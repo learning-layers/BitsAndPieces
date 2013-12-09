@@ -1,0 +1,160 @@
+{
+    "comment" : "This format is not standardized. Schema syntax copied from http://schema.rdfs.org/all.json because VIE already comes with a parser for it.",
+    "datatypes": {
+        "DataType": {
+          "ancestors": [], 
+          "comment": "", 
+          "comment_plain": "", 
+          "id": "DataType", 
+          "label": "Data Type", 
+          "properties": [], 
+          "specific_properties": [], 
+          "subtypes": [
+            "DateTime", 
+            "Text" 
+          ], 
+          "supertypes": [], 
+          "url": "http://schema.org/DataType"
+        }, 
+        "DateTime": {
+        "ancestors": [
+            "DataType"
+        ], 
+        "comment": "", 
+        "comment_plain": "", 
+        "id": "DateTime", 
+        "label": "Date Time", 
+        "properties": [], 
+        "specific_properties": [], 
+        "subtypes": [], 
+        "supertypes": [
+            "DataType"
+        ], 
+        "url": "http://schema.org/DateTime"
+        },
+        "Text": {
+          "ancestors": [
+            "DataType"
+          ], 
+          "comment": "", 
+          "comment_plain": "", 
+          "id": "Text", 
+          "label": "Text", 
+          "properties": [], 
+          "specific_properties": [], 
+          "subtypes": [
+            "URL"
+          ], 
+          "supertypes": [
+            "DataType"
+          ], 
+          "url": "http://schema.org/Text"
+        }
+    },
+    "properties": {
+        "name": {
+          "comment": "The name of the item.", 
+          "comment_plain": "The name of the item.", 
+          "domains": [
+            "Resource"
+          ], 
+          "id": "name", 
+          "label": "Name", 
+          "ranges": [
+            "Text"
+          ]
+        }, 
+        "time": {
+          "comment": "The time of the item. Will need to be something more detailed, eg. creationTime", 
+          "comment_plain": "The time of the item.", 
+          "domains": [
+            "Resource"
+          ], 
+          "id": "time", 
+          "label": "Time", 
+          "ranges": [
+            "DateTime"
+          ]
+        } 
+    },
+    "types": {
+        "Resource":{
+            "ancestors": [
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "Resource", 
+            "label": "Resource", 
+            "properties": [
+                "name",
+                "time"
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+                "Collection",
+                "Discussion",
+                "Photo"
+            ], 
+            "supertypes": [
+            ], 
+            "url": "http://sss.ss/Resource"
+        },
+        "Collection":{
+            "ancestors": [
+                "Resource" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "Collection", 
+            "label": "Collection", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "Resource" 
+            ], 
+            "url": "http://sss.ss/Collection"
+        },
+        "Discussion":{
+            "ancestors": [
+                "Resource" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "Discussion", 
+            "label": "Discussion", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "Resource" 
+            ], 
+            "url": "http://sss.ss/Discussion"
+        },
+        "Photo":{
+            "ancestors": [
+                "Resource" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "Photo", 
+            "label": "Photo", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "Resource" 
+            ], 
+            "url": "http://sss.ss/Photo"
+
+        }
+
+    }
+}

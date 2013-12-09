@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html><head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="lib/VIE/lib/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+        <script type="text/javascript" src="lib/VIE/lib/underscore/underscore-min.js"></script>
+        <script type="text/javascript" src="lib/VIE/lib/backbone/backbone.js"></script>
+        <script type="text/javascript" src="lib/VIE/dist/vie.js"></script>
+        <script type="text/javascript" src="lib/logger.js"></script>
+        <script type="text/javascript" src="js/service/SocialSemanticService.js"></script>
+
+        
+        <script type="text/javascript" src="http://kedemo.know-center.tugraz.at:8080/SSSClientSide/JSUtilities/JSGlobals.js"></script>
+        <script type="text/javascript" src="http://kedemo.know-center.tugraz.at:8080/SSSClientSide/SSSClientInterfaceGlobals/globals/SSGlobals.js"></script>
+        <script type="text/javascript" src="http://kedemo.know-center.tugraz.at:8080/SSSClientSide/SSSClientInterfaceGlobals/globals/SSVarU.js"></script>
+        <script type="text/javascript" src="http://kedemo.know-center.tugraz.at:8080/SSSClientSide/SSSClientInterfaceREST/connectors/SSEntityConns.js"></script>
+        <script type="text/javascript" src="http://kedemo.know-center.tugraz.at:8080/SSSClientSide/SSSClientInterfaceREST/connectors/SSUserEventConns.js"></script>
+        <script type="text/javascript" src="http://kedemo.know-center.tugraz.at:8080/SSSClientSide/SSSClientInterfaceREST/connectors/SSLearnEpConns.js"></script>
+
+        <!---
+        <script type="text/javascript" src="lib/SocialSemanticServer/SSSClientSide/SSSClientInterfaceREST/connectors/SSLearnEpConns.js"></script>
+        <script type="text/javascript" src="lib/SocialSemanticServer/SSSClientSide/SSSClientInterfaceREST/connectors/SSUserEventConns.js"></script>
+        <script type="text/javascript" src="lib/SocialSemanticServer/SSSClientSide/SSSClientInterfaceREST/connectors/SSEntityConns.js"></script>
+        <script type="text/javascript" src="lib/SocialSemanticServer/SSSClientSide/JSUtilities/JSGlobals.js"></script>
+        <script type="text/javascript" src="lib/SocialSemanticServer/SSSClientSide/SSSClientInterfaceGlobals/globals/SSVarU.js"></script>
+        <script type="text/javascript" src="lib/SocialSemanticServer/SSSClientSide/SSSClientInterfaceGlobals/globals/SSGlobals.js"></script>
+        --->
+
+        <!---
+        <script type="text/javascript" src="js/mockup/SSUserEventConns.js"></script>
+        <script type="text/javascript" src="js/mockup/SSResourceConns.js"></script>
+        <script type="text/javascript" src="js/mockup/SSLearnEpConns.js"></script>
+        --->
+
+        <script type="text/javascript" src="js/view/timeline/TimelineView.js"></script>
+        <script type="text/javascript" src="js/model/timeline/TimelineModel.js"></script>
+        <script type="text/javascript" src="js/view/organize/OrganizeView.js"></script>
+        <script type="text/javascript" src="js/model/organize/OrganizeModel.js"></script>
+        <script type="text/javascript" src="js/view/detail/DetailView.js"></script>
+        <script type="text/javascript" src="js/model/episode/EpisodeModel.js"></script>
+        <script type="text/javascript" src="js/model/episode/UserModel.js"></script>
+        <script type="text/javascript" src="js/model/episode/VersionModel.js"></script>
+        <script type="text/javascript" src="js/view/episode/EpisodeView.js"></script>
+        <script type="text/javascript" src="js/view/episode/EpisodeManagerView.js"></script>
+        <script type="text/javascript" src="js/view/sss/EntityView.js"></script>
+        <script type="text/javascript" src="js/view/sss/OrgaEntityView.js"></script>
+        <script type="text/javascript" src="js/view/sss/UserEventView.js"></script>
+        <script type="text/javascript" src="js/view/sss/UserView.js"></script>
+        <script type="text/javascript" src="lib/chap-links-library/js/src/timeline/timeline.js"></script>
+        <script type="text/javascript" src="lib/svgjs/svg.js" charset="utf-8"></script> 	
+        <script type="text/javascript" src="lib/svgjs/svg.draggable.js" charset="utf-8"></script> 
+        <script type="text/javascript" src="lib/svgjs/svg.foreignobject.js" charset="utf-8"></script> 
+        <script type="text/javascript" src="lib/organize/organize.js"></script>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="stylesheet" type="text/css" href="lib/chap-links-library/js/src/timeline/timeline.css">
+        <link rel="stylesheet" type="text/css" href="lib/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css">
+        <script type="text/javascript">
+
+
+            VIE.Util.useRealUri = true;
+            Logger.useDefaults();
+            var AppLog = Logger.get('App');
+            var AddLog = Logger.get('Add');
+            Logger.get('UserModel').setLevel(Logger.OFF);
+            Logger.get('OrganizeModel').setLevel(Logger.OFF);
+            Logger.get('VersionModel').setLevel(Logger.OFF);
+            Logger.get('EpisodeModel').setLevel(Logger.OFF);
+            Logger.get('TimelineModel').setLevel(Logger.OFF);
+            Logger.get('TimelineView').setLevel(Logger.OFF);
+            Logger.get('OrganizeView').setLevel(Logger.DEBUG);
+            Logger.get('DetailView').setLevel(Logger.OFF);
+            Logger.get('EpisodeManagerView').setLevel(Logger.OFF);
+            Logger.get('EpisodeView').setLevel(Logger.OFF);
+            Logger.get('EntityView').setLevel(Logger.OFF);
+            Logger.get('OrgaEntityView').setLevel(Logger.OFF);
+            Logger.get('UserEventView').setLevel(Logger.OFF);
+            Logger.get('UserView').setLevel(Logger.OFF);
+            Logger.get('App').setLevel(Logger.OFF);
+            Logger.get('Add').setLevel(Logger.OFF);
+            Logger.get('SocialSemanticService').setLevel(Logger.OFF);
+            Logger.get('Mockup').setLevel(Logger.OFF);
+
+            var v = new VIE();
+            var tracker;
+
+            var timelineView;
+            var organizeView;
+
+            (function(){
+            var username = window.location.search.substring(1);
+            if( !username) return alert('no username given!');
+
+            // --- HARD CODE THE CURRENT USER --- //
+            var userParams = {
+                'user': 'sss:user/'+username+'/',
+				'ueTrackUser': 'sss:user/ue_track_'+username+'/',
+                'userKey': '681V454J1P3H4W3B367BB79615U184N22356I3E',
+            };
+
+            var sss = new v.SocialSemanticService(_.extend({
+                'namespaces': {
+                    'sss': "http://eval.bp/"
+                }
+            }, userParams));
+            v.namespaces.base("http://eval.bp/");
+
+            tracker = Logger.get('Tracker');
+            tracker.setLevel(Logger.INFO);
+            tracker.setHandler(function(messages, context){
+                new SSUserEventAdd().handle(
+                        function(object){
+                            AppLog.info('USEREVENT ADDED', object);
+                        },
+                        function(object){
+                            AppLog.error('USEREVENT NOT ADDED', object);
+                        },
+                        v.namespaces.uri(userParams.ueTrackUser),
+                        userParams.userKey,
+                        messages[0],
+                        messages[1] || null,
+                        new Date().getTime()+(messages[2] ? ";"+JSON.stringify(messages[2]): "")
+                    )
+            });
+             
+  
+  
+  
+            tracker.OPENEPISODESDIALOG = "learnEpOpenEpisodesDialog";
+            tracker.SWITCHEPISODE = "learnEpSwitchEpisode";
+            tracker.SWITCHVERSION = "learnEpSwitchVersion";
+            tracker.RENAMEEPISODE = "learnEpRenameEpisode";
+            tracker.CREATENEWEPISODEFROMSCRATCH = "learnEpCreateNewEpisodeFromScratch";
+            tracker.CREATENEWEPISODEFROMVERSION = "learnEpCreateNewEpisodeFromVersion";
+            tracker.CREATENEWVERSION = "learnEpCreateNewVersion";
+            tracker.CHANGETIMELINERANGE = "timelineChangeTimelineRange";
+            tracker.VIEWDETAILS = "learnEpViewEntityDetails";
+            tracker.OPENRESOURCE = "viewEntity";
+            tracker.DROPORGANIZEENTITY = "learnEpDropOrganizeEntity";
+            tracker.MOVEORGANIZEENTITY = "learnEpMoveOrganizeEntity";
+            tracker.DELETEORGANIZEENTITY = "learnEpDeleteOrganizeEntity";
+            tracker.CREATEORGANIZECIRCLE = "learnEpCreateOrganizeCircle";
+            tracker.CHANGEORGANIZECIRCLE = "learnEpChangeOrganizeCircle";
+            tracker.RENAMEORGANIZECIRCLE = "learnEpRenameOrganizeCircle";
+            tracker.DELETEORGANIZECIRCLE = "learnEpDeleteOrganizeCircle";
+            tracker.NULL = 'http://dummy.dm/';
+
+
+            v.Entity.prototype.sync = function(method, model, options ) {
+                AppLog.debug("sync entity " + model.getSubject() + " by " + method);
+                if( !options) options = {};
+                AppLog.debug("options", options);
+                AppLog.debug("model", model);
+                switch(method) {
+                    case 'create':
+                        this.vie.save({
+                            'entity': model
+                        }).to('sss').execute().success(function(savedEntity){
+                            AppLog.debug("entity created");
+                            AppLog.debug("savedEntity", savedEntity);
+                            model.set('@subject', savedEntity['uri'], {'silent':false});
+                            if(options.success) 
+                                options.success(model);
+                        });
+                        break;
+                    case 'read':
+                        this.vie.load({
+                            'resource' : model.getSubject(),
+                            'data' : options.data
+                        }).from('sss').execute().success(function(readEntity){
+                            AppLog.debug("entity was read");
+                            AppLog.debug("readEntity", readEntity);
+                            model.set(readEntity)
+                            if(options.success) 
+                                options.success(readEntity);
+                        })
+                        break;
+                    case 'update':
+                        this.vie.save({
+                            'entity': model
+                        }).to('sss').execute().success(function(savedEntity){
+                            AppLog.debug("entity updated");
+                            if(options.success) 
+                                options.success(savedEntity);
+                        });
+                        break;
+                    case 'delete':
+                        this.vie.remove({
+                            'entity': model
+                        }).from('sss').execute().success(function(savedEntity){
+                            AppLog.debug("entity removed");
+                            if(options.success) 
+                                options.success(savedEntity);
+                        });
+                        break;
+                }
+            };
+
+            v.Collection.prototype.sync = function(method, collection, options ) {
+                AppLog.debug("sync collection by " + method);
+                AppLog.debug("options", options);
+                options = options || {'parse':false};
+                switch(method) {
+                    case 'create':
+                        // ???
+                        break;
+                    case 'read':
+                        this.vie.load(_.extend(options.data, {
+                            'type' : this.predicate
+                        })).from('sss').execute().success(function(readEntities){
+                            AppLog.debug("entities were read for ", collection);
+                            AppLog.info("readEntities", readEntities);
+                            //collection.add(readEntities);
+                            //AppLog.debug("added to ", collection);
+                            if(options.success)
+                                //options.ssuccess(collection, readEntities, options);
+                                options.success(readEntities);
+                        })
+                        break;
+                    case 'update':
+                        // ???
+                        break;
+                    case 'delete':
+                        // ???
+                        break;
+                }
+
+            };
+
+            /*
+            v.Entity.prototype.set = function(attrs, options, opts) {
+                if (!attrs) {
+                  return this;
+                }
+
+                if (attrs['@subject']) {
+                  attrs['@subject'] = this.toReference(attrs['@subject']);
+                }
+
+                // Use **`.set(attrName, value, options)`** for setting or changing exactly one
+                // entity attribute.
+                if (_.isString(attrs)) {
+                  var obj = {};
+                  obj[attrs] = options;
+                  return this.set(obj, opts);
+                }
+
+                // VIE's type system is more strict than default Backbone. Unless validation is
+                // explicitly disabled, we should always validate on set
+                if (!options) {
+                  options = {};
+                }
+                if (options.validate !== false && options.silent !== true) {
+                  options.validate = true;
+                }
+
+                // **`.set(entity)`**: In case you'd pass a VIE entity,
+                // the passed entities attributes are being set for the entity.
+                if (attrs.attributes) {
+                  attrs = attrs.attributes;
+                }
+                var coll;
+                // resolve shortened URIs like rdfs:label..
+                _.each (attrs, function (value, key) {
+                  var newKey = VIE.Util.mapAttributeNS(key, this.vie.namespaces);
+                  if (key !== newKey) {
+                    delete attrs[key];
+                    attrs[newKey] = value;
+                  }
+                }, this);
+
+                // Finally iterate through the *attributes* to be set and prepare
+                // them for the Backbone.Model.set method.
+                _.each (attrs, function (value, key) {
+                    AddLog.debug('attr', value, key);
+                  if (!value) { return; }
+                  if (key.indexOf('@') === -1) {
+                    if (value.isCollection) {
+                      // ignore
+                      value.each(function (child) {
+                        this.vie.entities.addOrUpdate(child);
+                      }, this);
+                    } else if (value.isEntity) {
+                      this.vie.entities.addOrUpdate(value);
+                      coll = new this.vie.Collection(value, {
+                        vie: this.vie,
+                        predicate: key
+                      });
+                      attrs[key] = coll;
+                    } else if (_.isArray(value)) {
+                      if (this.attributes[key] && this.attributes[key].isCollection) {
+                        var newEntities = this.attributes[key].addOrUpdate(value);
+                        attrs[key] = this.attributes[key];
+                        attrs[key].reset(newEntities);
+                      }
+                    } else if (value["@value"]) {
+                      // The value is a literal object, ignore
+                    } else if (_.isObject(value) && !_.isDate(value)) {
+                      // The value is another VIE Entity
+                      var child = new this.vie.Entity(value, options);
+                      // which is being stored in `v.entities`
+                      this.vie.entities.addOrUpdate(child);
+                      // and set as VIE Collection attribute on the original entity
+                      coll = new this.vie.Collection(value, {
+                        vie: this.vie,
+                        predicate: key
+                      });
+                      attrs[key] = coll;
+                    } else {
+                        // resolve uris
+                        if( this.vie.namespaces.isUri(value) && !this.vie.entities.get(value) ) {
+                            AddLog.debug('resolving', value, 'from Entity.set');
+                            //this.vie.entities.addOrUpdate(new this.vie.Entity({//SSS.Entity({
+                            this.vie.entities.set({//SSS.Entity({
+                                '@subject' : value
+                            }, {'remove': false});
+                        }
+                    }
+                  }
+                }, this);
+                var ret = Backbone.Model.prototype.set.call(this, attrs, options);
+                if (options && options.ignoreChanges) {
+                  // TODO: This will need to be changed to reflect now change
+                  // tracking mechanisms in Backbone.js 1.0.0
+                  this.changed = {};
+                  this._previousAttributes = _.clone(this.attributes);
+                }
+                return ret;
+              },
+              */
+
+            v.Collection.prototype.set = function(models, options) {
+                AddLog.info("adding to collection ", this.predicate);
+                if (!_.isArray(models)) models = models ? [models] : [];
+                for (var i = 0, l = models.length; i < l; i++) {
+                    var model = models[i];
+                    AddLog.info("model", model);
+
+                    var attributes;
+                    if ( model.attributes ) attributes = model.attributes;
+                    else attributes = model;
+
+                    // make sure each uri refers to a model object
+                    AddLog.debug("resolving references to objects of " + attributes[VIE.prototype.Entity.prototype.idAttribute]);
+                    for( var attr in attributes ) {
+                        var res = attributes[attr];
+                        if( attr[0] != '@' && this.vie.namespaces.isUri(res) ) {
+                            AddLog.debug(attr + ":" + res );
+                            if( !this.vie.entities.get(res) )
+                                //this.vie.entities.addOrUpdate(new this.vie.Entity({//SSS.Entity({
+                                this.vie.entities.set({//SSS.Entity({
+                                    '@subject' : res
+                                }, {'remove': false});
+                        }
+                    }
+                    if(this !== this.vie.entities)
+                        //this.vie.entities.addOrUpdate(model);
+                        this.vie.entities.set(model, {'remove': false});
+                }
+                AddLog.debug("adding to original collection", this, models);
+                return Backbone.Collection.prototype.set.call(this, models, options);
+                //return this.addOrUpdate( model, options);
+            }
+
+            $(document).ready(function() {
+                v.use(sss, 'sss');
+
+                var user = new EP.UserModel({
+                    '@subject':userParams.user,
+                });
+                v.entities.addOrUpdate(user);
+
+                var redraw = function(model, collection, options ) {
+                    var type = model.get('@type');
+                    AppLog.debug("redraw");
+
+                    if( type.id == v.namespaces.uri('sss:Organize')) {
+                        AppLog.debug('got Model', model.cid);
+                        //model = new ORGANIZE.OrganizeModel(model);
+                        AppLog.debug("adding OrganizeView");
+                        // --- ADD THE ORGANIZE VIEW --- //
+                        if( organizeView ) {
+                            organizeView.remove();
+                        }
+
+                        $('fieldset#organize').append('<div id="myOrganize1" tabindex="1" style="width:100%; height:100%"></div>'); 
+
+                        organizeView = new ORGANIZE.OrganizeView({
+                            model: model,
+                            EntityView: SSS.EntityView,
+                            el: '#myOrganize1'
+                        });
+                        organizeView.render();
+                        model.fetchStuff();
+
+                        organizeView.$el.droppable({
+                            drop: function(event, ui) {
+                                var id = ui.helper.attr('resource');
+                                AppLog.debug("dropped " + id);
+                                var offset = $(this).offset();
+                                var entity = {//ORGANIZE.Entity({
+                                    x: ui.offset.left - offset.left,
+                                    y: ui.offset.top - offset.top,
+                                    resource: id
+                                };
+                                tracker.info(tracker.DROPORGANIZEENTITY, id, entity);
+                                organizeView.model.createEntity(entity);
+                            }
+                        });
+
+                    } else if (type.id == v.namespaces.uri('sss:Timeline')){
+                        AppLog.debug("adding TimelineView");
+                        //model = new TL.TimelineModel(model);
+                        if( timelineView )
+                            timelineView.remove();
+                        $('fieldset#timeline').append('<div id="myTimeline1"></div>');
+
+                        // --- ADD THE TIMELINE VIEW --- //
+                        timelineView = new TL.TimelineView({
+                            model : model,
+                            EntityView: SSS.UserEventView,
+                            //GroupByEntityView: SSS.UserView,
+                            el: "#myTimeline1",
+                            //groupBy: v.namespaces.uri('sss:user'),
+                            timeline: {
+                                'width': '100%',
+                                //'height': '300px',
+                                'height': '100%',
+                                'editable': false, // disable dragging and editing events
+                                'axisOnTop': true,
+                                'stackEvents': false,
+                                //eventMarginAxis: '20', // minimal margin beteen events and the axis
+                                'style': 'box'
+                            }
+                        });
+                        // fetch initial data
+                        model.fetchRange();
+                        //model.fetchRange(0, new Date().getTime());
+
+                    }
+
+                };
+
+                currentVersion = null;
+                var draw = function(version) {
+                    if( !version || version === currentVersion ) return;
+                    if( currentVersion) {
+                        currentVersion.widgetCollection.off('add');
+                        currentVersion.off('somethingChanged');
+                    }
+                    if( !version.isVersion ) return; // not a version
+                    currentVersion = version;
+                    // create new version on change
+                    version.once('somethingChanged', function(model, collection, options ){
+                        AppLog.debug('somethingChanged', model, collection, options);
+                        
+                    });
+                    AppLog.debug('drawing ', currentVersion.getSubject());
+                    version.widgetCollection.each(function(widget){
+                        AppLog.debug("preparing widgets from collection");
+                        redraw(widget, version.widgetCollection );
+                    });
+                    AppLog.error('setting add event handler');
+
+                    // THAT's A HACK! don't fetch widgets again when already there:
+                    if( version.widgetCollection.length > 0 ) return;
+
+                    version.widgetCollection.on('add', function(model, collection, options) {
+                        if( collection && version.widgetCollection !== collection ) return;
+                        AppLog.debug("adding a widget to collection, length =", model, JSON.stringify(model),collection.length);
+                        redraw(model, collection, options) ;
+                    });
+
+                    // set up widgetsCollection
+                    version.fetchWidgets({'success' : function(collection, response, options ) {
+
+                        AppLog.debug("success of fetching widgets", collection);
+                        var types = collection.pluck('@type');
+                        types = types.map(function(type){return type.id? type.id: type});
+                        AppLog.debug('types', types);
+                        if( !_.contains(types, v.namespaces.uri('sss:Organize'))) {
+                            AppLog.debug("creating default organize widget");
+                            version.createWidget(new ORGANIZE.OrganizeModel({
+                                '@type' : v.namespaces.uri('sss:Organize'),
+                                'circleType' : v.namespaces.uri('sss:Circle'),
+                                'entityType' : v.namespaces.uri('sss:OrgaEntity')
+                            }));
+                        }
+                        if( !_.contains(types, v.namespaces.uri('sss:Timeline'))) {
+                            AppLog.debug("creating default timeline widget");
+                            version.createWidget(new TL.TimelineModel({
+                                '@type' : v.namespaces.uri('sss:Timeline'),
+                                'user' : user.getSubject(),
+                                'timeAttr': v.namespaces.uri('sss:timestamp'),
+                                'predicate' : v.namespaces.uri('sss:userEvent'),
+                                //'timelineCollection' : new v.Collection([], {//new TL.Collection([], { 
+                                    //'model': SSS.Entity,
+                                    //'vie' : v
+                                //}),
+                                'start': jSGlobals.getTime() - jSGlobals.dayInMilliSeconds,
+                                'end': jSGlobals.getTime() + 3600000 
+                            }));
+                        }
+                    }});
+                }
+
+                // manages switching between versions
+                user.on('change:' + v.namespaces.uri('sss:currentVersion'), function(model, value, options) {
+                    // catch change:currentVersion event and trigger redraw of organize and timeline
+                    // probably make organize unclickable
+                    AppLog.debug("app changeCurrentVersion ", model, value);
+                    var prev = model.previous('currentVersion');
+                    if( prev ) {
+                        AppLog.debug("prev =" +prev);
+                        prev = v.entities.get(prev);
+                        prev.widgetCollection.off('add', redraw);
+                    }
+                    var version = v.entities.get(value);
+
+                    if( version && version.isEntity ) {
+                        draw(version);
+                    }
+
+                });
+
+                user.episodeCollection.on('addVersion', function(version, versionCollection, versionOptions ){
+                    AppLog.debug("version added", JSON.stringify(version));
+                    if( !user.get('currentVersion')) {
+                        user.save('currentVersion', version.getSubject());
+                        user.trigger('change:' + user.vie.namespaces.uri('sss:currentVersion'), version, version.getSubject());
+                        draw(version);
+                    } else if( version === user.get('currentVersion')) {
+                        AppLog.debug('version and currentVersion equals');
+                        draw(version);
+                        user.trigger('change:' + user.vie.namespaces.uri('sss:currentVersion'), version, version.getSubject());
+                    }
+                });
+
+                episodeMgr = new EP.EpisodeManagerView({
+                    model: user,
+                    el: '#myEpisodes1'
+                });
+                user.fetch({'success' : function(model, response, options) {
+                    model.fetchEpisodes(); //model === user
+                }});
+
+
+                // --- DUMMY DATA --- //
+                /*
+                v.load(_.extend(userParams, {
+                    'connector': 'CircleGet',
+                    'circle': 'sss:circle/svgcircle01'
+                })).from('sss').execute().success(function(circle) {
+                    v.entities.add(circle);
+                });
+                v.load(_.extend(userParams, {
+                    'connector': 'OrgaEntityGet',
+                    'entity': 'sss:orgaentity/orgaentity01'
+                }))
+                        .from('sss')
+                        .execute()
+                        .success(function(entity) {
+                    v.entities.add(entity);
+                });
+                */
+            });
+
+            })();
+
+        </script>
+    </head>
+    <body>
+        <div id="myEpisodes1"></div>
+        <fieldset id="timeline">
+            <legend>Browse</legend>
+        </fieldset>
+        <fieldset style="height:400px" id="organize">
+            <legend>Organize</legend>
+        </fieldset>
+    </body></html>

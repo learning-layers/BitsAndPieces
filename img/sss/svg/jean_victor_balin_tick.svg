@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" id="svg2" viewBox="0 0 48 36" version="1.0">
+ <defs id="defs4">
+  <linearGradient id="linearGradient1341" y2="47.451" gradientUnits="userSpaceOnUse" y1="32.362" x2="84.911" x1="74.911">
+   <stop id="stop1366" stop-color="#236b0d" offset="0"/>
+   <stop id="stop1368" stop-color="#081b04" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient1343" y2="43.714" gradientUnits="userSpaceOnUse" y1="34.429" x2="76.875" x1="73.839">
+   <stop id="stop2124" stop-color="#2edc32" offset="0"/>
+   <stop id="stop2126" stop-color="#11661d" offset="1"/>
+  </linearGradient>
+  <linearGradient id="linearGradient1345" y2="47.375" gradientUnits="userSpaceOnUse" y1="35.589" x2="85" x1="72.946">
+   <stop id="stop1317" stop-color="#97ff82" offset="0"/>
+   <stop id="stop1319" stop-color="#ceff24" stop-opacity="0" offset="1"/>
+  </linearGradient>
+ </defs>
+ <g id="layer1">
+  <g id="g1330" transform="matrix(1.6698 0 0 1.6698 -109.6 -45.25)">
+   <path id="path1362" fill="url(#linearGradient1341)" d="m92.844 27.406c-0.135 0.026-0.263 0.079-0.375 0.156l-17.438 11.626-7.437-5.594c-0.374-0.281-0.894-0.259-1.243 0.052s-0.431 0.825-0.195 1.229l8 13c0.155 0.268 0.427 0.448 0.735 0.485 0.307 0.037 0.614-0.073 0.828-0.298l18-19c0.301-0.304 0.369-0.769 0.169-1.148s-0.623-0.584-1.044-0.508z"/>
+   <path id="path2120" transform="translate(0 -.012817)" fill="url(#linearGradient1343)" d="m92.969 27.969c-0.067 0.004-0.132 0.026-0.188 0.062l-17.781 11.844-7.75-5.813c-0.147-0.163-0.399-0.177-0.562-0.031-0.164 0.147-0.178 0.399-0.032 0.563l8 13c0.065 0.104 0.175 0.173 0.297 0.185 0.123 0.012 0.244-0.033 0.328-0.123l18-19c0.128-0.115 0.167-0.301 0.095-0.458-0.071-0.157-0.236-0.25-0.407-0.229z"/>
+   <path id="path1323" transform="translate(0 -.012817)" fill="url(#linearGradient1345)" d="m92.906 28.469l-17.906 11.937-7.906-5.937 7.937 12.875 17.875-18.875z"/>
+  </g>
+ </g>
+ <metadata>
+  <rdf:RDF>
+   <cc:Work>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <cc:license rdf:resource="http://creativecommons.org/licenses/publicdomain/"/>
+    <dc:publisher>
+     <cc:Agent rdf:about="http://openclipart.org/">
+      <dc:title>Openclipart</dc:title>
+     </cc:Agent>
+    </dc:publisher>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/licenses/publicdomain/">
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/>
+    <cc:permits rdf:resource="http://creativecommons.org/ns#DerivativeWorks"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+</svg>
