@@ -1,0 +1,193 @@
+*  {
+    font-family: Helvetica,Arial,sans-serif;
+}
+div.timeline-event-content {
+    overflow: visible;
+}
+#myTimeline1 {
+    height: 170px;
+}
+#myTimeline1 > .user-container {
+    width: 5%;
+    float: left;
+    margin: 3em 2.5%;
+    text-align: center;
+}
+#myTimeline1 > .timeline {
+    height: 100%;
+    width: 90%;
+    margin-left: 10%;
+}
+img.icon {
+    width: 50px;
+    display:block;
+    margin: auto;
+}
+img.small-icon {
+    width:16px;
+    display: inline;
+}
+.entity {
+    background-color: transparent;
+    display:inline;
+    cursor:pointer;
+}
+
+.entity .labelable {
+    max-width:50px;
+}
+
+.labelable label {
+    text-align: left;
+    border: 0 none;
+    bottom: -1.5em;
+    display: none;
+    font-family: sans;
+    font-size: 70%;
+    left: 0;
+    position: absolute;
+    z-index: 1000;
+}
+.labelable:hover label {
+    display:block;
+}
+label.nolabel {
+    font-style: italic;
+    color: grey;
+}
+.user-container {
+    text-align:center;
+}
+caption {
+    display:block;
+}
+fieldset {
+    border: 1px solid lightgray;
+}
+fieldset legend {
+    font-size: 0.8em;
+    color: gray;
+}
+.detailView {
+}
+.detailView ul  {
+    margin: 0;
+    padding-left: 1em;
+}
+.detailView ul li {
+    list-style: none;
+}
+/*override timeline.css*/
+div.timeline-groups-text {
+    padding-left:0;
+    padding-right:0;
+    width:100px;
+}
+
+div#episodes {
+    display: none;
+    background-color: white;
+    padding: 0.5em;
+    border: 1px solid black;
+    position:absolute;
+}
+
+div#episodes button {
+    display: block;
+    cursor: pointer;
+}
+
+div#episodes ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+div#episodes li.episode {
+    margin: 0.5em 0;
+}
+
+div#episodes h2 {
+    margin: 0;
+    padding: 0;
+    font-size: 100%;
+}
+
+.episode li {
+    list-style-type: decimal;
+    margin-left: 2em;
+}
+
+.episode li .timestamp {
+    margin: 0;
+    display: none;
+    font-size: 0.7em;
+    color: gray;
+    display: none;
+}
+/*
+.episode li .timestamp:hover {
+    display: block;
+}
+
+.episode li:hover .timestamp {
+    display: block;
+}
+*/
+
+
+div#myEpisodes1 h1 {
+    margin: 0;
+    padding: 0;
+    margin-left: 40px;
+}
+
+#toggleEpisodes {
+    float:left;
+    width: 24px;
+    height: 24px;
+    margin: 3px;
+}
+
+/*
+div#myEpisodes1:hover div#episodes {
+    display: block;
+    z-index: 1000;
+}
+
+div#episodes:hover {
+*/
+div#episodes {
+    display: none;
+    z-index: 1000;
+}
+
+div#episodes div.highlight {
+    background-color: lightgreen;
+}
+
+div#episodes li.highlight {
+    font-weight: bold;
+}
+
+div#episodes li {
+    cursor: pointer;
+}
+
+
+svg image {
+    cursor: pointer;
+}
+
+.highlight {
+    font-weight: strong;
+}
+
+/* hide versions */
+div#episodes button#createNewVersion {
+    display: none;
+}
+
+li.episode ul {
+    display: none;
+}
