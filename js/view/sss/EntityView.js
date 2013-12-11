@@ -1,5 +1,4 @@
 define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView'], function(VIE, Logger, tracker, _, $, Backbone, DetailView){
-    console.log('test2', DetailView);
     return Backbone.View.extend({
         LOG: Logger.get('EntityView'),
         icons: {
