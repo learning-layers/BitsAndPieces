@@ -1,4 +1,6 @@
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/EntityView', 'jquery-ui' ], function(VIE, Logger, tracker, _, $, Backbone, EntityView){
+define(['require', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 
+        'view/sss/EntityView', 'jquery-ui' ], 
+function(require, VIE, Logger, tracker, _, $, Backbone, EntityView){
     return Backbone.View.extend({
         LOG: Logger.get('DetailView'),
         events: { 
@@ -22,6 +24,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ss
                 if( prop == '@type') {
                     res_cont = val && val.id ? this.model.vie.namespaces.curie(val.id) : val;
                 } else if( val.isEntity ) {
+                    var EntityView = require('view/sss/EntityView');
                     var view = new EntityView({
                                 'model' : val
                                });

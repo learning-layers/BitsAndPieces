@@ -1,4 +1,4 @@
-define(['vie', 'logger', 'tracker', 'underscore', 'model/episode/VersionModel'], function(VIE, Logger, tracker, _, VersionModel){
+define(['require', 'vie', 'logger', 'tracker', 'underscore'], function(require, VIE, Logger, tracker, _){
     return VIE.prototype.Entity.extend({
         LOG : Logger.get('VersionModel'),
         initialize: function(attributes, options ) {
@@ -30,6 +30,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'model/episode/VersionModel'],
         clone: function() {
             var newAttr = _.clone(this.attributes);
             delete newAttr['@subject'];
+            var VersionModel = require('./VersionModel');
             var newVersion = new VersionModel(newAttr, {
                 'widgetCollection' : new this.vie.Collection([], {
                     'vie':this.vie,

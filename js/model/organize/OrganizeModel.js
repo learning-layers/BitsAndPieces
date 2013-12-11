@@ -1,4 +1,4 @@
-define(['vie', 'logger', 'tracker', 'underscore', 'model/organize/OrganizeModel'], function(VIE, Logger, tracker, _, OrganizeModel){
+define(['require', 'vie', 'logger', 'tracker', 'underscore' ], function(require, VIE, Logger, tracker, _){
     return VIE.prototype.Entity.extend({
         LOG : Logger.get('OrganizeModel'),
         initialize: function(attributes, options ) {
@@ -69,6 +69,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'model/organize/OrganizeModel'
                     'vie':this.vie,
                     'predicate': this.orgaEntityCollection.predicate
                 });
+            var OrganizeModel = require('./OrganizeModel');
             var newOrganize = new OrganizeModel(newAttr, {
                 'circleCollection' : circleCollection,
                 'orgaEntityCollection' : orgaEntityCollection

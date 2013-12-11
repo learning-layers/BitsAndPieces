@@ -42,7 +42,9 @@ requirejs.config((function() {
             },
             'chap-timeline' : {
                 'exports': 'links.Timeline'     
-            }
+            },
+            'svg.draggable' : ['svg'],
+            'svg.foreignobject' : ['svg']
         }
     };
 }()));

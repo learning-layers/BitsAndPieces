@@ -1,4 +1,4 @@
-define(['vie', 'logger', 'tracker', 'underscore', 'model/timeline/TimelineModel' ], function(VIE, Logger, tracker, _, TimelineModel){
+define(['require', 'vie', 'logger', 'tracker', 'underscore' ], function(require, VIE, Logger, tracker, _){
     return VIE.prototype.Entity.extend({
         LOG : Logger.get('TimelineModel'),
         initialize: function(attributes, options ) {
@@ -37,6 +37,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'model/timeline/TimelineModel'
             var newAttr = _.clone(this.attributes);
             newAttr = _.extend(newAttr, attributes);
             delete newAttr['@subject'];
+            var TimelineModel = require('./TimelineModel');
             var newTimeline = new TimelineModel(newAttr);
             newTimeline.timelineCollection = 
                 new this.vie.Collection([], {
