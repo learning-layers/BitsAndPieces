@@ -1,6 +1,7 @@
 // The SocialSemanticService wraps the SSS Client API.
 
-(function() {
+define(['logger', 'vie', 'underscore', 'model/organize/OrganizeModel', 'model/timeline/TimelineModel', 'model/episode/VersionModel', 'model/episode/EpisodeModel', 
+        'sss.conn.entity', 'sss.conn.userevent', 'sss.conn.learnep'], function(Logger, VIE, _, OrganizeModel, TimelineModel, VersionModel, EpisodeModel) {
 
 // ## VIE.SocialSemanticService(options)
 // This is the constructor to instantiate a new service.
@@ -231,7 +232,7 @@
                         var entityInstances = [];
                         _.each(objects['learnEps'], function(object) {
                             var entity = service.fixForVIE(object, 'learnEpUri');
-                            var vieEntity = new EP.EpisodeModel(entity);
+                            var vieEntity = new EpisodeModel(entity);
                             entityInstances.push(vieEntity);
                         });
                         loadable.resolve(entityInstances);
@@ -256,7 +257,7 @@
                             var entity = service.fixForVIE(object, 'learnEpVersionUri');
                             entity['episode'] = entity['learnEpUri'];
                             delete entity['learnEpUri'];
-                            var vieEntity = new EP.VersionModel(entity);
+                            var vieEntity = new VersionModel(entity);
                             entityInstances.push(vieEntity);
                             // each version has a organize component
                             // that would look like this object if the server would serve it
@@ -308,7 +309,7 @@
                     }
                     
                 if( organize ) 
-                    resolve('versionget', new ORGANIZE.OrganizeModel(this.fixForVIE(organize)));
+                    resolve('versionget', new OrganizeModel(this.fixForVIE(organize)));
                     //resolve('versionget', this.fixForVIE(organize));
                 else
                     resolve('versionget');
@@ -323,7 +324,7 @@
                             return;
                         }
                         object = object['learnEpTimelineState'];
-                        var vieEntity = new TL.TimelineModel(service.fixForVIE({
+                        var vieEntity = new TimelineModel(service.fixForVIE({
                             'uri' : object.learnEpTimelineStateUri,
                             'type' : service.types.TIMELINE,
                             'user' : service.vie.namespaces.uri(service.user),
@@ -333,7 +334,7 @@
                             //'timelineCollection' : new v.Collection([], {//new TL.Collection([], { 
                                 //'model': SSS.Entity,
                                 //'vie' : v
-                            //}),
+                            //})},
                             'start' : object.startTime,                            
                             'end' : object.endTime
                         }));
@@ -800,5 +801,7 @@
 
     };
 
-})();
+    return VIE.prototype.SocialSemanticService;
+
+});
 
