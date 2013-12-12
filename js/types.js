@@ -15,5 +15,8 @@ define([], {
     belongsToVersion: 'belongsToVersion',
     timestamp : 'timestamp',
     circleType: 'circleType', 
-    orgaEntityType: 'orgaEntityType'
+    orgaEntityType: 'orgaEntityType',
+    belongsToUser: 'belongsToUser',
+    start: 'start',
+    end: 'end'
 });
