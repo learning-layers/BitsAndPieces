@@ -1,33 +1,46 @@
-define(['require', 'vie', 'logger', 'tracker', 'underscore'], function(require, VIE, Logger, tracker, _){
-    return VIE.prototype.Entity.extend({
+define(['logger', 'types', 'underscore'], function(Logger, Types, _){
+    var VersionModel = function(vie) {
+        this.LOG.debug("initialize Version");
+        this.vie = vie;
+        this.vie.entities.on('add', this.filter);
+    };
+    VersionModel.prototype = {
         LOG : Logger.get('VersionModel'),
-        initialize: function(attributes, options ) {
-            this.LOG.debug("initialize Version");
-            if( !options) options = {};
-            this.LOG.debug("options",options);
-            this.LOG.debug("attributes",attributes);
-            // kind of super constructor:
-            VIE.prototype.Entity.prototype.initialize.call(this, attributes, options );
-            this.set('@type', 'sss:Version');
-            this.widgetCollection = options.widgetCollection || 
-                new this.vie.Collection([], {
-                    'vie':this.vie,
-                    'predicate': this.vie.namespaces.uri('sss:Widget')
-                });
-            this.isVersion = true;
-        }, 
-        fetchWidgets: function(data) {
-            if( !data ) data = {};
-            if( !data.data ) data.data = {};
-            data.data.version = this.getSubject();
-            this.widgetCollection.fetch(data);
+        /** 
+         * Filters user entities from added entities to vie.entities
+         */
+        filter: function(model, collection, options) {
+            if( this.vie.namespaces.curie(model.get('type').id) === Types.VERSION ) {
+                this.fetchWidgets(model);
+            }
         },
-        createWidget: function(object) {
-            object.set('version', this.getSubject());
-            this.LOG.debug("createWidget", this,object, this.widgetCollection);
-            this.widgetCollection.create(object, {'wait': true});
+        fetchWidgets: function(model) {
+            var vie = this.vie;
+            this.vie.load({
+                'version' : model,
+                'type' : Types.WIDGET
+            }).from('sss').execute().success(
+                function(widgets) {
+                    vie.entities.addOrUpdate(widgets);
+                }
+            );
+        },
+        createWidget: function(widget, version) {
+            widget.set(Types.belongstoVersion, version.getSubject());
+            this.LOG.debug("createWidget", widget, version);
+            var vie = this.vie;
+            this.vie.save({
+                'entity' : widget
+            }).from('sss').execute().success(
+                function(widget) {
+                    vie.entities.addOrUpdate(widget);
+                }
+            );
         },
         clone: function() {
+            //TODO to be done in vie.Entity
+            return; 
+            /*
             var newAttr = _.clone(this.attributes);
             delete newAttr['@subject'];
             var VersionModel = require('./VersionModel');
@@ -39,7 +52,9 @@ define(['require', 'vie', 'logger', 'tracker', 'underscore'], function(require, 
             });
             
             return newVersion;
+            */
         }
 
-    });
+    };
+    return VersionModel;
 });

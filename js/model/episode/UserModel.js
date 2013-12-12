@@ -1,58 +1,63 @@
-define(['vie', 'logger', 'tracker', 'model/episode/EpisodeModel'], function(VIE, Logger, tracker, EpisodeModel){
-    return VIE.prototype.Entity.extend({
+define(['logger', 'types'], function(Logger, Types){
+    var UserModel = function(vie) {
+        this.LOG.debug("initialize UserModel");
+        this.vie = vie;
+        this.vie.entities.on('add', this.filter);
+    };
+
+    UserModel.prototype = {
         LOG : Logger.get('UserModel'),
-        initialize: function(attributes, options) {
-            this.LOG.debug("initialize UserModel");
-            if( !options) options = {};
-            this.LOG.debug("options", options);
-            this.LOG.debug("attributes", attributes);
-            // kind of super constructor:
-            VIE.prototype.Entity.prototype.initialize.call(this, attributes, options );
-            this.episodeCollection = options.episodeCollection || 
-                new this.vie.Collection([], {
-                    'vie':this.vie,
-                    'model' : EpisodeModel,
-                    'predicate': this.vie.namespaces.uri('sss:Episode')
-                });
-                var model = this;
-
-            var m = this;
-            this.episodeCollection.on('change:' + this.vie.namespaces.uri('sss:currentVersion'), function(model, value, options){
-                m.LOG.log('changed currentVersion', value);
-                m.setCurrentVersion(value);
-            });
+        /** 
+         * Filters user entities from added entities to vie.entities
+         */
+        filter: function(model, collection, options) {
+            if( this.vie.namespaces.curie(model.get('type').id) === Types.USER ) {
+                this.fetchEpisodes(model);
+                /*
+                model.on('change:' 
+                    + this.vie.namespaces.uri(Types.CURRENTVERSION), 
+                    function(model, value, options){
+                        m.LOG.log('changed currentVersion', value);
+                        m.setCurrentVersion(value);
+                    });
+                    */
+)
+            }
         },
-        fetchEpisodes: function() {
-            var userModel = this;
-            this.episodeCollection.fetch({
-                                    'data':{'user':this.getSubject()},
-                                    'reset' : true,
-                                    'silent' : false,
-                                    'success' : function(collection, response, options) {
-                                        userModel.LOG.debug("success fetchEpisodes");
-                                        userModel.LOG.debug("collection", collection);
-                                        if( collection.length === 0 ) {
-                                            var ep = new EpisodeModel({
-                                                'label' : 'Unnamed Episode'
-                                            });
-                                            userModel.LOG.debug("episode created");
-                                            //ep.once('addVersion', function(version, collection, options ) {
-                                                //userModel.LOG.debug('Version added', version.getSubject());
-                                                //userModel.setCurrentVersion(version.getSubject());
-                                            //});
-                                            collection.create(ep, {
-                                                'success': function(episode) {
-                                                    episode.load();
-                                                }
-                                            });
-                                        } else {
-                                            collection.each(function(episode){
-                                                episode.load();
-                                            });
-                                        }
-
-                                    }
-            });
+        /**
+         * Fetch the episodes belonging to the user.
+         * On success load versions of each episode or create a new episode if none exists.
+         * @params VIE.Entity user
+         */
+        fetchEpisodes: function(user) {
+            var vie = this.vie;
+            this.vie.load({
+                'user': user.getSubject(),
+                'type' : Types.EPISODE
+            }).from('sss').execute().success(
+                function(episodes) {
+                    userModel.LOG.debug("success fetchEpisodes");
+                    userModel.LOG.debug("episodes", episodes);
+                    /* If no episodes exist create a new one */
+                    if( episodes.length === 0 ) {
+                        var ep = new this.vie.Entity({
+                            'type' : Types.EPISODE,
+                            'label' : 'Unnamed Episode'
+                        });
+                        userModel.LOG.debug("episode created", ep);
+                        episodes.add(ep);
+                        vie.save({
+                            'entity' : ep
+                        }.from('sss').execute().success(
+                            function(episode) {
+                                vie.entities.addOrUpdate(episode);
+                            }
+                        );
+                    } else {
+                        vie.entities.addOrUpdate(episodes);
+                    }
+                }
+            );
         },
         setCurrentVersion: function(value) {
             var version = this.get('currentVersion');
@@ -61,5 +66,6 @@ define(['vie', 'logger', 'tracker', 'model/episode/EpisodeModel'], function(VIE,
             if( value && value != version)
                 this.save('currentVersion', value);
         }
-    });
+    };
+    return UserModel;
 });
