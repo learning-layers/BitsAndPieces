@@ -18,5 +18,7 @@ define([], {
     orgaEntityType: 'orgaEntityType',
     belongsToUser: 'belongsToUser',
     start: 'start',
-    end: 'end'
+    end: 'end',
+
+    label : 'label'
 });
