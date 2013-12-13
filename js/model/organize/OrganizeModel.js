@@ -10,7 +10,7 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
          * Filters entities from added entities to vie.entities
          */
         filter: function(model, collection, options) {
-            if( this.vie.namespaces.curie(model.get('type').id) === Voc.ORGANIZE ) {
+            if( this.vie.namespaces.curie(model.get('@type').id) === Voc.ORGANIZE ) {
                 this.fetchStuff(model);
             }
         },

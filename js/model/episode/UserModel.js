@@ -11,7 +11,7 @@ define(['logger', 'voc'], function(Logger, Voc){
          * Filters user entities from added entities to vie.entities
          */
         filter: function(model, collection, options) {
-            if( this.vie.namespaces.curie(model.get('type').id) === Voc.USER ) {
+            if( this.vie.namespaces.curie(model.get('@type').id) === Voc.USER ) {
                 this.fetchEpisodes(model);
                 /*
                 model.on('change:' 
@@ -21,7 +21,6 @@ define(['logger', 'voc'], function(Logger, Voc){
                         m.setCurrentVersion(value);
                     });
                     */
-)
             }
         },
         /**
@@ -48,7 +47,7 @@ define(['logger', 'voc'], function(Logger, Voc){
                         episodes.add(ep);
                         vie.save({
                             'entity' : ep
-                        }.from('sss').execute().success(
+                        }).from('sss').execute().success(
                             function(episode) {
                                 vie.entities.addOrUpdate(episode);
                             }

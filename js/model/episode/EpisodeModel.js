@@ -7,10 +7,10 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
     EpisodeModel.prototype = {
         LOG : Logger.get('EpisodeModel'),
         /** 
-         * Filters user entities from added entities to vie.entities
+         * Filters entities from added entities to vie.entities
          */
         filter: function(model, collection, options) {
-            if( this.vie.namespaces.curie(model.get('type').id) === Voc.EPISODE ) {
+            if( this.vie.namespaces.curie(model.get('@type').id) === Voc.EPISODE ) {
                 this.fetchVersions(model);
             }
         },
