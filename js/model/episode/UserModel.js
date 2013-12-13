@@ -1,11 +1,10 @@
 define(['logger', 'voc'], function(Logger, Voc){
-    var UserModel = function(vie) {
-        this.LOG.debug("initialize UserModel");
-        this.vie = vie;
-        this.vie.entities.on('add', this.filter);
-    };
-
-    UserModel.prototype = {
+    return {
+        init : function(vie) {
+            this.LOG.debug("initialize UserModel");
+            this.vie = vie;
+            this.vie.entities.on('add', this.filter);
+        },
         LOG : Logger.get('UserModel'),
         /** 
          * Filters user entities from added entities to vie.entities
@@ -66,5 +65,4 @@ define(['logger', 'voc'], function(Logger, Voc){
                 this.save('currentVersion', value);
         }
     };
-    return UserModel;
 });

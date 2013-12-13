@@ -1,10 +1,10 @@
 define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
-    var VersionModel = function(vie) {
-        this.LOG.debug("initialize Version");
-        this.vie = vie;
-        this.vie.entities.on('add', this.filter);
-    };
-    VersionModel.prototype = {
+    return {
+        init : function(vie) {
+            this.LOG.debug("initialize Version");
+            this.vie = vie;
+            this.vie.entities.on('add', this.filter);
+        },
         LOG : Logger.get('VersionModel'),
         /** 
          * Filters entities from added entities to vie.entities
@@ -13,6 +13,41 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
             if( this.vie.namespaces.curie(model.get('@type').id) === Voc.VERSION ) {
                 this.fetchWidgets(model);
             }
+        },
+        newVersion: function(episode, fromVersion) {
+            var newVersion;
+            if( !fromVersion ){
+                newVersion = new this.vie.Entity();
+            } else {
+                // TODO rename to deepCopy
+                newVersion = fromVersion.clone();
+            }
+            this.LOG.debug("newVersion", newVersion);
+            newVersion.set(Voc.timestamp, new Date());
+            newVersion.set(Voc.belongsToEpisode, episode.getSubject());
+
+            var vie = this.vie;
+            this.vie.save({
+                'entity' : newVersion
+            }).from('sss').execute().success(
+                function(version) {
+                    vie.entities.addOrUpdate(version);
+                }
+            );
+            /*
+             * TODO refactor widget deepcopy
+            this.versionCollection.create(newVersion, {
+                'wait' : true,
+                'success' : function(model, response, options) {
+                    version.LOG.debug('version saved', model);
+                    if( fromVersion)
+                        fromVersion.widgetCollection.each(function(widget){
+                            var newWidget = widget.clone({'version': model.getSubject()});
+                            model.createWidget(newWidget);
+                        });
+            }});
+            */
+            return newVersion;
         },
         fetchWidgets: function(model) {
             var vie = this.vie;
@@ -56,5 +91,4 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
         }
 
     };
-    return VersionModel;
 });

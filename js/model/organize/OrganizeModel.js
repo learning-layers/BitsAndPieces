@@ -1,10 +1,10 @@
 define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
-    var OrganizeModel = function(vie) {
-        this.LOG.debug("initialize OrganizeModel");
-        this.vie = vie;
-        this.vie.entities.on('add', this.filter);
-    };
-    OrganizeModel.prototype = {
+    return {
+        init : function(vie) {
+            this.LOG.debug("initialize OrganizeModel");
+            this.vie = vie;
+            this.vie.entities.on('add', this.filter);
+        },
         LOG : Logger.get('OrganizeModel'),
         /** 
          * Filters entities from added entities to vie.entities
@@ -112,5 +112,4 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
             */
         }
     };
-    return OrganizeModel;
 });

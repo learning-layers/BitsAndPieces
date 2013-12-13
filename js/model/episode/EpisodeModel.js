@@ -1,10 +1,10 @@
 define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
-    var EpisodeModel = function(vie) {
-        this.LOG.debug("initialize Episode");
-        this.vie = vie;
-        this.vie.entities.on('add', this.filter);
-    };
-    EpisodeModel.prototype = {
+    return {
+        init : function(vie) {
+            this.LOG.debug("initialize Episode");
+            this.vie = vie;
+            this.vie.entities.on('add', this.filter);
+        },
         LOG : Logger.get('EpisodeModel'),
         /** 
          * Filters entities from added entities to vie.entities
@@ -15,6 +15,7 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
             }
         },
         fetchVersions: function(episode) {
+            var em = this;
             this.vie.load({
                 'episode' : episode,
                 'type' : Voc.VERSION
@@ -23,51 +24,49 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
                     episode.LOG.debug("success fetchVersions");
                     episode.LOG.debug("versions", versions);
                     if( versions.length === 0 ) {
-                        this.newVersion(episode);
+                        em.newVersion(episode);
                     } else {
-                        this.vie.entities.addOrUpdate(versions);
+                        em.vie.entities.addOrUpdate(versions);
                     }
                 }
             );
 
         },
-        newVersion: function(episode, fromVersion) {
-            var newVersion;
-            if( !fromVersion )
-                newVersion = new this.vie.Entity({
-                    'episode' : episode.getSubject()
-                });
-            else {
+        newEpisode: function(user, fromEpisode) {
+            var newEpisode;
+            if( !fromEpisode ){
+                newEpisode = new this.vie.Entity();
+            } else {
                 // TODO rename to deepCopy
-                newVersion = fromVersion.clone();
+                newEpisode = fromEpisode.clone();
             }
-            this.LOG.debug("newVersion", newVersion);
-            newVersion.set({
-                'timestamp': new Date(),
-                'episode' : episode.getSubject()
-            });
-            var version = this;
-            vie.save({
-                'entity' : newVersion
+            this.LOG.debug("newEpisode", newEpisode);
+            newEpisode.set(Voc.belongsToEpisode, episode.getSubject());
+            newEpisode.set(Voc.label, "New Episode");
+
+            var vie = this.vie;
+            this.vie.save({
+                'entity' : newEpisode
             }).from('sss').execute().success(
-                function(version) {
-                    vie.entities.addOrUpdate(version);
+                function(episode) {
+                    vie.entities.addOrUpdate(episode);
+                    VersionModel.newVersion(episode);
                 }
             );
             /*
              * TODO refactor widget deepcopy
-            this.versionCollection.create(newVersion, {
+            this.versionCollection.create(newEpisode, {
                 'wait' : true,
                 'success' : function(model, response, options) {
                     version.LOG.debug('version saved', model);
-                    if( fromVersion)
-                        fromVersion.widgetCollection.each(function(widget){
+                    if( fromEpisode)
+                        fromEpisode.widgetCollection.each(function(widget){
                             var newWidget = widget.clone({'version': model.getSubject()});
                             model.createWidget(newWidget);
                         });
             }});
             */
-            return newVersion;
+            return newEpisode;
         },
         getFirstVersion: function(episode) {
             return this.getVersions().at(0);
@@ -82,5 +81,4 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
             return coll;
         }
     };
-    return EpisodeModel;
 });

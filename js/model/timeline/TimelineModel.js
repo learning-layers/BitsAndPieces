@@ -1,10 +1,10 @@
 define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
-    var TimelineModel = function(vie) {
-        this.LOG.debug("initialize TimelineModel");
-        this.vie = vie;
-        this.vie.entities.on('add', this.filter);
-    };
-    TimelineModel.prototype = {
+    return {
+        init : function(vie) {
+            this.LOG.debug("initialize TimelineModel");
+            this.vie = vie;
+            this.vie.entities.on('add', this.filter);
+        },
         LOG : Logger.get('TimelineModel'),
         /** 
          * Filters entities from added entities to vie.entities
@@ -68,5 +68,4 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
         }
 
     };
-    return TimelineModel;
 });
