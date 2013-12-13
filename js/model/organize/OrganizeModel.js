@@ -1,4 +1,4 @@
-define(['logger', 'types', 'underscore' ], function(Logger, Types, _){
+define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
     var OrganizeModel = function(vie) {
         this.LOG.debug("initialize OrganizeModel");
         this.vie = vie;
@@ -10,14 +10,14 @@ define(['logger', 'types', 'underscore' ], function(Logger, Types, _){
          * Filters entities from added entities to vie.entities
          */
         filter: function(model, collection, options) {
-            if( this.vie.namespaces.curie(model.get('type').id) === Types.ORGANIZE ) {
+            if( this.vie.namespaces.curie(model.get('type').id) === Voc.ORGANIZE ) {
                 this.fetchStuff(model);
             }
         },
         createCircle: function(organize, circle, options) {
             options = options || {};
             if( !circle.isEntity) circle = new this.vie.Entity(circle);
-            var type = organize.get(Types.circleType);
+            var type = organize.get(Voc.circleType);
             if( type.isEntity ) type = type.getSubject();
             circle.set({
                 '@type': type,
@@ -37,7 +37,7 @@ define(['logger', 'types', 'underscore' ], function(Logger, Types, _){
         createEntity: function(entity, options) {
             options = options || {};
             if( !entity.isEntity) entity = new this.vie.Entity(entity);
-            var type = organize.get(Types.orgaEntityType);
+            var type = organize.get(Voc.orgaEntityType);
             if( type.isEntity ) type = type.getSubject();
             entity.set({
                 '@type': type,
@@ -57,7 +57,7 @@ define(['logger', 'types', 'underscore' ], function(Logger, Types, _){
         fetchStuff: function(organize) {
             this.vie.load({
                 'organize' : organize,
-                'type' : Types.CIRCLE
+                'type' : Voc.CIRCLE
             }).from('sss').execute().success(
                 function(circles) {
                     this.vie.entities.addOrUpdate(circles);
@@ -65,7 +65,7 @@ define(['logger', 'types', 'underscore' ], function(Logger, Types, _){
             );
             this.vie.load({
                 'organize' : organize,
-                'type' : Types.ORGAENTITY
+                'type' : Voc.ORGAENTITY
             }).from('sss').execute().success(
                 function(entities) {
                     this.vie.entities.addOrUpdate(entities);

@@ -1,4 +1,4 @@
-define(['logger', 'types', 'underscore'], function(Logger, Types, _){
+define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
     var EpisodeModel = function(vie) {
         this.LOG.debug("initialize Episode");
         this.vie = vie;
@@ -10,14 +10,14 @@ define(['logger', 'types', 'underscore'], function(Logger, Types, _){
          * Filters user entities from added entities to vie.entities
          */
         filter: function(model, collection, options) {
-            if( this.vie.namespaces.curie(model.get('type').id) === Types.EPISODE ) {
+            if( this.vie.namespaces.curie(model.get('type').id) === Voc.EPISODE ) {
                 this.fetchVersions(model);
             }
         },
         fetchVersions: function(episode) {
             this.vie.load({
                 'episode' : episode,
-                'type' : Types.VERSION
+                'type' : Voc.VERSION
             }).from('sss').execute().success(
                 function(versions) {
                     episode.LOG.debug("success fetchVersions");
@@ -75,9 +75,9 @@ define(['logger', 'types', 'underscore'], function(Logger, Types, _){
 
         getVersions: function(episode) {
             var conditions = {};
-            conditions[Types.belongsToEpisode] = episode.getSubject();
+            conditions[Voc.belongsToEpisode] = episode.getSubject();
             var coll = new this.vie.Collection;
-            coll.comparator = this.vie.namespaces.uri(Types.timeStamp);
+            coll.comparator = this.vie.namespaces.uri(Voc.timeStamp);
             coll.add(this.vie.entities.where(conditions));
             return coll;
         }

@@ -1,4 +1,4 @@
-define(['logger', 'types', 'underscore'], function(Logger, Types, _){
+define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
     var VersionModel = function(vie) {
         this.LOG.debug("initialize Version");
         this.vie = vie;
@@ -10,7 +10,7 @@ define(['logger', 'types', 'underscore'], function(Logger, Types, _){
          * Filters user entities from added entities to vie.entities
          */
         filter: function(model, collection, options) {
-            if( this.vie.namespaces.curie(model.get('type').id) === Types.VERSION ) {
+            if( this.vie.namespaces.curie(model.get('type').id) === Voc.VERSION ) {
                 this.fetchWidgets(model);
             }
         },
@@ -18,7 +18,7 @@ define(['logger', 'types', 'underscore'], function(Logger, Types, _){
             var vie = this.vie;
             this.vie.load({
                 'version' : model,
-                'type' : Types.WIDGET
+                'type' : Voc.WIDGET
             }).from('sss').execute().success(
                 function(widgets) {
                     vie.entities.addOrUpdate(widgets);
@@ -26,7 +26,7 @@ define(['logger', 'types', 'underscore'], function(Logger, Types, _){
             );
         },
         createWidget: function(widget, version) {
-            widget.set(Types.belongstoVersion, version.getSubject());
+            widget.set(Voc.belongstoVersion, version.getSubject());
             this.LOG.debug("createWidget", widget, version);
             var vie = this.vie;
             this.vie.save({
