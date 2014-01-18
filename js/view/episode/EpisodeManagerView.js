@@ -12,9 +12,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         initialize: function() {
             this.views = {};
+            this.LOG.debug('options', this.options);
             this.vie = this.options.vie;
             this.vie.entities.on('add', this.filter, this);
-            var user = this.model;
             this.$el.html('<img src="css/img/menu_small.png" id="toggleEpisodes"/><h1 contenteditable="true"></h1>' + 
                     '<div id="episodes"><button id="createNewVersion">New Version</button><button id="createBlank">Create new Episode from scratch</button><button id="createFromHere">Create new Episode from here</button><ul></ul></div>');
 

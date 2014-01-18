@@ -3,7 +3,7 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
         init : function(vie) {
             this.LOG.debug("initialize Episode");
             this.vie = vie;
-            this.vie.entities.on('add', this.filter);
+            this.vie.entities.on('add', this.filter, this);
         },
         LOG : Logger.get('EpisodeModel'),
         /** 
@@ -11,6 +11,7 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
          */
         filter: function(model, collection, options) {
             if( this.vie.namespaces.curie(model.get('@type').id) === Voc.EPISODE ) {
+                this.LOG.debug('episode added', model);
                 this.fetchVersions(model);
             }
         },
@@ -32,16 +33,17 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
             );
 
         },
-        newEpisode: function(user, fromEpisode) {
+        newEpisode: function(user, fromVersion) {
             var newEpisode;
-            if( !fromEpisode ){
+            if( !fromVersion ){
                 newEpisode = new this.vie.Entity();
             } else {
-                // TODO rename to deepCopy
+                var fromEpisode = fromVersion.get(Voc.belongsToEpisode);
                 newEpisode = fromEpisode.clone();
             }
             this.LOG.debug("newEpisode", newEpisode);
-            newEpisode.set(Voc.belongsToEpisode, episode.getSubject());
+            newEpisode.set(Voc.belongsToUser, user.getSubject());
+            newEpisode.set('@type', Voc.EPISODE);
             newEpisode.set(Voc.label, "New Episode");
 
             var vie = this.vie;
@@ -50,23 +52,13 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
             }).from('sss').execute().success(
                 function(episode) {
                     vie.entities.addOrUpdate(episode);
-                    VersionModel.newVersion(episode);
+                    VersionModel.newVersion(episode, fromVersion);
                 }
             );
-            /*
-             * TODO refactor widget deepcopy
-            this.versionCollection.create(newEpisode, {
-                'wait' : true,
-                'success' : function(model, response, options) {
-                    version.LOG.debug('version saved', model);
-                    if( fromEpisode)
-                        fromEpisode.widgetCollection.each(function(widget){
-                            var newWidget = widget.clone({'version': model.getSubject()});
-                            model.createWidget(newWidget);
-                        });
-            }});
-            */
             return newEpisode;
+        },
+        clone: function(fromEpisode) {
+            
         },
         getFirstVersion: function(episode) {
             return this.getVersions().at(0);

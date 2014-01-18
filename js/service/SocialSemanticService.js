@@ -1,7 +1,7 @@
 // The SocialSemanticService wraps the SSS Client API.
 
-define(['logger', 'vie', 'underscore', 'model/organize/OrganizeModel', 'model/timeline/TimelineModel', 'model/episode/VersionModel', 'model/episode/EpisodeModel', 
-        'sss.conn.entity', 'sss.conn.userevent', 'sss.conn.learnep'], function(Logger, VIE, _, OrganizeModel, TimelineModel, VersionModel, EpisodeModel) {
+define(['logger', 'vie', 'underscore', 'voc', 
+        'sss.conn.entity', 'sss.conn.userevent', 'sss.conn.learnep'], function(Logger, VIE, _, Voc) {
 
 // ## VIE.SocialSemanticService(options)
 // This is the constructor to instantiate a new service.
@@ -232,7 +232,8 @@ define(['logger', 'vie', 'underscore', 'model/organize/OrganizeModel', 'model/ti
                         var entityInstances = [];
                         _.each(objects['learnEps'], function(object) {
                             var entity = service.fixForVIE(object, 'learnEpUri');
-                            var vieEntity = new EpisodeModel(entity);
+                            var vieEntity = new service.vie.Entity(entity);
+                            vieEntity.set('@type', Voc.EPISODE);
                             entityInstances.push(vieEntity);
                         });
                         loadable.resolve(entityInstances);
@@ -257,7 +258,8 @@ define(['logger', 'vie', 'underscore', 'model/organize/OrganizeModel', 'model/ti
                             var entity = service.fixForVIE(object, 'learnEpVersionUri');
                             entity['episode'] = entity['learnEpUri'];
                             delete entity['learnEpUri'];
-                            var vieEntity = new VersionModel(entity);
+                            var vieEntity = new service.vie.Entity(entity);
+                            vieEntity.set('@type', Voc.VERSION);
                             entityInstances.push(vieEntity);
                             // each version has a organize component
                             // that would look like this object if the server would serve it
@@ -266,7 +268,7 @@ define(['logger', 'vie', 'underscore', 'model/organize/OrganizeModel', 'model/ti
                                 'type' : service.vie.namespaces.uri('sss:' + service.types.ORGANIZE),
                                 'circleType' : service.vie.namespaces.uri('sss:' + service.types.CIRCLE),
                                 'entityType' : service.vie.namespaces.uri('sss:' + service.types.ORGAENTITY),
-                                'version' : vieEntity.getSubject()
+                                'version' : entity.getSubject()
                             };
                             // make a vie Entity to generate an id for it
                             //var vOrg = new service.vie.Entity(service.fixForVIE(organize));
@@ -309,8 +311,8 @@ define(['logger', 'vie', 'underscore', 'model/organize/OrganizeModel', 'model/ti
                     }
                     
                 if( organize ) 
-                    resolve('versionget', new OrganizeModel(this.fixForVIE(organize)));
-                    //resolve('versionget', this.fixForVIE(organize));
+                    //resolve('versionget', new OrganizeModel(this.fixForVIE(organize)));
+                    resolve('versionget', new service.vie.Entity(this.fixForVIE(organize)));
                 else
                     resolve('versionget');
 
@@ -324,7 +326,7 @@ define(['logger', 'vie', 'underscore', 'model/organize/OrganizeModel', 'model/ti
                             return;
                         }
                         object = object['learnEpTimelineState'];
-                        var vieEntity = new TimelineModel(service.fixForVIE({
+                        var vieEntity = new service.vie.Entity(service.fixForVIE({
                             'uri' : object.learnEpTimelineStateUri,
                             'type' : service.types.TIMELINE,
                             'user' : service.vie.namespaces.uri(service.user),

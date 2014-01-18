@@ -130,11 +130,11 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
         render: function() {
             this.$el.attr({
               'class' : 'entity',
-              'resource' : this.model.getSubject()
+              'about' : this.model.getSubject()
             });
             var label = this.model.get('sss:label');
             if( label && label.isEntity ) label = label.getSubject();
-            this.$el.html(//"<div class=\"entity\" resource=\""+this.model.getSubject()+"\">"+
+            this.$el.html(//"<div class=\"entity\" about=\""+this.model.getSubject()+"\">"+
                     "<img src=\""+this.getIcon()+"\" class=\"small-icon\"> " + 
                     label );
                 
@@ -148,7 +148,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             this.LOG.debug("clicked entity");
             this.LOG.debug("e", e);
             if( !e.currentTarget ) return;
-            var id = $(e.currentTarget).attr('resource');
+            var id = $(e.currentTarget).attr('about');
             if( !id ) return;
             this.LOG.debug("id", id);
             if( id != this.model.getSubject() ) return;

@@ -28,34 +28,6 @@ define(['logger', 'voc'], function(Logger, Voc){
          * @params VIE.Entity user
          */
         fetchEpisodes: function(user) {
-            var vie = this.vie;
-            this.vie.load({
-                'user': user.getSubject(),
-                'type' : Voc.EPISODE
-            }).from('sss').execute().success(
-                function(episodes) {
-                    userModel.LOG.debug("success fetchEpisodes");
-                    userModel.LOG.debug("episodes", episodes);
-                    /* If no episodes exist create a new one */
-                    if( episodes.length === 0 ) {
-                        var ep = new this.vie.Entity({
-                            'type' : Voc.EPISODE,
-                            'label' : 'Unnamed Episode'
-                        });
-                        userModel.LOG.debug("episode created", ep);
-                        episodes.add(ep);
-                        vie.save({
-                            'entity' : ep
-                        }).from('sss').execute().success(
-                            function(episode) {
-                                vie.entities.addOrUpdate(episode);
-                            }
-                        );
-                    } else {
-                        vie.entities.addOrUpdate(episodes);
-                    }
-                }
-            );
         },
         setCurrentVersion: function(value) {
             var version = this.get('currentVersion');

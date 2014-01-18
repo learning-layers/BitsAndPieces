@@ -21,7 +21,7 @@ define(['view/sss/EntityView', 'logger'], function(EntityView, Logger){
         render: function() {
             this.$el.attr({
               'class' : 'entity',
-              'resource' : this.model.getSubject()
+              'about' : this.model.getSubject()
             });
             var label = this.resource.get('sss:label');
             if( label && label.isEntity ) label = label.getSubject();
@@ -32,7 +32,7 @@ define(['view/sss/EntityView', 'logger'], function(EntityView, Logger){
                 var s = 30;
                 content = content.substring(0, l>s? s : l) + (l>s ? "..." : "");
             } else content = "";
-            this.$el.html(//"<div class=\"entity\" resource=\""+this.model.getSubject()+"\">"+
+            this.$el.html(//"<div class=\"entity\" about=\""+this.model.getSubject()+"\">"+
                     "<div class=\"labelable\">"+
                     "<img class=\"icon\" src=\""+this.getIcon()+"\" "+ 
                     "alt=\"" + this.type + "\"/>"+

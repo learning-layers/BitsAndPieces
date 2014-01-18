@@ -13,9 +13,9 @@ define(['view/sss/EntityView', 'logger', 'underscore'], function(EntityView, Log
         render: function() {
             this.$el.attr({
               'class' : 'entity user',
-              'resource' : this.model.getSubject()
+              'about' : this.model.getSubject()
             });
-            this.$el.html(//"<div class=\"entity user\" resource=\""+this.model.getSubject()+"\">"+
+            this.$el.html(//"<div class=\"entity user\" about=\""+this.model.getSubject()+"\">"+
                     "<img class=\"icon\" src=\""+this.getIcon()+"\" "+ 
                     "alt=\"User " + this.model.get('sss:label') + "\"/>"+
                     "<div class=\"label\">"+this.model.get('sss:label')+"</div>");

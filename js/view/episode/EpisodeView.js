@@ -24,13 +24,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'], functio
                 view.LOG.debug('version', version.getSubject());
                 if( view.highlit && version.getSubject() === view.highlit ) 
                     highlit = 'highlight';
-                ul.append('<li class="version '+highlit+'" resource="'+version.getSubject()+'">Version<div class="timestamp">' + new Date(version.get('timestamp')-0) + '</div></li>');
+                ul.append('<li class="version '+highlit+'" about="'+version.getSubject()+'">Version<div class="timestamp">' + new Date(version.get('timestamp')-0) + '</div></li>');
             });
             return this;
         },
         changeCurrentVersion: function(event) {
             if( !event || !event.currentTarget ) return;
-            var id = $(event.currentTarget).attr('resource');
+            var id = $(event.currentTarget).attr('about');
             this.LOG.debug('EpisodeView changeCurrentVersion ' + id);
             tracker.info(tracker.SWITCHVERSION, id);
             if( !id ) return;
@@ -46,7 +46,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'], functio
         },
         highlight: function(versionId) {
             this.$el.addClass('highlight');
-            this.$el.find('li[resource="'+versionId+'"]').addClass('highlight');
+            this.$el.find('li[about="'+versionId+'"]').addClass('highlight');
             this.highlit = versionId;
         },
         unhighlight: function() {
