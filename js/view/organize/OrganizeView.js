@@ -58,8 +58,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
                         //OrganizeView.listenTo(a, 'destroy', OrganizeView.removeCircle);
                         OrganizeView.addCircle(a, collection, options);
                     });
-                } else if( key === Voc.hasOrgaEntity){
-                    var current = Backbone.Model.prototype.get.call(this.model, Voc.hasOrgaEntity);
+                } else if( key === Voc.hasEntity){
+                    var current = Backbone.Model.prototype.get.call(this.model, Voc.hasEntity);
                     var added = _.difference(changed, current);
                     _.each(added, function(a){
                         a = OrganizeView.model.vie.entities.get(a);
