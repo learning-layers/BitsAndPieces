@@ -3,7 +3,7 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
         init : function(vie) {
             this.LOG.debug("initialize OrganizeModel");
             this.vie = vie;
-            this.vie.entities.on('add', this.filter);
+            this.vie.entities.on('add', this.filter, this);
         },
         LOG : Logger.get('OrganizeModel'),
         /** 
@@ -29,12 +29,16 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
                 'entity' : circle
             }).from('sss').execute().success(
                 function(circ) {
-                    vie.entities.addOrUpdate(circ);
+                    circle.set(circle.idAttribute, circ['uri']);
+                    vie.entities.addOrUpdate(circle);
+                    var circles = Backbone.Model.prototype.get.call(this.model, Voc.hasCircle);
+                    circles = circles.push(circ['uri']);
+                    organize.set(Voc.hasCircle, circles);
                 }
             );
             return circle;
         },
-        createEntity: function(entity, options) {
+        createEntity: function(organize, entity, options) {
             options = options || {};
             if( !entity.isEntity) entity = new this.vie.Entity(entity);
             var type = organize.get(Voc.orgaEntityType);
@@ -48,15 +52,19 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
             this.vie.save({
                 'entity' : entity
             }).from('sss').execute().success(
-                function(circ) {
-                    vie.entities.addOrUpdate(circ);
+                function(ent) {
+                    entity.set(entity.idAttribute, ent['uri']);
+                    vie.entities.addOrUpdate(entity);
+                    var entities = Backbone.Model.prototype.get.call(this.model, Voc.hasOrgaEntity);
+                    entities = entities.push(ent['uri']);
+                    organize.set(Voc.hasOrgaEntity, entities);
                 }
             );
             return entity;
         },
         fetchStuff: function(organize) {
             this.vie.load({
-                'organize' : organize,
+                'organize' : organize.getSubject(),
                 'type' : Voc.CIRCLE
             }).from('sss').execute().success(
                 function(circles) {
@@ -64,7 +72,7 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
                 }
             );
             this.vie.load({
-                'organize' : organize,
+                'organize' : organize.getSubject(),
                 'type' : Voc.ORGAENTITY
             }).from('sss').execute().success(
                 function(entities) {

@@ -1,15 +1,18 @@
 define(['vie', 'logger', 'tracker', 'userParams', 'service/SocialSemanticService', 'extender', 
         'model/episode/UserModel','model/episode/EpisodeModel',
+        'model/episode/VersionModel','model/timeline/TimelineModel',
+        'model/organize/OrganizeModel',
         'view/AppView', 'voc'],
 function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
-        UserModel, EpisodeModel, AppView, Voc){
+        UserModel, EpisodeModel, VersionModel, TimelineModel, OrganizeModel, 
+        AppView, Voc){
     VIE.Util.useRealUri = true;
     Logger.useDefaults();
     var AppLog = Logger.get('App');
     var AddLog = Logger.get('Add');
     Logger.get('UserModel').setLevel(Logger.OFF);
     Logger.get('OrganizeModel').setLevel(Logger.OFF);
-    Logger.get('VersionModel').setLevel(Logger.OFF);
+    Logger.get('VersionModel').setLevel(Logger.DEBUG);
     Logger.get('EpisodeModel').setLevel(Logger.DEBUG);
     Logger.get('TimelineModel').setLevel(Logger.OFF);
     Logger.get('TimelineView').setLevel(Logger.OFF);
@@ -23,13 +26,15 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('UserView').setLevel(Logger.OFF);
     Logger.get('App').setLevel(Logger.DEBUG);
     Logger.get('Add').setLevel(Logger.OFF);
-    Logger.get('SocialSemanticService').setLevel(Logger.OFF);
+    Logger.get('SocialSemanticService').setLevel(Logger.DEBUG);
     Logger.get('Mockup').setLevel(Logger.OFF);
 
     var username = window.location.search.substring(1);
     if( !username) return alert('no username given!');
 
     var v = new VIE();
+
+    AppLog.debug('vie', v);
 
     var timelineView;
     var organizeView;
@@ -46,15 +51,16 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     v.use(sss, 'sss');
 
     extender.syncByVIE(v);
-    extender.autoResolveReferences(v);
+    //extender.autoResolveReferences(v);
 
+    UserModel.init(v);
     EpisodeModel.init(v);
-    var user = new v.Entity({
-        '@subject':userParams.user,
-    });
+    VersionModel.init(v);
+    TimelineModel.init(v);
+    OrganizeModel.init(v);
 
-    v.entities.addOrUpdate(user);
-
+    var user = new v.Entity;
+    user.set(user.idAttribute, userParams.user);
 
     var AppView = new AppView({
         'model' : user,
@@ -64,24 +70,8 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
 
     $(document).ready(function(){
         AppView.render();
-        user.fetch({'success' : function(model, response, options) {
-            // load Episodes of User
-            v.load({
-                'user': model.getSubject(),
-                'type' : Voc.EPISODE
-            }).from('sss').execute().success(
-                function(episodes) {
-                    Logger.debug("success fetchEpisodes");
-                    Logger.debug("episodes", episodes);
-                    /* If no episodes exist create a new one */
-                    if( episodes.length === 0 ) {
-                        var ep = EpisodeModel.newEpisode(model);
-                        Logger.debug("episode created", ep);
-                    } else {
-                        v.entities.addOrUpdate(episodes);
-                    }
-                }
-            );
+        user.fetch({'success': function(){
+            v.entities.addOrUpdate(user);
         }});
     });
 

@@ -13,6 +13,7 @@ define([], {
     currentVersion: 'currentVersion',
     belongsToEpisode: 'belongsToEpisode',
     belongsToVersion: 'belongsToVersion',
+    hasVersion: 'hasVersion',
     hasWidget: 'hasWidget',
     timestamp : 'timestamp',
     circleType: 'circleType', 
@@ -21,5 +22,6 @@ define([], {
     start: 'start',
     end: 'end',
 
-    label : 'label'
+    label : 'label',
+    belongsToOrganize: 'belongsToOrganize'
 });

@@ -256,7 +256,8 @@ define(['logger', 'vie', 'underscore', 'voc',
                         var entityInstances = [];
                         _.each(objects['learnEpVersions'], function(object) {
                             var entity = service.fixForVIE(object, 'learnEpVersionUri');
-                            entity['episode'] = entity['learnEpUri'];
+                            entity[Voc.belongsToEpisode] = entity['learnEpUri'];
+                            entity[Voc.hasWidget] = [];
                             delete entity['learnEpUri'];
                             var vieEntity = new service.vie.Entity(entity);
                             vieEntity.set('@type', Voc.VERSION);
@@ -268,7 +269,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                                 'type' : service.vie.namespaces.uri('sss:' + service.types.ORGANIZE),
                                 'circleType' : service.vie.namespaces.uri('sss:' + service.types.CIRCLE),
                                 'entityType' : service.vie.namespaces.uri('sss:' + service.types.ORGAENTITY),
-                                'version' : entity.getSubject()
+                                'version' : vieEntity.getSubject()
                             };
                             // make a vie Entity to generate an id for it
                             //var vOrg = new service.vie.Entity(service.fixForVIE(organize));
@@ -305,7 +306,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                 };
                 var organize;
                 for( var organizeId in this.buffer )
-                    if( this.buffer[organizeId].version == loadable.options.version) {
+                    if( this.buffer[organizeId][Voc.belongsToVersion] == loadable.options.version) {
                         organize = this.buffer[organizeId];
                         break;
                     }
@@ -361,7 +362,8 @@ define(['logger', 'vie', 'underscore', 'voc',
                     return;
                 }
                 //map organize id to version id
-                var version = this.buffer[loadable.options.organize].version; 
+                this.LOG.debug('buffer', this.buffer);
+                var version = this.buffer[loadable.options.organize][Voc.belongsToVersion]; 
                 var entities = [];
                 new SSLearnEpVersionGet().handle(
                     function(object) {
@@ -405,7 +407,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                     return;
                 }
                 //map organize id to version id
-                var version = this.buffer[loadable.options.organize].version; 
+                var version = this.buffer[loadable.options.organize][Voc.belongsToVersion]; 
                 var entities = [];
                 new SSLearnEpVersionGet().handle(
                     function(object) {
@@ -480,7 +482,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                         },
                         this.vie.namespaces.uri(this.user),
                         this.userKey,
-                        obj.version,
+                        obj[Voc.belongsToVersion],
                         _.isDate(obj.start) ? (obj.start - 0) : obj.start,
                         _.isDate(obj.end) ? (obj.end - 0) : obj.end
                     );
@@ -533,7 +535,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                 }
             } else if( typeCurie == this.types.VERSION ) {
                 this.LOG.debug("saving version");
-                var episode = entity.get('episode');
+                var episode = entity.get(Voc.belongsToEpisode);
                 if( episode.isEntity ) episode = episode.getSubject();
                 new SSLearnEpVersionCreate().handle(
                         function(object) {
@@ -552,7 +554,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                     );
             } else if( typeCurie == this.types.CIRCLE ) {
                 this.LOG.debug("saving circle");
-                var organize = entity.get('organize');
+                var organize = entity.get(Voc.belongsToOrganize);
                 if( organize.isEntity ) organize = organize.getSubject();
 
                 // map internal organize model to its version
@@ -561,7 +563,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                     savable.reject(entity);
                     return;
                 }
-                var version = this.buffer[organize].version;
+                var version = this.buffer[organize][Voc.belongsToVersion];
                 if( version.isEntity ) version = version.getSubject();
                 // end map
 
@@ -618,7 +620,7 @@ define(['logger', 'vie', 'underscore', 'voc',
 
             } else if( typeCurie == this.types.ORGAENTITY ) {
                 this.LOG.debug("saving orgaentity");
-                var organize = entity.get('organize');
+                var organize = entity.get(Voc.belongsToOrganize);
                 if( organize.isEntity ) organize = organize.getSubject();
 
                 // map internal organize model to its version
@@ -627,7 +629,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                     savable.reject(entity);
                     return;
                 }
-                var version = this.buffer[organize].version;
+                var version = this.buffer[organize][Voc.belongsToVersion];
                 if( version.isEntity ) version = version.getSubject();
                 // end map
 

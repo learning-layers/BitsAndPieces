@@ -3,7 +3,7 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
         init : function(vie) {
             this.LOG.debug("initialize Version");
             this.vie = vie;
-            this.vie.entities.on('add', this.filter);
+            this.vie.entities.on('add', this.filter, this);
         },
         LOG : Logger.get('VersionModel'),
         /** 
@@ -11,6 +11,7 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
          */
         filter: function(model, collection, options) {
             if( this.vie.namespaces.curie(model.get('@type').id) === Voc.VERSION ) {
+                this.LOG.debug('version added', model);
                 this.fetchWidgets(model);
             }
         },
@@ -24,7 +25,9 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
             }
             this.LOG.debug("newVersion", newVersion);
             newVersion.set(Voc.timestamp, new Date());
+            newVersion.set('@type', Voc.VERSION);
             newVersion.set(Voc.belongsToEpisode, episode.getSubject());
+            newVersion.set(Voc.hasWidget, []);
 
             var vie = this.vie;
             var vm = this;
@@ -68,35 +71,35 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
             var vie = this.vie;
             var LOG = this.LOG;
             this.vie.load({
-                'version' : version,
+                'version' : version.getSubject(),
                 'type' : Voc.WIDGET
             }).from('sss').execute().success(
                 function(widgets) {
                     LOG.debug("success of fetching widgets", widgets);
-                    var types = widgets.pluck('@type');
+                    var types = _.pluck(widgets, '@type');
                     types = types.map(function(type){return type.id? type.id: type;});
 
                     LOG.debug('types', types);
                     if( !_.contains(types, vie.namespaces.uri('sss:Organize'))) {
                         LOG.debug("creating default organize widget");
                         var newWidget = new vie.Entity;
-                        newWidget.set('@type', AppView.vie.namespaces.uri('sss:Organize'));
-                        newWidget.set(Voc.circleType, AppView.vie.namespaces.uri('sss:Circle'));
-                        newWidget.set(Voc.entityType, AppView.vie.namespaces.uri('sss:OrgaEntity'));
+                        newWidget.set('@type', vie.namespaces.uri('sss:Organize'));
+                        newWidget.set(Voc.circleType, vie.namespaces.uri('sss:Circle'));
+                        newWidget.set(Voc.orgaEntityType, vie.namespaces.uri('sss:OrgaEntity'));
 
                         VersionModel.createWidget(newWidget, version);
                         widgets.push(newWidget);
                     }
-                    if( !_.contains(types, AppView.vie.namespaces.uri('sss:Timeline'))) {
+                    if( !_.contains(types, vie.namespaces.uri('sss:Timeline'))) {
                         LOG.debug("creating default timeline widget");
                         var newWidget = new vie.Entity;
-                        newWidget.set('@type', AppView.vie.namespaces.uri('sss:Timeline'));
-                        newWidget.set('user', AppView.model.getSubject());
+                        newWidget.set('@type', vie.namespaces.uri('sss:Timeline'));
+                        newWidget.set('user', model.getSubject());
                         newWidget.set('timeAttr',timestamp);
-                        newWidget.set('predicate', AppView.vie.namespaces.uri('sss:userEvent'));
-                            //'timelineCollection' : new AppView.vie.Collection([], {//new TL.Collection([], { 
+                        newWidget.set('predicate', vie.namespaces.uri('sss:userEvent'));
+                            //'timelineCollection' : new vie.Collection([], {//new TL.Collection([], { 
                                 //'model': Entity,
-                                //'vie' : AppView.vie
+                                //'vie' : vie
                                 //})},
                         newWidget.set('start', jSGlobals.getTime() - jSGlobals.dayInMilliSeconds);
                         newWidget.set('end', jSGlobals.getTime() + 3600000 );
@@ -116,11 +119,12 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
             this.vie.save({
                 'entity' : widget
             }).from('sss').execute().success(
-                function(widget) {
-                    var widgets = version.get(Voc.hasWidget);
-                    widgets.push(widget.getSubject());
-                    version.set(Voc.hasWidget, widgets);
+                function(widget_uri) {
+                    widget.set(widget.idAttribute, widget_uri['uri']);
+                    var widgets = version.get(Voc.hasWidget) || [];
+                    widgets.push(widget_uri['uri']);
                     vie.entities.addOrUpdate(widget);
+                    version.set(Voc.hasWidget, widgets);
                 }
             );
         },

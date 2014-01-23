@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
+define(['logger', 'voc', 'underscore', 'model/episode/VersionModel'], function(Logger, Voc, _, VersionModel){
     return {
         init : function(vie) {
             this.LOG.debug("initialize Episode");
@@ -18,14 +18,14 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
         fetchVersions: function(episode) {
             var em = this;
             this.vie.load({
-                'episode' : episode,
+                'episode' : episode.getSubject(),
                 'type' : Voc.VERSION
             }).from('sss').execute().success(
                 function(versions) {
-                    episode.LOG.debug("success fetchVersions");
-                    episode.LOG.debug("versions", versions);
+                    em.LOG.debug("success fetchVersions");
+                    em.LOG.debug("versions", versions);
                     if( versions.length === 0 ) {
-                        em.newVersion(episode);
+                        VersionModel.newVersion(episode);
                     } else {
                         em.vie.entities.addOrUpdate(versions);
                     }

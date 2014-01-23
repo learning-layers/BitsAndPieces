@@ -1,4 +1,4 @@
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'], function(VIE, Logger, tracker, _, $, Backbone){
+define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc'], function(VIE, Logger, tracker, _, $, Backbone, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeView'),
         events: {
@@ -6,9 +6,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'], functio
             'click h2' : 'changeCurrentEpisode'
         },
         initialize: function() {
-            this.model.versionCollection.on('add', this.render, this);
-            this.model.versionCollection.on('change', this.render, this);
-            this.model.on('change:'+this.model.vie.namespaces.uri('sss:label'), this.renderLabel, this);
+            this.model.on('change:'+this.model.vie.namespaces.uri(Voc.hasVersion), this.render, this);
+            this.model.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
         },
         renderLabel: function(model, value, options) {
             this.$el.find('h2').html(value);
@@ -19,7 +18,12 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'], functio
             var ul = this.$el.find('ul');
             this.LOG.debug("this.model", this.model, this.highlit);
             var view = this;
-            this.model.versionCollection.each(function(version){
+            var versionCollection = new Backbone.Collection;
+            versionCollection.comparator = Voc.timestamp;
+            _.each(this.model.get(Voc.hasVersion), function(v){
+                versionCollection.add(view.vie.entities.get(v));
+            });
+            versionCollection.each(function(version){
                 var highlit = "";
                 view.LOG.debug('version', version.getSubject());
                 if( view.highlit && version.getSubject() === view.highlit ) 

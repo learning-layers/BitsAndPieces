@@ -1,9 +1,9 @@
-define(['logger', 'voc'], function(Logger, Voc){
+define(['logger', 'voc', 'model/episode/EpisodeModel'], function(Logger, Voc, EpisodeModel){
     return {
         init : function(vie) {
             this.LOG.debug("initialize UserModel");
             this.vie = vie;
-            this.vie.entities.on('add', this.filter);
+            this.vie.entities.on('add', this.filter, this);
         },
         LOG : Logger.get('UserModel'),
         /** 
@@ -28,6 +28,24 @@ define(['logger', 'voc'], function(Logger, Voc){
          * @params VIE.Entity user
          */
         fetchEpisodes: function(user) {
+            // load Episodes of User
+            var v = this.vie;
+            this.vie.load({
+                'user': user.getSubject(),
+                'type' : Voc.EPISODE
+            }).from('sss').execute().success(
+                function(episodes) {
+                    Logger.debug("success fetchEpisodes");
+                    Logger.debug("episodes", episodes);
+                    /* If no episodes exist create a new one */
+                    if( episodes.length === 0 ) {
+                        var ep = EpisodeModel.newEpisode(model);
+                        Logger.debug("episode created", ep);
+                    } else {
+                        v.entities.addOrUpdate(episodes);
+                    }
+                }
+            );
         },
         setCurrentVersion: function(value) {
             var version = this.get('currentVersion');

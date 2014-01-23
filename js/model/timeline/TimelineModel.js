@@ -3,7 +3,7 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
         init : function(vie) {
             this.LOG.debug("initialize TimelineModel");
             this.vie = vie;
-            this.vie.entities.on('add', this.filter);
+            this.vie.entities.on('add', this.filter, this);
         },
         LOG : Logger.get('TimelineModel'),
         /** 

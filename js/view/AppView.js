@@ -17,13 +17,15 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc',
                 this.vie = this.options.vie;
                 this.currentVersion = this.model.get('currentVersion');
 
-                this.vie.entities.on('add', this.filter );
+                this.vie.entities.on('add', this.filter, this );
             },
             filter: function(model, collection, options) {
                 if( this.vie.namespaces.curie(model.get('@type').id) === Voc.VERSION ) {
                     var version = model;
+                    var AppView = this;
                     // append listener to the version that its widget are drawn as soon as they are added to the version
                     version.on('change:' + this.vie.namespaces.uri(Voc.hasWidget), function(model, widgets, options) {
+                        AppLog.debug('Version hasWidget changed', widgets);
                         AppView.drawWidgets(widgets);
                     });
                     var currentVersion = this.model.get('currentVersion');
@@ -49,7 +51,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc',
             },
             drawWidget: function(widget) {
                 if( !widget.isEntity )
-                    widget =  this.entities.get(widget);
+                    widget =  this.vie.entities.get(widget);
 
                 var type = widget.get('@type').id;
                 var ctype = this.vie.namespaces.curie(type);
@@ -74,7 +76,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc',
                         if( !element.is(':hidden') ) element.hide(); /* hide widget if it is visible and not in the list of changed ones */
                     }
                 });
-                _.each(toDraw, this.drawWidget);
+                _.each(toDraw, this.drawWidget, this);
             },
 
             draw: function(version) {
@@ -131,7 +133,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc',
                             resource: id
                         };
                         tracker.info(tracker.DROPORGANIZEENTITY, id, entity);
-                        widget.createEntity(entity);
+                        OrganizeModel.createEntity(widget, entity);
                     }
                 });
                 var widgetBody = $('<fieldset style="height:400px" about="'+widget.getSubject()+'">'+

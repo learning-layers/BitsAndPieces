@@ -1,6 +1,6 @@
 define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
-        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize' ], 
-    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize){
+        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'model/organize/OrganizeModel' ], 
+    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeModel){
     return Backbone.View.extend({
         LOG: Logger.get('OrganizeView'),
         events:{
@@ -15,8 +15,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
         initialize: function() {
 
             this.EntityView = this.options.EntityView;
-            this.orgaEntityCollection = this.model.orgaEntityCollection;
-            this.circleCollection = this.model.circleCollection;
+            this.listenTo(this.model, 'change', this.filter);
             this.views = {};
 
             //this.orgaEntityCollection.on('add', this.addEntity, this);
@@ -26,12 +25,12 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             //this.orgaEntityCollection.on('remove', this.removeEntity, this);
             //this.circleCollection.on('remove', this.removeCircle, this);
 
-            this.listenTo(this.orgaEntityCollection, 'add', this.addEntity);
-            this.listenTo(this.circleCollection, 'add', this.addCircle);
-            this.listenTo(this.orgaEntityCollection, 'change', this.changeEntity);
-            this.listenTo(this.circleCollection, 'change', this.changeCircle);
-            this.listenTo(this.orgaEntityCollection, 'remove', this.removeEntity);
-            this.listenTo(this.circleCollection, 'remove', this.removeCircle);
+            //this.listenTo(this.orgaEntityCollection, 'add', this.addEntity);
+            //this.listenTo(this.circleCollection, 'add', this.addCircle);
+            //this.listenTo(this.orgaEntityCollection, 'change', this.changeEntity);
+            //this.listenTo(this.circleCollection, 'change', this.changeCircle);
+            //this.listenTo(this.orgaEntityCollection, 'remove', this.removeEntity);
+            //this.listenTo(this.circleCollection, 'remove', this.removeCircle);
             //this.collection.on('change', this.changeEntity);
             //this.collection.on('remove', this.removeEntity);
             //this.collection.on('reset', this.refreshEntities);
@@ -42,20 +41,46 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.LOG.debug("initialize Organize component");
             this.organize = new Organize();
 
-
-
+        },
+        filter: function(model, collection, options) {
+            this.LOG.debug('filter change of ' + model.getSubject());
+            var changed = model.changedAttributes();
+            var OrganizeView = this;
+            for( var key in changed ) {
+                this.LOG.debug('key : ' + key );
+                if( key === Voc.hasCircle) {
+                    var current = Backbone.Model.prototype.get.call(this.model, Voc.hasCircle);
+                    var added = _.difference(changed, current);
+                    var deleted = _.difference(current, changed);
+                    _.each(added, function(a){
+                        a = OrganizeView.model.vie.entities.get(a);
+                        //OrganizeView.listenTo(a, 'change', OrganizeView.changeCircle);
+                        //OrganizeView.listenTo(a, 'destroy', OrganizeView.removeCircle);
+                        OrganizeView.addCircle(a, collection, options);
+                    });
+                } else if( key === Voc.hasOrgaEntity){
+                    var current = Backbone.Model.prototype.get.call(this.model, Voc.hasOrgaEntity);
+                    var added = _.difference(changed, current);
+                    _.each(added, function(a){
+                        a = OrganizeView.model.vie.entities.get(a);
+                        //OrganizeView.listenTo(a, 'change', OrganizeView.changeEntity);
+                        //OrganizeView.listenTo(a, 'destroy', OrganizeView.removeEntity);
+                        OrganizeView.addEntity(a, collection, options);
+                    });
+                }
+            }
         },
         render: function() {
             this.organize.loadOrganizeCanvas(this.el.id);
             // Make the view aware of existing entities in collection
             var view = this;
-            this.orgaEntityCollection.each(function(entity) {
+            _.each(this.model.get(Voc.hasEntity), function(entity) {
                 view.addEntity(entity);
             }, this);
-            this.circleCollection.each(function(circle) {
+            _.each(this.model.get(Voc.hasCircle), function(circle) {
                 view.addCircle(circle);
             }, this);
-            this.delegateEvents();
+            //this.delegateEvents();
         },
         remove: function() {
             this.organize.clearCanvas();
@@ -73,7 +98,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             var id = circle['id'];
             tracker.info(tracker.CREATEORGANIZECIRCLE, tracker.NULL, circle);
             delete circle['id'];
-            var model = this.model.createCircle(circle, {'by':this});
+            var model = OrganizeModel.createCircle(this.model, circle, {'by':this});
             this.views[id] = new EntityView({'model' : model});
         },
 
@@ -117,7 +142,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             var entity = event.detail;
             this.LOG.debug("AddEntity caught");
             this.LOG.debug("entity", entity);
-            this.orgaEntityCollection.add(entity, {'by':this});
+            //this.orgaEntityCollection.add(entity, {'by':this});
         },
         ChangeEntity: function(event){
             this.LOG.debug('event', event);
@@ -175,7 +200,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
 
         addCircle: function(entity, collection, options ) {
             options = options || {};
-            if( collection && collection !== this.circleCollection ) return;
             if( options.by && options.by === this ) return;
             this.LOG.debug("addCircle", options);
             var data = {
@@ -195,21 +219,18 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
         },
         changeCircle: function(circle, collection, options) {
             options = options || {};
-            if( collection && collection !== this.circleCollection ) return;
             if( options.by && options.by === this ) return;
             //this.organize.removeEntity(id);
             this.LOG.warn("organize:changeCircle not implemented");
         },
         removeCircle: function(circle, collection, options) {
             options = options || {};
-            if( collection && collection !== this.circleCollection ) return;
             if( options.by && options.by === this ) return;
             //this.organize.removeEntity(id);
             this.LOG.warn("organize:removeCircle not implemented");
         },
         addEntity: function(entity, collection, options) {
             options = options || {};
-            if( collection && collection !== this.orgaEntityCollection ) return;
             if( options.by && options.by === this ) return;
             this.LOG.debug("ORGANIZE.CollectionVIEW.addEntity: " + entity.getSubject());
             /*
@@ -237,14 +258,12 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
         },
         changeEntity: function(entity, collection, options) {
             options = options || {};
-            if( collection && collection !== this.orgaEntityCollection ) return;
             if( options.by && options.by === this ) return;
             //this.organize.removeEntity(id);
             this.LOG.warn("organize:changeEntity not implemented");
         },
         removeEntity: function(entity, collection, options) {
             options = options || {};
-            if( collection && collection !== this.orgaEntityCollection ) return;
             if( options.by && options.by === this ) return;
             this.LOG.warn("organize:removeEntity not implemented");
         }
