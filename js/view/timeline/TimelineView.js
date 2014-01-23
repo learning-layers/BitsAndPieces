@@ -1,4 +1,5 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline'], function(Logger, tracker, _, $, Backbone, UserView, Timeline){
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'model/timeline/TimelineModel'], 
+    function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineModel){
     return Backbone.View.extend({
         LOG: Logger.get('TimelineView'),
         initialize: function() {
@@ -20,11 +21,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 throw Error("no timeline configuration provided");
             }
 
-            this.model.timelineCollection.on('add', this.addEntity, this);
-            this.model.timelineCollection.on('change', this.changeEntity, this);
-            this.model.timelineCollection.on('remove', this.removeEntity, this);
-            this.model.timelineCollection.on('reset', this.refreshEntities, this);
-            this.model.on('change', this.rearrangeVisibleArea, this);
+            //this.model.timelineCollection.on('add', this.addEntity, this);
+            //this.model.timelineCollection.on('change', this.changeEntity, this);
+            //this.model.timelineCollection.on('remove', this.removeEntity, this);
+            //this.model.timelineCollection.on('reset', this.refreshEntities, this);
+            this.model.on('change:' + this.vie.namespaces.uri(Voc.start), this.rearrangeVisibleArea, this);
+            this.model.on('change:' + this.vie.namespaces.uri(Voc.end), this.rearrangeVisibleArea, this);
+            this.model.on('change:' + this.vie.namespaces.uri(Voc.hasEntity), this.changeEntitySet, this);
 
             var data = [];
 
@@ -59,7 +62,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             // Make the view aware of existing entities in collection
             var view = this;
-            this.model.timelineCollection.each(function(entity) {
+            _.each(this.model.get(Voc.hasEntity), function(entity) {
                 view.addEntity(entity);
             }, this);
             
@@ -75,9 +78,25 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             });
             
         },
+        changeEntitySet: function(model, set, options) {
+            this.LOG.debug('changeEntitySet', set);  
+            var current = Backbone.Model.prototype.get.call(this.model, Voc.hasEntity);
+            var that = this;
+            var added = _.difference(set, current);
+            _.each(added, function(a){
+                a = that.model.vie.entities.get(a);
+                that.addEntity(a);
+            });
+            
+            var deleted = _.difference(current, set);
+            _.each(deleted, function(a){
+                a = that.model.vie.entities.get(a);
+                that.removeEntity(a);
+            });
+        },
         fetchRange: function(startTime, endTime){
             // Fetch entities currently visible
-            this.model.fetchRange( startTime, endTime );
+            TimelineModel.fetchRange( this.model, startTime, endTime );
         },
         rearrangeVisibleArea: function(model, collection, options ) {
             this.LOG.debug("rearrangeVisibleArea");
@@ -87,11 +106,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             var endTime = this.model.get('end');
             if( !startTime || !endTime )  return;
 
-            this.model.fetchRange(startTime, endTime );
+            TimelineModel.fetchRange(this.model, startTime, endTime );
             this.timeline.setVisibleChartRange( startTime, endTime);
         },
         addEntity: function(entity, collection, options) {
-            if( collection && collection !== this.model.timelineCollection ) return false;
             var entityView = this.addEntityView(entity);
             var time = entity.get(this.timeAttr);
             if( !time ) this.LOG.warn("entity " + entity.getSubject() + " has invalid time");
