@@ -14,15 +14,15 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('OrganizeModel').setLevel(Logger.OFF);
     Logger.get('VersionModel').setLevel(Logger.DEBUG);
     Logger.get('EpisodeModel').setLevel(Logger.DEBUG);
-    Logger.get('TimelineModel').setLevel(Logger.OFF);
-    Logger.get('TimelineView').setLevel(Logger.OFF);
+    Logger.get('TimelineModel').setLevel(Logger.DEBUG);
+    Logger.get('TimelineView').setLevel(Logger.DEBUG);
     Logger.get('OrganizeView').setLevel(Logger.DEBUG);
     Logger.get('DetailView').setLevel(Logger.OFF);
     Logger.get('EpisodeManagerView').setLevel(Logger.DEBUG);
     Logger.get('EpisodeView').setLevel(Logger.OFF);
     Logger.get('EntityView').setLevel(Logger.OFF);
     Logger.get('OrgaEntityView').setLevel(Logger.OFF);
-    Logger.get('UserEventView').setLevel(Logger.OFF);
+    Logger.get('UserEventView').setLevel(Logger.DEBUG);
     Logger.get('UserView').setLevel(Logger.OFF);
     Logger.get('App').setLevel(Logger.DEBUG);
     Logger.get('Add').setLevel(Logger.OFF);

@@ -54,7 +54,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 'start' : this.model.get('start'),
                 'end' : this.model.get('end'),
                 'min' : new Date('2013-01-01'),
-                'max' : new Date('2014-01-01'),
+                'max' : new Date('2015-01-01'),
                 'zoomMin' : 300000, // 5 minute
                 'zoomMax' : 4320000000 // 5 days
 
@@ -83,6 +83,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             var current = Backbone.Model.prototype.get.call(this.model, Voc.hasEntity);
             var that = this;
             var added = _.difference(set, current);
+            this.LOG.debug('added', added);
             _.each(added, function(a){
                 a = that.model.vie.entities.get(a);
                 that.addEntity(a);

@@ -33,6 +33,7 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
             // Fetch entities currently visible
             var forUser = timeline.get(Voc.belongsToUser);
             if( forUser.isEntity ) forUser = forUser.getSubject();
+            var that = this;
             this.vie.load({
                 'type' : timeline.get('predicate'), //TODO check that property
                 'start' : start - range,
@@ -40,7 +41,25 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
                 'forUser' : forUser
             }).from('sss').execute().success(
                 function(entities) {
-                    this.vie.entities.addOrUpdate(entities);
+                    that.LOG.debug('success fetchRange: ', entities, 'timeline: ', timeline);
+                    that.vie.entities.addOrUpdate(entities);
+                    var current = timeline.get(Voc.hasEntity) || [];
+                    if( !_.isArray(current)) current = [current];
+                    current = current.map(function(c){
+                        return c.getSubject();
+                    });
+                    entities = entities.map(function(e){
+                        var resource = e.get('sss:resource');
+                        if( !resource.isEntity ) {
+                            var newEntity = new that.vie.Entity
+                            newEntity.set(that.vie.Entity.prototype.idAttribute, resource ); 
+                            that.vie.entities.addOrUpdate(newEntity);
+                            newEntity.fetch();
+                        }
+                        return e.getSubject();
+                    });
+                    current = _.union(current, entities);
+                    timeline.set(Voc.hasEntity, current);
                 }
             );
         },

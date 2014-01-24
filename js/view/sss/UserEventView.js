@@ -9,7 +9,7 @@ define(['view/sss/EntityView', 'logger'], function(EntityView, Logger){
             this.LOG.debug("type of usereventview entity: " + this.type.id);
             this.resource = this.model.get('sss:resource');
             this.LOG.debug("this.resource", this.resource);
-            this.resource.fetch(); // fetching here correct?
+            //this.resource.fetch(); // fetching here correct?
             this.resView = new EntityView({model:this.resource});
             this.resource.on('change', this.render, this);
         },

@@ -190,7 +190,7 @@ function SSUserEventAdd() {
         var userEvents = [];
         MockupLog.debug("SSUSEREVENTADD eventType ",  eventType, ", resource ", resource, ", content" , content);
         SSMockupUserEvents.push({
-            'uri': v.namespaces.uri('sss:#' ) + _.uniqueId('ue'),
+            'uri': MockupNS + ':#' + _.uniqueId('ue'),
             'type': eventType,
             'resource': resource,
             'user': user,

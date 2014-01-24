@@ -53,35 +53,35 @@ var SSMockupResources = [
     {
         'entityUri': MockupNS + 'coll/resource01',
         'label': 'White Folder',
-        'entityType' : 'Collection'
+        'entityType' : 'coll'
     },
     {
         'entityUri': MockupNS + 'coll/resource02',
         'label': 'Blue Folder',
-        'entityType' : 'Collection'
+        'entityType' : 'coll'
     },
     {
         'entityUri': MockupNS + 'coll/resource03',
         'label': 'Green Folder',
-        'entityType' : 'Collection'
+        'entityType' : 'coll'
     },
     {
         'entityUri': MockupNS + 'doc/document01',
         'label': 'Mr Smith',
         'content' : 'This patient is suffering from severe cancer blablabla',
-        'entityType' : 'Document'
+        'entityType' : 'file'
     },
     {
         'entityUri': MockupNS + 'doc/document02',
         'label': 'Mrs Johnson',
         'content' : 'baljk This patient is suffering from severe cancer blablabla',
-        'entityType' : 'Document'
+        'entityType' : 'file'
     },
     {
         'entityUri': MockupNS + 'doc/document03',
         'label': 'Mr Miller',
         'content' : '1234 This patient is suffering from severe cancer blablabla',
-        'entityType' : 'Document'
+        'entityType' : 'file'
     }
 ];
 
