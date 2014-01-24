@@ -69,15 +69,17 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
                 function(widget_uri) {
                     widget.set(widget.idAttribute, widget_uri['uri']);
                     LOG.debug('created', widget_uri, 'version', version.getSubject());
-                    version = vie.entities.get(version.getSubject());
+                    //version = vie.entities.get(version.getSubject());
                     var widgets = version.get(Voc.hasWidget) || [];
-                    LOG.debug('widgets', JSON.stringify(widgets));
-                    if( !_.isArray(widgets)) widgets = [widgets.getSubject()];
-                    widgets.push(widget_uri['uri']);
-                    vie.entities.addOrUpdate(widget);
-                    version.set(Voc.hasWidget, widgets);
-                    widgets = version.get( Voc.hasWidget) || [];
-                    LOG.debug('widgets', JSON.stringify(widgets));
+                    if( !_.isArray(widgets)) widgets = [widgets];
+                    widgets = widgets.map(function(w){
+                        return w.getSubject();
+                    });
+                    if( _.indexOf(widgets, widget_uri['uri']) === -1 ) {
+                        widgets.push(widget_uri['uri']);
+                        vie.entities.addOrUpdate(widget);
+                        version.set(Voc.hasWidget, widgets);
+                    }
                 }
             );
         },
