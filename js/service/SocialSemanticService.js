@@ -330,7 +330,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                         var vieEntity = new service.vie.Entity(service.fixForVIE({
                             'uri' : object.learnEpTimelineStateUri,
                             'type' : service.types.TIMELINE,
-                            'user' : service.vie.namespaces.uri(service.user),
+                            'belongsToUser' : service.vie.namespaces.uri(service.user),
                             'timeAttr': service.vie.namespaces.uri('sss:timestamp'),
                             'predicate' : service.vie.namespaces.uri('sss:userEvent'),
                             'version' : service.vie.namespaces.uri(loadable.options.version),

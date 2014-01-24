@@ -10,10 +10,6 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
          * Filters entities from added entities to vie.entities
          */
         filter: function(model, collection, options) {
-            if( this.vie.namespaces.curie(model.get('@type').id) === Voc.VERSION ) {
-                this.LOG.debug('version added', model);
-                this.fetchWidgets(model);
-            }
         },
         newVersion: function(episode, fromVersion) {
             var newVersion;
@@ -62,69 +58,26 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
             */
             return newVersion;
         },
-        /**
-         * Fetches widget entities from server.
-         * If no such entities exist, default Timeline and Organize are created.
-         */
-        fetchWidgets: function(version) {
-            var VersionModel = this;
-            var vie = this.vie;
-            var LOG = this.LOG;
-            this.vie.load({
-                'version' : version.getSubject(),
-                'type' : Voc.WIDGET
-            }).from('sss').execute().success(
-                function(widgets) {
-                    LOG.debug("success of fetching widgets", widgets);
-                    var types = _.pluck(widgets, '@type');
-                    types = types.map(function(type){return type.id? type.id: type;});
-
-                    LOG.debug('types', types);
-                    if( !_.contains(types, vie.namespaces.uri('sss:Organize'))) {
-                        LOG.debug("creating default organize widget");
-                        var newWidget = new vie.Entity;
-                        newWidget.set('@type', vie.namespaces.uri('sss:Organize'));
-                        newWidget.set(Voc.circleType, vie.namespaces.uri('sss:Circle'));
-                        newWidget.set(Voc.orgaEntityType, vie.namespaces.uri('sss:OrgaEntity'));
-
-                        VersionModel.createWidget(newWidget, version);
-                        widgets.push(newWidget);
-                    }
-                    if( !_.contains(types, vie.namespaces.uri('sss:Timeline'))) {
-                        LOG.debug("creating default timeline widget");
-                        var newWidget = new vie.Entity;
-                        newWidget.set('@type', vie.namespaces.uri('sss:Timeline'));
-                        newWidget.set('user', model.getSubject());
-                        newWidget.set('timeAttr',timestamp);
-                        newWidget.set('predicate', vie.namespaces.uri('sss:userEvent'));
-                            //'timelineCollection' : new vie.Collection([], {//new TL.Collection([], { 
-                                //'model': Entity,
-                                //'vie' : vie
-                                //})},
-                        newWidget.set('start', jSGlobals.getTime() - jSGlobals.dayInMilliSeconds);
-                        newWidget.set('end', jSGlobals.getTime() + 3600000 );
-                        version.createWidget(newWidget, version);
-                        widgets.push(newWidget);
-                    }
-                    var ws = widgets.pluck(vie.Entity.prototype.idAttribute);
-                    version.set(Voc.hasWidgets, ws);
-                    vie.entities.addOrUpdate(widgets);
-                }
-            );
-        },
         createWidget: function(widget, version) {
-            widget.set(Voc.belongstoVersion, version.getSubject());
+            widget.set(Voc.belongsToVersion, version.getSubject());
             this.LOG.debug("createWidget", widget, version);
+            var LOG = this.LOG;
             var vie = this.vie;
             this.vie.save({
                 'entity' : widget
             }).from('sss').execute().success(
                 function(widget_uri) {
                     widget.set(widget.idAttribute, widget_uri['uri']);
+                    LOG.debug('created', widget_uri, 'version', version.getSubject());
+                    version = vie.entities.get(version.getSubject());
                     var widgets = version.get(Voc.hasWidget) || [];
+                    LOG.debug('widgets', JSON.stringify(widgets));
+                    if( !_.isArray(widgets)) widgets = [widgets.getSubject()];
                     widgets.push(widget_uri['uri']);
                     vie.entities.addOrUpdate(widget);
                     version.set(Voc.hasWidget, widgets);
+                    widgets = version.get( Voc.hasWidget) || [];
+                    LOG.debug('widgets', JSON.stringify(widgets));
                 }
             );
         },

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 var MockupNS = MockupNS || "http://eval.bp/";
-var MockupLog = MockupLog || Logger.get('Mockup');
+var MockupLog = MockupLog || require('logger').get('Mockup');
 var MockupTimeout = MockupTimeout || 300;
 
 var SSMockupUserEvents = [
@@ -80,7 +80,7 @@ var SSMockupUserEvents = [
         'resource': MockupNS + 'doc/document01',
         'user': MockupNS + 'user/peter/',
         'content': 'Create Private Record',
-        'timestamp': '2013-11-15T15:30:20+02:00'
+        'timestamp': '2014-01-22T15:30:20+02:00'
     },
     {
         'uri': 'sss:#useraction22',

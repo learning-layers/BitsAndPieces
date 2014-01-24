@@ -15,7 +15,7 @@
  */
 
 var MockupNS = MockupNS || "http://eval.bp/";
-var MockupLog = MockupLog || Logger.get('Mockup');
+var MockupLog = MockupLog || require('logger').get('Mockup');
 var MockupTimeout = MockupTimeout || 300;
 
 var SSMockupResources = [

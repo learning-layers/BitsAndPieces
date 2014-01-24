@@ -27,7 +27,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('App').setLevel(Logger.DEBUG);
     Logger.get('Add').setLevel(Logger.OFF);
     Logger.get('SocialSemanticService').setLevel(Logger.DEBUG);
-    Logger.get('Mockup').setLevel(Logger.OFF);
+    Logger.get('Mockup').setLevel(Logger.DEBUG);
 
     var username = window.location.search.substring(1);
     if( !username) return alert('no username given!');
@@ -62,17 +62,19 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     var user = new v.Entity;
     user.set(user.idAttribute, userParams.user);
 
-    var AppView = new AppView({
+    var view = new AppView({
         'model' : user,
         'el' : 'body',
         'vie' :  v
-    })
+    });
 
     $(document).ready(function(){
-        AppView.render();
+        view.render();
         user.fetch({'success': function(){
             v.entities.addOrUpdate(user);
         }});
     });
+
+    return null;
 
 });

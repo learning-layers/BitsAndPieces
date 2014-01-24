@@ -6,9 +6,9 @@ requirejs.config((function() {
             'sss.jsutils' : sss_url + "JSUtilities/JSGlobals",
             'sss.globals' : sss_url + "SSSClientInterfaceGlobals/globals/SSGlobals",
             'sss.varu' : sss_url + "SSSClientInterfaceGlobals/globals/SSVarU",
-            'sss.conn.entity' : sss_url + "SSSClientInterfaceREST/connectors/SSEntityConns",
-            'sss.conn.userevent' : sss_url + "SSSClientInterfaceREST/connectors/SSUserEventConns",
-            'sss.conn.learnep' : sss_url + "SSSClientInterfaceREST/connectors/SSLearnEpConns",
+            'sss.conn.entity' : 'mockup/SSResourceConns', //sss_url + "SSSClientInterfaceREST/connectors/SSEntityConns",
+            'sss.conn.userevent' : 'mockup/SSUserEventConns', //sss_url + "SSSClientInterfaceREST/connectors/SSUserEventConns",
+            'sss.conn.learnep' : 'mockup/SSLearnEpConns', //sss_url + "SSSClientInterfaceREST/connectors/SSLearnEpConns",
             'vie' : '../lib/VIE/dist/vie',
             'backbone' : '../lib/VIE/lib/backbone/backbone',
             'underscore' : '../lib/VIE/lib/underscore/underscore-min',
@@ -22,9 +22,12 @@ requirejs.config((function() {
             'organize' : '../lib/organize/organize'
         },
         shim: {
-            'sss.conn.userevent' : [ 'sss.jsutils', 'sss.globals', 'sss.varu'],
-            'sss.conn.entity' : [ 'sss.jsutils', 'sss.globals', 'sss.varu'],
-            'sss.conn.learnep' : [ 'sss.jsutils', 'sss.globals', 'sss.varu'],
+            'logger' : { 
+                'exports' : 'Logger'
+            },
+            'sss.conn.userevent' : [ 'sss.jsutils', 'sss.globals', 'sss.varu', 'logger'],
+            'sss.conn.entity' : [ 'sss.jsutils', 'sss.globals', 'sss.varu', 'logger'],
+            'sss.conn.learnep' : [ 'sss.jsutils', 'sss.globals', 'sss.varu', 'logger'],
             'vie' : {
                 'deps' : ['backbone', 'jquery', 'underscore'],
                 'exports' : 'VIE'

@@ -1,5 +1,5 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'model/timeline/TimelineModel'], 
-    function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineModel){
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'model/timeline/TimelineModel', 'voc'], 
+    function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineModel, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('TimelineView'),
         initialize: function() {
@@ -25,9 +25,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             //this.model.timelineCollection.on('change', this.changeEntity, this);
             //this.model.timelineCollection.on('remove', this.removeEntity, this);
             //this.model.timelineCollection.on('reset', this.refreshEntities, this);
-            this.model.on('change:' + this.vie.namespaces.uri(Voc.start), this.rearrangeVisibleArea, this);
-            this.model.on('change:' + this.vie.namespaces.uri(Voc.end), this.rearrangeVisibleArea, this);
-            this.model.on('change:' + this.vie.namespaces.uri(Voc.hasEntity), this.changeEntitySet, this);
+            this.model.on('change:' + this.model.vie.namespaces.uri(Voc.start), this.rearrangeVisibleArea, this);
+            this.model.on('change:' + this.model.vie.namespaces.uri(Voc.end), this.rearrangeVisibleArea, this);
+            this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEntity), this.changeEntitySet, this);
 
             var data = [];
 

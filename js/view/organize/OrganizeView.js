@@ -1,6 +1,6 @@
 define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
-        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'model/organize/OrganizeModel' ], 
-    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeModel){
+        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'model/organize/OrganizeModel', 'voc' ], 
+    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeModel, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('OrganizeView'),
         events:{
@@ -71,7 +71,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             }
         },
         render: function() {
-            this.organize.loadOrganizeCanvas(this.el.id);
+            this.LOG.debug('el = ', this.el);
+            this.organize.loadOrganizeCanvas(this.el);
             // Make the view aware of existing entities in collection
             var view = this;
             _.each(this.model.get(Voc.hasEntity), function(entity) {
