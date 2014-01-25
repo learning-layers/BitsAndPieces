@@ -45,29 +45,32 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
         filter: function(model, collection, options) {
             this.LOG.debug('filter change of ' + model.getSubject());
             var changed = model.changedAttributes();
+            this.LOG.debug('changed: ', JSON.stringify(changed));
             var OrganizeView = this;
             for( var key in changed ) {
                 this.LOG.debug('key : ' + key );
-                if( key === Voc.hasCircle) {
-                    var current = Backbone.Model.prototype.get.call(this.model, Voc.hasCircle);
-                    var added = _.difference(changed, current);
-                    var deleted = _.difference(current, changed);
-                    _.each(added, function(a){
-                        a = OrganizeView.model.vie.entities.get(a);
-                        //OrganizeView.listenTo(a, 'change', OrganizeView.changeCircle);
-                        //OrganizeView.listenTo(a, 'destroy', OrganizeView.removeCircle);
-                        OrganizeView.addCircle(a, collection, options);
-                    });
-                } else if( key === Voc.hasEntity){
-                    var current = Backbone.Model.prototype.get.call(this.model, Voc.hasEntity);
-                    var added = _.difference(changed, current);
-                    _.each(added, function(a){
-                        a = OrganizeView.model.vie.entities.get(a);
-                        //OrganizeView.listenTo(a, 'change', OrganizeView.changeEntity);
-                        //OrganizeView.listenTo(a, 'destroy', OrganizeView.removeEntity);
-                        OrganizeView.addEntity(a, collection, options);
-                    });
-                }
+                if( key === this.model.vie.namespaces.uri(Voc.hasCircle)) {
+                    kind = 'Circle';
+                } else if( key === this.model.vie.namespaces.uri(Voc.hasEntity)){
+                    kind = 'Entity';
+                } else continue;;
+
+                var previous = this.model.previous(Voc['has'+kind]) || [];
+                if( !_.isArray(previous)) previous = [previous];
+                this.LOG.debug('previous', JSON.stringify(previous));
+
+                var current = this.model.get(Voc['has'+kind]) || [];
+                if( !_.isArray(current)) current = [current];
+                this.LOG.debug('current', JSON.stringify(current));
+
+                var added = _.difference(current, previous);
+                this.LOG.debug('added', JSON.stringify(added));
+                _.each(added, function(a){
+                    a = OrganizeView.model.vie.entities.get(a);
+                    //OrganizeView.listenTo(a, 'change', OrganizeView['change'+kind]);
+                    //OrganizeView.listenTo(a, 'destroy', OrganizeView.['remove' + kind]);
+                    OrganizeView['add'+ kind](a, collection, options);
+                });
             }
         },
         render: function() {

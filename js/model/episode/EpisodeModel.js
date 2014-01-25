@@ -25,10 +25,16 @@ define(['logger', 'voc', 'underscore', 'model/episode/VersionModel'], function(L
                     em.LOG.debug("success fetchVersions");
                     em.LOG.debug("versions", versions);
                     if( versions.length === 0 ) {
-                        VersionModel.newVersion(episode);
+                        versions.push(VersionModel.newVersion(episode));
                     } else {
-                        em.vie.entities.addOrUpdate(versions);
+                        versions = em.vie.entities.addOrUpdate(versions);
                     }
+                    var current = episode.get(Voc.hasVersion) || [];
+                    versions = _.union(current, versions);
+                    versions = versions.map(function(v){
+                        return v.getSubject();
+                    });
+                    episode.set(Voc.hasVersion, versions);
                 }
             );
 

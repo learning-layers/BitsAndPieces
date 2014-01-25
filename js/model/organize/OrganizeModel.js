@@ -11,74 +11,83 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
          */
         filter: function(model, collection, options) {
             if( this.vie.namespaces.curie(model.get('@type').id) === Voc.ORGANIZE ) {
-                this.fetchStuff(model);
+                if( !model.isNew()) {
+                    this.fetchCircles(model);
+                    this.fetchEntities(model);
+                }
             }
         },
-        createCircle: function(organize, circle, options) {
+        createItem: function(organize, item, options, type, relation) {
             options = options || {};
-            if( !circle.isEntity) circle = new this.vie.Entity(circle);
+            if( !item.isEntity) item = new this.vie.Entity(item);
+            item.set({
+                '@type': type,
+            }, _.extend(options));
+            item.set(Voc.belongsToOrganize , organize.getSubject());
+
+            this.vie.entities.addOrUpdate(item);
+            var items = Backbone.Model.prototype.get.call(
+                organize, this.vie.namespaces.uri(relation));
+            (items = _.clone(items)).push(item.getSubject());
+            organize.set(relation, items);
+            var vie = this.vie;
+            this.vie.save({
+                'entity' : item
+            }).from('sss').execute().success(
+                function(it) {
+                    item.set(item.idAttribute, it['uri']);
+                }
+            );
+            return item;
+        },
+        createCircle: function(organize, circle, options) {
             var type = organize.get(Voc.circleType);
             if( type.isEntity ) type = type.getSubject();
-            circle.set({
-                '@type': type,
-                'organize' : organize.getSubject()
-            }, _.extend(options));
-
-            var vie = this.vie;
-            this.vie.save({
-                'entity' : circle
-            }).from('sss').execute().success(
-                function(circ) {
-                    circle.set(circle.idAttribute, circ['uri']);
-                    vie.entities.addOrUpdate(circle);
-                    var circles = Backbone.Model.prototype.get.call(this.model, Voc.hasCircle);
-                    circles = circles.push(circ['uri']);
-                    organize.set(Voc.hasCircle, circles);
-                }
-            );
-            return circle;
+            return this.createItem(organize, circle, options, type, Voc.hasCircle);
         },
         createEntity: function(organize, entity, options) {
-            options = options || {};
-            if( !entity.isEntity) entity = new this.vie.Entity(entity);
             var type = organize.get(Voc.orgaEntityType);
             if( type.isEntity ) type = type.getSubject();
-            entity.set({
-                '@type': type,
-                'organize' : organize.getSubject()
-            }, _.extend(options));
-
-            var vie = this.vie;
-            this.vie.save({
-                'entity' : entity
-            }).from('sss').execute().success(
-                function(ent) {
-                    entity.set(entity.idAttribute, ent['uri']);
-                    vie.entities.addOrUpdate(entity);
-                    var entities = Backbone.Model.prototype.get.call(this.model, Voc.hasOrgaEntity);
-                    entities = entities.push(ent['uri']);
-                    organize.set(Voc.hasOrgaEntity, entities);
-                }
-            );
-            return entity;
+            return this.createItem(organize, entity, options, type, Voc.hasEntity);
         },
-        fetchStuff: function(organize) {
+        fetchStuff: function(organize, type, relation) {
+            var that = this;
             this.vie.load({
                 'organize' : organize.getSubject(),
-                'type' : Voc.CIRCLE
+                'type' : type
             }).from('sss').execute().success(
-                function(circles) {
-                    this.vie.entities.addOrUpdate(circles);
+                function(items) {
+
+                    that.LOG.debug('items fetched');
+                    items = that.vie.entities.addOrUpdate(items);
+                    var current = organize.get(relation) || [];
+                    if( !_.isArray(current)) current = [current];
+                    var added = _.difference(items, current);
+                    _.each(added, function(c){
+                        c.on('destroy', function(model, collection, options) {
+                            that.LOG.debug('destroy fired', model);
+                            var its = organize.get(relation) || [];
+                            if( !_.isArray(its)) its = [its];
+                            that.LOG.debug('its', its);
+                            var newIts = _.without(its, model);
+                            organize.set(relation, newIts, options);
+                        });
+                        that.LOG.debug('added', c.getSubject());
+                    });
+                    current = _.union(current, items).map(function(c){
+                        return c.getSubject();
+                    });
+                    that.LOG.debug('current', current);
+                    organize.set(relation, current);
+
                 }
             );
-            this.vie.load({
-                'organize' : organize.getSubject(),
-                'type' : Voc.ORGAENTITY
-            }).from('sss').execute().success(
-                function(entities) {
-                    this.vie.entities.addOrUpdate(entities);
-                }
-            );
+        },
+        fetchCircles: function(organize) {
+            this.fetchStuff(organize, Voc.CIRCLE, Voc.hasCircle);
+        },
+        fetchEntities: function(organize) {
+            this.fetchStuff(organize, Voc.ORGAENTITY, Voc.hasEntity);
         },
         clone: function(attributes) {
             // TODO to be done in vie.Entity

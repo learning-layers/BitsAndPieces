@@ -61,8 +61,14 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
         createWidget: function(widget, version) {
             widget.set(Voc.belongsToVersion, version.getSubject());
             this.LOG.debug("createWidget", widget, version);
+            this.vie.entities.addOrUpdate(widget);
+            var widgets = Backbone.Model.prototype.get.call(version, 
+                this.vie.namespaces.uri(Voc.hasWidget)) || [];
+            if( !_.isArray(widgets)) widgets = [widgets];
+            widgets.push(widget.getSubject());
+            version.set(Voc.hasWidget, widgets);
+
             var LOG = this.LOG;
-            var vie = this.vie;
             this.vie.save({
                 'entity' : widget
             }).from('sss').execute().success(
@@ -70,16 +76,6 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
                     widget.set(widget.idAttribute, widget_uri['uri']);
                     LOG.debug('created', widget_uri, 'version', version.getSubject());
                     //version = vie.entities.get(version.getSubject());
-                    var widgets = version.get(Voc.hasWidget) || [];
-                    if( !_.isArray(widgets)) widgets = [widgets];
-                    widgets = widgets.map(function(w){
-                        return w.getSubject();
-                    });
-                    if( _.indexOf(widgets, widget_uri['uri']) === -1 ) {
-                        widgets.push(widget_uri['uri']);
-                        vie.entities.addOrUpdate(widget);
-                        version.set(Voc.hasWidget, widgets);
-                    }
                 }
             );
         },

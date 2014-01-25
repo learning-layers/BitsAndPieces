@@ -16,7 +16,7 @@
 
 var MockupNS = MockupNS || "http://eval.bp/";
 var MockupLog = MockupLog || require('logger').get('Mockup');
-var MockupTimeout = MockupTimeout || 300;
+var MockupTimeout = MockupTimeout || 100;
 
 var SSMockupResources = [
     {
@@ -43,7 +43,7 @@ var SSMockupResources = [
         'entityUri': MockupNS + 'user/peter/',
         'label': 'Peter',
         'entityType' : 'user',
-        'currentVersion': MockupNS + 'version/versionX'
+        'currentVersion': MockupNS + 'version/versionY'
     },
     {
         'entityUri': MockupNS + 'user/paul/',

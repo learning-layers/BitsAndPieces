@@ -232,6 +232,8 @@ define(['logger', 'vie', 'underscore', 'voc',
                         var entityInstances = [];
                         _.each(objects['learnEps'], function(object) {
                             var entity = service.fixForVIE(object, 'learnEpUri');
+                            entity[Voc.belongsToUser] = entity['user'];
+                            delete entity['user'];
                             var vieEntity = new service.vie.Entity(entity);
                             vieEntity.set('@type', Voc.EPISODE);
                             entityInstances.push(vieEntity);
@@ -257,25 +259,23 @@ define(['logger', 'vie', 'underscore', 'voc',
                         _.each(objects['learnEpVersions'], function(object) {
                             var entity = service.fixForVIE(object, 'learnEpVersionUri');
                             entity[Voc.belongsToEpisode] = entity['learnEpUri'];
-                            entity[Voc.hasWidget] = [];
                             delete entity['learnEpUri'];
                             var vieEntity = new service.vie.Entity(entity);
                             vieEntity.set('@type', Voc.VERSION);
                             entityInstances.push(vieEntity);
                             // each version has a organize component
-                            // that would look like this object if the server would serve it
+                            // that would look like as if this object already exists on the server
                             var organize = {
-                                //'uri' : this.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget'),
+                                'uri' : service.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget'),
                                 'type' : service.vie.namespaces.uri('sss:' + service.types.ORGANIZE),
                                 'circleType' : service.vie.namespaces.uri('sss:' + service.types.CIRCLE),
-                                'entityType' : service.vie.namespaces.uri('sss:' + service.types.ORGAENTITY),
-                                'version' : vieEntity.getSubject()
+                                'orgaEntityType' : service.vie.namespaces.uri('sss:' + service.types.ORGAENTITY),
+                                'belongsToVersion' : vieEntity.getSubject()
                             };
-                            // make a vie Entity to generate an id for it
-                            //var vOrg = new service.vie.Entity(service.fixForVIE(organize));
                             // we buffer that object for explicit retrieval of organize
                             // and store it in memory as it would come from the server
-                            //service.buffer[vOrg.getSubject()] = service.fixFromVIE(vOrg);
+                            service.buffer[organize.uri] = organize;
+
                         });
                         loadable.resolve(entityInstances);
                     },
@@ -297,8 +297,8 @@ define(['logger', 'vie', 'underscore', 'voc',
                 var resolve = function(finished, entity) {
                     if( _.contains(finishedCalls, finished)) return;
                     finishedCalls.push(finished);
-                    if( entity ) entities.push(entity);
                     service.LOG.debug('resolved', entity);
+                    if( entity ) entities.push(entity);
                     if( _.contains(finishedCalls, 'versionget') &&  
                         _.contains(finishedCalls, 'timelineget') ) {
                         loadable.resolve(entities);
@@ -306,7 +306,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                 };
                 var organize;
                 for( var organizeId in this.buffer )
-                    if( this.buffer[organizeId][Voc.belongsToVersion] == loadable.options.version) {
+                    if( this.buffer[organizeId]['belongsToVersion'] == loadable.options.version) {
                         organize = this.buffer[organizeId];
                         break;
                     }
@@ -333,11 +333,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                             'belongsToUser' : service.vie.namespaces.uri(service.user),
                             'timeAttr': service.vie.namespaces.uri('sss:timestamp'),
                             'predicate' : service.vie.namespaces.uri('sss:userEvent'),
-                            'version' : service.vie.namespaces.uri(loadable.options.version),
-                            //'timelineCollection' : new v.Collection([], {//new TL.Collection([], { 
-                                //'model': SSS.Entity,
-                                //'vie' : v
-                            //})},
+                            'belongsToVersion' : service.vie.namespaces.uri(loadable.options.version),
                             'start' : object.startTime,                            
                             'end' : object.endTime
                         }));
@@ -362,8 +358,10 @@ define(['logger', 'vie', 'underscore', 'voc',
                     return;
                 }
                 //map organize id to version id
-                this.LOG.debug('buffer', this.buffer);
-                var version = this.buffer[loadable.options.organize][Voc.belongsToVersion]; 
+                this.LOG.debug('buffer', JSON.stringify(this.buffer));
+                this.LOG.debug('organize to find', loadable.options.organize);
+                var version = this.buffer[loadable.options.organize]['belongsToVersion']; 
+                this.LOG.debug('version found', version);
                 var entities = [];
                 new SSLearnEpVersionGet().handle(
                     function(object) {
@@ -386,7 +384,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                             delete fixEntity['yR'];
                             delete fixEntity['xC'];
                             delete fixEntity['yC'];
-                            fixEntity.organize = loadable.options.organize;
+                            fixEntity.belongsToOrganize = loadable.options.organize;
                             var vieEntity = new service.vie.Entity(fixEntity);
                             vieEntity.set('@type', typeCurie);
                             entities.push(vieEntity);
@@ -418,7 +416,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                             var fixEntity = service.fixForVIE(item, 'learnEpEntityUri');
                             fixEntity.resource = item['entityUri'];
                             delete fixEntity['entityUri'];
-                            fixEntity.organize = loadable.options.organize;
+                            fixEntity.belongsToOrganize = loadable.options.organize;
                             var vieEntity = new service.vie.Entity(fixEntity);
                             vieEntity.set('@type', typeCurie);
                             entities.push(vieEntity);

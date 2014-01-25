@@ -53,10 +53,11 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         render: function() {
             this.LOG.debug('EpisodeManager render');
             var version = this.model.get(Voc.currentVersion);
-            if( !version || !version.isEntity ) return;
             this.LOG.debug('version', version);
+            if( !version || !version.isEntity ) return;
             var episode = version.get(Voc.belongsToEpisode);
             var label = episode.get(Voc.label);
+            this.LOG.debug('label', label);
             this.$el.find('h1').html(label);
             if( this.currentEpisode) this.currentEpisode.unhighlight();
             this.currentEpisode = this.views[episode.cid];

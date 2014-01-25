@@ -21,7 +21,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc'], 
             var versionCollection = new Backbone.Collection;
             versionCollection.comparator = Voc.timestamp;
             _.each(this.model.get(Voc.hasVersion), function(v){
-                versionCollection.add(view.vie.entities.get(v));
+                versionCollection.add(view.model.vie.entities.get(v));
             });
             versionCollection.each(function(version){
                 var highlit = "";
@@ -38,7 +38,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc'], 
             this.LOG.debug('EpisodeView changeCurrentVersion ' + id);
             tracker.info(tracker.SWITCHVERSION, id);
             if( !id ) return;
-            this.model.trigger('change:'+this.model.vie.namespaces.uri('sss:currentVersion'), this.model, id);
+            this.model.get(Voc.belongsToUser).set( Voc.currentVersion, id);
         },
         changeCurrentEpisode: function(event) {
             if( !event || !event.currentTarget ) return;
@@ -46,7 +46,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc'], 
             if( !id ) return;
             this.LOG.debug('EpisodeView changeCurrentEpisode, version = ' + id.getSubject());
             tracker.info(tracker.SWITCHEPISODE, id.getSubject());
-            this.model.trigger('change:'+this.model.vie.namespaces.uri('sss:currentVersion'), this.model, id.getSubject());
+            this.model.get(Voc.belongsToUser).set( Voc.currentVersion, id.getSubject());
         },
         highlight: function(versionId) {
             this.$el.addClass('highlight');

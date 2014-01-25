@@ -13,7 +13,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.timeAttr = this.model.get('timeAttr');
             if( this.timeAttr.isEntity ) this.timeAttr = this.timeAttr.getSubject();
             this.groupBy = this.options.groupBy;
-            this.user = this.model.get('user');
+            this.user = this.model.get(Voc.belongsToUser);
 
             $(this.el).empty();
 
@@ -29,7 +29,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.end), this.rearrangeVisibleArea, this);
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEntity), this.changeEntitySet, this);
 
-            var data = [];
+            this.LOG.debug('TimelineView initialized');
+
 
             if( this.user && (typeof this.user) === 'object') {
                 var parent = $('<div class="user-container">');
@@ -50,22 +51,24 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.timelineDOM.setAttribute('class', 'timeline');
             this.$el.append(this.timelineDOM);
             this.timeline = new Timeline(this.timelineDOM);
-            this.timeline.draw( data, _.extend(this.options.timeline, {
+            this.timeline.draw( [{
+                    'start' : new Date(),
+                    'content' : "x"
+                }], _.extend(this.options.timeline, {
                 'start' : this.model.get('start'),
                 'end' : this.model.get('end'),
                 'min' : new Date('2013-01-01'),
                 'max' : new Date('2015-01-01'),
                 'zoomMin' : 300000, // 5 minute
                 'zoomMax' : 4320000000 // 5 days
-
             }));
+            this.timeline.deleteItem(0);
+            this.LOG.debug('timeline', this.timeline);
 
-            // Make the view aware of existing entities in collection
             var view = this;
-            _.each(this.model.get(Voc.hasEntity), function(entity) {
+            _.each(view.model.get(Voc.hasEntity), function(entity) {
                 view.addEntity(entity);
-            }, this);
-            
+            });
             // bind timeline's internal events to model
             links.events.addListener(this.timeline, 'rangechanged', function(range){
                 view.LOG.debug('caught rangechanged: '+ range.start + ' - ' + range.end);
@@ -80,16 +83,18 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         },
         changeEntitySet: function(model, set, options) {
             this.LOG.debug('changeEntitySet', set);  
-            var current = Backbone.Model.prototype.get.call(this.model, Voc.hasEntity);
+            var previous = Backbone.Model.prototype.previous.call(
+                this.model, this.model.vie.namespaces.uri(Voc.hasEntity));
+            this.LOG.debug('previous', previous);  
             var that = this;
-            var added = _.difference(set, current);
+            var added = _.difference(set, previous);
             this.LOG.debug('added', added);
             _.each(added, function(a){
                 a = that.model.vie.entities.get(a);
                 that.addEntity(a);
             });
             
-            var deleted = _.difference(current, set);
+            var deleted = _.difference(previous, set);
             _.each(deleted, function(a){
                 a = that.model.vie.entities.get(a);
                 that.removeEntity(a);
@@ -111,6 +116,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.timeline.setVisibleChartRange( startTime, endTime);
         },
         addEntity: function(entity, collection, options) {
+            this.LOG.debug('addEntity');
             var entityView = this.addEntityView(entity);
             var time = entity.get(this.timeAttr);
             if( !time ) this.LOG.warn("entity " + entity.getSubject() + " has invalid time");

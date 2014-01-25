@@ -11,23 +11,23 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     var AppLog = Logger.get('App');
     var AddLog = Logger.get('Add');
     Logger.get('UserModel').setLevel(Logger.OFF);
-    Logger.get('OrganizeModel').setLevel(Logger.OFF);
-    Logger.get('VersionModel').setLevel(Logger.DEBUG);
-    Logger.get('EpisodeModel').setLevel(Logger.DEBUG);
-    Logger.get('TimelineModel').setLevel(Logger.DEBUG);
+    Logger.get('OrganizeModel').setLevel(Logger.DEBUG);
+    Logger.get('VersionModel').setLevel(Logger.OFF);
+    Logger.get('EpisodeModel').setLevel(Logger.OFF);
+    Logger.get('TimelineModel').setLevel(Logger.OFF);
     Logger.get('TimelineView').setLevel(Logger.DEBUG);
-    Logger.get('OrganizeView').setLevel(Logger.DEBUG);
+    Logger.get('OrganizeView').setLevel(Logger.OFF);
     Logger.get('DetailView').setLevel(Logger.OFF);
-    Logger.get('EpisodeManagerView').setLevel(Logger.DEBUG);
+    Logger.get('EpisodeManagerView').setLevel(Logger.OFF);
     Logger.get('EpisodeView').setLevel(Logger.OFF);
     Logger.get('EntityView').setLevel(Logger.OFF);
     Logger.get('OrgaEntityView').setLevel(Logger.OFF);
-    Logger.get('UserEventView').setLevel(Logger.DEBUG);
+    Logger.get('UserEventView').setLevel(Logger.OFF);
     Logger.get('UserView').setLevel(Logger.OFF);
     Logger.get('App').setLevel(Logger.DEBUG);
     Logger.get('Add').setLevel(Logger.OFF);
-    Logger.get('SocialSemanticService').setLevel(Logger.DEBUG);
-    Logger.get('Mockup').setLevel(Logger.DEBUG);
+    Logger.get('SocialSemanticService').setLevel(Logger.OFF);
+    Logger.get('Mockup').setLevel(Logger.OFF);
 
     var username = window.location.search.substring(1);
     if( !username) return alert('no username given!');
@@ -35,9 +35,6 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     var v = new VIE();
 
     AppLog.debug('vie', v);
-
-    var timelineView;
-    var organizeView;
 
     var namespace = "http://eval.bp/" ;
     userParams.init(username, namespace);

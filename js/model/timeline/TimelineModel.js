@@ -42,23 +42,25 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
             }).from('sss').execute().success(
                 function(entities) {
                     that.LOG.debug('success fetchRange: ', entities, 'timeline: ', timeline);
-                    that.vie.entities.addOrUpdate(entities);
+                    entities = that.vie.entities.addOrUpdate(entities);
                     var current = timeline.get(Voc.hasEntity) || [];
                     if( !_.isArray(current)) current = [current];
-                    current = current.map(function(c){
-                        return c.getSubject();
-                    });
-                    entities = entities.map(function(e){
+                    var added = _.difference(entities, current);
+                    added = added.map(function(e){
                         var resource = e.get('sss:resource');
                         if( !resource.isEntity ) {
-                            var newEntity = new that.vie.Entity
+                            var newEntity = new that.vie.Entity;
                             newEntity.set(that.vie.Entity.prototype.idAttribute, resource ); 
                             that.vie.entities.addOrUpdate(newEntity);
                             newEntity.fetch();
                         }
                         return e.getSubject();
                     });
-                    current = _.union(current, entities);
+                    current = current.map(function(c){
+                        return c.getSubject();
+                    });
+                    current = _.union(current, added);
+                    that.LOG.debug('current', current);
                     timeline.set(Voc.hasEntity, current);
                 }
             );

@@ -4,16 +4,16 @@
 div.timeline-event-content {
     overflow: visible;
 }
-#myTimeline1 {
+div.timelineFrame {
     height: 170px;
 }
-#myTimeline1 > .user-container {
+div.timelineFrame > .user-container {
     width: 5%;
     float: left;
     margin: 3em 2.5%;
     text-align: center;
 }
-#myTimeline1 > .timeline {
+div.timelineFrame > .timeline {
     height: 100%;
     width: 90%;
     margin-left: 10%;
@@ -166,7 +166,7 @@ div#episodes div.highlight {
     background-color: lightgreen;
 }
 
-div#episodes li.highlight {
+div#episodes li.highlight h2 {
     font-weight: bold;
 }
 
@@ -179,15 +179,15 @@ svg image {
     cursor: pointer;
 }
 
-.highlight {
-    font-weight: strong;
+li.episode ul li.highlight {
+    font-weight: bold;
 }
 
 /* hide versions */
 div#episodes button#createNewVersion {
-    display: none;
+    display: block;
 }
 
 li.episode ul {
-    display: none;
+    display: block;
 }

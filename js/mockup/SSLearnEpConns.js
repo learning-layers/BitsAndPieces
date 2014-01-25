@@ -15,21 +15,33 @@
  */
 var MockupNS = MockupNS || "http://eval.bp/";
 var MockupLog = MockupLog || require('logger').get('Mockup');
-var MockupTimeout = MockupTimeout || 300;
-var SSMockupCircles = {/*
+var MockupTimeout = MockupTimeout || 100;
+var SSMockupCircles = {
     'http://20130930devDays.ll/circle/svgcircle01':
         {
-            'uri': 'http://20130930devDays.ll/circle/svgcircle01',
-            'Label': 'Circle No. 1',
-            'LabelX' : 100, 
-            'LabelY' : 100, 
-            'cx' : 150,
-            'cy' : 150,
-            'rx' : 50,
-            'ry' : 50,
-            'type' : 'http://20130930devDays.ll/Circle'
+            'learnEpCircleUri': 'http://20130930devDays.ll/circle/svgcircle01',
+            'label': 'Circle No. 1',
+            'xLabel' : 100, 
+            'yLabel' : 100, 
+            'xC' : 150,
+            'yC' : 150,
+            'xR' : 50,
+            'yR' : 50,
+            'learnEpVersionUri' : MockupNS + 'version/versionX'
+        },
+    'http://20130930devDays.ll/circle/svgcircle02':
+        {
+            'learnEpCircleUri': 'http://20130930devDays.ll/circle/svgcircle02',
+            'label': 'Circle No. 2',
+            'xLabel' : 200, 
+            'yLabel' : 200, 
+            'xC' : 250,
+            'yC' : 250,
+            'xR' : 70,
+            'yR' : 70,
+            'learnEpVersionUri' : MockupNS + 'version/versionX'
         }
-*/};
+};
 
 var SSMockupOrgaEntities = {/*
     'http://20130930devDays.ll/orgaentity/orgaentity01' :
@@ -244,7 +256,7 @@ function SSLearnEpVersionAddEntity(){
             'y' : y,
             'entityUri' : entityUri
         }
-        setTimeout(function(){resultHandler({'uri':uri});}, MockupTimeout);
+        setTimeout(function(){resultHandler({'learnEpEntityUri':uri});}, MockupTimeout);
         return;
         errorHandler({'error':'Resource not found'});
 	};
@@ -330,14 +342,14 @@ function SSLearnEpVersionGet(){
             errorHandler({'error':'Resource not found'});
             return;
         }
-        var result = [];
+        var result = {'learnEpVersion' : {'circles' : [], 'entities' : [] } };
         for( var uri in SSMockupCircles) {
             if( SSMockupCircles[uri]['learnEpVersionUri'] == learnEpVersionUri)
-                result.organize.push(SSMockupCircles[uri]);
+                result.learnEpVersion.circles.push(SSMockupCircles[uri]);
         }
         for( var uri in SSMockupOrgaEntities) {
             if( SSMockupOrgaEntities[uri]['learnEpVersionUri'] == learnEpVersionUri)
-                result.organize.push(SSMockupOrgaEntities[uri]);
+                result.learnEpVersion.entities.push(SSMockupOrgaEntities[uri]);
         }
         if(result.length == 0 ) {
             errorHandler(result);
