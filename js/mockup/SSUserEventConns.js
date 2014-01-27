@@ -80,7 +80,7 @@ var SSMockupUserEvents = [
         'resource': MockupNS + 'doc/document01',
         'user': MockupNS + 'user/peter/',
         'content': 'Create Private Record',
-        'timestamp': '2014-01-22T15:30:20+02:00'
+        'timestamp': '2014-01-27T12:30:20+02:00'
     },
     {
         'uri': 'sss:#useraction22',

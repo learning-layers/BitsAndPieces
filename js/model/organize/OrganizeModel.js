@@ -19,17 +19,18 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
         },
         createItem: function(organize, item, options, type, relation) {
             options = options || {};
+            this.LOG.debug('options', options);
             if( !item.isEntity) item = new this.vie.Entity(item);
             item.set({
                 '@type': type,
             }, _.extend(options));
-            item.set(Voc.belongsToOrganize , organize.getSubject());
+            item.set(Voc.belongsToOrganize, organize.getSubject(), options);
 
             this.vie.entities.addOrUpdate(item);
             var items = Backbone.Model.prototype.get.call(
                 organize, this.vie.namespaces.uri(relation));
             (items = _.clone(items)).push(item.getSubject());
-            organize.set(relation, items);
+            organize.set(relation, items, options);
             var vie = this.vie;
             this.vie.save({
                 'entity' : item

@@ -15,25 +15,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
         initialize: function() {
 
             this.EntityView = this.options.EntityView;
-            this.listenTo(this.model, 'change', this.filter);
+            this.listenTo(this.model, 'change', this.changeStuff);
             this.views = {};
-
-            //this.orgaEntityCollection.on('add', this.addEntity, this);
-            //this.circleCollection.on('add', this.addCircle, this);
-            //this.orgaEntityCollection.on('change', this.changeEntity, this);
-            //this.circleCollection.on('change', this.changeCircle, this);
-            //this.orgaEntityCollection.on('remove', this.removeEntity, this);
-            //this.circleCollection.on('remove', this.removeCircle, this);
-
-            //this.listenTo(this.orgaEntityCollection, 'add', this.addEntity);
-            //this.listenTo(this.circleCollection, 'add', this.addCircle);
-            //this.listenTo(this.orgaEntityCollection, 'change', this.changeEntity);
-            //this.listenTo(this.circleCollection, 'change', this.changeCircle);
-            //this.listenTo(this.orgaEntityCollection, 'remove', this.removeEntity);
-            //this.listenTo(this.circleCollection, 'remove', this.removeCircle);
-            //this.collection.on('change', this.changeEntity);
-            //this.collection.on('remove', this.removeEntity);
-            //this.collection.on('reset', this.refreshEntities);
 
             this.$el = $(this.el);
             this.$el.empty();
@@ -42,7 +25,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.organize = new Organize();
 
         },
-        filter: function(model, collection, options) {
+        changeStuff: function(model, options) {
+            this.LOG.debug('options', options);
+            if( options && options.by === this ) return;
             this.LOG.debug('filter change of ' + model.getSubject());
             var changed = model.changedAttributes();
             this.LOG.debug('changed: ', JSON.stringify(changed));
@@ -69,7 +54,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
                     a = OrganizeView.model.vie.entities.get(a);
                     //OrganizeView.listenTo(a, 'change', OrganizeView['change'+kind]);
                     //OrganizeView.listenTo(a, 'destroy', OrganizeView.['remove' + kind]);
-                    OrganizeView['add'+ kind](a, collection, options);
+                    OrganizeView['add'+ kind](a, OrganizeView.model.vie.entities, options);
                 });
             }
         },

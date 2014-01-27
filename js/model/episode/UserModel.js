@@ -11,7 +11,7 @@ define(['logger', 'voc', 'model/episode/EpisodeModel'], function(Logger, Voc, Ep
          */
         filter: function(model, collection, options) {
             if( this.vie.namespaces.curie(model.get('@type').id) === Voc.USER ) {
-                this.fetchEpisodes(model);
+                //this.fetchEpisodes(model);
                 /*
                 model.on('change:' 
                     + this.vie.namespaces.uri(Voc.CURRENTVERSION), 
@@ -46,13 +46,6 @@ define(['logger', 'voc', 'model/episode/EpisodeModel'], function(Logger, Voc, Ep
                     }
                 }
             );
-        },
-        setCurrentVersion: function(value) {
-            var version = this.get('currentVersion');
-            if( version && version.isEntity ) version = version.getSubject();
-            this.LOG.debug('version', version, '= value ', value, '?');
-            if( value && value != version)
-                this.save('currentVersion', value);
         }
     };
 });

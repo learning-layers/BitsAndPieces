@@ -10,6 +10,7 @@ define(['logger', 'voc', 'underscore', 'model/episode/VersionModel'], function(L
          * Filters entities from added entities to vie.entities
          */
         filter: function(model, collection, options) {
+            if( options && options.by === this ) return;
             if( this.vie.namespaces.curie(model.get('@type').id) === Voc.EPISODE ) {
                 this.LOG.debug('episode added', model);
                 this.fetchVersions(model);
@@ -51,16 +52,11 @@ define(['logger', 'voc', 'underscore', 'model/episode/VersionModel'], function(L
             newEpisode.set(Voc.belongsToUser, user.getSubject());
             newEpisode.set('@type', Voc.EPISODE);
             newEpisode.set(Voc.label, "New Episode");
+            this.vie.entities.addOrUpdate(newEpisode, {'by': this});
+            VersionModel.newVersion(newEpisode, fromVersion);
 
-            var vie = this.vie;
-            this.vie.save({
-                'entity' : newEpisode
-            }).from('sss').execute().success(
-                function(episode) {
-                    vie.entities.addOrUpdate(episode);
-                    VersionModel.newVersion(episode, fromVersion);
-                }
-            );
+            newEpisode.save();
+
             return newEpisode;
         },
         clone: function(fromEpisode) {

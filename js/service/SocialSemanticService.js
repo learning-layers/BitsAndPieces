@@ -75,6 +75,58 @@ define(['logger', 'vie', 'underscore', 'voc',
                 this.vie.namespaces.add(key, val);
             }
         },
+        /**
+         * Waits for the given blank node references in arguments to turn into URIs.
+         * Then executes the last argument as a callback with the adapted arguments as parameter.
+         */
+        onUrisReady: function() {
+            this.LOG.debug('onUrisReady', _.clone(arguments));
+            var that = this,
+                wait = false,
+                args = _.initial(arguments),
+                callback = _.last(arguments),
+                entity;
+            _.each(args, function(arg) {
+                if( wait || !arg ) return;
+                wait = arg.isBlankNode();
+            });
+            if( !wait ) {
+                this.LOG.debug('callback immediately, args = ', args);
+                callback.apply(this, args);
+                return;
+            }
+
+            // there is some blank node reference:
+            var j, waitFor = 0;
+            _.each(args, function(arg) {
+                that.LOG.debug('parsing arg', arg);
+                if( !arg ) return;
+
+                if( arg.isBlankNode() ) {
+                    entity = that.vie.entities.get(arg);
+                    if( !entity ) return;
+
+                    that.LOG.debug('change listener for', entity );
+                    entity.once('change:' + entity.idAttribute, 
+                        function(ent, value) {
+                            that.LOG.debug('changed from ', arg, 'to', value);
+                            // replace argument by new URI
+                            for( j = 0; j < args.length; j++ ) {
+                                if( args[j] === arg ) {
+                                    args[j] = that.vie.namespaces.uri(value);
+                                }
+                            };
+                            that.LOG.debug('args = ', _.clone(args));
+                            that.LOG.debug('waitFor = ', waitFor);
+                            if( --waitFor == 0 ) {
+                                callback.apply(that, args);
+                            }
+                        });
+                    waitFor++;
+                    that.LOG.debug('waitFor = ', waitFor);
+                }
+            });
+        },
         analyze: function(analyzable) {
             // in a certain way, analyze is the same as load
             return this.load(analyzable);
@@ -114,56 +166,61 @@ define(['logger', 'vie', 'underscore', 'voc',
             this.LOG.debug("typeCurie", typeCurie);
             var service = this;
             if( !typeCurie || typeCurie == this.types.THING || typeCurie == this.types.DOCUMENT ) {
-                new SSEntityDescGet().handle(
-                    function(object) {
-                        service.LOG.debug("handle result of EntityDescGet");
-                        service.LOG.debug("object", object);
-                        var entity = service.fixForVIE(object['entityDesc'], 'entityUri', 'entityType');
-                        var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
-                        var type = vieEntity.get('@type');
-                        if( type && type.id && service.vie.namespaces.curie(type.id) == service.types.USER )  {
-                            new SSLearnEpVersionCurrentGet().handle(
-                                function(object2) {
-                                    service.LOG.debug("handle result of VersionCurrentGet");
-                                    service.LOG.debug("object", object2);
-                                    vieEntity.set({
-                                        'currentVersion': object2['learnEpVersion']['learnEpVersionUri']});
+                this.onUrisReady(
+                    this.user,
+                    loadable.options.resource,
+                    function(userUri, resourceUri) {
+                        new SSEntityDescGet().handle(
+                            function(object) {
+                                service.LOG.debug("handle result of EntityDescGet");
+                                service.LOG.debug("object", object);
+                                var entity = service.fixForVIE(object['entityDesc'], 'entityUri', 'entityType');
+                                var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
+                                var type = vieEntity.get('@type');
+                                if( type && type.id && service.vie.namespaces.curie(type.id) == service.types.USER )  {
+                                    new SSLearnEpVersionCurrentGet().handle(
+                                        function(object2) {
+                                            service.LOG.debug("handle result of VersionCurrentGet");
+                                            service.LOG.debug("object", object2);
+                                            vieEntity.set({
+                                                'currentVersion': object2['learnEpVersion']['learnEpVersionUri']});
+                                            loadable.resolve(vieEntity);
+                                        },
+                                        function(object2) {
+                                            service.LOG.warn("error:", object2);
+                                            loadable.resolve(vieEntity);
+                                        },
+                                        vieEntity.getSubject(),//this.vie.namespaces.uri(this.user),
+                                        service.userKey 
+                                        );
+                                } else if( type && type.id && service.vie.namespaces.curie(type.id) == service.types.USEREVENT )  {
+                                    new SSUserEventGet().handle(
+                                        function(object2) {
+                                            service.LOG.debug("handle result of UserEventTypeGet");
+                                            service.LOG.debug("object", object2);
+                                            var entity = service.fixForVIE(object2['uE'], 'uri');
+                                            var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
+                                            loadable.resolve(vieEntity);
+                                        },
+                                        function(object2) {
+                                            service.LOG.warn("error:", object2);
+                                            loadable.resolve(vieEntity);
+                                        },
+                                        service.vie.namespaces.uri(service.user),
+                                        service.userKey ,
+                                        vieEntity.getSubject()
+                                        );
+                                } else
                                     loadable.resolve(vieEntity);
-                                },
-                                function(object2) {
-                                    service.LOG.warn("error:", object2);
-                                    loadable.resolve(vieEntity);
-                                },
-                                vieEntity.getSubject(),//this.vie.namespaces.uri(this.user),
-                                service.userKey 
-                                );
-                        } else if( type && type.id && service.vie.namespaces.curie(type.id) == service.types.USEREVENT )  {
-                            new SSUserEventGet().handle(
-                                function(object2) {
-                                    service.LOG.debug("handle result of UserEventTypeGet");
-                                    service.LOG.debug("object", object2);
-                                    var entity = service.fixForVIE(object2['uE'], 'uri');
-                                    var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
-                                    loadable.resolve(vieEntity);
-                                },
-                                function(object2) {
-                                    service.LOG.warn("error:", object2);
-                                    loadable.resolve(vieEntity);
-                                },
-                                service.vie.namespaces.uri(service.user),
-                                service.userKey ,
-                                vieEntity.getSubject()
-                                );
-                        } else
-                            loadable.resolve(vieEntity);
-                    },
-                    function(object) {
-                        service.LOG.warn("error:",object);
-                    },
-                    this.vie.namespaces.uri(this.user),
-                    this.userKey,
-                    this.vie.namespaces.uri(loadable.options.resource)
-                );
+                            },
+                            function(object) {
+                                service.LOG.warn("error:",object);
+                            },
+                            userUri,
+                            service.userKey,
+                            resourceUri
+                        );
+                });
             } else {
                 this.LOG.warn("SocialSemanticService load for " + typeCurie + " not implemented");
             }
@@ -179,114 +236,129 @@ define(['logger', 'vie', 'underscore', 'voc',
             var service = this;
             if( typeCurie == this.types.USEREVENT) {
                 this.LOG.debug("SSUserEventsGet");
-                new SSUserEventsGet().handle(
-                    function(objects) {
-                        service.LOG.debug("handle result of userEventsOfUser");
-                        service.LOG.debug("objects", objects);
-                        var entityInstances = [];
-                        _.each(objects['uEs'], function(object) {
-                            var entity = service.fixForVIE(object);
-                            if(_.contains([
-                                    "learnEpOpenEpisodesDialog",
-                                    "learnEpSwitchEpisode",
-                                    "learnEpSwitchVersion",
-                                    "learnEpRenameEpisode",
-                                    "learnEpCreateNewEpisodeFromScratch",
-                                    "learnEpCreateNewEpisodeFromVersion",
-                                    "learnEpCreateNewVersion",
-                                    "timelineChangeTimelineRange",
-                                    "learnEpViewEntityDetails",
-                                    "viewEntity",
-                                    "learnEpDropOrganizeEntity",
-                                    "learnEpMoveOrganizeEntity",
-                                    "learnEpDeleteOrganizeEntity",
-                                    "learnEpCreateOrganizeCircle",
-                                    "learnEpChangeOrganizeCircle",
-                                    "learnEpRenameOrganizeCircle",
-                                    "learnEpDeleteOrganizeCircle"], entity['@type'])) {
-                                    service.LOG.debug(entity['@type'], 'filtered');
-                                    return;
-                                    }
-                            var vieEntity = new service.vie.Entity(entity);
-                            entityInstances.push(vieEntity);
-                        });
-                        loadable.resolve(entityInstances);
-                    },
-                    function(object) {
-                        service.LOG.warn("error:");
-                        service.LOG.warn(object);
-                    },
-                    this.vie.namespaces.uri(this.user),
-                    this.userKey,
-                    this.vie.namespaces.uri(loadable.options.forUser),
-                    loadable.options.resource ? this.vie.namespaces.uri(loadable.options.resource) : null,
-                    loadable.options.start,
-                    loadable.options.end
-                );
+                this.onUrisReady(
+                    this.user,
+                    loadable.options.forUser,
+                    loadable.options.resource,
+                    function(userUri, forUserUri, resourceUri) {
+                        new SSUserEventsGet().handle(
+                            function(objects) {
+                                service.LOG.debug("handle result of userEventsOfUser");
+                                service.LOG.debug("objects", objects);
+                                var entityInstances = [];
+                                _.each(objects['uEs'], function(object) {
+                                    var entity = service.fixForVIE(object);
+                                    if(_.contains([
+                                            "learnEpOpenEpisodesDialog",
+                                            "learnEpSwitchEpisode",
+                                            "learnEpSwitchVersion",
+                                            "learnEpRenameEpisode",
+                                            "learnEpCreateNewEpisodeFromScratch",
+                                            "learnEpCreateNewEpisodeFromVersion",
+                                            "learnEpCreateNewVersion",
+                                            "timelineChangeTimelineRange",
+                                            "learnEpViewEntityDetails",
+                                            "viewEntity",
+                                            "learnEpDropOrganizeEntity",
+                                            "learnEpMoveOrganizeEntity",
+                                            "learnEpDeleteOrganizeEntity",
+                                            "learnEpCreateOrganizeCircle",
+                                            "learnEpChangeOrganizeCircle",
+                                            "learnEpRenameOrganizeCircle",
+                                            "learnEpDeleteOrganizeCircle"], entity['@type'])) {
+                                            service.LOG.debug(entity['@type'], 'filtered');
+                                            return;
+                                            }
+                                    var vieEntity = new service.vie.Entity(entity);
+                                    entityInstances.push(vieEntity);
+                                });
+                                loadable.resolve(entityInstances);
+                            },
+                            function(object) {
+                                service.LOG.warn("error:");
+                                service.LOG.warn(object);
+                            },
+                            userUri,
+                            service.userKey,
+                            forUserUri,
+                            resourceUri ? resourceUri : null,
+                            loadable.options.start,
+                            loadable.options.end
+                        );
+                });
             } else if( typeCurie == this.types.EPISODE ) {
                 this.LOG.debug("SSLearnEpsGet");
-                new SSLearnEpsGet().handle(
-                    function(objects) {
-                        service.LOG.debug("handle result of epsGet");
-                        service.LOG.debug("objects", objects);
-                        var entityInstances = [];
-                        _.each(objects['learnEps'], function(object) {
-                            var entity = service.fixForVIE(object, 'learnEpUri');
-                            entity[Voc.belongsToUser] = entity['user'];
-                            delete entity['user'];
-                            var vieEntity = new service.vie.Entity(entity);
-                            vieEntity.set('@type', Voc.EPISODE);
-                            entityInstances.push(vieEntity);
-                        });
-                        loadable.resolve(entityInstances);
-                    },
-                    function(object) {
-                        service.LOG.warn("error on SSLearnEpsGet (perhaps just empty):");
-                        service.LOG.warn(object);
-                        loadable.resolve([]);
-                    },
-                    this.vie.namespaces.uri(this.user),
-                    this.userKey
-                );
+                this.onUrisReady(
+                    this.user,
+                    function(userUri) {
+                        new SSLearnEpsGet().handle(
+                            function(objects) {
+                                service.LOG.debug("handle result of epsGet");
+                                service.LOG.debug("objects", objects);
+                                var entityInstances = [];
+                                _.each(objects['learnEps'], function(object) {
+                                    var entity = service.fixForVIE(object, 'learnEpUri');
+                                    entity[Voc.belongsToUser] = entity['user'];
+                                    delete entity['user'];
+                                    var vieEntity = new service.vie.Entity(entity);
+                                    vieEntity.set('@type', Voc.EPISODE);
+                                    entityInstances.push(vieEntity);
+                                });
+                                loadable.resolve(entityInstances);
+                            },
+                            function(object) {
+                                service.LOG.warn("error on SSLearnEpsGet (perhaps just empty):");
+                                service.LOG.warn(object);
+                                loadable.resolve([]);
+                            },
+                            userUri,
+                            service.userKey
+                        );
+                });
 
             } else if( typeCurie == this.types.VERSION ) {
                 this.LOG.debug("SSLearnEpVersionsGet");
-                new SSLearnEpVersionsGet().handle(
-                    function(objects) {
-                        service.LOG.debug("handle result of epVersionsGet");
-                        service.LOG.debug("objects", objects);
-                        var entityInstances = [];
-                        _.each(objects['learnEpVersions'], function(object) {
-                            var entity = service.fixForVIE(object, 'learnEpVersionUri');
-                            entity[Voc.belongsToEpisode] = entity['learnEpUri'];
-                            delete entity['learnEpUri'];
-                            var vieEntity = new service.vie.Entity(entity);
-                            vieEntity.set('@type', Voc.VERSION);
-                            entityInstances.push(vieEntity);
-                            // each version has a organize component
-                            // that would look like as if this object already exists on the server
-                            var organize = {
-                                'uri' : service.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget'),
-                                'type' : service.vie.namespaces.uri('sss:' + service.types.ORGANIZE),
-                                'circleType' : service.vie.namespaces.uri('sss:' + service.types.CIRCLE),
-                                'orgaEntityType' : service.vie.namespaces.uri('sss:' + service.types.ORGAENTITY),
-                                'belongsToVersion' : vieEntity.getSubject()
-                            };
-                            // we buffer that object for explicit retrieval of organize
-                            // and store it in memory as it would come from the server
-                            service.buffer[organize.uri] = organize;
+                this.onUrisReady(
+                    this.user,
+                    loadable.options.episode,
+                    function(userUri, episodeUri) {
+                        new SSLearnEpVersionsGet().handle(
+                            function(objects) {
+                                service.LOG.debug("handle result of epVersionsGet");
+                                service.LOG.debug("objects", objects);
+                                var entityInstances = [];
+                                _.each(objects['learnEpVersions'], function(object) {
+                                    var entity = service.fixForVIE(object, 'learnEpVersionUri');
+                                    entity[Voc.belongsToEpisode] = entity['learnEpUri'];
+                                    delete entity['learnEpUri'];
+                                    var vieEntity = new service.vie.Entity(entity);
+                                    vieEntity.set('@type', Voc.VERSION);
+                                    entityInstances.push(vieEntity);
+                                    // each version has a organize component
+                                    // that would look like as if this object already exists on the server
+                                    var organize = {
+                                        'uri' : service.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget'),
+                                        'type' : service.vie.namespaces.uri('sss:' + service.types.ORGANIZE),
+                                        'circleType' : service.vie.namespaces.uri('sss:' + service.types.CIRCLE),
+                                        'orgaEntityType' : service.vie.namespaces.uri('sss:' + service.types.ORGAENTITY),
+                                        'belongsToVersion' : vieEntity.getSubject()
+                                    };
+                                    // we buffer that object for explicit retrieval of organize
+                                    // and store it in memory as it would come from the server
+                                    service.buffer[organize.uri] = organize;
 
-                        });
-                        loadable.resolve(entityInstances);
-                    },
-                    function(object) {
-                        service.LOG.warn("error:");
-                        service.LOG.warn(object);
-                    },
-                    this.vie.namespaces.uri(this.user),
-                    this.userKey,
-                    this.vie.namespaces.uri(loadable.options.episode)
-                );
+                                });
+                                loadable.resolve(entityInstances);
+                            },
+                            function(object) {
+                                service.LOG.warn("error:");
+                                service.LOG.warn(object);
+                            },
+                            userUri,
+                            service.userKey,
+                            episodeUri
+                        );
+                });
 
             } else if (typeCurie == this.types.WIDGET ){
                 // fetches Organize and Timeline stuff manually
@@ -318,38 +390,43 @@ define(['logger', 'vie', 'underscore', 'voc',
                     resolve('versionget');
 
                 this.LOG.log("SSLearnEPGetTimelineState");
-                new SSLearnEpVersionGetTimelineState().handle(
-                    function(object) {
-                        service.LOG.debug("handle result of LearnEpGetTimelineState");
-                        service.LOG.debug("object", object);
-                        if( !object['learnEpTimelineState']) {
-                            resolve('timelineget');
-                            return;
-                        }
-                        object = object['learnEpTimelineState'];
-                        var vieEntity = new service.vie.Entity(service.fixForVIE({
-                            'uri' : object.learnEpTimelineStateUri,
-                            'type' : service.types.TIMELINE,
-                            'belongsToUser' : service.vie.namespaces.uri(service.user),
-                            'timeAttr': service.vie.namespaces.uri('sss:timestamp'),
-                            'predicate' : service.vie.namespaces.uri('sss:userEvent'),
-                            'belongsToVersion' : service.vie.namespaces.uri(loadable.options.version),
-                            'start' : object.startTime,                            
-                            'end' : object.endTime
-                        }));
+                this.onUrisReady(
+                    this.user,
+                    loadable.options.version,
+                    function(userUri, versionUri) {
+                        new SSLearnEpVersionGetTimelineState().handle(
+                            function(object) {
+                                service.LOG.debug("handle result of LearnEpGetTimelineState");
+                                service.LOG.debug("object", object);
+                                if( !object['learnEpTimelineState']) {
+                                    resolve('timelineget');
+                                    return;
+                                }
+                                object = object['learnEpTimelineState'];
+                                var vieEntity = new service.vie.Entity(service.fixForVIE({
+                                    'uri' : object.learnEpTimelineStateUri,
+                                    'type' : service.types.TIMELINE,
+                                    'belongsToUser' : service.vie.namespaces.uri(service.user),
+                                    'timeAttr': service.vie.namespaces.uri('sss:timestamp'),
+                                    'predicate' : service.vie.namespaces.uri('sss:userEvent'),
+                                    'belongsToVersion' : service.vie.namespaces.uri(loadable.options.version),
+                                    'start' : object.startTime,                            
+                                    'end' : object.endTime
+                                }));
 
-                        //service.buffer[vieEntity.getSubject()] = object;
-                        //loadable.resolve(vieEntity);
-                        resolve('timelineget', vieEntity);
-                    },
-                    function(object) {
-                        service.LOG.warn("error:", object);
-                        resolve('timelineget');
-                    },
-                    this.vie.namespaces.uri(this.user),
-                    this.userKey,
-                    this.vie.namespaces.uri(loadable.options.version)
-                );
+                                //service.buffer[vieEntity.getSubject()] = object;
+                                //loadable.resolve(vieEntity);
+                                resolve('timelineget', vieEntity);
+                            },
+                            function(object) {
+                                service.LOG.warn("error:", object);
+                                resolve('timelineget');
+                            },
+                            userUri,
+                            service.userKey,
+                            versionUri
+                        );
+                });
 
             } else if (typeCurie == this.types.CIRCLE){
                 if (!loadable.options.organize) {
@@ -363,41 +440,46 @@ define(['logger', 'vie', 'underscore', 'voc',
                 var version = this.buffer[loadable.options.organize]['belongsToVersion']; 
                 this.LOG.debug('version found', version);
                 var entities = [];
-                new SSLearnEpVersionGet().handle(
-                    function(object) {
-                        service.LOG.debug("handle result of LearnEpVersionGet");
-                        service.LOG.debug("objects", object);
-                        var key, idAttr;
-                        _.each(object['learnEpVersion']['circles'], function(item){
-                            var fixEntity = service.fixForVIE(item, 'learnEpCircleUri');
-                            fixEntity.Label = item['label'];
-                            fixEntity.LabelX = item['xLabel'];
-                            fixEntity.LabelY = item['yLabel'];
-                            fixEntity.rx = item['xR'];
-                            fixEntity.ry = item['yR'];
-                            fixEntity.cx = item['xC'];
-                            fixEntity.cy = item['yC'];
-                            delete fixEntity['label'];
-                            delete fixEntity['xLabel'];
-                            delete fixEntity['yLabel'];
-                            delete fixEntity['xR'];
-                            delete fixEntity['yR'];
-                            delete fixEntity['xC'];
-                            delete fixEntity['yC'];
-                            fixEntity.belongsToOrganize = loadable.options.organize;
-                            var vieEntity = new service.vie.Entity(fixEntity);
-                            vieEntity.set('@type', typeCurie);
-                            entities.push(vieEntity);
-                        });
-                        loadable.resolve(entities);
-                    },
-                    function(object) {
-                        service.LOG.warn("error:", object);
-                    },
-                    this.vie.namespaces.uri(this.user),
-                    this.userKey,
-                    version
-                );
+                this.onUrisReady(
+                    this.user,
+                    version,
+                    function(userUri, versionUri) {
+                        new SSLearnEpVersionGet().handle(
+                            function(object) {
+                                service.LOG.debug("handle result of LearnEpVersionGet");
+                                service.LOG.debug("objects", object);
+                                var key, idAttr;
+                                _.each(object['learnEpVersion']['circles'], function(item){
+                                    var fixEntity = service.fixForVIE(item, 'learnEpCircleUri');
+                                    fixEntity.Label = item['label'];
+                                    fixEntity.LabelX = item['xLabel'];
+                                    fixEntity.LabelY = item['yLabel'];
+                                    fixEntity.rx = item['xR'];
+                                    fixEntity.ry = item['yR'];
+                                    fixEntity.cx = item['xC'];
+                                    fixEntity.cy = item['yC'];
+                                    delete fixEntity['label'];
+                                    delete fixEntity['xLabel'];
+                                    delete fixEntity['yLabel'];
+                                    delete fixEntity['xR'];
+                                    delete fixEntity['yR'];
+                                    delete fixEntity['xC'];
+                                    delete fixEntity['yC'];
+                                    fixEntity.belongsToOrganize = loadable.options.organize;
+                                    var vieEntity = new service.vie.Entity(fixEntity);
+                                    vieEntity.set('@type', typeCurie);
+                                    entities.push(vieEntity);
+                                });
+                                loadable.resolve(entities);
+                            },
+                            function(object) {
+                                service.LOG.warn("error:", object);
+                            },
+                            userUri,
+                            service.userKey,
+                            versionUri
+                        );
+                });
             } else if (typeCurie == this.types.ORGAENTITY){
                 if (!loadable.options.organize) {
                     this.LOG.warn("no organize reference");
@@ -407,29 +489,34 @@ define(['logger', 'vie', 'underscore', 'voc',
                 //map organize id to version id
                 var version = this.buffer[loadable.options.organize][Voc.belongsToVersion]; 
                 var entities = [];
-                new SSLearnEpVersionGet().handle(
-                    function(object) {
-                        service.LOG.debug("handle result of LearnEpVersionGet");
-                        service.LOG.debug("objects", object);
-                        var key, idAttr;
-                        _.each(object['learnEpVersion']['entities'], function(item){
-                            var fixEntity = service.fixForVIE(item, 'learnEpEntityUri');
-                            fixEntity.resource = item['entityUri'];
-                            delete fixEntity['entityUri'];
-                            fixEntity.belongsToOrganize = loadable.options.organize;
-                            var vieEntity = new service.vie.Entity(fixEntity);
-                            vieEntity.set('@type', typeCurie);
-                            entities.push(vieEntity);
-                        });
-                        loadable.resolve(entities);
-                    },
-                    function(object) {
-                        service.LOG.warn("error:", object);
-                    },
-                    this.vie.namespaces.uri(this.user),
-                    this.userKey,
-                    version
-                );
+                this.onUrisReady(
+                    this.user,
+                    version,
+                    function(userUri, versionUri) {
+                        new SSLearnEpVersionGet().handle(
+                            function(object) {
+                                service.LOG.debug("handle result of LearnEpVersionGet");
+                                service.LOG.debug("objects", object);
+                                var key, idAttr;
+                                _.each(object['learnEpVersion']['entities'], function(item){
+                                    var fixEntity = service.fixForVIE(item, 'learnEpEntityUri');
+                                    fixEntity.resource = item['entityUri'];
+                                    delete fixEntity['entityUri'];
+                                    fixEntity.belongsToOrganize = loadable.options.organize;
+                                    var vieEntity = new service.vie.Entity(fixEntity);
+                                    vieEntity.set('@type', typeCurie);
+                                    entities.push(vieEntity);
+                                });
+                                loadable.resolve(entities);
+                            },
+                            function(object) {
+                                service.LOG.warn("error:", object);
+                            },
+                            userUri,
+                            service.userKey,
+                            versionUri,
+                        );
+                });
 
 
             } else {
@@ -466,24 +553,29 @@ define(['logger', 'vie', 'underscore', 'voc',
                 obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('TimelineWidget')
                                          : obj.uri;
                 this.buffer[obj.uri] = obj;
-                new SSLearnEpVersionSetTimelineState().handle(
-                        function(object) {
-                            service.LOG.debug("handle result of LearnEpVersionSetTimelinState");
-                            service.LOG.debug("object", object);
-                            if( entity.isNew() )
-                                savable.resolve({'uri':obj.uri}); //timeline was created
-                            else 
-                                savable.resolve(true); //timeline was updated
-                        },
-                        function(object) {
-                            service.LOG.warn("error:", object);
-                        },
-                        this.vie.namespaces.uri(this.user),
-                        this.userKey,
-                        obj[Voc.belongsToVersion],
-                        _.isDate(obj.start) ? (obj.start - 0) : obj.start,
-                        _.isDate(obj.end) ? (obj.end - 0) : obj.end
-                    );
+                this.onUrisReady(
+                    this.user,
+                    obj[Voc.belongsToVersion],
+                    function(userUri, versionUri) {
+                        new SSLearnEpVersionSetTimelineState().handle(
+                                function(object) {
+                                    service.LOG.debug("handle result of LearnEpVersionSetTimelinState");
+                                    service.LOG.debug("object", object);
+                                    if( entity.isNew() )
+                                        savable.resolve({'uri':obj.uri}); //timeline was created
+                                    else 
+                                        savable.resolve(true); //timeline was updated
+                                },
+                                function(object) {
+                                    service.LOG.warn("error:", object);
+                                },
+                                userUri,
+                                service.userKey,
+                                versionUri,
+                                _.isDate(obj.start) ? (obj.start - 0) : obj.start,
+                                _.isDate(obj.end) ? (obj.end - 0) : obj.end
+                            );
+                });
             } else if( typeCurie == this.types.ORGANIZE ) {
                 this.LOG.debug("saving organize");
                 var obj = this.fixFromVIE(entity);
@@ -497,59 +589,72 @@ define(['logger', 'vie', 'underscore', 'voc',
             } else if( typeCurie == this.types.EPISODE ) {
                 this.LOG.debug("saving episode");
                 if( entity.isNew() ) {
-                    new SSLearnEpCreate().handle(
-                            function(object) {
-                                service.LOG.debug("handle result of LearnEpCreate");
-                                service.LOG.debug("object", object);
-                                savable.resolve({'uri':object['learnEpUri']});
-                            },
-                            function(object) {
-                                service.LOG.warn("error:");
-                                service.LOG.warn("object", object);
-                                savable.reject(entity);
-                            },
-                            this.vie.namespaces.uri(this.user),
-                            this.userKey,
-                            entity.get('label'),
-                            'private'
-                        );
+                    this.onUrisReady(
+                        this.user,
+                        function(userUri) {
+                            new SSLearnEpCreate().handle(
+                                function(object) {
+                                    service.LOG.debug("handle result of LearnEpCreate");
+                                    service.LOG.debug("object", object);
+                                    savable.resolve({'uri':object['learnEpUri']});
+                                },
+                                function(object) {
+                                    service.LOG.warn("error:");
+                                    service.LOG.warn("object", object);
+                                    savable.reject(entity);
+                                },
+                                userUri,
+                                service.userKey,
+                                entity.get('label'),
+                                'private'
+                            );
+                    });
                 } else {
-                    new SSEntityLabelSet().handle(
-                            function(object) {
-                                service.LOG.debug("handle result of SSLabelSet");
-                                service.LOG.debug("object", object);
-                                savable.resolve(object);
-                            },
-                            function(object) {
-                                service.LOG.warn("error:");
-                                service.LOG.warn("object", object);
-                                savable.reject(entity);
-                            },
-                            this.vie.namespaces.uri(this.user),
-                            this.userKey,
-                            entity.getSubject(),
-                            entity.get('label')
-                        );
+                    this.onUrisReady(
+                        this.user,
+                        entity.getSubject(),
+                        function(userUri, entityUri){
+                            new SSEntityLabelSet().handle(
+                                function(object) {
+                                    service.LOG.debug("handle result of SSLabelSet");
+                                    service.LOG.debug("object", object);
+                                    savable.resolve(object);
+                                },
+                                function(object) {
+                                    service.LOG.warn("error:");
+                                    service.LOG.warn("object", object);
+                                    savable.reject(entity);
+                                },
+                                userUri,
+                                service.userKey,
+                                entityUri
+                            );
+                    });
                 }
             } else if( typeCurie == this.types.VERSION ) {
                 this.LOG.debug("saving version");
                 var episode = entity.get(Voc.belongsToEpisode);
                 if( episode.isEntity ) episode = episode.getSubject();
-                new SSLearnEpVersionCreate().handle(
-                        function(object) {
-                            service.LOG.debug("handle result of LearnEpCreate");
-                            service.LOG.debug("object", object);
-                            savable.resolve({'uri':object['learnEpVersionUri']});
-                        },
-                        function(object) {
-                            service.LOG.warn("error:");
-                            service.LOG.warn("object", object);
-                            savable.reject(entity);
-                        },
-                        this.vie.namespaces.uri(this.user),
-                        this.userKey,
-                        episode
-                    );
+                this.onUrisReady(
+                    this.user,
+                    episode,
+                    function( userUri, episodeUri) {
+                        new SSLearnEpVersionCreate().handle(
+                                function(object) {
+                                    service.LOG.debug("handle result of LearnEpVersionCreate");
+                                    service.LOG.debug("object", object);
+                                    savable.resolve({'uri':object['learnEpVersionUri']});
+                                },
+                                function(object) {
+                                    service.LOG.warn("error:");
+                                    service.LOG.warn("object", object);
+                                    savable.reject(entity);
+                                },
+                                userUri,
+                                service.userKey,
+                                episodeUri
+                            );
+                });
             } else if( typeCurie == this.types.CIRCLE ) {
                 this.LOG.debug("saving circle");
                 var organize = entity.get(Voc.belongsToOrganize);
@@ -568,53 +673,63 @@ define(['logger', 'vie', 'underscore', 'voc',
                 var fixEntity = this.fixFromVIE(entity);
 
                 if( entity.isNew() )
-                    new SSLearnEpVersionAddCircle().handle(
-                            function(object) {
-                                service.LOG.debug("handle result of LearnEpVersionAddCircle");
-                                service.LOG.debug("object", object);
-                                savable.resolve({'uri': object['learnEpCircleUri']});
-                            },
-                            function(object) {
-                                service.LOG.warn("error:");
-                                service.LOG.warn("object", object);
-                                savable.reject(entity);
-                            },
-                            this.vie.namespaces.uri(this.user),
-                            this.userKey,
-                            version,
-                            fixEntity.Label,
-                            fixEntity.LabelX,
-                            fixEntity.LabelY,
-                            fixEntity.rx,
-                            fixEntity.ry,
-                            fixEntity.cx,
-                            fixEntity.cy
+                    this.onUrisReady(
+                        this.user,
+                        version,
+                        function(userUri, versionUri) {
+                            new SSLearnEpVersionAddCircle().handle(
+                                function(object) {
+                                    service.LOG.debug("handle result of LearnEpVersionAddCircle");
+                                    service.LOG.debug("object", object);
+                                    savable.resolve({'uri': object['learnEpCircleUri']});
+                                },
+                                function(object) {
+                                    service.LOG.warn("error:");
+                                    service.LOG.warn("object", object);
+                                    savable.reject(entity);
+                                },
+                                userUri,
+                                service.userKey,
+                                versionUri,
+                                fixEntity.Label,
+                                fixEntity.LabelX,
+                                fixEntity.LabelY,
+                                fixEntity.rx,
+                                fixEntity.ry,
+                                fixEntity.cx,
+                                fixEntity.cy
 
-                        );
+                            );
+                    });
                 else
-                    new SSLearnEpVersionUpdateCircle().handle(
-                            function(object) {
-                                service.LOG.debug("handle result of LearnEpVersionUpdateCircle");
-                                service.LOG.debug("object", object);
-                                savable.resolve(object);
-                            },
-                            function(object) {
-                                service.LOG.warn("error:");
-                                service.LOG.warn("object", object);
-                                savable.reject(entity);
-                            },
-                            this.vie.namespaces.uri(this.user),
-                            this.userKey,
-                            fixEntity.uri,
-                            fixEntity.Label,
-                            fixEntity.LabelX,
-                            fixEntity.LabelY,
-                            fixEntity.rx,
-                            fixEntity.ry,
-                            fixEntity.cx,
-                            fixEntity.cy
+                    this.onUrisReady(
+                        this.user,
+                        fixEntity.uri,
+                        function(userUri, uriUri ) {
+                            new SSLearnEpVersionUpdateCircle().handle(
+                                function(object) {
+                                    service.LOG.debug("handle result of LearnEpVersionUpdateCircle");
+                                    service.LOG.debug("object", object);
+                                    savable.resolve(object);
+                                },
+                                function(object) {
+                                    service.LOG.warn("error:");
+                                    service.LOG.warn("object", object);
+                                    savable.reject(entity);
+                                },
+                                userUri,
+                                service.userKey,
+                                uriUri,
+                                fixEntity.Label,
+                                fixEntity.LabelX,
+                                fixEntity.LabelY,
+                                fixEntity.rx,
+                                fixEntity.ry,
+                                fixEntity.cx,
+                                fixEntity.cy
 
-                        );
+                            );
+                    });
 
             } else if( typeCurie == this.types.ORGAENTITY ) {
                 this.LOG.debug("saving orgaentity");
@@ -634,62 +749,79 @@ define(['logger', 'vie', 'underscore', 'voc',
                 var fixEntity = this.fixFromVIE(entity);
 
                 if(entity.isNew() )
-                    new SSLearnEpVersionAddEntity().handle(
-                            function(object) {
-                                service.LOG.debug("handle result of LearnEpVersionAddEntity");
-                                service.LOG.debug("object", object);
-                                savable.resolve({'uri': object['learnEpEntityUri']});
-                            },
-                            function(object) {
-                                service.LOG.warn("error:");
-                                service.LOG.warn("object", object);
-                                savable.reject(entity);
-                            },
-                            this.vie.namespaces.uri(this.user),
-                            this.userKey,
-                            version,
-                            fixEntity.resource,
-                            fixEntity.x,
-                            fixEntity.y
+                    this.onUrisReady(
+                        this.user,
+                        version,
+                        fixEntity.resource,
+                        function(userUri, versionUri, resourceUri){
+                            new SSLearnEpVersionAddEntity().handle(
+                                function(object) {
+                                    service.LOG.debug("handle result of LearnEpVersionAddEntity");
+                                    service.LOG.debug("object", object);
+                                    savable.resolve({'uri': object['learnEpEntityUri']});
+                                },
+                                function(object) {
+                                    service.LOG.warn("error:");
+                                    service.LOG.warn("object", object);
+                                    savable.reject(entity);
+                                },
+                                userUri,
+                                service.userKey,
+                                versionUri,
+                                resourceUri,
+                                fixEntity.x,
+                                fixEntity.y
 
-                        );
+                            );
+                    });
                 else
-                    new SSLearnEpVersionUpdateEntity().handle(
-                            function(object) {
-                                service.LOG.debug("handle result of LearnEpVersionUpdateEntity");
-                                service.LOG.debug("object", object);
-                                savable.resolve(object);
-                            },
-                            function(object) {
-                                service.LOG.warn("error:");
-                                service.LOG.warn("object", object);
-                                savable.reject(entity);
-                            },
-                            this.vie.namespaces.uri(this.user),
-                            this.userKey,
-                            fixEntity.uri,
-                            fixEntity.resource,
-                            fixEntity.x,
-                            fixEntity.y
+                    this.onUrisReady(
+                        this.user,
+                        fixEntity.uri,
+                        fixEntity.resource,
+                        function(userUri,uriUri,resourceUri){
+                            new SSLearnEpVersionUpdateEntity().handle(
+                                function(object) {
+                                    service.LOG.debug("handle result of LearnEpVersionUpdateEntity");
+                                    service.LOG.debug("object", object);
+                                    savable.resolve(object);
+                                },
+                                function(object) {
+                                    service.LOG.warn("error:");
+                                    service.LOG.warn("object", object);
+                                    savable.reject(entity);
+                                },
+                                userUri,
+                                service.userKey,
+                                uriUri,
+                                resourceUri,
+                                fixEntity.x,
+                                fixEntity.y
 
-                        );
+                            );
+                    });
 
             } else if ( typeCurie == this.types.USER ) {
                 var fixEntity = this.fixFromVIE(entity);
                 if( fixEntity.currentVersion ) {
-                    new SSLearnEpVersionCurrentSet().handle(
-                        function(object) {
-                            service.LOG.debug("handle result of VersionCurrentSet");
-                            service.LOG.debug("object", object);
-                            savable.resolve(true);
-                        },
-                        function(object) {
-                            service.LOG.warn("error:", object);
-                        },
-                        this.vie.namespaces.uri(this.user),
-                        this.userKey,
-                        fixEntity.currentVersion
-                        );
+                    this.onUrisReady(
+                        this.user,
+                        fixEntity.currentVersion,
+                        function(userUri, versionUri) {
+                            new SSLearnEpVersionCurrentSet().handle(
+                                function(object) {
+                                    service.LOG.debug("handle result of VersionCurrentSet");
+                                    service.LOG.debug("object", object);
+                                    savable.resolve(true);
+                                },
+                                function(object) {
+                                    service.LOG.warn("error:", object);
+                                },
+                                userUri,
+                                service.userKey,
+                                versionUri
+                            );
+                    });
                 } else
                     savable.resolve(true);
             } else {
@@ -721,7 +853,11 @@ define(['logger', 'vie', 'underscore', 'voc',
             var fixEntity = this.fixFromVIE(entity);
 
             if( typeCurie == this.types.CIRCLE ) {
-                new SSLearnEpVersionRemoveCircle().handle(
+                this.onUrisReady(
+                    this.user,
+                    fixEntity.uri,
+                    function(userUri,uriUri){
+                        new SSLearnEpVersionRemoveCircle().handle(
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionRemoveCircle");
                                 service.LOG.debug("object", object);
@@ -732,12 +868,17 @@ define(['logger', 'vie', 'underscore', 'voc',
                                 service.LOG.warn("object", object);
                                 removable.reject(entity);
                             },
-                            this.vie.namespaces.uri(this.user),
-                            this.userKey,
-                            fixEntity.uri
-                    );
+                            userUri,
+                            service.userKey,
+                            uriUri
+                        );
+                });
             } else if( typeCurie == this.types.ORGAENTITY ) {
-                new SSLearnEpVersionRemoveEntity().handle(
+                this.onUrisReady(
+                    this.user,
+                    fixEntity.uri,
+                    function(userUri,uriUri){
+                        new SSLearnEpVersionRemoveEntity().handle(
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionRemoveEntity");
                                 service.LOG.debug("object", object);
@@ -748,10 +889,11 @@ define(['logger', 'vie', 'underscore', 'voc',
                                 service.LOG.warn("object", object);
                                 removable.reject(entity);
                             },
-                            this.vie.namespaces.uri(this.user),
-                            this.userKey,
-                            fixEntity.uri
-                    );
+                            userUri,
+                            service.userKey,
+                            uriUri
+                        );
+                });
             } else {
                 this.LOG.warn("SocialSemanticService remove for " + typeCurie + " not implemented");
             }

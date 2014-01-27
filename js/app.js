@@ -11,11 +11,11 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     var AppLog = Logger.get('App');
     var AddLog = Logger.get('Add');
     Logger.get('UserModel').setLevel(Logger.OFF);
-    Logger.get('OrganizeModel').setLevel(Logger.DEBUG);
+    Logger.get('OrganizeModel').setLevel(Logger.OFF);
     Logger.get('VersionModel').setLevel(Logger.OFF);
-    Logger.get('EpisodeModel').setLevel(Logger.OFF);
+    Logger.get('EpisodeModel').setLevel(Logger.DEBUG);
     Logger.get('TimelineModel').setLevel(Logger.OFF);
-    Logger.get('TimelineView').setLevel(Logger.DEBUG);
+    Logger.get('TimelineView').setLevel(Logger.OFF);
     Logger.get('OrganizeView').setLevel(Logger.OFF);
     Logger.get('DetailView').setLevel(Logger.OFF);
     Logger.get('EpisodeManagerView').setLevel(Logger.OFF);
@@ -26,8 +26,8 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('UserView').setLevel(Logger.OFF);
     Logger.get('App').setLevel(Logger.DEBUG);
     Logger.get('Add').setLevel(Logger.OFF);
-    Logger.get('SocialSemanticService').setLevel(Logger.OFF);
-    Logger.get('Mockup').setLevel(Logger.OFF);
+    Logger.get('SocialSemanticService').setLevel(Logger.DEBUG);
+    Logger.get('Mockup').setLevel(Logger.DEBUG);
 
     var username = window.location.search.substring(1);
     if( !username) return alert('no username given!');
@@ -56,20 +56,40 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     TimelineModel.init(v);
     OrganizeModel.init(v);
 
-    var user = new v.Entity;
-    user.set(user.idAttribute, userParams.user);
-
-    var view = new AppView({
-        'model' : user,
-        'el' : 'body',
-        'vie' :  v
-    });
-
     $(document).ready(function(){
+        var user = new v.Entity;
+        user.set(user.idAttribute, userParams.user);
+        v.entities.addOrUpdate(user);
+
+        var view = new AppView({
+            'model' : user,
+            'el' : 'body',
+            'vie' :  v
+        });
+
         view.render();
-        user.fetch({'success': function(){
-            v.entities.addOrUpdate(user);
-        }});
+
+        // LOAD APPLICATION DATA
+        // user data
+        user.fetch();
+        // episode data 
+        v.load({
+            'user': user.getSubject(),
+            'type' : Voc.EPISODE
+        }).from('sss').execute().success(
+            function(episodes) {
+                AppLog.debug("success fetchEpisodes");
+                AppLog.debug("episodes", episodes);
+                /* If no episodes exist create a new one */
+                if( episodes.length === 0 ) {
+                    var ep = EpisodeModel.newEpisode(user); 
+                    AppLog.debug("episode created", ep);
+                } else {
+                    v.entities.addOrUpdate(episodes);
+                }
+            }
+        );
+        // more data is fetched by EpisodeModel
     });
 
     return null;

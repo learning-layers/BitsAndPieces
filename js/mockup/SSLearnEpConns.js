@@ -235,7 +235,7 @@ function SSLearnEpVersionAddCircle(){
             'xC' : xC,
             'yC' : yC
         }
-        setTimeout(function(){resultHandler({'uri':uri});}, MockupTimeout);
+        setTimeout(function(){resultHandler({'learnEpCircleUri':uri});}, MockupTimeout);
         return;
         errorHandler({'error':'Resource not found'});
   }
@@ -380,7 +380,7 @@ function SSLearnEpsGet(){
 	this.op = "learnEpsGet";
   
   this.handle = function(resultHandler, errorHandler, user, key){
-    MockupLog.debug("SSEPISODESGET")
+    MockupLog.debug("SSEPISODESGET", user)
     var result = [];
     for( var uri in SSMockupEpisodes) {
         if(SSMockupEpisodes[uri]['user'] == user)
