@@ -15,7 +15,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
             currentVersion: null,
             initialize: function() {
                 this.vie = this.options.vie;
-                this.currentVersion = this.model.get('currentVersion');
+                this.currentVersion = this.model.get(Voc.currentVersion);
 
                 this.vie.entities.on('add', this.filter, this );
                 this.model.on('change:' 
@@ -30,24 +30,27 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                     var version = model;
                     var AppView = this;
                     AppLog.debug('version added', model);
-                    this.fetchWidgets(model);
-                    var currentVersion = this.model.get('currentVersion');
+
+                    if(!model.isNew()) {
+                        this.fetchWidgets(model);
+                    }
 
                     // append listener to the version that its widget are drawn as soon as they are added to the version (or created)
                     version.on('change:' + this.vie.namespaces.uri(Voc.hasWidget), function(model, widgets, options) {
 
                         AppLog.debug('Version hasWidget changed', widgets);
                         AppView.drawWidgets(widgets);
-                        if( model === currentVersion) {
+                        if( model === AppView.currentVersion) {
                             AppView.showWidgets(widgets);
                         }
                     });
 
                     // if there is not currentVersion set, take the first one getting into this filter function
-                    if( !currentVersion ) {
-                        this.model.save('currentVersion', version.getSubject());
-                    // if the version matches the currentVersion, draw it
-                    } else if( version === currentVersion ) {
+                    if( !this.currentVersion ) {
+                        this.model.save(Voc.currentVersion, version.getSubject());
+                        this.currentVersion = version;
+                    // if the version matches the currentVersion, show it
+                    } else if( version === this.currentVersion ) {
                         AppLog.debug('version matches currentVersion');
                         this.episodeMgrView.render();
                         this.show(version);
@@ -104,7 +107,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                     widgetBody.append('<legend>Browse</legend>');
                     body = $('<div class="timelineFrame"></div>');
                     widgetBody.append(body);
-                    this.widgetFrame.prepend(widgetBody);
+                    this.widgetFrame.append(widgetBody);
                     this.createTimeline(widget, body);
                 } else if (ctype == 'Organize' ) {
                     widgetBody.append('<legend>Organize</legend>');
