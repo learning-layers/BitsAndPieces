@@ -40,9 +40,10 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                     version.on('change:' + this.vie.namespaces.uri(Voc.hasWidget), function(model, widgets, options) {
 
                         AppLog.debug('Version hasWidget changed', widgets);
-                        AppView.drawWidgets(widgets);
                         if( model === currentVersion) {
-                            AppView.showWidgets(widgets);
+                            AppView.show(model);
+                        } else {
+                            AppView.draw(model);
                         }
                     });
 
@@ -93,7 +94,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                     vie : this.vie
                 });
             },
-            drawWidget: function(widget) {
+            drawWidget: function(versionElem, widget) {
                 AppLog.debug('drawWidget', widget);
                 if( !widget.isEntity )
                     widget =  this.vie.entities.get(widget);
@@ -107,68 +108,67 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                     widgetBody.append('<legend>Browse</legend>');
                     body = $('<div class="timelineFrame"></div>');
                     widgetBody.append(body);
-                    this.widgetFrame.append(widgetBody);
+                    versionElem.prepend(widgetBody);
                     this.createTimeline(widget, body);
                 } else if (ctype == 'Organize' ) {
                     widgetBody.append('<legend>Organize</legend>');
                     body = $('<div tabindex="1" style="width:100%; height:400px"></div>');                     
                     widgetBody.append(body);
-                    this.widgetFrame.append(widgetBody);
+                    versionElem.append(widgetBody);
                     this.createOrganize(widget, body);
                 } else {
                     widget.once('change', this.drawWidget, this );
                 }
                 if( body ) {
-                    widget.on('change:' + widget.idAttribute, function(model, value, options) {
+                    widget.once('change:' + widget.idAttribute, function(model, value, options) {
                         AppLog.debug('change subject from', model.cid, 'to', value);
                         widgetBody.attr('about', value);
                     });
-                    widgetBody.css('visibility', 'hidden');
                 }
-            },
-
-            drawWidgets: function(widgets) {
-                AppLog.debug('drawWidgets, widgets', widgets);
-                var abouts = this.widgetFrame.children().map(function(i, c){
-                    return c.getAttribute('about');
-                });
-                var that = this;
-                _.each(widgets, function(widget_uri){
-                    if( !_.contains(abouts, widget_uri))
-                        that.drawWidget(widget_uri);
-                });
-            },
-            showWidgets: function(widgets) {
-                if( !widgets) return;
-                var that= this;
-                this.widgetFrame.children().css('visibility', 'hidden');
-                AppLog.debug('hide' , this.widgetFrame.children());
-                var selector = "fieldset[about=\"" + widgets.join("\"],fieldset[about=\"") + "\"]";
-                AppLog.debug('selector', selector);
-                AppLog.debug('fount' , this.widgetFrame.find(selector));
-                var elements = this.widgetFrame.find(selector);
-                elements.css('visibility', 'visible');
-                elements.detach();
-                this.widgetFrame.prepend(elements);
             },
             draw: function(version) {
                 AppLog.debug('drawing ', version.getSubject());
-                var widgets = version.get(Voc.hasWidget);
-                if( !widgets ) return;
-                widgets = widgets.map(function(w){
-                    return w.getSubject();
+                var versionElem = this.widgetFrame.children('*[about="'+version.getSubject()+'"]').first();
+                AppLog.debug('versionElem', versionElem);
+                if( versionElem.length === 0) {
+                    versionElem = $('<div about="'+version.getSubject()+'" rel="'+this.vie.namespaces.uri(Voc.hasWidget)+'"></div>');
+                    this.widgetFrame.append(versionElem);
+                    version.once('change:' + version.idAttribute, function(model, value, options) {
+                        AppLog.debug('change subject from', model.cid, 'to', value);
+                        versionElem.attr('about', value);
+                    });
+                }
+                var widgets = version.get(Voc.hasWidget) || [];
+                if( !_.isArray(widgets)) widgets = [widgets];
+                if( !widgets || widgets.length === 0 ) return;
+
+                var abouts = versionElem.children().map(function(i, c){
+                    return c.getAttribute('about');
                 });
-                this.drawWidgets(widgets);
+                var that = this;
+                _.each(widgets, function(widget){
+                    if( !_.contains(abouts, widget.getSubject()))
+                        that.drawWidget(versionElem, widget);
+                });
+                versionElem.css('visibility', 'hidden');
             },
             show: function(version) {
+                if( !version ) return;
+                if( !version.isEntity )  {
+                    if(!(version = this.vie.entities.get(version)))
+                        return;
+                }
+
                 AppLog.debug('showing', version.getSubject());
-                var widgets = version.get(Voc.hasWidget);
-                if( !widgets ) return;
-                widgets = widgets.map(function(w){
-                    return w.getSubject();
-                });
-                this.drawWidgets(widgets);
-                this.showWidgets(widgets);
+                this.draw(version);
+
+                var that= this;
+                this.widgetFrame.children().css('visibility', 'hidden');
+                AppLog.debug('hide' , this.widgetFrame.children());
+                var element = this.widgetFrame.children('*[about="'+version.getSubject()+'"]');
+                element.css('visibility', 'visible');
+                element.detach();
+                this.widgetFrame.prepend(element);
 
             },
             createTimeline: function(widget, timelineBody) {
