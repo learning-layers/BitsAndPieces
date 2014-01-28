@@ -32,8 +32,6 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, V
             versions.push(newVersion.getSubject());
             episode.set(Voc.hasVersion, versions);
 
-            this.LOG.debug('hasVersion set', newV);
-            
             // copy widgets if fromVersion
             if( fromVersion) {
                 var widgets = fromVersion.get(Voc.hasWidget) || [];

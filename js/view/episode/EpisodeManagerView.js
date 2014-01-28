@@ -77,7 +77,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.LOG.debug('createNewVersion from', version);
             tracker.info(tracker.CREATENEWVERSION, version.getSubject());
             var episode = version.get(Voc.belongsToEpisode);
-            VersionModel.newVersion(episode, version);
+            var newVersion = VersionModel.newVersion(episode, version);
+            this.model.save(Voc.currentVersion, newVersion.getSubject());
         },
         createFromHere: function() {
             var version = this.model.get(Voc.currentVersion);
