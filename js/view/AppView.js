@@ -12,17 +12,16 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
     function(Logger, tracker, Backbone, $, Voc, userParams, TimelineModel, OrganizeModel, UserModel, EpisodeModel, VersionModel,TimelineView, OrganizeView, UserEventView, EntityView, EpisodeManagerView){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
-            currentVersion: null,
             initialize: function() {
                 this.vie = this.options.vie;
-                this.currentVersion = this.model.get(Voc.currentVersion);
 
                 this.vie.entities.on('add', this.filter, this );
+                var that = this;
                 this.model.on('change:' 
                     + this.vie.namespaces.uri(Voc.currentVersion), 
                     function(model, value, options) {
-                        var version = model.get(Voc.currentVersion);
-                        if( version.isEntity) this.show(version);
+                        version = model.get(Voc.currentVersion);
+                        if( version.isEntity) that.show(version);
                     }, this);
             },
             filter: function(model, collection, options) {
@@ -35,22 +34,23 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                         this.fetchWidgets(model);
                     }
 
+                    var currentVersion = this.model.get(Voc.currentVersion);
+
                     // append listener to the version that its widget are drawn as soon as they are added to the version (or created)
                     version.on('change:' + this.vie.namespaces.uri(Voc.hasWidget), function(model, widgets, options) {
 
                         AppLog.debug('Version hasWidget changed', widgets);
                         AppView.drawWidgets(widgets);
-                        if( model === AppView.currentVersion) {
+                        if( model === currentVersion) {
                             AppView.showWidgets(widgets);
                         }
                     });
 
                     // if there is not currentVersion set, take the first one getting into this filter function
-                    if( !this.currentVersion ) {
+                    if( !currentVersion ) {
                         this.model.save(Voc.currentVersion, version.getSubject());
-                        this.currentVersion = version;
                     // if the version matches the currentVersion, show it
-                    } else if( version === this.currentVersion ) {
+                    } else if( version === currentVersion ) {
                         AppLog.debug('version matches currentVersion');
                         this.episodeMgrView.render();
                         this.show(version);
