@@ -1,24 +1,18 @@
-define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
+define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, Voc, _, CopyMachine){
     return {
         init : function(vie) {
             this.LOG.debug("initialize Version");
             this.vie = vie;
-            this.vie.entities.on('add', this.filter, this);
         },
         LOG : Logger.get('VersionModel'),
-        /** 
-         * Filters entities from added entities to vie.entities
-         */
-        filter: function(model, collection, options) {
-        },
         newVersion: function(episode, fromVersion) {
-            var newVersion;
-            if( !fromVersion ){
-                newVersion = new this.vie.Entity();
-            } else {
-                // TODO rename to deepCopy
-                newVersion = fromVersion.clone();
+            var newVersion,
+                attr = {}
+            if( fromVersion ){
+                attr = fromVersion.attributes;
+                delete attr[fromVersion.idAttribute];
             }
+            newVersion = new this.vie.Entity(attr);
             this.LOG.debug("newVersion", newVersion);
             newVersion.set(Voc.timestamp, new Date());
             newVersion.set('@type', Voc.VERSION);
@@ -27,35 +21,28 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
 
             var vie = this.vie;
             var vm = this;
-            this.vie.save({
-                'entity' : newVersion
-            }).from('sss').execute().success(
-                function(version) {
-                    vie.entities.addOrUpdate(version);
-                    if( fromVersion ) {
-                        vm.getWidgets(fromVersion).each( function(widget){
-                            var newWidget = CopyMachine.deepCopy(widget);
-                            vie.save({
-                                'entity' : newWidget
-                            }).to('sss').execute();
-                        });
-                        
-                    }
-                }
-            );
-            /*
-             * TODO refactor widget deepcopy
-            this.versionCollection.create(newVersion, {
-                'wait' : true,
-                'success' : function(model, response, options) {
-                    version.LOG.debug('version saved', model);
-                    if( fromVersion)
-                        fromVersion.widgetCollection.each(function(widget){
-                            var newWidget = widget.clone({'version': model.getSubject()});
-                            model.createWidget(newWidget);
-                        });
-            }});
-            */
+            this.vie.entities.addOrUpdate(newVersion);
+            newVersion.save();
+            
+            // add Version to episode
+            var versions = Backbone.Model.prototype.get.call(episode,
+                this.vie.namespaces.uri(Voc.hasVersion));
+            versions.push(newVersion.getSubject());
+            episode.set(Voc.hasVersion, versions);
+            
+            // copy widgets if fromVersion
+            if( fromVersion) {
+                var widgets = fromVersion.get(Voc.hasWidget) || [];
+                if( !_.isArray(widgets)) widgets = [widgets];
+                var newWidgets = [];
+                _.each(widgets, function(widget) {
+                    var newWidget = CopyMachine.copy(widget);
+                    newWidget.set(Voc.belongsToVersion, newVersion.getSubject());
+                    newWidget.save();
+                    newWidgets.push(newWidget.getSubject());
+                });
+                newVersion.set(Voc.hasWidget, newWidgets);
+            }
             return newVersion;
         },
         createWidget: function(widget, version) {
@@ -78,23 +65,6 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
                     //version = vie.entities.get(version.getSubject());
                 }
             );
-        },
-        clone: function() {
-            //TODO to be done in vie.Entity
-            return; 
-            /*
-            var newAttr = _.clone(this.attributes);
-            delete newAttr['@subject'];
-            var VersionModel = require('./VersionModel');
-            var newVersion = new VersionModel(newAttr, {
-                'widgetCollection' : new this.vie.Collection([], {
-                    'vie':this.vie,
-                    'predicate': this.widgetCollection.predicate
-                })
-            });
-            
-            return newVersion;
-            */
         },
         getWidgets: function(version) {
             var conditions = {};

@@ -1,28 +1,21 @@
-define(['logger', 'voc', 'underscore'], function(Logger, Voc, _) {
+define(['logger', 'voc', 'underscore', ], function(Logger, Voc, _, TimelineModel, OrganizeModel) {
     return {
-        init : function(vie) {
-            this.LOG.debug("initialize Version");
-            this.vie = vie;
-            this.vie.entities.on('add', this.filter, this);
-        },
         LOG : Logger.get('CopyMachine'),
-        deepCopy: function(entity, excludeEntity) {
+        copy: function(entity) {
             if( !entity.isEntity ) return;
-            var newEntity = entity.clone();
             
-            for( var attr in newEntity.attributes ) {
-                if( attr[0] != '@' && this.vie.namespaces.isUri(res) ) {
-                    var value = newEntity.get(attr);
-                    if( value.isEntity && value !== excludeEntity) {
-                        var newValue = this.deepCopy(value, excludeEntity);
-                        newEntity.set(attr, value.getSubject());
-                    }
-                }
+            var type = entity.get('@type');
+            if(type.id) type = entity.vie.namespaces.uri(type.id);
+
+            if(type == entity.vie.namespaces.uri(Voc.TIMELINE)) {
+                return require('model/timeline/TimelineModel').copy(entity);
             }
-            this.vie.save({
-                'entity' : newEntity
-            }).to('sss').execute();
-           
+            if(type == entity.vie.namespaces.uri(Voc.ORGANIZE)) {
+                return require('model/organize/OrganizeModel').copy(entity);
+            }
+            var newAttr = _.clone(entity.attributes);
+            delete newAttr[entity.idAttribute];
+            return new entity.vie.Entity(newAttr);
         }
     };
 });

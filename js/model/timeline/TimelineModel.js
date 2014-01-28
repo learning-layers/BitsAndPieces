@@ -11,7 +11,9 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
          */
         filter: function(model, collection, options) {
             if( this.vie.namespaces.curie(model.get('@type').id) === Voc.TIMELINE ) {
-                this.fetchRange(model);
+                if( !model.isNew()) {
+                    this.fetchRange(model);
+                }
                 var tl = this;
                 model.on('change:' + this.vie.namespaces.uri(Voc.start) + ' ' + 
                          'change:' + this.vie.namespaces.uri(Voc.end),
@@ -65,27 +67,12 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
                 }
             );
         },
-        clone: function(attributes) {
-            //TODO to be done in vie.Entity
-            //
-            return;
-            /*
-            var newAttr = _.clone(this.attributes);
-            newAttr = _.extend(newAttr, attributes);
-            delete newAttr['@subject'];
-            var TimelineModel = require('./TimelineModel');
-            var newTimeline = new TimelineModel(newAttr);
-            newTimeline.timelineCollection = 
-                new this.vie.Collection([], {
-                    'vie':this.vie,
-                    'predicate': this.timelineCollection.predicate
-                });
-            this.timelineCollection.each(function(item){
-                newTimeline.timelineCollection.add(item);
-            });
-            this.LOG.debug('timeline cloned');
+        copy: function(timeline) {
+            var newAttr = _.clone(timeline.attributes);
+            delete newAttr[timeline.idAttribute];
+            var newTimeline = new this.vie.Entity(newAttr);
+            this.vie.entities.addOrUpdate(newTimeline);
             return newTimeline;
-             */       
         }
 
     };

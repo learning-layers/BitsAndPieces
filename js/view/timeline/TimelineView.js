@@ -52,7 +52,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.$el.append(this.timelineDOM);
             this.timeline = new Timeline(this.timelineDOM);
             this.timeline.draw( [{
-                    'start' : new Date(),
+                    'start' : new Date(), // add a dummy event to force rendering
                     'content' : "x"
                 }], _.extend(this.options.timeline, {
                 'start' : this.model.get('start'),
@@ -62,11 +62,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 'zoomMin' : 300000, // 5 minute
                 'zoomMax' : 4320000000 // 5 days
             }));
-            this.timeline.deleteItem(0);
+            this.timeline.deleteItem(0); // remove dummy node
             this.LOG.debug('timeline', this.timeline);
 
             var view = this;
-            _.each(view.model.get(Voc.hasEntity), function(entity) {
+            _.each(view.model.get(Voc.hasEntity) || [], function(entity) {
                 view.addEntity(entity);
             });
             // bind timeline's internal events to model

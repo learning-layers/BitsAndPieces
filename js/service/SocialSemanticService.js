@@ -88,7 +88,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                 entity;
             _.each(args, function(arg) {
                 if( wait || !arg ) return;
-                wait = arg.isBlankNode();
+                wait = VIE.Util.isBlankNode(arg);
             });
             if( !wait ) {
                 this.LOG.debug('callback immediately, args = ', args);
@@ -102,7 +102,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                 that.LOG.debug('parsing arg', arg);
                 if( !arg ) return;
 
-                if( arg.isBlankNode() ) {
+                if( VIE.Util.isBlankNode(arg) ) {
                     entity = that.vie.entities.get(arg);
                     if( !entity ) return;
 
@@ -514,7 +514,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                             },
                             userUri,
                             service.userKey,
-                            versionUri,
+                            versionUri
                         );
                 });
 
@@ -660,146 +660,154 @@ define(['logger', 'vie', 'underscore', 'voc',
                 var organize = entity.get(Voc.belongsToOrganize);
                 if( organize.isEntity ) organize = organize.getSubject();
 
-                // map internal organize model to its version
-                if( !this.buffer[organize]) {
-                    this.LOG.warn("circle can't be saved because no organize exists");
-                    savable.reject(entity);
-                    return;
-                }
-                var version = this.buffer[organize][Voc.belongsToVersion];
-                if( version.isEntity ) version = version.getSubject();
-                // end map
+                this.onUrisReady(
+                    organize,
+                    function(organizeUri) {
+                        // map internal organize model to its version
+                        if( !service.buffer[organizeUri]) {
+                            service.LOG.warn("circle can't be saved because no organize exists");
+                            savable.reject(entity);
+                            return;
+                        }
+                        var version = service.buffer[organizeUri][Voc.belongsToVersion];
+                        if( version.isEntity ) version = version.getSubject();
+                        // end map
 
-                var fixEntity = this.fixFromVIE(entity);
+                        var fixEntity = service.fixFromVIE(entity);
 
-                if( entity.isNew() )
-                    this.onUrisReady(
-                        this.user,
-                        version,
-                        function(userUri, versionUri) {
-                            new SSLearnEpVersionAddCircle().handle(
-                                function(object) {
-                                    service.LOG.debug("handle result of LearnEpVersionAddCircle");
-                                    service.LOG.debug("object", object);
-                                    savable.resolve({'uri': object['learnEpCircleUri']});
-                                },
-                                function(object) {
-                                    service.LOG.warn("error:");
-                                    service.LOG.warn("object", object);
-                                    savable.reject(entity);
-                                },
-                                userUri,
-                                service.userKey,
-                                versionUri,
-                                fixEntity.Label,
-                                fixEntity.LabelX,
-                                fixEntity.LabelY,
-                                fixEntity.rx,
-                                fixEntity.ry,
-                                fixEntity.cx,
-                                fixEntity.cy
+                        if( entity.isNew() )
+                            service.onUrisReady(
+                                service.user,
+                                version,
+                                function(userUri, versionUri) {
+                                    new SSLearnEpVersionAddCircle().handle(
+                                        function(object) {
+                                            service.LOG.debug("handle result of LearnEpVersionAddCircle");
+                                            service.LOG.debug("object", object);
+                                            savable.resolve({'uri': object['learnEpCircleUri']});
+                                        },
+                                        function(object) {
+                                            service.LOG.warn("error:");
+                                            service.LOG.warn("object", object);
+                                            savable.reject(entity);
+                                        },
+                                        userUri,
+                                        service.userKey,
+                                        versionUri,
+                                        fixEntity.Label,
+                                        fixEntity.LabelX,
+                                        fixEntity.LabelY,
+                                        fixEntity.rx,
+                                        fixEntity.ry,
+                                        fixEntity.cx,
+                                        fixEntity.cy
 
-                            );
-                    });
-                else
-                    this.onUrisReady(
-                        this.user,
-                        fixEntity.uri,
-                        function(userUri, uriUri ) {
-                            new SSLearnEpVersionUpdateCircle().handle(
-                                function(object) {
-                                    service.LOG.debug("handle result of LearnEpVersionUpdateCircle");
-                                    service.LOG.debug("object", object);
-                                    savable.resolve(object);
-                                },
-                                function(object) {
-                                    service.LOG.warn("error:");
-                                    service.LOG.warn("object", object);
-                                    savable.reject(entity);
-                                },
-                                userUri,
-                                service.userKey,
-                                uriUri,
-                                fixEntity.Label,
-                                fixEntity.LabelX,
-                                fixEntity.LabelY,
-                                fixEntity.rx,
-                                fixEntity.ry,
-                                fixEntity.cx,
-                                fixEntity.cy
+                                    );
+                            });
+                        else
+                            service.onUrisReady(
+                                service.user,
+                                fixEntity.uri,
+                                function(userUri, uriUri ) {
+                                    new SSLearnEpVersionUpdateCircle().handle(
+                                        function(object) {
+                                            service.LOG.debug("handle result of LearnEpVersionUpdateCircle");
+                                            service.LOG.debug("object", object);
+                                            savable.resolve(object);
+                                        },
+                                        function(object) {
+                                            service.LOG.warn("error:");
+                                            service.LOG.warn("object", object);
+                                            savable.reject(entity);
+                                        },
+                                        userUri,
+                                        service.userKey,
+                                        uriUri,
+                                        fixEntity.Label,
+                                        fixEntity.LabelX,
+                                        fixEntity.LabelY,
+                                        fixEntity.rx,
+                                        fixEntity.ry,
+                                        fixEntity.cx,
+                                        fixEntity.cy
 
-                            );
-                    });
+                                    );
+                            });
+                });
 
             } else if( typeCurie == this.types.ORGAENTITY ) {
                 this.LOG.debug("saving orgaentity");
                 var organize = entity.get(Voc.belongsToOrganize);
                 if( organize.isEntity ) organize = organize.getSubject();
 
-                // map internal organize model to its version
-                if( !this.buffer[organize]) {
-                    this.LOG.warn("orgaentity can't be saved because no organize exists");
-                    savable.reject(entity);
-                    return;
-                }
-                var version = this.buffer[organize][Voc.belongsToVersion];
-                if( version.isEntity ) version = version.getSubject();
-                // end map
+                this.onUrisReady(
+                    organize,
+                    function(organizeUri) {
+                        // map internal organize model to its version
+                        if( !service.buffer[organizeUri]) {
+                            service.LOG.warn("orgaentity can't be saved because no organize exists");
+                            savable.reject(entity);
+                            return;
+                        }
+                        var version = service.buffer[organizeUri][Voc.belongsToVersion];
+                        if( version.isEntity ) version = version.getSubject();
+                        // end map
 
-                var fixEntity = this.fixFromVIE(entity);
+                        var fixEntity = service.fixFromVIE(entity);
 
-                if(entity.isNew() )
-                    this.onUrisReady(
-                        this.user,
-                        version,
-                        fixEntity.resource,
-                        function(userUri, versionUri, resourceUri){
-                            new SSLearnEpVersionAddEntity().handle(
-                                function(object) {
-                                    service.LOG.debug("handle result of LearnEpVersionAddEntity");
-                                    service.LOG.debug("object", object);
-                                    savable.resolve({'uri': object['learnEpEntityUri']});
-                                },
-                                function(object) {
-                                    service.LOG.warn("error:");
-                                    service.LOG.warn("object", object);
-                                    savable.reject(entity);
-                                },
-                                userUri,
-                                service.userKey,
-                                versionUri,
-                                resourceUri,
-                                fixEntity.x,
-                                fixEntity.y
+                        if(entity.isNew() )
+                            service.onUrisReady(
+                                service.user,
+                                version,
+                                fixEntity.resource,
+                                function(userUri, versionUri, resourceUri){
+                                    new SSLearnEpVersionAddEntity().handle(
+                                        function(object) {
+                                            service.LOG.debug("handle result of LearnEpVersionAddEntity");
+                                            service.LOG.debug("object", object);
+                                            savable.resolve({'uri': object['learnEpEntityUri']});
+                                        },
+                                        function(object) {
+                                            service.LOG.warn("error:");
+                                            service.LOG.warn("object", object);
+                                            savable.reject(entity);
+                                        },
+                                        userUri,
+                                        service.userKey,
+                                        versionUri,
+                                        resourceUri,
+                                        fixEntity.x,
+                                        fixEntity.y
 
-                            );
-                    });
-                else
-                    this.onUrisReady(
-                        this.user,
-                        fixEntity.uri,
-                        fixEntity.resource,
-                        function(userUri,uriUri,resourceUri){
-                            new SSLearnEpVersionUpdateEntity().handle(
-                                function(object) {
-                                    service.LOG.debug("handle result of LearnEpVersionUpdateEntity");
-                                    service.LOG.debug("object", object);
-                                    savable.resolve(object);
-                                },
-                                function(object) {
-                                    service.LOG.warn("error:");
-                                    service.LOG.warn("object", object);
-                                    savable.reject(entity);
-                                },
-                                userUri,
-                                service.userKey,
-                                uriUri,
-                                resourceUri,
-                                fixEntity.x,
-                                fixEntity.y
+                                    );
+                            });
+                        else
+                            service.onUrisReady(
+                                service.user,
+                                fixEntity.uri,
+                                fixEntity.resource,
+                                function(userUri,uriUri,resourceUri){
+                                    new SSLearnEpVersionUpdateEntity().handle(
+                                        function(object) {
+                                            service.LOG.debug("handle result of LearnEpVersionUpdateEntity");
+                                            service.LOG.debug("object", object);
+                                            savable.resolve(object);
+                                        },
+                                        function(object) {
+                                            service.LOG.warn("error:");
+                                            service.LOG.warn("object", object);
+                                            savable.reject(entity);
+                                        },
+                                        userUri,
+                                        service.userKey,
+                                        uriUri,
+                                        resourceUri,
+                                        fixEntity.x,
+                                        fixEntity.y
 
-                            );
-                    });
+                                    );
+                            });
+                });
 
             } else if ( typeCurie == this.types.USER ) {
                 var fixEntity = this.fixFromVIE(entity);

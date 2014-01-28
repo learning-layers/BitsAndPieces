@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
+define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, Voc, _, CopyMachine){
     return {
         init : function(vie) {
             this.LOG.debug("initialize OrganizeModel");
@@ -32,13 +32,7 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
             (items = _.clone(items)).push(item.getSubject());
             organize.set(relation, items, options);
             var vie = this.vie;
-            this.vie.save({
-                'entity' : item
-            }).from('sss').execute().success(
-                function(it) {
-                    item.set(item.idAttribute, it['uri']);
-                }
-            );
+            item.save();
             return item;
         },
         createCircle: function(organize, circle, options) {
@@ -90,44 +84,26 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
         fetchEntities: function(organize) {
             this.fetchStuff(organize, Voc.ORGAENTITY, Voc.hasEntity);
         },
-        clone: function(attributes) {
-            // TODO to be done in vie.Entity
-            return;
-            /*
-            var newAttr = _.clone(this.attributes);
-            delete newAttr[VIE.prototype.Entity.prototype.idAttribute];
-            newAttr = _.extend(newAttr, attributes);
-            var circleCollection = 
-                new this.vie.Collection([], {
-                    'vie':this.vie,
-                    'predicate': this.circleCollection.predicate
+        copy: function(organize) {
+            var newAttr = _.clone(organize.attributes);
+            delete newAttr[organize.idAttribute];
+            var newOrganize = new this.vie.Entity(newAttr);
+            this.vie.entities.addOrUpdate(newOrganize);
+            var that = this;
+            _.each([Voc.hasCircle, Voc.hasEntity], function(rel) {
+                var items = organize.get(rel) || [];
+                if(!_.isArray(items)) items = [items];
+                var newItems = [];
+                _.each(items,function(item){
+                    var newItem = CopyMachine.copy(item);
+                    newItem.set(Voc.belongsToOrganize, newOrganize.getSubject());
+                    newItems.push( newItem.getSubject() );
+                    that.vie.entities.addOrUpdate(newItem);
+                    newItem.save();
                 });
-            var orgaEntityCollection = 
-                new this.vie.Collection([], {
-                    'vie':this.vie,
-                    'predicate': this.orgaEntityCollection.predicate
-                });
-            var OrganizeModel = require('./OrganizeModel');
-            var newOrganize = new OrganizeModel(newAttr, {
-                'circleCollection' : circleCollection,
-                'orgaEntityCollection' : orgaEntityCollection
+                newOrganize.set(rel, newItems);
             });
-            var organize = this;
-            newOrganize.save(newOrganize, {'success':function(model, response, options){
-                organize.LOG.debug('organize cloned');
-                organize.circleCollection.each(function(item){
-                    var newItem = _.clone(item.attributes);
-                    delete newItem[VIE.prototype.Entity.prototype.idAttribute];
-                    model.createCircle(newItem);
-                });
-                organize.orgaEntityCollection.each(function(item){
-                    var newItem = _.clone(item.attributes);
-                    delete newItem[VIE.prototype.Entity.prototype.idAttribute];
-                    model.createEntity(newItem);
-                });
-            }});
             return newOrganize;
-            */
         }
     };
 });
