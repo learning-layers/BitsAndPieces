@@ -12,7 +12,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     var AddLog = Logger.get('Add');
     Logger.get('UserModel').setLevel(Logger.OFF);
     Logger.get('OrganizeModel').setLevel(Logger.OFF);
-    Logger.get('VersionModel').setLevel(Logger.OFF);
+    Logger.get('VersionModel').setLevel(Logger.DEBUG);
     Logger.get('EpisodeModel').setLevel(Logger.DEBUG);
     Logger.get('TimelineModel').setLevel(Logger.OFF);
     Logger.get('TimelineView').setLevel(Logger.OFF);

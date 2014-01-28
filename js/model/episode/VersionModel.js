@@ -7,7 +7,7 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, V
         LOG : Logger.get('VersionModel'),
         newVersion: function(episode, fromVersion) {
             var newVersion,
-                attr = {}
+                attr = {};
             if( fromVersion ){
                 attr = fromVersion.attributes;
                 delete attr[fromVersion.idAttribute];
@@ -26,9 +26,13 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, V
             
             // add Version to episode
             var versions = Backbone.Model.prototype.get.call(episode,
-                this.vie.namespaces.uri(Voc.hasVersion));
+                this.vie.namespaces.uri(Voc.hasVersion)) || [];
+            if(!_.isArray(versions)) versions = [versions];
+            else versions = _.clone(versions);
             versions.push(newVersion.getSubject());
             episode.set(Voc.hasVersion, versions);
+
+            this.LOG.debug('hasVersion set', newV);
             
             // copy widgets if fromVersion
             if( fromVersion) {
@@ -52,6 +56,7 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, V
             var widgets = Backbone.Model.prototype.get.call(version, 
                 this.vie.namespaces.uri(Voc.hasWidget)) || [];
             if( !_.isArray(widgets)) widgets = [widgets];
+            else widgets = _.clone(widgets);
             widgets.push(widget.getSubject());
             version.set(Voc.hasWidget, widgets);
 

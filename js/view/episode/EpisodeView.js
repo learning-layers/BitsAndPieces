@@ -19,10 +19,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc'], 
             this.LOG.debug("this.model", this.model, this.highlit);
             var view = this;
             var versionCollection = new Backbone.Collection;
-            versionCollection.comparator = Voc.timestamp;
-            _.each(this.model.get(Voc.hasVersion), function(v){
-                versionCollection.add(view.model.vie.entities.get(v));
-            });
+            versionCollection.comparator = this.model.vie.namespaces.uri(Voc.timestamp);
+            versionCollection.add(this.model.get(Voc.hasVersion));
             versionCollection.each(function(version){
                 var highlit = "";
                 view.LOG.debug('version', version.getSubject());

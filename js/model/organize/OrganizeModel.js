@@ -28,8 +28,10 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, V
 
             this.vie.entities.addOrUpdate(item);
             var items = Backbone.Model.prototype.get.call(
-                organize, this.vie.namespaces.uri(relation));
-            (items = _.clone(items)).push(item.getSubject());
+                organize, this.vie.namespaces.uri(relation)) || [];
+            if(!_.isArray(items)) items = [items];
+            else items = _.clone(items);
+            items.push(item.getSubject());
             organize.set(relation, items, options);
             var vie = this.vie;
             item.save();
