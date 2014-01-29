@@ -339,6 +339,8 @@ define(['logger', 'vie', 'underscore', 'voc',
                                     var entity = service.fixForVIE(object, 'learnEpVersionUri');
                                     entity[Voc.belongsToEpisode] = entity['learnEpUri'];
                                     delete entity['learnEpUri'];
+                                    delete entity['circles'];
+                                    delete entity['entities'];
                                     var vieEntity = new service.vie.Entity(entity);
                                     vieEntity.set('@type', Voc.VERSION);
                                     entityInstances.push(vieEntity);
