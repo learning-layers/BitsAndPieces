@@ -63,10 +63,15 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.organize.loadOrganizeCanvas(this.el);
             // Make the view aware of existing entities in collection
             var view = this;
-            _.each(this.model.get(Voc.hasEntity), function(entity) {
+            var entities = this.model.get(Voc.hasEntity) || [];
+            if( !_.isArray(entities)) entities = [entities];
+            _.each(entities, function(entity) {
                 view.addEntity(entity);
             }, this);
-            _.each(this.model.get(Voc.hasCircle), function(circle) {
+
+            var circles = this.model.get(Voc.hasCircle) || [];
+            if( !_.isArray(circles)) circles = [circles];
+            _.each(circles, function(circle) {
                 view.addCircle(circle);
             }, this);
             //this.delegateEvents();
