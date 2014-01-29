@@ -10,10 +10,10 @@ define(['logger', 'voc', 'underscore', 'model/episode/VersionModel'], function(L
          * Filters entities from added entities to vie.entities
          */
         filter: function(model, collection, options) {
-            if( options && options.by === this ) return;
             if( this.vie.namespaces.curie(model.get('@type').id) === Voc.EPISODE ) {
-                this.LOG.debug('episode added', model);
-                this.fetchVersions(model);
+                if( !model.isNew() ) {
+                    this.fetchVersions(model);
+                }
             }
         },
         fetchVersions: function(episode) {
@@ -41,18 +41,13 @@ define(['logger', 'voc', 'underscore', 'model/episode/VersionModel'], function(L
 
         },
         newEpisode: function(user, fromVersion) {
-            var newEpisode;
-            if( !fromVersion ){
-                newEpisode = new this.vie.Entity();
-            } else {
-                var fromEpisode = fromVersion.get(Voc.belongsToEpisode);
-                newEpisode = fromEpisode.clone();
-            }
+            var newEpisode, attr = {};
+            newEpisode = new this.vie.Entity();
             this.LOG.debug("newEpisode", newEpisode);
+            newEpisode.set(Voc.label, "New Episode");
             newEpisode.set(Voc.belongsToUser, user.getSubject());
             newEpisode.set('@type', Voc.EPISODE);
-            newEpisode.set(Voc.label, "New Episode");
-            this.vie.entities.addOrUpdate(newEpisode, {'by': this});
+            this.vie.entities.addOrUpdate(newEpisode);
             VersionModel.newVersion(newEpisode, fromVersion);
 
             newEpisode.save();

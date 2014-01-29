@@ -9,7 +9,7 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, V
             var newVersion,
                 attr = {};
             if( fromVersion ){
-                attr = fromVersion.attributes;
+                attr = _.clone(fromVersion.attributes);
                 delete attr[fromVersion.idAttribute];
             }
             newVersion = new this.vie.Entity(attr);
@@ -21,9 +21,25 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, V
 
             var vie = this.vie;
             var vm = this;
+
+            // copy widgets if fromVersion
+            var newWidgets = [];
+            if( fromVersion) {
+                var newWidgetUris = [];
+                var widgets = fromVersion.get(Voc.hasWidget) || [];
+                if( !_.isArray(widgets)) widgets = [widgets];
+                _.each(widgets, function(widget) {
+                    var newWidget = CopyMachine.copy(widget);
+                    newWidget.set(Voc.belongsToVersion, newVersion.getSubject());
+                    newWidgets.push(newWidget);
+                    newWidgetUris.push(newWidget.getSubject());
+                });
+                newVersion.set(Voc.hasWidget, newWidgetUris);
+            }
             this.vie.entities.addOrUpdate(newVersion);
             newVersion.save();
-            
+            // save widgets after version is added
+            _.each(newWidgets, function(widget){widget.save()});
             // add Version to episode
             var versions = Backbone.Model.prototype.get.call(episode,
                 this.vie.namespaces.uri(Voc.hasVersion)) || [];
@@ -31,20 +47,7 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, V
             else versions = _.clone(versions);
             versions.push(newVersion.getSubject());
             episode.set(Voc.hasVersion, versions);
-
-            // copy widgets if fromVersion
-            if( fromVersion) {
-                var widgets = fromVersion.get(Voc.hasWidget) || [];
-                if( !_.isArray(widgets)) widgets = [widgets];
-                var newWidgets = [];
-                _.each(widgets, function(widget) {
-                    var newWidget = CopyMachine.copy(widget);
-                    newWidget.set(Voc.belongsToVersion, newVersion.getSubject());
-                    newWidget.save();
-                    newWidgets.push(newWidget.getSubject());
-                });
-                newVersion.set(Voc.hasWidget, newWidgets);
-            }
+            
             return newVersion;
         },
         createWidget: function(widget, version) {

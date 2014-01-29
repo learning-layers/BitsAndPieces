@@ -187,3 +187,34 @@ function SSEntityDescGet() {
         errorHandler({'error':'Resource not found'});
     };
 };
+
+function SSEntityLabelGet() {
+    this.handle = function(resultHandler, errorHandler, user, key, entityUri){
+        var u;
+        MockupLog.debug("SSLABELGET " + entityUri);
+        for (var i = 0; i < SSMockupResources.length; i++) {
+            u = SSMockupResources[i];
+            if (u['entityUri'] == entityUri) {
+                setTimeout(function(){resultHandler({'label' : u});}, MockupTimeout);
+                return;
+            }
+        }
+        errorHandler({'error':'Resource not found'});
+    }
+}
+
+function SSEntityLabelSet() {
+    this.handle = function(resultHandler, errorHandler, user, key, entityUri, label){
+        var u;
+        MockupLog.debug("SSLABELSET " + entityUri);
+        for (var i = 0; i < SSMockupResources.length; i++) {
+            u = SSMockupResources[i];
+            if (u['entityUri'] == entityUri) {
+                u['label'] = label;
+                setTimeout(function(){resultHandler({'worked' : true})}, MockupTimeout);
+                return;
+            }
+        }
+        errorHandler({'error':'Resource not found'});
+    }
+}

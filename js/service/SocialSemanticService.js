@@ -107,23 +107,31 @@ define(['logger', 'vie', 'underscore', 'voc',
                     if( !entity ) return;
 
                     that.LOG.debug('change listener for', entity );
-                    entity.once('change:' + entity.idAttribute, 
-                        function(ent, value) {
-                            that.LOG.debug('changed from ', arg, 'to', value);
-                            // replace argument by new URI
-                            for( j = 0; j < args.length; j++ ) {
-                                if( args[j] === arg ) {
-                                    args[j] = that.vie.namespaces.uri(value);
-                                }
-                            };
-                            that.LOG.debug('args = ', _.clone(args));
-                            that.LOG.debug('waitFor = ', waitFor);
-                            if( --waitFor == 0 ) {
-                                callback.apply(that, args);
+                    
+                    var func = function(ent, value) {
+                        that.LOG.debug('changed from ', arg, 'to', value);
+                        // replace argument by new URI
+                        for( j = 0; j < args.length; j++ ) {
+                            if( args[j] === arg ) {
+                                args[j] = that.vie.namespaces.uri(value);
                             }
-                        });
+                        };
+                        that.LOG.debug('args = ', _.clone(args));
+                        that.LOG.debug('waitFor = ', waitFor);
+                        if( --waitFor == 0 ) {
+                            callback.apply(that, args);
+                        }
+                        // turn off listener
+                        entity.off('change:'+entity.idAttribute, func);
+                    };
+                    // add listener
+                    entity.on('change:' + entity.idAttribute, func);
                     waitFor++;
                     that.LOG.debug('waitFor = ', waitFor);
+                    if( !VIE.Util.isBlankNode(entity.getSubject()) )  {
+                        that.LOG.debug('URI changed meanwhile, so go on immediately');
+                        func(entity, entity.getSubject());
+                    }
                 }
             });
         },
@@ -581,11 +589,15 @@ define(['logger', 'vie', 'underscore', 'voc',
                 var obj = this.fixFromVIE(entity);
                 obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget')
                                          : obj.uri;
-                this.buffer[obj.uri] = obj;
-                if( entity.isNew() )
-                    savable.resolve({'uri':obj.uri}); // organize was created
-                else
-                    savable.resolve(true); // organize was updated
+                this.onUrisReady(
+                    obj[Voc.belongsToVersion],
+                    function() {
+                        service.buffer[obj.uri] = obj;
+                        if( entity.isNew() )
+                            savable.resolve({'uri':obj.uri}); // organize was created
+                        else
+                            savable.resolve(true); // organize was updated
+                });
             } else if( typeCurie == this.types.EPISODE ) {
                 this.LOG.debug("saving episode");
                 if( entity.isNew() ) {
@@ -627,7 +639,8 @@ define(['logger', 'vie', 'underscore', 'voc',
                                 },
                                 userUri,
                                 service.userKey,
-                                entityUri
+                                entityUri,
+                                entity.get('label')
                             );
                     });
                 }
@@ -670,7 +683,6 @@ define(['logger', 'vie', 'underscore', 'voc',
                             return;
                         }
                         var version = service.buffer[organizeUri][Voc.belongsToVersion];
-                        if( version.isEntity ) version = version.getSubject();
                         // end map
 
                         var fixEntity = service.fixFromVIE(entity);
@@ -750,7 +762,6 @@ define(['logger', 'vie', 'underscore', 'voc',
                             return;
                         }
                         var version = service.buffer[organizeUri][Voc.belongsToVersion];
-                        if( version.isEntity ) version = version.getSubject();
                         // end map
 
                         var fixEntity = service.fixFromVIE(entity);

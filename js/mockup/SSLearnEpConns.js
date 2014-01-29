@@ -390,3 +390,17 @@ function SSLearnEpsGet(){
 
 	};
 };
+
+function SSEntityLabelSet() {
+    this.handle = function(resultHandler, errorHandler, user, key, entityUri, label){
+        MockupLog.debug("SSLABELSET " + entityUri);
+        for (var uri in SSMockupEpisodes) {
+            if (SSMockupEpisodes[uri]['learnEpUri'] == entityUri) {
+                SSMockupEpisodes[uri]['learnEpUri']['label'] = label;
+                setTimeout(function(){resultHandler({'worked' : true})}, MockupTimeout);
+                return;
+            }
+        }
+        errorHandler({'error':'Resource not found'});
+    }
+}

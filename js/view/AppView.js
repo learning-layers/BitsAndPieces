@@ -32,6 +32,12 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
 
                     if(!model.isNew()) {
                         this.fetchWidgets(model);
+                    } else  {
+                        var ws = model.get(Voc.hasWidget)||[];
+                        if( !_.isArray(ws) ) ws = [ws];
+                        if ( ws.length < 2 ){
+                            this.fillupWidgets([], model);
+                        }
                     }
 
                     var currentVersion = this.model.get(Voc.currentVersion);

@@ -66,7 +66,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         addEpisode: function(model, collection,options) {
             this.LOG.debug('addEpisode', model, collection);
             var view = new EpisodeView({'model':model});
-            var li = $('<li class="episode"></li>');
+            var li = $('<li class="episode" about="'+model.getSubject()+'"></li>');
+            if( model.isNew() ) {
+                model.once('change:'+model.idAttribute, 
+                    function(model, value) {
+                        li.attr('about', value);
+                });
+            }
             li.append(view.render().$el);
             this.$el.find('ul').first().append(li);
             this.views[model.cid] = view;
@@ -82,10 +88,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         createFromHere: function() {
             var version = this.model.get(Voc.currentVersion);
-            var episode = version.get(Voc.belongsToEpisode);
             this.LOG.debug('create new episode from version', version);
             tracker.info(tracker.CREATENEWEPISODEFROMVERSION, version.getSubject());
-            EpisodeModel.newEpisode(this.model, episode );
+            EpisodeModel.newEpisode(this.model, version );
         },
         createBlank: function() {
             var version = this.model.get(Voc.currentVersion);
