@@ -1,7 +1,7 @@
 // The SocialSemanticService wraps the SSS Client API.
 
-define(['logger', 'vie', 'underscore', 'voc', 
-        'sss.conn.entity', 'sss.conn.userevent', 'sss.conn.learnep'], function(Logger, VIE, _, Voc) {
+define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
+        'sss.conn.entity', 'sss.conn.userevent', 'sss.conn.learnep'], function(Logger, VIE, _, Voc, EntityView) {
 
 // ## VIE.SocialSemanticService(options)
 // This is the constructor to instantiate a new service.
@@ -260,24 +260,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                                 _.each(objects['uEs'], function(object) {
                                     var entity = service.fixForVIE(object);
                                     service.LOG.debug('entity', _.clone(entity));
-                                    if(_.contains([
-                                            "learnEpOpenEpisodesDialog",
-                                            "learnEpSwitchEpisode",
-                                            "learnEpSwitchVersion",
-                                            "learnEpRenameEpisode",
-                                            "learnEpCreateNewEpisodeFromScratch",
-                                            "learnEpCreateNewEpisodeFromVersion",
-                                            "learnEpCreateNewVersion",
-                                            "timelineChangeTimelineRange",
-                                            "learnEpViewEntityDetails",
-                                            "viewEntity",
-                                            "learnEpDropOrganizeEntity",
-                                            "learnEpMoveOrganizeEntity",
-                                            "learnEpDeleteOrganizeEntity",
-                                            "learnEpCreateOrganizeCircle",
-                                            "learnEpChangeOrganizeCircle",
-                                            "learnEpRenameOrganizeCircle",
-                                            "learnEpDeleteOrganizeCircle"], entity['@type'])) {
+                                    if(!_.contains( _.keys(EntityView.prototype.icons), entity['@type'])) {
                                             service.LOG.debug(entity['@type'], 'filtered');
                                             return;
                                             }
