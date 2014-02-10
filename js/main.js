@@ -1,6 +1,6 @@
 var require = (function() {
-    //var sss_url = 'http://kedemo.know-center.tugraz.at:8080/SSSClientSide/';
-    var sss_url = 'http://127.0.0.1/sm-improved/lib/SocialSemanticServer/SSSClientSide/';
+    var sss_url = 'http://kedemo.know-center.tugraz.at:8080/SSSClientSide/';
+    //var sss_url = 'http://127.0.0.1/sm-improved/lib/SocialSemanticServer/SSSClientSide/';
     return {
         baseUrl: 'js',
         paths: {
