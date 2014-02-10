@@ -66,7 +66,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.LOG.debug('timeline', this.timeline);
 
             var view = this;
-            _.each(view.model.get(Voc.hasEntity) || [], function(entity) {
+            var entities = this.model.get(Voc.hasEntity) || [];
+            if( !_.isArray(entities)) entities = [entities];
+            _.each(entities, function(entity) {
                 view.addEntity(entity);
             });
             // bind timeline's internal events to model

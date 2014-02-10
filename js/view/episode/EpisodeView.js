@@ -44,7 +44,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','m
             this.LOG.debug('EpisodeView changeCurrentVersion ' + id);
             tracker.info(tracker.SWITCHVERSION, id);
             if( !id ) return;
-            this.model.get(Voc.belongsToUser).set( Voc.currentVersion, id);
+            this.model.get(Voc.belongsToUser).save( Voc.currentVersion, id);
         },
         changeCurrentEpisode: function(event) {
             if( !event || !event.currentTarget ) return;
@@ -52,7 +52,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','m
             if( !id ) return;
             this.LOG.debug('EpisodeView changeCurrentEpisode, version = ' + id.getSubject());
             tracker.info(tracker.SWITCHEPISODE, id.getSubject());
-            this.model.get(Voc.belongsToUser).set( Voc.currentVersion, id.getSubject());
+            this.model.get(Voc.belongsToUser).save( Voc.currentVersion, id.getSubject());
         },
         highlight: function(versionId) {
             this.$el.addClass('highlight');
