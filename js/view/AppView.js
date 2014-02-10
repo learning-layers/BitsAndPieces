@@ -107,6 +107,10 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                 AppLog.debug('drawWidget', widget);
                 if( !widget.isEntity )
                     widget =  this.vie.entities.get(widget);
+                if( !widget ) {
+                    console.error("drawWidget of inexistent widget called");
+                    return;
+                }
 
                 var type = widget.get('@type').id;
                 var ctype = this.vie.namespaces.curie(type);
