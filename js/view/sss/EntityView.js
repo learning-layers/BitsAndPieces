@@ -1,4 +1,4 @@
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView'], function(VIE, Logger, tracker, _, $, Backbone, DetailView){
+define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView', 'voc'], function(VIE, Logger, tracker, _, $, Backbone, DetailView, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('EntityView'),
         icons: {
@@ -118,7 +118,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
         },
         defer: function() {
             this.LOG.debug('defer');
-            var resource = this.model.get('resource');
+            var resource = this.model.get(Voc.hasResource);
             if( !resource ) resource = this.model.getSubject();
             else resource = resource.getSubject();
             var lastChar = resource[resource.length-1];
@@ -187,6 +187,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
         },
         getIcon: function(type) {
             // TODO: make clear use of URIs
+            this.LOG.debug('model', this.model);
+            this.LOG.debug('model', _.clone(this.model.attributes));
             if( !type ) type = this.model.get('@type');
             this.LOG.debug('type', type);
             if( !type ) return this.icons['unknown'];

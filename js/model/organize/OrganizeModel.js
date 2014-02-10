@@ -70,6 +70,19 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, V
                             organize.set(relation, newIts, options);
                         });
                         that.LOG.debug('added', c.getSubject());
+                        if( type == Voc.ORGAENTITY ) {
+                            var resource = c.get(Voc.hasResource);
+                            if( !resource.isEntity ) {
+                                var entity = new that.vie.Entity;
+                                entity.set(entity.idAttribute, resource);
+                                that.LOG.debug('xyz1', _.clone(entity.attributes));
+                                entity.fetch();
+                                that.LOG.debug('xyz3', entity);
+                                resource = entity;
+                                that.vie.entities.addOrUpdate(resource);
+                            }
+                        }
+
                     });
                     current = _.union(current, items).map(function(c){
                         return c.getSubject();

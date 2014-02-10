@@ -17,6 +17,7 @@ define([], {
     hasEntity: 'hasEntity',
     hasVersion: 'hasVersion',
     hasWidget: 'hasWidget',
+    hasResource : 'resource',
     timestamp : 'timestamp',
     circleType: 'circleType', 
     orgaEntityType: 'orgaEntityType',
@@ -25,5 +26,6 @@ define([], {
     end: 'end',
 
     label : 'label',
+    content : 'content',
     belongsToOrganize: 'belongsToOrganize'
 });

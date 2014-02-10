@@ -206,9 +206,12 @@ define(['logger', 'vie', 'underscore', 'voc',
                                         function(object2) {
                                             service.LOG.debug("handle result of UserEventTypeGet");
                                             service.LOG.debug("object", object2);
+
+                                            if(!object2['uE']['timestamp'])
+                                                delete object2['uE']['timestamp'];
                                             var entity = service.fixForVIE(object2['uE'], 'uri');
-                                            var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
-                                            loadable.resolve(vieEntity);
+                                            //var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
+                                            loadable.resolve(entity);
                                         },
                                         function(object2) {
                                             service.LOG.warn("error:", object2);
@@ -256,6 +259,7 @@ define(['logger', 'vie', 'underscore', 'voc',
                                 var entityInstances = [];
                                 _.each(objects['uEs'], function(object) {
                                     var entity = service.fixForVIE(object);
+                                    service.LOG.debug('entity', _.clone(entity));
                                     if(_.contains([
                                             "learnEpOpenEpisodesDialog",
                                             "learnEpSwitchEpisode",
@@ -277,8 +281,8 @@ define(['logger', 'vie', 'underscore', 'voc',
                                             service.LOG.debug(entity['@type'], 'filtered');
                                             return;
                                             }
-                                    var vieEntity = new service.vie.Entity(entity);
-                                    entityInstances.push(vieEntity);
+                                    //var vieEntity = new service.vie.Entity(entity);
+                                    entityInstances.push(entity);
                                 });
                                 loadable.resolve(entityInstances);
                             },
@@ -510,9 +514,9 @@ define(['logger', 'vie', 'underscore', 'voc',
                                 var key, idAttr;
                                 _.each(object['learnEpVersion']['entities'], function(item){
                                     var fixEntity = service.fixForVIE(item, 'learnEpEntityUri');
-                                    fixEntity.resource = item['entityUri'];
+                                    fixEntity[Voc.hasResource] = item['entityUri'];
                                     delete fixEntity['entityUri'];
-                                    fixEntity.belongsToOrganize = loadable.options.organize;
+                                    fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
                                     var vieEntity = new service.vie.Entity(fixEntity);
                                     vieEntity.set('@type', typeCurie);
                                     entities.push(vieEntity);

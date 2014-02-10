@@ -1,4 +1,4 @@
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc'], function(VIE, Logger, tracker, _, $, Backbone, Voc){
+define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','model/episode/EpisodeModel'], function(VIE, Logger, tracker, _, $, Backbone, Voc, EpisodeModel){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeView'),
         events: {
@@ -48,7 +48,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc'], 
         },
         changeCurrentEpisode: function(event) {
             if( !event || !event.currentTarget ) return;
-            var id = this.model.getFirstVersion();
+            var id = EpisodeModel.getFirstVersion(this.model);
             if( !id ) return;
             this.LOG.debug('EpisodeView changeCurrentEpisode, version = ' + id.getSubject());
             tracker.info(tracker.SWITCHEPISODE, id.getSubject());

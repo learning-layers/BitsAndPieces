@@ -1,4 +1,4 @@
-define(['view/sss/EntityView', 'logger'], function(EntityView, Logger){
+define(['view/sss/EntityView', 'logger', 'voc'], function(EntityView, Logger, Voc){
     return EntityView.extend({
         LOG: Logger.get('UserEventView'),
         type: "",
@@ -7,7 +7,7 @@ define(['view/sss/EntityView', 'logger'], function(EntityView, Logger){
             this.listenTo(this.model, 'change', this.changeEntity);
             this.type = this.model.get('@type');
             this.LOG.debug("type of usereventview entity: " + this.type.id);
-            this.resource = this.model.get('sss:resource');
+            this.resource = this.model.get(Voc.hasResource);
             this.LOG.debug("this.resource", this.resource);
             //this.resource.fetch(); // fetching here correct?
             this.resView = new EntityView({model:this.resource});
@@ -23,9 +23,9 @@ define(['view/sss/EntityView', 'logger'], function(EntityView, Logger){
               'class' : 'entity',
               'about' : this.model.getSubject()
             });
-            var label = this.resource.get('sss:label');
+            var label = this.resource.get(Voc.label);
             if( label && label.isEntity ) label = label.getSubject();
-            var content = this.resource.get('sss:content');
+            var content = this.resource.get(Voc.content);
             if( content ){
                 if( content.isEntity ) content = content.getSubject();
                 var l = content.length;
