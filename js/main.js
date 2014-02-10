@@ -1,7 +1,8 @@
-requirejs.config((function() {
+var require = (function() {
     //var sss_url = 'http://kedemo.know-center.tugraz.at:8080/SSSClientSide/';
     var sss_url = 'http://127.0.0.1/sm-improved/lib/SocialSemanticServer/SSSClientSide/';
     return {
+        baseUrl: 'js',
         paths: {
             'sss.jsutils' : sss_url + "JSUtilities/JSGlobals",
             'sss.globals' : sss_url + "SSSClientInterfaceGlobals/globals/SSGlobals",
@@ -53,7 +54,6 @@ requirejs.config((function() {
             'svg.foreignobject' : ['svg']
         }
     };
-}()));
+}());
 
-requirejs(["app"]);
 

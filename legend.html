@@ -3,24 +3,13 @@
     <head>
         <title></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script type="text/javascript" src="lib/VIE/lib/jquery/jquery.min.js"></script>
-        <script type="text/javascript" src="lib/VIE/lib/underscore/underscore-min.js"></script>
-        <script type="text/javascript" src="lib/VIE/lib/backbone/backbone.js"></script>
-        <script type="text/javascript" src="lib/logger.js"></script>
-        <script type="text/javascript" src="js/view/sss/EntityView.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function() {
-                var ul = $('<ul></ul>');
-                var icons = SSS.EntityView.prototype.icons;
-                for( var key in icons ) {
-                    if ( key.substring(0, 8) != 'evernote') continue;
-                    ul.append('<li><strong>'+key+':</strong><br/><img src="'+icons[key]+'" width="50"/></li>');
-                }
-                $('body').append(ul);
-            });
-        </script>
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript" src="lib/require.js"></script>
     </head>
     <body>
         <h1>BnP Entity Icons Legend</h1>
+        <script type="text/javascript">
+            requirejs(["legend"]);
+        </script>
     </body>
 </html>
