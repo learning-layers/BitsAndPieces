@@ -44,9 +44,7 @@ define(['logger', 'voc', 'underscore' ], function(Logger, Voc, _){
             }).from('sss').execute().success(
                 function(entities) {
                     that.LOG.debug('success fetchRange: ', _.clone(entities), 'timeline: ', timeline);
-                    that.LOG.debug('in entities', _.clone(that.vie.entities.get(entities[0]['@subject'])));
                     entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
-                    that.LOG.debug('entities', _.clone(entities));
                     var current = timeline.get(Voc.hasEntity) || [];
                     if( !_.isArray(current)) current = [current];
                     var added = _.difference(entities, current);
