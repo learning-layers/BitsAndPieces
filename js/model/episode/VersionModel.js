@@ -1,3 +1,4 @@
+// TODO: let versionModel create Things for URIs in hasWidget which have no existing entity object in vie.entities yet. BNodes need not be considered as they can only occur if a new entity is created (so an entity should exist in vie.entities).
 define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, Voc, _, CopyMachine){
     return {
         init : function(vie) {

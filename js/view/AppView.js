@@ -30,6 +30,19 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                     var AppView = this;
                     AppLog.debug('version added', model);
 
+                    // draw already existing widgets
+                    this.draw(version);
+                    
+                    // draw widgets as soon as they are added to the version
+                    version.on('change:' + this.vie.namespaces.uri(Voc.hasWidget), function(model, widgets, options) {
+
+                        AppLog.debug('Version hasWidget changed', widgets);
+                        AppView.draw(model);
+                    });
+
+                    // TODO: WidgetView needs to remove itself when the widget object is removed
+                    // TODO: DataIntegrator shall update hasWidget list of a version X when a widget with belongsToVersion set to version X is added
+
                     if(!model.isNew()) {
                         this.fetchWidgets(model);
                     } else  {
@@ -41,17 +54,6 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                     }
 
                     var currentVersion = this.model.get(Voc.currentVersion);
-
-                    // append listener to the version that its widget are drawn as soon as they are added to the version (or created)
-                    version.on('change:' + this.vie.namespaces.uri(Voc.hasWidget), function(model, widgets, options) {
-
-                        AppLog.debug('Version hasWidget changed', widgets);
-                        if( model === currentVersion) {
-                            AppView.show(model);
-                        } else {
-                            AppView.draw(model);
-                        }
-                    });
 
                     // if there is not currentVersion set, take the first one getting into this filter function
                     if( !currentVersion ) {
@@ -101,6 +103,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                 });
             },
             drawWidget: function(versionElem, widget) {
+                //TODO: use a WidgetView. The view will update itself as soon as the Widget is loaded or changes.
                 AppLog.debug('drawWidget', widget);
                 if( !widget.isEntity )
                     widget =  this.vie.entities.get(widget);
@@ -133,6 +136,11 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                 }
             },
             draw: function(version) {
+                if( !version ) return;
+                if( !version.isEntity )  {
+                    if(!(version = this.vie.entities.get(version)))
+                        return;
+                }
                 AppLog.debug('drawing ', version.getSubject());
                 var versionElem = this.widgetFrame.children('*[about="'+version.getSubject()+'"]').first();
                 AppLog.debug('versionElem', versionElem);
@@ -156,7 +164,11 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                     if( !_.contains(abouts, widget.getSubject()))
                         that.drawWidget(versionElem, widget);
                 });
-                versionElem.css('visibility', 'hidden');
+                if( version === this.model.get(Voc.currentVersion)) {
+                    this.show(version);
+                } else {
+                    versionElem.css('visibility', 'hidden');
+                }
             },
             show: function(version) {
                 if( !version ) return;
@@ -166,7 +178,6 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                 }
 
                 AppLog.debug('showing', version.getSubject());
-                this.draw(version);
 
                 var that= this;
                 this.widgetFrame.children().css('visibility', 'hidden');
