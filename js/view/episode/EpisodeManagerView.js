@@ -21,13 +21,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), 
                 this.render, this);
             var view = this;
-            this.vie.entities.each(this.filter, this);
-            if( this.model.get(Voc.currentVersion)) this.render();
-        },
-        filter: function(model, collection, options) {
-            if( this.vie.namespaces.curie(model.get('@type').id) === Voc.EPISODE ) {
-                this.addEpisode(model);
-            }
         },
         toggleEpisodes: function() {
             var episodes = this.$el.find('#episodes');
@@ -39,11 +32,11 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             if( !this.currentEpisode ) return;
             var label = this.$el.find('h1').text();
             label = label.replace(/(<([^>]+)>)/ig,"");
-            this.$el.find('h1').html(label);
-            if( this.currentEpisode.model.get('label') == label) return;
+            this.renderLabel(this.currentEpisode, label);
+            if( this.currentEpisode.get('label') == label) return;
             this.LOG.debug('changeLabel', label);
             tracker.info(tracker.RENAMEEPISODE, this.model.getSubject(), label);
-            this.currentEpisode.model.save({'label': label});
+            this.currentEpisode.save({'label': label});
         },
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {
@@ -53,15 +46,35 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         render: function() {
             this.LOG.debug('EpisodeManager render');
             var version = this.model.get(Voc.currentVersion);
-            this.LOG.debug('version', version);
+            this.LOG.debug('version', _.clone(version));
             if( !version || !version.isEntity ) return;
-            var episode = version.get(Voc.belongsToEpisode);
-            var label = episode.get(Voc.label);
-            this.LOG.debug('label', label);
+            this.currentEpisode = version.get(Voc.belongsToEpisode);
+            this.LOG.debug('currentEpisode', _.clone(this.currentEpisode));
+            if( !this.currentEpisode ) {
+                // wait for the episode to be ready
+                version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.render, this);
+                return;
+            }
+            var label = this.currentEpisode.get(Voc.label);
+            this.renderLabel(this.currentEpisode, label);
+
+            var prevCurrVersion = user.previous(Voc.currentVersion);
+            var prevCurrEpisode, epView;
+            if( prevCurrVersion ) {
+                prevCurrEpisode = prevCurrVersion.get(Voc.belongsToEpisode);
+                if(epView = this.views[prevCurrEpisode.cid]) {
+                    epView.unhighlight();
+                }
+                prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
+            }
+            if(epView = this.views[this.currentEpisode.cid]) {
+                epView.highlight(currentVersion.getSubject());
+                this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
+            }
+        },
+        renderLabel: function(episode, label) {
+            this.LOG.debug('renderLabel', label);
             this.$el.find('h1').html(label);
-            if( this.currentEpisode) this.currentEpisode.unhighlight();
-            this.currentEpisode = this.views[episode.cid];
-            this.currentEpisode.highlight(version.getSubject());
         },
         addEpisode: function(model, collection,options) {
             this.LOG.debug('addEpisode', model, collection);
@@ -76,6 +89,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             li.append(view.render().$el);
             this.$el.find('ul').first().append(li);
             this.views[model.cid] = view;
+            if( model === this.currentEpisode ) { view.highlight();}
             return this;
         },
         createNewVersion: function() {

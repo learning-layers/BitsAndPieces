@@ -1,25 +1,54 @@
-define(['logger', 'voc', 'model/episode/EpisodeModel'], function(Logger, Voc, EpisodeModel){
-    return {
+define(['logger', 'voc', 'model/Model', 'model/episode/EpisodeModel'], function(Logger, Voc, EpisodeModel){
+    return _.extend(Model, {
         init : function(vie) {
             this.LOG.debug("initialize UserModel");
             this.vie = vie;
             this.vie.entities.on('add', this.filter, this);
+            this.setIntegrityCheck(Voc.hasEpisode, Voc.EPISODE, Voc.belongsToUser);
+            this.setIntegrityCheck(Voc.currentVersion, Voc.VERSION);
         },
         LOG : Logger.get('UserModel'),
         /** 
          * Filters user entities from added entities to vie.entities
          */
-        filter: function(model, collection, options) {
-            if( this.vie.namespaces.curie(model.get('@type').id) === Voc.USER ) {
-                //this.fetchEpisodes(model);
-                /*
-                model.on('change:' 
-                    + this.vie.namespaces.uri(Voc.CURRENTVERSION), 
-                    function(model, value, options){
-                        m.LOG.log('changed currentVersion', value);
-                        m.setCurrentVersion(value);
-                    });
-                    */
+        filter: function(user, collection, options) {
+            if( this.vie.namespaces.curie(user.get('@type').id) === Voc.USER ) {
+                this.checkIntegrity();
+                user.listenTo(this.vie.entities, 'add', this.initCurrentVersion);
+                if( !user.isNew() ) {
+                    this.fetchEpisodes(model);
+                } else {
+                    if( user.has(Voc.hasEpisode)) {
+                        var eps = user.get(Voc.hasEpisode)||[];
+                        if( !_.isArray(eps) ) eps = [eps];
+                        this.initEpisodes(user, eps);
+                    }
+                }
+                user.on('change:'+this.vie.namespaces.uri(Voc.hasEpisode),
+                    this.initEpisodes, this);
+
+            }
+        },
+        /**
+         * To be called in the context of a user entity.
+         * If user has no currentVersion set, use the given one.
+         */
+        initCurrentVersion: function(version) {
+            if( this.vie.namespaces.curie(version.get('@type').id) !== Voc.VERSION ) return;
+
+            if( !this.get(Voc.currentVersion) ) {
+                this.save(Voc.currentVersion, version.getSubject());
+            }
+            this.stopListening(this.vie.entities, 'add', UserModel.initCurrentVersion);
+        },
+        /**
+         * Check if the user hasEpisode and create a new one if not.
+         * Otherwise make sure that the episodes are loaded.
+         */
+        initEpisodes: function(user, episodes, options) {
+            if( _.isEmpty(episodes) ) {
+                user.set(Voc.hasEpisode, 
+                    EpisodeModel.newEpisode(user).getSubject());
             }
         },
         /**
@@ -37,15 +66,13 @@ define(['logger', 'voc', 'model/episode/EpisodeModel'], function(Logger, Voc, Ep
                 function(episodes) {
                     Logger.debug("success fetchEpisodes");
                     Logger.debug("episodes", episodes);
-                    /* If no episodes exist create a new one */
-                    if( episodes.length === 0 ) {
-                        var ep = EpisodeModel.newEpisode(model);
-                        Logger.debug("episode created", ep);
-                    } else {
-                        v.entities.addOrUpdate(episodes);
-                    }
+                    v.entities.addOrUpdate(episodes);
+                    var eps = episodes.map(function(ep){
+                        return ep.getSubject();
+                    });
+                    user.set(Voc.hasEpisode, eps);
                 }
             );
         }
-    };
+    });
 });

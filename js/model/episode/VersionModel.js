@@ -1,11 +1,42 @@
 // TODO: let versionModel create Things for URIs in hasWidget which have no existing entity object in vie.entities yet. BNodes need not be considered as they can only occur if a new entity is created (so an entity should exist in vie.entities).
 define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, Voc, _, CopyMachine){
     return {
+        LOG : Logger.get('VersionModel'),
         init : function(vie) {
             this.LOG.debug("initialize Version");
             this.vie = vie;
+            this.vie.entities.on('add', this.filter, this );
+
         },
-        LOG : Logger.get('VersionModel'),
+        filter: function(model, collection, options ) {
+            if( this.vie.namespaces.curie(model.get('@type').id) === Voc.VERSION ) {
+                if(!model.isNew()) {
+                    this.fetchWidgets(model);
+                } 
+            }
+        },
+        /**
+         * Fetches widget entities from server.
+         * If no such entities exist, default Timeline and/or Organize are created.
+         */
+        fetchWidgets: function(version) {
+            this.LOG.debug('fetchWidgets');
+            var vie = this.vie;
+            var that = this;
+            this.vie.load({
+                'version' : version.getSubject(),
+                'type' : Voc.WIDGET
+            }).from('sss').execute().success(
+                function(widgets) {
+                    widgets = that.vie.entities.addOrUpdate(widgets);
+                    that.LOG.debug('success fetchWidgets', widgets);
+                    var ws = _.map(widgets, function(w){
+                        return w.getSubject();
+                    });
+                    version.set(Voc.hasWidget, ws);
+                }
+            );
+        },
         newVersion: function(episode, fromVersion) {
             var newVersion,
                 attr = {};
@@ -62,22 +93,7 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, V
             widgets.push(widget.getSubject());
             version.set(Voc.hasWidget, widgets);
 
-            var LOG = this.LOG;
-            this.vie.save({
-                'entity' : widget
-            }).from('sss').execute().success(
-                function(widget_uri) {
-                    widget.set(widget.idAttribute, widget_uri['uri']);
-                    LOG.debug('created', widget_uri, 'version', version.getSubject());
-                    //version = vie.entities.get(version.getSubject());
-                }
-            );
-        },
-        getWidgets: function(version) {
-            var conditions = {};
-            conditions[Voc.belongsToVersion] = version.getSubject();
-            conditions['@type'] = Voc.WIDGET;
-            return new this.vie.Collection(this.vie.entities.where(conditions));
+            widget.save();
         }
 
     };

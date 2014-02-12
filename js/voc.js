@@ -18,6 +18,7 @@ define([], {
     hasVersion: 'hasVersion',
     hasWidget: 'hasWidget',
     hasResource : 'resource',
+    hasEpisode : 'hasEpisode',
     timestamp : 'timestamp',
     circleType: 'circleType', 
     orgaEntityType: 'orgaEntityType',

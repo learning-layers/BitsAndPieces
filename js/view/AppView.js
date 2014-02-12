@@ -37,56 +37,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                         AppView.draw(model);
                     });
 
-                    // TODO: DataIntegrator shall update hasWidget list of a version X when a widget with belongsToVersion set to version X is added
-
-                    if(!model.isNew()) {
-                        this.fetchWidgets(model);
-                    } else  {
-                        var ws = model.get(Voc.hasWidget)||[];
-                        if( !_.isArray(ws) ) ws = [ws];
-                        else ws = _.clone(ws);
-                        if ( ws.length < 2 ){
-                            this.fillupWidgets(ws, model);
-                        }
-                    }
-
-                    var currentVersion = this.model.get(Voc.currentVersion);
-
-                    // if there is not currentVersion set, take the first one getting into this filter function
-                    if( !currentVersion ) {
-                        this.model.save(Voc.currentVersion, version.getSubject());
-                    // if the version matches the currentVersion, show it
-                    } else if( version === currentVersion ) {
-                        AppLog.debug('version matches currentVersion');
-                        this.episodeMgrView.render();
-                        this.show(version);
-                    }
                 }
-            },
-            /**
-             * Fetches widget entities from server.
-             * If no such entities exist, default Timeline and/or Organize are created.
-             */
-            fetchWidgets: function(version) {
-                var vie = this.vie;
-                var AppView = this;
-                this.vie.load({
-                    'version' : version.getSubject(),
-                    'type' : Voc.WIDGET
-                }).from('sss').execute().success(
-                    function(widgets) {
-                        AppLog.debug("success of fetching widgets", widgets.length);
-                        if( widgets.length < 2 ) 
-                            AppView.fillupWidgets(widgets, version);
-
-                        var ws = _.map(widgets, function(w){
-                            return w.getSubject();
-                        });
-                        AppLog.debug('ws', ws);
-                        vie.entities.addOrUpdate(widgets);
-                        version.set(Voc.hasWidget, ws);
-                    }
-                );
             },
             render: function() {
                 var episodes = $('<div id="myEpisodes1"></div>');
@@ -98,6 +49,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                     el: episodes,
                     vie : this.vie
                 });
+                this.episodeMgrView.render();
             },
             drawWidget: function(versionElem, widget) {
                 AppLog.debug('drawWidget', widget);
@@ -172,44 +124,6 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                 element.detach();
                 this.widgetFrame.prepend(element);
 
-            },
-            /**
-             * Fills up widget space with missing widgets.
-             */
-            fillupWidgets: function(widgets, version) {
-                var types = widgets.map(function(w){
-                    var type = w.get('@type');
-                    return type.id ? type.id : type;
-                });
-                AppLog.debug('types', types);
-
-                var newWidget;
-                if( !_.contains(types, this.vie.namespaces.uri('sss:Organize'))) {
-                    AppLog.debug("creating default organize widget");
-                    newWidget = new this.vie.Entity;
-                    newWidget.set('@type', this.vie.namespaces.uri('sss:Organize'));
-                    newWidget.set(Voc.circleType, this.vie.namespaces.uri('sss:Circle'));
-                    newWidget.set(Voc.orgaEntityType, this.vie.namespaces.uri('sss:OrgaEntity'));
-
-                    VersionModel.createWidget(newWidget, version);
-                    widgets.push(newWidget);
-                }
-                if( !_.contains(types, this.vie.namespaces.uri('sss:Timeline'))) {
-                    AppLog.debug("creating default timeline widget");
-                    newWidget = new this.vie.Entity;
-                    newWidget.set('@type', this.vie.namespaces.uri('sss:Timeline'));
-                    newWidget.set(Voc.belongsToUser, userParams.user);
-                    newWidget.set('timeAttr', Voc.timestamp);
-                    newWidget.set('predicate', this.vie.namespaces.uri('sss:userEvent'));
-                        //'timelineCollection' : new vie.Collection([], {//new TL.Collection([], { 
-                            //'model': Entity,
-                            //'vie' : vie
-                            //})},
-                    newWidget.set('start', jSGlobals.getTime() - jSGlobals.dayInMilliSeconds);
-                    newWidget.set('end', jSGlobals.getTime() + 3600000 );
-                    VersionModel.createWidget(newWidget, version);
-                    widgets.push(newWidget);
-                }
             }
         });
 });
