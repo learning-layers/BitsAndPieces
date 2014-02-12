@@ -15,8 +15,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.groupBy = this.options.groupBy;
             this.user = this.model.get(Voc.belongsToUser);
 
-            $(this.el).empty();
-
             if (!this.options.timeline) {
                 throw Error("no timeline configuration provided");
             }
@@ -31,56 +29,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             this.LOG.debug('TimelineView initialized');
 
-
-            if( this.user && (typeof this.user) === 'object') {
-                var parent = $('<div class="user-container">');
-                this.userDOM = $('<div class="user">');
-                parent.append(this.userDOM);
-                this.$el.append(parent);
-
-                // Instantiate User View
-                this.userView = new UserView({
-                    model:this.user,
-                    el: this.userDOM
-                });
-                this.userView.render();
-            }
-
-            // Instantiate our timeline object.
-            this.timelineDOM = document.createElement('div');
-            this.timelineDOM.setAttribute('class', 'timeline');
-            this.$el.append(this.timelineDOM);
-            this.timeline = new Timeline(this.timelineDOM);
-            this.timeline.draw( [{
-                    'start' : new Date(), // add a dummy event to force rendering
-                    'content' : "x"
-                }], _.extend(this.options.timeline, {
-                'start' : this.model.get('start'),
-                'end' : this.model.get('end'),
-                'min' : new Date('2013-01-01'),
-                'max' : new Date('2015-01-01'),
-                'zoomMin' : 300000, // 5 minute
-                'zoomMax' : 4320000000 // 5 days
-            }));
-            this.timeline.deleteItem(0); // remove dummy node
-            this.LOG.debug('timeline', this.timeline);
-
-            var view = this;
-            var entities = this.model.get(Voc.hasEntity) || [];
-            if( !_.isArray(entities)) entities = [entities];
-            _.each(entities, function(entity) {
-                view.addEntity(entity);
-            });
-            // bind timeline's internal events to model
-            links.events.addListener(this.timeline, 'rangechanged', function(range){
-                view.LOG.debug('caught rangechanged: '+ range.start + ' - ' + range.end);
-                tracker.info(tracker.CHANGETIMELINERANGE, tracker.NULL, range);
-                view.model.save({
-                    'start' : range.start,
-                    'end' : range.end
-                }, { 'by' : view });
-                //view.fetchRange(range.start,range.end);
-            });
             
         },
         changeEntitySet: function(model, set, options) {
@@ -160,7 +108,65 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
         },
         render: function() {
-            this.tl.redraw();
+            if( this.timeline ) {
+                this.timeline.redraw();
+                return this;
+            }
+
+            this.$el.empty();
+
+            if( this.user && this.user.isEntity) {
+                var par = $('<div class="user-container">');
+                this.userDOM = $('<div class="user">');
+                par.append(this.userDOM);
+                this.$el.append(par);
+
+                // Instantiate User View
+                this.userView = new UserView({
+                    model:this.user,
+                    el: this.userDOM
+                });
+                this.userView.render();
+            }
+
+            this.LOG.debug('this.user of timeline', this.user.getSubject());
+
+            // Instantiate our timeline object.
+            this.timelineDOM = document.createElement('div');
+            this.timelineDOM.setAttribute('class', 'timeline');
+            this.$el.append(this.timelineDOM);
+            this.timeline = new Timeline(this.timelineDOM);
+            this.timeline.draw( [{
+                    'start' : new Date(), // add a dummy event to force rendering
+                    'content' : "x"
+                }], _.extend(this.options.timeline, {
+                'start' : this.model.get('start'),
+                'end' : this.model.get('end'),
+                'min' : new Date('2013-01-01'),
+                'max' : new Date('2015-01-01'),
+                'zoomMin' : 300000, // 5 minute
+                'zoomMax' : 4320000000 // 5 days
+            }));
+            this.timeline.deleteItem(0); // remove dummy node
+            this.LOG.debug('timeline', this.timeline);
+
+            var view = this;
+            var entities = this.model.get(Voc.hasEntity) || [];
+            if( !_.isArray(entities)) entities = [entities];
+            _.each(entities, function(entity) {
+                view.addEntity(entity);
+            });
+            // bind timeline's internal events to model
+            links.events.addListener(this.timeline, 'rangechanged', function(range){
+                view.LOG.debug('caught rangechanged: '+ range.start + ' - ' + range.end);
+                tracker.info(tracker.CHANGETIMELINERANGE, tracker.NULL, range);
+                view.model.save({
+                    'start' : range.start,
+                    'end' : range.end
+                }, { 'by' : view });
+                //view.fetchRange(range.start,range.end);
+            });
+            return this;
         },
         getEntityViewIndex: function (entity) {
             for( var i = 0; i < this.entityViews.length; i++ ) {

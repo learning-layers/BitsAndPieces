@@ -4,12 +4,9 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
         'model/episode/UserModel',
         'model/episode/EpisodeModel',
         'model/episode/VersionModel',
-        'view/timeline/TimelineView', 
-        'view/organize/OrganizeView',
-        'view/sss/UserEventView', 
-        'view/sss/EntityView', 
+        'view/WidgetView',
         'view/episode/EpisodeManagerView'], 
-    function(Logger, tracker, Backbone, $, Voc, userParams, TimelineModel, OrganizeModel, UserModel, EpisodeModel, VersionModel,TimelineView, OrganizeView, UserEventView, EntityView, EpisodeManagerView){
+    function(Logger, tracker, Backbone, $, Voc, userParams, TimelineModel, OrganizeModel, UserModel, EpisodeModel, VersionModel,WidgetView, EpisodeManagerView){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             initialize: function() {
@@ -40,7 +37,6 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                         AppView.draw(model);
                     });
 
-                    // TODO: WidgetView needs to remove itself when the widget object is removed
                     // TODO: DataIntegrator shall update hasWidget list of a version X when a widget with belongsToVersion set to version X is added
 
                     if(!model.isNew()) {
@@ -49,7 +45,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                         var ws = model.get(Voc.hasWidget)||[];
                         if( !_.isArray(ws) ) ws = [ws];
                         if ( ws.length < 2 ){
-                            this.fillupWidgets([], model);
+                            this.fillupWidgets(ws, model);
                         }
                     }
 
@@ -103,7 +99,6 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                 });
             },
             drawWidget: function(versionElem, widget) {
-                //TODO: use a WidgetView. The view will update itself as soon as the Widget is loaded or changes.
                 AppLog.debug('drawWidget', widget);
                 if( !widget.isEntity )
                     widget =  this.vie.entities.get(widget);
@@ -112,32 +107,17 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                     return;
                 }
 
-                var type = widget.get('@type').id;
-                var ctype = this.vie.namespaces.curie(type);
+                var widgetView = new WidgetView({
+                    model: widget,
+                    tagName: 'fieldset'
+                });
 
-                var widgetBody = $('<fieldset about="'+widget.getSubject()+'"></fieldset>');
-                var newWidget, body;
-                if( ctype == 'Timeline' ) {
-                    widgetBody.append('<legend>Browse</legend>');
-                    body = $('<div class="timelineFrame"></div>');
-                    widgetBody.append(body);
-                    versionElem.prepend(widgetBody);
-                    this.createTimeline(widget, body);
-                } else if (ctype == 'Organize' ) {
-                    widgetBody.append('<legend>Organize</legend>');
-                    body = $('<div tabindex="1" style="width:100%; height:400px"></div>');                     
-                    widgetBody.append(body);
-                    versionElem.append(widgetBody);
-                    this.createOrganize(widget, body);
-                } else {
-                    widget.once('change', this.drawWidget, this );
+                if( widgetView.isBrowse() ) {
+                    versionElem.prepend(widgetView.$el);
+                }else if( widgetView.isOrganize() ) {
+                    versionElem.append(widgetView.$el);
                 }
-                if( body ) {
-                    widget.once('change:' + widget.idAttribute, function(model, value, options) {
-                        AppLog.debug('change subject from', model.cid, 'to', value);
-                        widgetBody.attr('about', value);
-                    });
-                }
+                widgetView.render();
             },
             draw: function(version) {
                 if( !version ) return;
@@ -191,51 +171,6 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                 element.detach();
                 this.widgetFrame.prepend(element);
 
-            },
-            createTimeline: function(widget, timelineBody) {
-                AppLog.debug("adding TimelineView");
-
-                // --- ADD THE TIMELINE VIEW --- //
-                var timelineView = new TimelineView({
-                    model : widget,
-                    EntityView: UserEventView,
-                    //GroupByEntityView: SSS.UserView,
-                    el: timelineBody,
-                    //groupBy: this.vie.namespaces.uri('sss:user'),
-                    timeline: {
-                        'width': '100%',
-                        'height': '180px',
-                        'editable': false, // disable dragging and editing events
-                        'axisOnTop': true,
-                        'stackEvents': false,
-                        //eventMarginAxis: '20', // minimal margin beteen events and the axis
-                        'style': 'box'
-                    }
-                });
-            },
-            createOrganize: function(widget, organizeBody) {
-                var organizeView = new OrganizeView({
-                    model: widget,
-                    EntityView: EntityView,
-                    el: organizeBody
-                });
-                organizeView.render();
-
-                var AppView = this;
-                organizeBody.droppable({
-                    drop: function(event, ui) {
-                        var id = ui.helper.attr('about');
-                        AppLog.debug("dropped " + id);
-                        var offset = $(this).offset();
-                        var entity = {//ORGANIZE.Entity({
-                            x: ui.offset.left - offset.left,
-                            y: ui.offset.top - offset.top,
-                            resource: id
-                        };
-                        tracker.info(tracker.DROPORGANIZEENTITY, id, entity);
-                        OrganizeModel.createEntity(widget, entity);
-                    }
-                });
             },
             /**
              * Fills up widget space with missing widgets.
