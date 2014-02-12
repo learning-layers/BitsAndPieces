@@ -44,6 +44,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                     } else  {
                         var ws = model.get(Voc.hasWidget)||[];
                         if( !_.isArray(ws) ) ws = [ws];
+                        else ws = _.clone(ws);
                         if ( ws.length < 2 ){
                             this.fillupWidgets(ws, model);
                         }
