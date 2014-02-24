@@ -1,8 +1,8 @@
-define(['logger', 'voc', 'underscore', 
+define(['logger', 'voc', 'underscore', 'userParams',
         'model/episode/UserModel','model/episode/EpisodeModel',
         'model/episode/VersionModel','model/timeline/TimelineModel',
         'model/organize/OrganizeModel' ], 
-function(Logger, Voc, _,
+function(Logger, Voc, _, userParams,
     UserModel, EpisodeModel, VersionModel, TimelineModel, OrganizeModel ){
     return {
         LOG : Logger.get('AppModel'),
@@ -89,7 +89,7 @@ function(Logger, Voc, _,
                 return w.getSubject();
             });
             AppLog.debug('filled up widgets', ws);
-            vie.entities.addOrUpdate(newWidgets);
+            this.vie.entities.addOrUpdate(newWidgets);
             version.set(Voc.hasWidget, ws, {'by': this});
         }
 

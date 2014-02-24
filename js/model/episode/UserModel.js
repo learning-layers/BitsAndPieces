@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'model/Model', 'model/episode/EpisodeModel'], function(Logger, Voc, EpisodeModel){
+define(['logger', 'voc', 'model/Model', 'model/episode/EpisodeModel'], function(Logger, Voc, Model, EpisodeModel){
     return _.extend(Model, {
         init : function(vie) {
             this.LOG.debug("initialize UserModel");
@@ -13,7 +13,7 @@ define(['logger', 'voc', 'model/Model', 'model/episode/EpisodeModel'], function(
          */
         filter: function(user, collection, options) {
             if( this.vie.namespaces.curie(user.get('@type').id) === Voc.USER ) {
-                this.checkIntegrity();
+                this.checkIntegrity(user);
                 user.listenTo(this.vie.entities, 'add', this.initCurrentVersion);
                 if( !user.isNew() ) {
                     this.fetchEpisodes(model);
@@ -53,7 +53,6 @@ define(['logger', 'voc', 'model/Model', 'model/episode/EpisodeModel'], function(
         },
         /**
          * Fetch the episodes belonging to the user.
-         * On success load versions of each episode or create a new episode if none exists.
          * @params VIE.Entity user
          */
         fetchEpisodes: function(user) {
