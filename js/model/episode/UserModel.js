@@ -13,10 +13,11 @@ define(['logger', 'voc', 'model/Model', 'model/episode/EpisodeModel'], function(
          */
         filter: function(user, collection, options) {
             if( this.vie.namespaces.curie(user.get('@type').id) === Voc.USER ) {
+                this.LOG.debug('user added', user);
                 this.checkIntegrity(user);
                 user.listenTo(this.vie.entities, 'add', this.initCurrentVersion);
                 if( !user.isNew() ) {
-                    this.fetchEpisodes(model);
+                    this.fetchEpisodes(user);
                 } else {
                     if( user.has(Voc.hasEpisode)) {
                         var eps = user.get(Voc.hasEpisode)||[];
@@ -39,7 +40,7 @@ define(['logger', 'voc', 'model/Model', 'model/episode/EpisodeModel'], function(
             if( !this.get(Voc.currentVersion) ) {
                 this.save(Voc.currentVersion, version.getSubject());
             }
-            this.stopListening(this.vie.entities, 'add', UserModel.initCurrentVersion);
+            this.stopListening(this.vie.entities, 'add', require('model/episode/UserModel').initCurrentVersion);
         },
         /**
          * Check if the user hasEpisode and create a new one if not.

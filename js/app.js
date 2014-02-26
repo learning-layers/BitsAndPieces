@@ -7,7 +7,8 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.useDefaults();
     var AppLog = Logger.get('App');
     var AddLog = Logger.get('Add');
-    Logger.get('UserModel').setLevel(Logger.OFF);
+    Logger.get('Model').setLevel(Logger.DEBUG);
+    Logger.get('UserModel').setLevel(Logger.DEBUG);
     Logger.get('OrganizeModel').setLevel(Logger.DEBUG);
     Logger.get('VersionModel').setLevel(Logger.DEBUG);
     Logger.get('EpisodeModel').setLevel(Logger.DEBUG);
@@ -55,6 +56,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     $(document).ready(function(){
         var user = new v.Entity;
         user.set(user.idAttribute, userParams.user);
+        user.set('@type', Voc.USER);
         user.fetch();
         v.entities.addOrUpdate(user);
 

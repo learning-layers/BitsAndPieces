@@ -1,9 +1,11 @@
-define(['logger', 'voc', 'underscore', 'model/episode/VersionModel'], function(Logger, Voc, _, VersionModel){
-    return {
+define(['logger', 'voc', 'underscore', 'model/Model', 'model/episode/VersionModel'], function(Logger, Voc, _, Model, VersionModel){
+    return _.extend(Model, {
         init : function(vie) {
             this.LOG.debug("initialize Episode");
             this.vie = vie;
             this.vie.entities.on('add', this.filter, this);
+            this.setIntegrityCheck(Voc.belongsToUser, Voc.USER, Voc.hasEpisode);
+            this.setIntegrityCheck(Voc.hasVersion, Voc.VERSION, Voc.belongsToEpisode);
         },
         LOG : Logger.get('EpisodeModel'),
         /** 
@@ -11,6 +13,7 @@ define(['logger', 'voc', 'underscore', 'model/episode/VersionModel'], function(L
          */
         filter: function(model, collection, options) {
             if( this.vie.namespaces.curie(model.get('@type').id) === Voc.EPISODE ) {
+                this.checkIntegrity(model);
                 if( !model.isNew() ) {
                     this.fetchVersions(model);
                 }
@@ -68,5 +71,5 @@ define(['logger', 'voc', 'underscore', 'model/episode/VersionModel'], function(L
             coll.add(episode.get(Voc.hasVersion));
             return coll;
         }
-    };
+    });
 });

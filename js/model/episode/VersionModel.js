@@ -1,15 +1,18 @@
 // TODO: let versionModel create Things for URIs in hasWidget which have no existing entity object in vie.entities yet. BNodes need not be considered as they can only occur if a new entity is created (so an entity should exist in vie.entities).
-define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, Voc, _, CopyMachine){
-    return {
+define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], function(Logger, Voc, _, CopyMachine, Model){
+    return _.extend(Model, {
         LOG : Logger.get('VersionModel'),
         init : function(vie) {
             this.LOG.debug("initialize Version");
             this.vie = vie;
             this.vie.entities.on('add', this.filter, this );
+            this.setIntegrityCheck(Voc.belongsToEpisode, Voc.EPISODE, Voc.hasVersion);
+            this.setIntegrityCheck(Voc.hasWidget, Voc.WIDGET, Voc.belongsToVersion);
 
         },
         filter: function(model, collection, options ) {
             if( this.vie.namespaces.curie(model.get('@type').id) === Voc.VERSION ) {
+                this.checkIntegrity(model);
                 if(!model.isNew()) {
                     this.fetchWidgets(model);
                 } 
@@ -96,5 +99,5 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine' ], function(Logger, V
             widget.save();
         }
 
-    };
+    });
 });
