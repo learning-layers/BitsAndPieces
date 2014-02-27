@@ -58,7 +58,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             var label = this.currentEpisode.get(Voc.label);
             this.renderLabel(this.currentEpisode, label);
 
-            var prevCurrVersion = user.previous(Voc.currentVersion);
+            var prevCurrVersion = this.model.previous(Voc.currentVersion);
             var prevCurrEpisode, epView;
             if( prevCurrVersion ) {
                 prevCurrEpisode = prevCurrVersion.get(Voc.belongsToEpisode);
