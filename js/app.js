@@ -27,8 +27,8 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('App').setLevel(Logger.DEBUG);
     Logger.get('AppModel').setLevel(Logger.DEBUG);
     Logger.get('Add').setLevel(Logger.OFF);
-    Logger.get('SocialSemanticService').setLevel(Logger.OFF);
-    Logger.get('Mockup').setLevel(Logger.OFF);
+    Logger.get('SocialSemanticService').setLevel(Logger.DEBUG);
+    Logger.get('Mockup').setLevel(Logger.DEBUG);
 
     var username = window.location.search.substring(1);
     if( !username) return alert('no username given!');
@@ -68,26 +68,6 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
 
         view.render();
 
-        // LOAD APPLICATION DATA
-        // user data
-        // episode data 
-        v.load({
-            'user': user.getSubject(),
-            'type' : Voc.EPISODE
-        }).from('sss').execute().success(
-            function(episodes) {
-                AppLog.debug("success fetchEpisodes");
-                AppLog.debug("episodes", episodes);
-                /* If no episodes exist create a new one */
-                if( episodes.length === 0 ) {
-                    var ep = EpisodeModel.newEpisode(user); 
-                    AppLog.debug("episode created", ep);
-                } else {
-                    v.entities.addOrUpdate(episodes);
-                }
-            }
-        );
-        // more data is fetched by EpisodeModel
     });
 
     return null;

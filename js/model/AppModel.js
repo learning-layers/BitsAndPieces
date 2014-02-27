@@ -33,12 +33,16 @@ function(Logger, Voc, _, userParams,
             }
         },
         /**
-         * Fills up widget collection of a version with missing widgets.
+         * Initialize widget collection of a version with missing widgets.
+         * Here it will be initialized with a Timeline and an Organize widget.
          */
         initWidgets: function(version, widgets, options) {
             if( options && options.by === this ) return;
+            if( !_.isEmpty(widgets) ) return;
+
             var that = this;
-            this.LOG.debug('initWidgets', _.clone(widgets));
+            this.LOG.debug('initWidgets');
+            /*
             var types = _.map(widgets, function(w){
                 if( !w.isEntity ) { 
                     var widget = that.vie.entities.get(w); 
@@ -47,7 +51,6 @@ function(Logger, Voc, _, userParams,
                         widget.set(widget.idAttribute, w );
                         that.vie.entities.addOrUpdate(widget);
                         widget.fetch();
-                        return;
                     }
                     w = widget;
                 } 
@@ -55,21 +58,22 @@ function(Logger, Voc, _, userParams,
                 return type.id ? type.id : type;
             });
             this.LOG.debug('types', types);
-
-            if( types.length >= 2 ) return;
+            */
 
             var newWidget, newWidgets = [];
-            if( !_.contains(types, this.vie.namespaces.uri(Voc.ORGANIZE))) {
+            //if( !_.contains(types, this.vie.namespaces.uri(Voc.ORGANIZE))) {
                 AppLog.debug("creating default organize widget");
                 newWidget = new this.vie.Entity;
                 newWidget.set('@type', Voc.ORGANIZE);
                 newWidget.set(Voc.circleType, Voc.CIRCLE);
                 newWidget.set(Voc.orgaEntityType, Voc.ORGAENTITY);
 
-                VersionModel.createWidget(newWidget, version);
+                newWidget.set(Voc.belongsToVersion, version.getSubject());
+                newWidget.save();
+
                 newWidgets.push(newWidget);
-            }
-            if( !_.contains(types, this.vie.namespaces.uri(Voc.TIMELINE))) {
+            //}
+            //if( !_.contains(types, this.vie.namespaces.uri(Voc.TIMELINE))) {
                 AppLog.debug("creating default timeline widget");
                 newWidget = new this.vie.Entity;
                 newWidget.set('@type', Voc.TIMELINE);
@@ -82,15 +86,12 @@ function(Logger, Voc, _, userParams,
                         //})},
                 newWidget.set('start', jSGlobals.getTime() - jSGlobals.dayInMilliSeconds);
                 newWidget.set('end', jSGlobals.getTime() + 3600000 );
-                VersionModel.createWidget(newWidget, version);
+                newWidget.set(Voc.belongsToVersion, version.getSubject());
+                newWidget.save();
                 newWidgets.push(newWidget);
-            }
-            var ws = _.map(newWidgets, function(w){
-                return w.getSubject();
-            });
-            AppLog.debug('filled up widgets', ws);
+            //}
+        
             this.vie.entities.addOrUpdate(newWidgets);
-            version.set(Voc.hasWidget, ws, {'by': this});
         }
 
     };
