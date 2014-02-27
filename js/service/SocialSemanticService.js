@@ -215,11 +215,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         },
                                         function(object2) {
                                             service.LOG.warn("error:", object2);
-                                            loadable.resolve(vieEntity);
+                                            loadable.resolve(entity);
                                         },
                                         service.vie.namespaces.uri(service.user),
                                         service.userKey ,
-                                        vieEntity.getSubject()
+                                        entity.getSubject()
                                         );
                                 } else
                                     loadable.resolve(entity);
@@ -295,9 +295,9 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     var entity = service.fixForVIE(object, 'learnEpUri');
                                     entity[Voc.belongsToUser] = entity['user'];
                                     delete entity['user'];
-                                    var vieEntity = new service.vie.Entity(entity);
-                                    vieEntity.set('@type', Voc.EPISODE);
-                                    entityInstances.push(vieEntity);
+                                    //var vieEntity = new service.vie.Entity(entity);
+                                    entity['@type'] = Voc.EPISODE;
+                                    entityInstances.push(entity);
                                 });
                                 loadable.resolve(entityInstances);
                             },
@@ -328,9 +328,9 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     delete entity['learnEpUri'];
                                     delete entity['circles'];
                                     delete entity['entities'];
-                                    var vieEntity = new service.vie.Entity(entity);
-                                    vieEntity.set('@type', Voc.VERSION);
-                                    entityInstances.push(vieEntity);
+                                    //var vieEntity = new service.vie.Entity(entity);
+                                    entity['@type'] = Voc.VERSION;
+                                    entityInstances.push(entity);
                                     // each version has a organize component
                                     // that would look like as if this object already exists on the server
 
@@ -465,9 +465,9 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     delete fixEntity['xC'];
                                     delete fixEntity['yC'];
                                     fixEntity.belongsToOrganize = loadable.options.organize;
-                                    var vieEntity = new service.vie.Entity(fixEntity);
-                                    vieEntity.set('@type', typeCurie);
-                                    entities.push(vieEntity);
+                                    //var vieEntity = new service.vie.Entity(fixEntity);
+                                    fixEntity['@type'] = typeCurie;
+                                    entities.push(fixEntity);
                                 });
                                 loadable.resolve(entities);
                             },
@@ -502,9 +502,9 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     fixEntity[Voc.hasResource] = item['entityUri'];
                                     delete fixEntity['entityUri'];
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
-                                    var vieEntity = new service.vie.Entity(fixEntity);
-                                    vieEntity.set('@type', typeCurie);
-                                    entities.push(vieEntity);
+                                    //var vieEntity = new service.vie.Entity(fixEntity);
+                                    fixEntity['@type'] = typeCurie;
+                                    entities.push(fixEntity);
                                 });
                                 loadable.resolve(entities);
                             },
