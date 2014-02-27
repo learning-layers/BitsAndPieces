@@ -1,9 +1,11 @@
 define(['logger', 'voc', 'underscore', 'userParams',
         'model/episode/UserModel','model/episode/EpisodeModel',
         'model/episode/VersionModel','model/timeline/TimelineModel',
+        'model/timeline/UserEventModel',
+        'model/organize/OrgaEntityModel','model/organize/CircleModel',
         'model/organize/OrganizeModel' ], 
 function(Logger, Voc, _, userParams,
-    UserModel, EpisodeModel, VersionModel, TimelineModel, OrganizeModel ){
+    UserModel, EpisodeModel, VersionModel, TimelineModel, UserEventModel, OrgaEntityModel, CircleModel, OrganizeModel ){
     return {
         LOG : Logger.get('AppModel'),
         init : function(vie) {
@@ -13,6 +15,9 @@ function(Logger, Voc, _, userParams,
             VersionModel.init(this.vie);
             TimelineModel.init(this.vie);
             OrganizeModel.init(this.vie);
+            UserEventModel.init(this.vie);
+            OrgaEntityModel.init(this.vie);
+            CircleModel.init(this.vie);
             this.LOG.debug("initialize AppModel");
             this.vie.entities.on('add', this.filter, this );
         },

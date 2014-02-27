@@ -60,6 +60,9 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], fun
             function(items) {
 
                 that.LOG.debug('items fetched');
+                _.each(items, function(item){
+                    item[Voc.belongsToOrganize] = organize.getSubject();
+                });
                 items = that.vie.entities.addOrUpdate(items);
                 /*
                 var current = organize.get(relation) || [];

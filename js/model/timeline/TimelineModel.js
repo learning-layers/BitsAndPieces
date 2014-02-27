@@ -48,6 +48,9 @@ define(['logger', 'voc', 'underscore', 'model/Model' ], function(Logger, Voc, _,
         }).from('sss').execute().success(
             function(entities) {
                 that.LOG.debug('success fetchRange: ', _.clone(entities), 'timeline: ', timeline);
+                _.each(entities, function(entity){
+                    entity[Voc.belongsToTimeline] = timeline.getSubject();
+                });
                 entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
                 /*
                 var current = timeline.get(Voc.hasEntity) || [];

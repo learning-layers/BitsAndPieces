@@ -13,6 +13,8 @@ define([], {
     currentVersion: 'currentVersion',
     belongsToEpisode: 'belongsToEpisode',
     belongsToVersion: 'belongsToVersion',
+    belongsToTimeline: 'belongsToTimeline',
+    belongsToOrganize: 'belongsToOrganize',
     hasCircle: 'hasCircle',
     hasEntity: 'hasEntity',
     hasVersion: 'hasVersion',
@@ -27,6 +29,5 @@ define([], {
     end: 'end',
 
     label : 'label',
-    content : 'content',
-    belongsToOrganize: 'belongsToOrganize'
+    content : 'content'
 });
