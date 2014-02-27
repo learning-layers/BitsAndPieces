@@ -61,18 +61,11 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], fun
 
                 that.LOG.debug('items fetched');
                 items = that.vie.entities.addOrUpdate(items);
+                /*
                 var current = organize.get(relation) || [];
                 if( !_.isArray(current)) current = [current];
                 var added = _.difference(items, current);
                 _.each(added, function(c){
-                    c.on('destroy', function(model, collection, options) {
-                        that.LOG.debug('destroy fired', model);
-                        var its = organize.get(relation) || [];
-                        if( !_.isArray(its)) its = [its];
-                        that.LOG.debug('its', its);
-                        var newIts = _.without(its, model);
-                        organize.set(relation, newIts, options);
-                    });
                     that.LOG.debug('added', c.getSubject());
                     if( type == Voc.ORGAENTITY ) {
                         var resource = c.get(Voc.hasResource);
@@ -93,6 +86,7 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], fun
                 });
                 that.LOG.debug('current', current);
                 organize.set(relation, current);
+                */
 
             }
         );

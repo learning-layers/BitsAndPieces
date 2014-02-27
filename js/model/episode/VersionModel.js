@@ -30,12 +30,12 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], fun
             'type' : Voc.WIDGET
         }).from('sss').execute().success(
             function(widgets) {
-                widgets = that.vie.entities.addOrUpdate(widgets);
                 that.LOG.debug('success fetchWidgets', widgets);
-                var ws = _.map(widgets, function(w){
-                    return w.getSubject();
-                });
-                version.set(Voc.hasWidget, ws);
+                that.vie.entities.addOrUpdate(widgets);
+                //var ws = _.map(widgets, function(w){
+                    //return w.getSubject();
+                //});
+                //version.set(Voc.hasWidget, ws);
             }
         );
     };

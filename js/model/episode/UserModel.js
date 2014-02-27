@@ -71,10 +71,6 @@ define(['logger', 'voc', 'model/Model', 'model/episode/EpisodeModel'], function(
                 that.LOG.debug("success fetchEpisodes");
                 that.LOG.debug("episodes", episodes);
                 v.entities.addOrUpdate(episodes);
-                var eps = episodes.map(function(ep){
-                    return ep.getSubject();
-                });
-                user.set(Voc.hasEpisode, eps);
             }
         );
     }

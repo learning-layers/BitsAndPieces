@@ -49,6 +49,7 @@ define(['logger', 'voc', 'underscore', 'model/Model' ], function(Logger, Voc, _,
             function(entities) {
                 that.LOG.debug('success fetchRange: ', _.clone(entities), 'timeline: ', timeline);
                 entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
+                /*
                 var current = timeline.get(Voc.hasEntity) || [];
                 if( !_.isArray(current)) current = [current];
                 var added = _.difference(entities, current);
@@ -68,6 +69,7 @@ define(['logger', 'voc', 'underscore', 'model/Model' ], function(Logger, Voc, _,
                 current = _.union(current, added);
                 that.LOG.debug('current', current);
                 timeline.set(Voc.hasEntity, current);
+                */
             }
         );
     };

@@ -16,6 +16,12 @@ define(['logger', 'voc', 'underscore', 'model/Model', 'model/episode/VersionMode
             this.checkIntegrity(model);
             if( !model.isNew() ) {
                 this.fetchVersions(model);
+            } else {
+                if(model.has(Voc.hasVersion)) {
+                    if( _.isEmpty(model.get(Voc.hasVersion))) {
+                        model.set(Voc.hasVersion, VersionModel.newVersion(model));
+                    }
+                }
             }
         }
     };
@@ -28,17 +34,7 @@ define(['logger', 'voc', 'underscore', 'model/Model', 'model/episode/VersionMode
             function(versions) {
                 em.LOG.debug("success fetchVersions");
                 em.LOG.debug("versions", versions);
-                if( versions.length === 0 ) {
-                    versions.push(VersionModel.newVersion(episode));
-                } else {
-                    versions = em.vie.entities.addOrUpdate(versions);
-                }
-                var current = episode.get(Voc.hasVersion) || [];
-                versions = _.union(current, versions);
-                versions = versions.map(function(v){
-                    return v.getSubject();
-                });
-                episode.set(Voc.hasVersion, versions);
+                em.vie.entities.addOrUpdate(versions);
             }
         );
 
