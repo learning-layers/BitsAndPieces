@@ -67,7 +67,7 @@ define(['logger', 'voc'], function(Logger, Voc){
             for( key in this.integrity ) {
                 if( this.integrity[key].foreignKey ) {
                     this.LOG.debug('check', key, this.integrity[key].foreignKey);
-                    foreign = model.get(key);
+                    foreign = model.get(key) || [];
                     if( !_.isArray(foreign)) foreign = [foreign];
                     _.each(foreign, function(f) {
                         that._removeForeignValue(model, key, f);
@@ -97,18 +97,19 @@ define(['logger', 'voc'], function(Logger, Voc){
 
             // If there is a foreignKey 
             if( this.integrity[key].foreignKey ){
-                var fValue = foreign.get( this.integrity[key].foreignKey );
+                var fValue = foreign.get( this.integrity[key].foreignKey ) || [];
                 this.LOG.debug('foreign got a foreignKey', this.integrity[key].foreignKey, _.clone(fValue));
                 if( !_.isArray(fValue)) fValue = [fValue];
-                var fKeys = [];
+                var fValues = [];
                 // check that model is contained in foreignKey field
                 for( var i = 0; i < fValue.length; i++ ) {
                     if( fValue[i] && this._isIdentical(fValue[i], model)) return;
+                    fValues.push(fValue[i].isEntity ? fValue[i].getSubject() : fValue[i] );
                 }
                 // add model reference if not contained
                 this.LOG.debug('add model to foreign', model.getSubject());
-                fKeys.push(model.getSubject());
-                foreign.set(this.integrity[key].foreignKey, fKeys);
+                fValues.push(model.getSubject());
+                foreign.set(this.integrity[key].foreignKey, fValues);
             } 
             // if the foreign entity is destroyed, remove it from this model
             foreign.on('destroy', function() {this._removeValue(model, key, foreign)}, this);
@@ -131,7 +132,7 @@ define(['logger', 'voc'], function(Logger, Voc){
             if(_.isEmpty(value) ) return;
             var values = [];
             for( var i = 0; i < value.length; i++ ) {
-                if( value[i] && this._isIdentical(value[i], foreign)) continue;
+                if( !value[i] || this._isIdentical(value[i], foreign)) continue;
                 values.push(value[i].isEntity ? value[i].getSubject() : value[i] );
             }
             model.set(key, values);
@@ -140,17 +141,17 @@ define(['logger', 'voc'], function(Logger, Voc){
          * Removes the foreignKey references of the foreign entity to model.
          */
         _removeForeignValue: function( model, key, foreign ) {
-            var fValue = foreign.get( this.integrity[key].foreignKey );
+            var fValue = foreign.get( this.integrity[key].foreignKey ) || [];
             this.LOG.debug('_removeForeignValue', key, _.clone(foreign), _.clone(fValue));
             if( !_.isArray(fValue)) fValue = [fValue];
-            var fKeys = [];
+            var fValues = [];
             // remove model from foreignKey field
             for( var i = 0; i < fValue.length; i++ ) {
-                if( fValue[i] && this._isIdentical(fValue[i], model)) continue;
-                fKeys.push(fValue[i].isEntity ? fValue[i].getSubject() : fValue[i] );
+                if( !fValue[i] || this._isIdentical(fValue[i], model)) continue;
+                fValues.push(fValue[i].isEntity ? fValue[i].getSubject() : fValue[i] );
             }
-            this.LOG.debug('_newKeys', fKeys);
-            foreign.set(this.integrity[key].foreignKey, fKeys);
+            this.LOG.debug('_newKeys', fValues);
+            foreign.set(this.integrity[key].foreignKey, fValues);
         }
     };
 });
