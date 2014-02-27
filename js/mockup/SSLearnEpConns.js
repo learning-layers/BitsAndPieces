@@ -288,7 +288,7 @@ function SSLearnEpVersionGetTimelineState(){
         errorHandler({'error':"Timelinestate not found"});
         return;
     }
-    setTimeout(function(){resultHandler(SSMockupTimelineStates[learnEpVersionUri]);}, MockupTimeout);
+    setTimeout(function(){resultHandler({'learnEpTimelineState': SSMockupTimelineStates[learnEpVersionUri]});}, MockupTimeout);
 
 	};
 };
