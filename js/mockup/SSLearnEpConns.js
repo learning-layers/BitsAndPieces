@@ -77,10 +77,12 @@ SSMockupEpisodes[MockupNS + 'episode/episodeX'] = {
 };
 var SSMockupTimelineStates = {};
 SSMockupTimelineStates[MockupNS + 'version/versionX'] = {
+    'learnEpTimelineStateUri' : MockupNS + 'timelinestate/versionX',
     'startTime' : '2013-11-04T17:40:20+02:00',
     'endTime' : '2013-11-05T17:40:20+02:00'
 };
 SSMockupTimelineStates[MockupNS + 'version/versionY'] = {
+    'learnEpTimelineStateUri' : MockupNS + 'timelinestate/versionY',
     'startTime' : '2013-11-06T17:40:20+02:00',
     'endTime' : '2013-11-07T17:40:20+02:00'
 };
