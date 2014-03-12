@@ -25,10 +25,12 @@ function(Logger, Voc, _, userParams,
             if( this.vie.namespaces.curie(model.get('@type').id) === Voc.VERSION ) {
                 // only initWidgets if hasWidget is defined
                 // otherwise it is unknown whether there are widgets for this version 
+                this.LOG.debug("Version has hasWidget?", model.has(Voc.hasWidget), model.get(Voc.hasWidget));
                 if( model.has(Voc.hasWidget) ) {
                     var ws = model.get(Voc.hasWidget)||[];
                     if( !_.isArray(ws) ) ws = [ws];
                     else ws = _.clone(ws);
+                    this.LOG.debug("widgets = ", ws);
                     this.initWidgets(model, ws);
                 } 
 

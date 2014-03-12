@@ -46,9 +46,13 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], fun
             attr = _.clone(fromVersion.attributes);
             delete attr[fromVersion.idAttribute];
             delete attr[this.vie.namespaces.uri(Voc.hasWidget)];
+        } else {
+            attr[this.vie.namespaces.uri(Voc.hasWidget)] = false;
         }
         newVersion = new this.vie.Entity(attr);
-        this.LOG.debug("newVersion", newVersion);
+
+        this.LOG.debug("newVersion", newVersion, fromVersion);
+        this.LOG.debug("has Widgets", newVersion.get(Voc.hasWidget));
         newVersion.set(Voc.timestamp, new Date());
         newVersion.set('@type', Voc.VERSION);
         newVersion.set(Voc.belongsToEpisode, episode.getSubject());
