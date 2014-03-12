@@ -14,12 +14,12 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.views = {};
             this.LOG.debug('options', this.options);
             this.vie = this.options.vie;
-            this.vie.entities.on('add', this.filter, this);
             this.$el.html('<img src="css/img/menu_small.png" id="toggleEpisodes"/><h1 contenteditable="true"></h1>' + 
                     '<div id="episodes"><button id="createNewVersion">New Version</button><button id="createBlank">Create new Episode from scratch</button><button id="createFromHere">Create new Episode from here</button><ul></ul></div>');
 
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), 
                 this.render, this);
+            this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEpisode), this.changeEpisodeSet, this);
             var view = this;
         },
         toggleEpisodes: function() {
@@ -68,7 +68,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
                 prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
             }
             if(epView = this.views[this.currentEpisode.cid]) {
-                epView.highlight(currentVersion.getSubject());
+                epView.highlight(version.getSubject());
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
             }
         },
@@ -76,8 +76,28 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.LOG.debug('renderLabel', label);
             this.$el.find('h1').html(label);
         },
-        addEpisode: function(model, collection,options) {
-            this.LOG.debug('addEpisode', model, collection);
+        changeEpisodeSet: function(model, set, options) {
+            this.LOG.debug('changeEpisodeSet', set);  
+            var previous = Backbone.Model.prototype.previous.call(
+                this.model, this.model.vie.namespaces.uri(Voc.hasEpisode));
+            if( !_.isArray(set)) set = [set];
+            this.LOG.debug('previous', previous);  
+            var that = this;
+            var added = _.difference(set, previous);
+            this.LOG.debug('added', added);
+            _.each(added, function(a){
+                a = that.model.vie.entities.get(a);
+                that.addEpisode(a);
+            });
+            
+            var deleted = _.difference(previous, set);
+            _.each(deleted, function(a){
+                a = that.model.vie.entities.get(a);
+                that.removeEntity(a);
+            });
+        },
+        addEpisode: function(model) {
+            this.LOG.debug('addEpisode', model);
             var view = new EpisodeView({'model':model});
             var li = $('<li class="episode" about="'+model.getSubject()+'"></li>');
             if( model.isNew() ) {
@@ -91,6 +111,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.views[model.cid] = view;
             if( model === this.currentEpisode ) { view.highlight();}
             return this;
+        },
+        removeEpisode: function(model) {
+            this.LOG.debug('removeEpisode', model);
         },
         createNewVersion: function() {
             var version = this.model.get(Voc.currentVersion);

@@ -98,7 +98,7 @@ define(['logger', 'voc'], function(Logger, Voc){
             // If there is a foreignKey 
             if( this.integrity[key].foreignKey ){
                 var fValue = foreign.get( this.integrity[key].foreignKey ) || [];
-                this.LOG.debug('foreign got a foreignKey', this.integrity[key].foreignKey, _.clone(fValue));
+                this.LOG.debug('foreign got a foreignKey', this.integrity[key].foreignKey, fValue);
                 if( !_.isArray(fValue)) fValue = [fValue];
                 var fValues = [];
                 // check that model is contained in foreignKey field
@@ -109,7 +109,7 @@ define(['logger', 'voc'], function(Logger, Voc){
                 // add model reference if not contained
                 this.LOG.debug('add model to foreign', model.getSubject());
                 fValues.push(model.getSubject());
-                foreign.set(this.integrity[key].foreignKey, fValues);
+                foreign.set(this.integrity[key].foreignKey, fValues.length > 1 ? fValues : fValues[0]);
             } 
             // if the foreign entity is destroyed, remove it from this model
             foreign.on('destroy', function() {this._removeValue(model, key, foreign)}, this);
@@ -135,7 +135,7 @@ define(['logger', 'voc'], function(Logger, Voc){
                 if( !value[i] || this._isIdentical(value[i], foreign)) continue;
                 values.push(value[i].isEntity ? value[i].getSubject() : value[i] );
             }
-            model.set(key, values);
+            model.set(key, values.length > 1 ? values : values[0]);
         },
         /**
          * Removes the foreignKey references of the foreign entity to model.
@@ -151,7 +151,7 @@ define(['logger', 'voc'], function(Logger, Voc){
                 fValues.push(fValue[i].isEntity ? fValue[i].getSubject() : fValue[i] );
             }
             this.LOG.debug('_newKeys', fValues);
-            foreign.set(this.integrity[key].foreignKey, fValues);
+            foreign.set(this.integrity[key].foreignKey, fValues.length > 1 ? fValues : fValues[0]);
         }
     };
 });

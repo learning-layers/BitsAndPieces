@@ -30,7 +30,7 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], fun
             'type' : Voc.WIDGET
         }).from('sss').execute().success(
             function(widgets) {
-                that.LOG.debug('success fetchWidgets', widgets);
+                that.LOG.debug('success fetchWidgets', _.clone(widgets));
                 that.vie.entities.addOrUpdate(widgets);
                 //var ws = _.map(widgets, function(w){
                     //return w.getSubject();
