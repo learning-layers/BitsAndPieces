@@ -1,0 +1,10 @@
+# vim
+.session.vim
+*.swp
+
+# eclipse
+workbench.xmi
+.project
+
+nbproject/*
+doc/*
