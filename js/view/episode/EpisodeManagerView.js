@@ -78,8 +78,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         changeEpisodeSet: function(model, set, options) {
             this.LOG.debug('changeEpisodeSet', set);  
-            var previous = this.model.previous(Voc.hasEpisode);
             if( !_.isArray(set)) set = [set];
+            var previous = this.model.previous(Voc.hasEpisode) || [];
+            if( !_.isArray(previous)) previous = [previous];
             for( var i = 0; i < set.length; i++ ) {
                 set[i] = this.model.vie.entities.get(set[i]);
             }
@@ -93,6 +94,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             });
             
             var deleted = _.difference(previous, set);
+            this.LOG.debug('deleted', deleted);
             _.each(deleted, function(a){
                 a = that.model.vie.entities.get(a);
                 that.removeEpisode(a);
