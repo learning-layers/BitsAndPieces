@@ -56,12 +56,12 @@ define(['logger', 'voc', 'underscore', 'model/Model', 'model/episode/VersionMode
     m.getFirstVersion= function(episode) {
         return this.getVersions(episode).at(0);
     };
-    getVersions= function(episode) {
+    m.getVersions= function(episode) {
 
         var coll = new this.vie.Collection([],{'vie':this.vie});
         coll.comparator = this.vie.namespaces.uri(Voc.timestamp);
         coll.add(episode.get(Voc.hasVersion));
         return coll;
-    }
+    };
     return m;
 });
