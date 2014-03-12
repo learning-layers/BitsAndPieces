@@ -464,6 +464,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     delete fixEntity['yR'];
                                     delete fixEntity['xC'];
                                     delete fixEntity['yC'];
+                                    delete fixEntity['learnEpVersionUri'];
                                     fixEntity.belongsToOrganize = loadable.options.organize;
                                     //var vieEntity = new service.vie.Entity(fixEntity);
                                     fixEntity['@type'] = typeCurie;

@@ -76,11 +76,14 @@ define(['logger', 'voc', 'underscore', 'model/Model' ], function(Logger, Voc, _,
             }
         );
     };
-    m.copy= function(timeline) {
+    m.copy= function(timeline, overrideAttributes) {
         var newAttr = _.clone(timeline.attributes);
         delete newAttr[timeline.idAttribute];
+        delete newAttr[this.vie.namespaces.uri(Voc.hasEntity)];
+        newAttr = _.extend(newAttr, overrideAttributes || {});
         var newTimeline = new this.vie.Entity(newAttr);
         this.vie.entities.addOrUpdate(newTimeline);
+        newTimeline.save();
         return newTimeline;
     };
     return m;

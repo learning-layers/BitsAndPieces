@@ -45,6 +45,7 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], fun
         if( fromVersion ){
             attr = _.clone(fromVersion.attributes);
             delete attr[fromVersion.idAttribute];
+            delete attr[this.vie.namespaces.uri(Voc.hasWidget)];
         }
         newVersion = new this.vie.Entity(attr);
         this.LOG.debug("newVersion", newVersion);
@@ -64,9 +65,10 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], fun
             var widgets = fromVersion.get(Voc.hasWidget) || [];
             if( !_.isArray(widgets)) widgets = [widgets];
             _.each(widgets, function(widget) {
-                var newWidget = CopyMachine.copy(widget);
-                newWidget.set(Voc.belongsToVersion, newVersion.getSubject());
-                newWidget.save();
+                var overrideAttributes = {};
+                overrideAttributes[vm.vie.namespaces.uri(Voc.belongsToVersion)] 
+                    = newVersion.getSubject();
+                var newWidget = CopyMachine.copy(widget, overrideAttributes);
                 //newWidgets.push(newWidget);
                 //newWidgetUris.push(newWidget.getSubject());
             });

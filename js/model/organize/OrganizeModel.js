@@ -100,22 +100,27 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], fun
     m.fetchEntities= function(organize) {
         this.fetchStuff(organize, Voc.ORGAENTITY, Voc.hasEntity);
     };
-    m.copy= function(organize) {
+    m.copy= function(organize, overrideAttributes) {
         var newAttr = _.clone(organize.attributes);
         delete newAttr[organize.idAttribute];
+        delete newAttr[this.vie.namespaces.uri(Voc.hasCircle)];
+        delete newAttr[this.vie.namespaces.uri(Voc.hasEntity)];
+        newAttr = _.extend(newAttr, overrideAttributes || {});
+        
         var newOrganize = new this.vie.Entity(newAttr);
         this.vie.entities.addOrUpdate(newOrganize);
+        newOrganize.save();
         var that = this;
         _.each([Voc.hasCircle, Voc.hasEntity], function(rel) {
             var items = organize.get(rel) || [];
             if(!_.isArray(items)) items = [items];
             var newItems = [];
             _.each(items,function(item){
-                var newItem = CopyMachine.copy(item);
-                newItem.set(Voc.belongsToOrganize, newOrganize.getSubject());
+                var overrideAttributes = {};
+                overrideAttributes[that.vie.namespaces.uri(Voc.belongsToOrganize)] 
+                    = newOrganize.getSubject();
+                var newItem = CopyMachine.copy(item, overrideAttributes);
                 newItems.push( newItem.getSubject() );
-                that.vie.entities.addOrUpdate(newItem);
-                newItem.save();
             });
             newOrganize.set(rel, newItems);
         });
