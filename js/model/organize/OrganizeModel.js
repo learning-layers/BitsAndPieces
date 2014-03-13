@@ -31,12 +31,12 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], fun
         item.set(Voc.belongsToOrganize, organize.getSubject(), options);
 
         this.vie.entities.addOrUpdate(item, {'addOptions' : options});
-        var items = Backbone.Model.prototype.get.call(
-            organize, this.vie.namespaces.uri(relation)) || [];
-        if(!_.isArray(items)) items = [items];
-        else items = _.clone(items);
-        items.push(item.getSubject());
-        organize.set(relation, items, options);
+        //var items = Backbone.Model.prototype.get.call(
+            //organize, this.vie.namespaces.uri(relation)) || [];
+        //if(!_.isArray(items)) items = [items];
+        //else items = _.clone(items);
+        //items.push(item.getSubject());
+        //organize.set(relation, items, options);
         item.save();
         return item;
     };
