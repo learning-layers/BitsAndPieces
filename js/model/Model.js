@@ -8,15 +8,15 @@ define(['logger', 'voc'], function(Logger, Voc){
                 'foreignKey': foreignKey
             };
         },
-        checkIntegrity: function(model) {
+        checkIntegrity: function(model, options) {
             var key;
-            this._checkIntegrity(model);
+            this._checkIntegrity(model, options);
             for( key in this.integrity ) {
                 model.on('change:' + model.vie.namespaces.uri(key), this._changeIntegrity, this);
             }
             model.on('destroy', this._removeIntegrity, this);
         },
-        _checkIntegrity: function(model) {
+        _checkIntegrity: function(model, options) {
             this.LOG.debug('checkIntegrity', model);
             var key, foreign, that = this;
             for( key in this.integrity ) {
@@ -25,13 +25,13 @@ define(['logger', 'voc'], function(Logger, Voc){
                 if( !_.isArray(foreign)) foreign = [foreign];
                 if( !_.isEmpty(foreign)) {
                     _.each(foreign, function(f) {
-                        that._checkValue(model, key, f);
+                        that._checkValue(model, key, f, options);
                     });
                 }
             }
         },
-        _changeIntegrity: function(model) {
-            this.LOG.debug('changeIntegrity', model);
+        _changeIntegrity: function(model, value, options) {
+            this.LOG.debug('changeIntegrity', model, options);
             var toRemove, toCheck, key, that = this; 
             for( key in this.integrity ) {
                 if( !model.hasChanged(model.vie.namespaces.uri(key))) continue;
@@ -45,23 +45,23 @@ define(['logger', 'voc'], function(Logger, Voc){
                 toCheck = _.difference(foreign, previous);
 
                 _.each(toCheck, function(c) {
-                    that._checkValue(model, key, c);
+                    that._checkValue(model, key, c, options);
                 });
 
                 toRemove = _.difference(previous, foreign);
 
                 _.each(toRemove, function(r){
-                    that._removeValue(r, key, model);
+                    that._removeValue(r, key, model, options);
                 });
 
                 if( this.integrity[key].foreignKey ) {
                     _.each(toRemove, function(r){
-                        that._removeForeignValue(model, key, r);
+                        that._removeForeignValue(model, key, r, options);
                     });
                 }
             }
         },
-        _removeIntegrity: function(model) {
+        _removeIntegrity: function(model, collection, options) {
             this.LOG.debug('removeIntegrity', model);
             var key;
             for( key in this.integrity ) {
@@ -70,7 +70,7 @@ define(['logger', 'voc'], function(Logger, Voc){
                     foreign = model.get(key) || [];
                     if( !_.isArray(foreign)) foreign = [foreign];
                     _.each(foreign, function(f) {
-                        that._removeForeignValue(model, key, f);
+                        that._removeForeignValue(model, key, f, options);
                     });
                 }
 
@@ -80,8 +80,8 @@ define(['logger', 'voc'], function(Logger, Voc){
         /**
          * Check integrity for given foreign entity
          */
-        _checkValue: function(model, key, foreign) {
-            this.LOG.debug('_checkValue', key, _.clone(foreign));
+        _checkValue: function(model, key, foreign, options) {
+            this.LOG.debug('_checkValue', key, _.clone(foreign), options);
             // If the foreign entity does not exist, 
             // create it with the type associated with key
             if( !foreign.isEntity) {
@@ -109,7 +109,7 @@ define(['logger', 'voc'], function(Logger, Voc){
                 // add model reference if not contained
                 this.LOG.debug('add model to foreign', model.getSubject());
                 fValues.push(model.getSubject());
-                foreign.set(this.integrity[key].foreignKey, fValues.length > 1 ? fValues : fValues[0]);
+                foreign.set(this.integrity[key].foreignKey, fValues.length > 1 ? fValues : fValues[0], options);
             } 
             // if the foreign entity is destroyed, remove it from this model
             foreign.on('destroy', function() {this._removeValue(model, key, foreign)}, this);
@@ -125,7 +125,7 @@ define(['logger', 'voc'], function(Logger, Voc){
         /**
          * Remove foreign from key of model.
          */
-        _removeValue: function( model, key, foreign) {
+        _removeValue: function( model, key, foreign, options) {
             if(_.isEmpty(foreign) ) return;
             var value = model.get(key) || [];
             if( !_.isArray(value)) value = [value];
@@ -135,12 +135,12 @@ define(['logger', 'voc'], function(Logger, Voc){
                 if( !value[i] || this._isIdentical(value[i], foreign)) continue;
                 values.push(value[i].isEntity ? value[i].getSubject() : value[i] );
             }
-            model.set(key, values.length > 1 ? values : values[0]);
+            model.set(key, values.length > 1 ? values : values[0], options);
         },
         /**
          * Removes the foreignKey references of the foreign entity to model.
          */
-        _removeForeignValue: function( model, key, foreign ) {
+        _removeForeignValue: function( model, key, foreign, options ) {
             var fValue = foreign.get( this.integrity[key].foreignKey ) || [];
             this.LOG.debug('_removeForeignValue', key, _.clone(foreign), _.clone(fValue));
             if( !_.isArray(fValue)) fValue = [fValue];
@@ -151,7 +151,7 @@ define(['logger', 'voc'], function(Logger, Voc){
                 fValues.push(fValue[i].isEntity ? fValue[i].getSubject() : fValue[i] );
             }
             this.LOG.debug('_newKeys', fValues);
-            foreign.set(this.integrity[key].foreignKey, fValues.length > 1 ? fValues : fValues[0]);
+            foreign.set(this.integrity[key].foreignKey, fValues.length > 1 ? fValues : fValues[0], options);
         }
     };
 });

@@ -13,7 +13,7 @@ define(['logger', 'voc', 'underscore', 'model/Model', 'model/episode/VersionMode
      */
     m.filter= function(model, collection, options) {
         if( this.vie.namespaces.curie(model.get('@type').id) === Voc.EPISODE ) {
-            this.checkIntegrity(model);
+            this.checkIntegrity(model, options);
             if( !model.isNew() ) {
                 this.fetchVersions(model);
             } else {

@@ -16,7 +16,7 @@ define(['logger', 'voc', 'model/Model', 'model/episode/EpisodeModel'], function(
     m.filter= function(user, collection, options) {
         if( this.vie.namespaces.curie(user.get('@type').id) === Voc.USER ) {
             this.LOG.debug('user added', user);
-            this.checkIntegrity(user);
+            this.checkIntegrity(user, options);
             user.listenTo(this.vie.entities, 'add', this.initCurrentVersion);
             if( !user.isNew() ) {
                 this.fetchEpisodes(user);

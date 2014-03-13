@@ -14,7 +14,7 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], fun
      */
     m.filter= function(model, collection, options) {
         if( this.vie.namespaces.curie(model.get('@type').id) === Voc.ORGANIZE ) {
-            this.checkIntegrity(model);
+            this.checkIntegrity(model, options);
             if( !model.isNew()) {
                 this.fetchCircles(model);
                 this.fetchEntities(model);
@@ -27,17 +27,16 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], fun
         if( !item.isEntity) item = new this.vie.Entity(item);
         item.set({
             '@type': type,
-        }, _.extend(options));
+        }, options);
         item.set(Voc.belongsToOrganize, organize.getSubject(), options);
 
-        this.vie.entities.addOrUpdate(item);
+        this.vie.entities.addOrUpdate(item, {'addOptions' : options});
         var items = Backbone.Model.prototype.get.call(
             organize, this.vie.namespaces.uri(relation)) || [];
         if(!_.isArray(items)) items = [items];
         else items = _.clone(items);
         items.push(item.getSubject());
         organize.set(relation, items, options);
-        var vie = this.vie;
         item.save();
         return item;
     };

@@ -12,7 +12,7 @@ define(['logger', 'voc', 'underscore', 'model/Model' ], function(Logger, Voc, _,
      */
     m.filter= function(model, collection, options) {
         if( this.vie.namespaces.curie(model.get('@type').id) === Voc.CIRCLE ) {
-            this.checkIntegrity(model);
+            this.checkIntegrity(model, options);
         }
     };
     return m;

@@ -11,7 +11,7 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], fun
     };
     m.filter= function(model, collection, options ) {
         if( this.vie.namespaces.curie(model.get('@type').id) === Voc.VERSION ) {
-            this.checkIntegrity(model);
+            this.checkIntegrity(model, options);
             if(!model.isNew()) {
                 this.fetchWidgets(model);
             } 

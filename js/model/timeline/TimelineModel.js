@@ -14,7 +14,7 @@ define(['logger', 'voc', 'underscore', 'model/Model' ], function(Logger, Voc, _,
      */
     m.filter= function(model, collection, options) {
         if( this.vie.namespaces.curie(model.get('@type').id) === Voc.TIMELINE ) {
-            this.checkIntegrity(model);
+            this.checkIntegrity(model, options);
             if( !model.isNew()) {
                 this.fetchRange(model);
             }
