@@ -6,7 +6,7 @@ define(['logger', 'voc', 'underscore', 'model/Model' ], function(Logger, Voc, _,
         this.vie.entities.on('add', this.filter, this);
         this.setIntegrityCheck(Voc.belongsToOrganize, Voc.ORGANIZE, Voc.hasCircle);
     };
-    m.LOG = Logger.get('UserEventModel');
+    m.LOG = Logger.get('CircleModel');
     /** 
      * Filters entities from added entities to vie.entities
      */
