@@ -1,18 +1,18 @@
 define(['vie', 'logger', 'tracker', 'userParams', 'service/SocialSemanticService', 'extender', 
-        'model/AppModel',
+        'model/AppData',
         'view/AppView', 'voc'],
 function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
-        AppModel, AppView, Voc){
+        AppData, AppView, Voc){
     VIE.Util.useRealUri = true;
     Logger.useDefaults();
     var AppLog = Logger.get('App');
     var AddLog = Logger.get('Add');
-    Logger.get('Model').setLevel(Logger.DEBUG);
-    Logger.get('UserModel').setLevel(Logger.DEBUG);
-    Logger.get('OrganizeModel').setLevel(Logger.DEBUG);
-    Logger.get('VersionModel').setLevel(Logger.DEBUG);
-    Logger.get('EpisodeModel').setLevel(Logger.DEBUG);
-    Logger.get('TimelineModel').setLevel(Logger.DEBUG);
+    Logger.get('Data').setLevel(Logger.DEBUG);
+    Logger.get('UserData').setLevel(Logger.DEBUG);
+    Logger.get('OrganizeData').setLevel(Logger.DEBUG);
+    Logger.get('VersionData').setLevel(Logger.DEBUG);
+    Logger.get('EpisodeData').setLevel(Logger.DEBUG);
+    Logger.get('TimelineData').setLevel(Logger.DEBUG);
     Logger.get('TimelineView').setLevel(Logger.DEBUG);
     Logger.get('OrganizeView').setLevel(Logger.DEBUG);
     Logger.get('WidgetView').setLevel(Logger.DEBUG);
@@ -25,7 +25,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('UserEventView').setLevel(Logger.OFF);
     Logger.get('UserView').setLevel(Logger.OFF);
     Logger.get('App').setLevel(Logger.DEBUG);
-    Logger.get('AppModel').setLevel(Logger.DEBUG);
+    Logger.get('AppData').setLevel(Logger.DEBUG);
     Logger.get('Add').setLevel(Logger.OFF);
     Logger.get('SocialSemanticService').setLevel(Logger.DEBUG);
     Logger.get('Mockup').setLevel(Logger.DEBUG);
@@ -51,7 +51,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     extender.syncByVIE(v);
     //extender.autoResolveReferences(v);
 
-    AppModel.init(v);
+    AppData.init(v);
 
     $(document).ready(function(){
         var user = new v.Entity;

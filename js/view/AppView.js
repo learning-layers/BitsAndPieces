@@ -1,12 +1,12 @@
 define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
-        'model/timeline/TimelineModel', 
-        'model/organize/OrganizeModel',
-        'model/episode/UserModel',
-        'model/episode/EpisodeModel',
-        'model/episode/VersionModel',
+        'model/timeline/TimelineData', 
+        'model/organize/OrganizeData',
+        'model/episode/UserData',
+        'model/episode/EpisodeData',
+        'model/episode/VersionData',
         'view/WidgetView',
         'view/episode/EpisodeManagerView'], 
-    function(Logger, tracker, Backbone, $, Voc, userParams, TimelineModel, OrganizeModel, UserModel, EpisodeModel, VersionModel,WidgetView, EpisodeManagerView){
+    function(Logger, tracker, Backbone, $, Voc, userParams, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             initialize: function() {

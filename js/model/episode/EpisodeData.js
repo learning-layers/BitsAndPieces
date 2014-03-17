@@ -1,5 +1,5 @@
-define(['logger', 'voc', 'underscore', 'model/Model', 'model/episode/VersionModel'], function(Logger, Voc, _, Model, VersionModel){
-    var m = Object.create(Model);
+define(['logger', 'voc', 'underscore', 'model/Data', 'model/episode/VersionData'], function(Logger, Voc, _, Data, VersionData){
+    var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize Episode");
         this.vie = vie;
@@ -7,7 +7,7 @@ define(['logger', 'voc', 'underscore', 'model/Model', 'model/episode/VersionMode
         this.setIntegrityCheck(Voc.belongsToUser, Voc.USER, Voc.hasEpisode);
         this.setIntegrityCheck(Voc.hasVersion, Voc.VERSION, Voc.belongsToEpisode);
     };
-    m.LOG = Logger.get('EpisodeModel');
+    m.LOG = Logger.get('EpisodeData');
     /** 
      * Filters entities from added entities to vie.entities
      */
@@ -23,7 +23,7 @@ define(['logger', 'voc', 'underscore', 'model/Model', 'model/episode/VersionMode
                     this.LOG.debug("hasVersion", model.get(Voc.hasVersion));
                     if( _.isEmpty(model.get(Voc.hasVersion))) {
                         this.LOG.debug("hasVersion isEmpty");
-                        model.set(Voc.hasVersion, VersionModel.newVersion(model).getSubject());
+                        model.set(Voc.hasVersion, VersionData.newVersion(model).getSubject());
                     }
                 }
             }
@@ -41,7 +41,7 @@ define(['logger', 'voc', 'underscore', 'model/Model', 'model/episode/VersionMode
                 em.vie.entities.addOrUpdate(versions);
                 if( _.isEmpty(versions) ) {
                     em.LOG.debug("versions empty");
-                    episode.set(Voc.hasVersion, VersionModel.newVersion(episode).getSubject());
+                    episode.set(Voc.hasVersion, VersionData.newVersion(episode).getSubject());
                 }
             }
         );
@@ -56,7 +56,7 @@ define(['logger', 'voc', 'underscore', 'model/Model', 'model/episode/VersionMode
         newEpisode.set('@type', Voc.EPISODE);
         newEpisode.set(Voc.hasVersion, false);
         this.vie.entities.addOrUpdate(newEpisode);
-        //VersionModel.newVersion(newEpisode, fromVersion);
+        //VersionData.newVersion(newEpisode, fromVersion);
 
         newEpisode.save();
 

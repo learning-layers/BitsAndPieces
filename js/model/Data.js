@@ -1,6 +1,6 @@
 define(['logger', 'voc'], function(Logger, Voc){
     return {
-        LOG: Logger.get('Model'),
+        LOG: Logger.get('Data'),
         setIntegrityCheck: function(key, type, foreignKey) {
             this.integrity = this.integrity || {};
             this.integrity[key] = {

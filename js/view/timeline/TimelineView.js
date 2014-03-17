@@ -1,5 +1,5 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'model/timeline/TimelineModel', 'voc'], 
-    function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineModel, Voc){
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'model/timeline/TimelineData', 'voc'], 
+    function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineData, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('TimelineView'),
         initialize: function() {
@@ -54,7 +54,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         },
         fetchRange: function(startTime, endTime){
             // Fetch entities currently visible
-            TimelineModel.fetchRange( this.model, startTime, endTime );
+            TimelineData.fetchRange( this.model, startTime, endTime );
         },
         rearrangeVisibleArea: function(model, collection, options ) {
             this.LOG.debug("rearrangeVisibleArea");
@@ -64,7 +64,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             var endTime = this.model.get('end');
             if( !startTime || !endTime )  return;
 
-            TimelineModel.fetchRange(this.model, startTime, endTime );
+            TimelineData.fetchRange(this.model, startTime, endTime );
             this.timeline.setVisibleChartRange( startTime, endTime);
         },
         addEntity: function(entity, collection, options) {

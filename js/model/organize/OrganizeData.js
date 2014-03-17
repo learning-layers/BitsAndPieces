@@ -1,14 +1,14 @@
-define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], function(Logger, Voc, _, CopyMachine, Model){
-    var m = Object.create(Model);
+define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Data' ], function(Logger, Voc, _, CopyMachine, Data){
+    var m = Object.create(Data);
     m.init = function(vie) {
-        this.LOG.debug("initialize OrganizeModel");
+        this.LOG.debug("initialize OrganizeData");
         this.vie = vie;
         this.vie.entities.on('add', this.filter, this);
         this.setIntegrityCheck(Voc.belongsToVersion, Voc.VERSION, Voc.hasWidget);
         this.setIntegrityCheck(Voc.hasCircle, Voc.CIRCLE);
         this.setIntegrityCheck(Voc.hasEntity, Voc.ORGAENTITY);
     };
-    m.LOG = Logger.get('OrganizeModel');
+    m.LOG = Logger.get('OrganizeData');
     /** 
      * Filters entities from added entities to vie.entities
      */
@@ -31,7 +31,7 @@ define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Model' ], fun
         item.set(Voc.belongsToOrganize, organize.getSubject(), options);
 
         this.vie.entities.addOrUpdate(item, {'addOptions' : options});
-        //var items = Backbone.Model.prototype.get.call(
+        //var items = Backbone.Data.prototype.get.call(
             //organize, this.vie.namespaces.uri(relation)) || [];
         //if(!_.isArray(items)) items = [items];
         //else items = _.clone(items);

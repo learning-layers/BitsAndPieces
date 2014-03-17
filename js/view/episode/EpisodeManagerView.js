@@ -1,4 +1,4 @@
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'model/episode/EpisodeModel', 'model/episode/VersionModel', 'voc'], function(VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeModel, VersionModel, Voc){
+define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'model/episode/EpisodeData', 'model/episode/VersionData', 'voc'], function(VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
@@ -127,20 +127,20 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.LOG.debug('createNewVersion from', version);
             tracker.info(tracker.CREATENEWVERSION, version.getSubject());
             var episode = version.get(Voc.belongsToEpisode);
-            var newVersion = VersionModel.newVersion(episode, version);
+            var newVersion = VersionData.newVersion(episode, version);
             this.model.save(Voc.currentVersion, newVersion.getSubject());
         },
         createFromHere: function() {
             var version = this.model.get(Voc.currentVersion);
             this.LOG.debug('create new episode from version', version);
             tracker.info(tracker.CREATENEWEPISODEFROMVERSION, version.getSubject());
-            EpisodeModel.newEpisode(this.model, version );
+            EpisodeData.newEpisode(this.model, version );
         },
         createBlank: function() {
             var version = this.model.get(Voc.currentVersion);
             this.LOG.debug('create new episode from scratch');
             tracker.info(tracker.CREATENEWEPISODEFROMSCRATCH, version.getSubject());
-            EpisodeModel.newEpisode(this.model);
+            EpisodeData.newEpisode(this.model);
         }
 
     });

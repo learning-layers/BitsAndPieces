@@ -1,15 +1,15 @@
-define(['logger', 'voc', 'model/Model', 'model/episode/EpisodeModel'], function(Logger, Voc, Model, EpisodeModel){
-    var m = Object.create(Model);
+define(['logger', 'voc', 'model/Data', 'model/episode/EpisodeData'], function(Logger, Voc, Data, EpisodeData){
+    var m = Object.create(Data);
     m.init = function(vie) {
-        this.LOG.debug("initialize UserModel");
+        this.LOG.debug("initialize UserData");
         this.LOG.debug('this', this);
-        this.LOG.debug('Model', Model);
+        this.LOG.debug('Data', Data);
         this.vie = vie;
         this.vie.entities.on('add', this.filter, this);
         this.setIntegrityCheck(Voc.hasEpisode, Voc.EPISODE, Voc.belongsToUser);
         this.setIntegrityCheck(Voc.currentVersion, Voc.VERSION);
     };
-    m.LOG = Logger.get('UserModel');
+    m.LOG = Logger.get('UserData');
     /** 
      * Filters user entities from added entities to vie.entities
      */
@@ -42,7 +42,7 @@ define(['logger', 'voc', 'model/Model', 'model/episode/EpisodeModel'], function(
         if( !this.get(Voc.currentVersion) ) {
             this.save(Voc.currentVersion, version.getSubject());
         }
-        this.stopListening(this.vie.entities, 'add', require('model/episode/UserModel').initCurrentVersion);
+        this.stopListening(this.vie.entities, 'add', require('model/episode/UserData').initCurrentVersion);
     };
     /**
      * Check if the user hasEpisode and create a new one if not.
@@ -52,7 +52,7 @@ define(['logger', 'voc', 'model/Model', 'model/episode/EpisodeModel'], function(
         this.LOG.debug("initEpisodes");
         if( _.isEmpty(episodes) ) {
             user.set(Voc.hasEpisode, 
-                EpisodeModel.newEpisode(user).getSubject());
+                EpisodeData.newEpisode(user).getSubject());
         }
     };
     /**

@@ -1,24 +1,24 @@
 define(['logger', 'voc', 'underscore', 'userParams',
-        'model/episode/UserModel','model/episode/EpisodeModel',
-        'model/episode/VersionModel','model/timeline/TimelineModel',
-        'model/timeline/UserEventModel',
-        'model/organize/OrgaEntityModel','model/organize/CircleModel',
-        'model/organize/OrganizeModel' ], 
+        'model/episode/UserData','model/episode/EpisodeData',
+        'model/episode/VersionData','model/timeline/TimelineData',
+        'model/timeline/UserEventData',
+        'model/organize/OrgaEntityData','model/organize/CircleData',
+        'model/organize/OrganizeData' ], 
 function(Logger, Voc, _, userParams,
-    UserModel, EpisodeModel, VersionModel, TimelineModel, UserEventModel, OrgaEntityModel, CircleModel, OrganizeModel ){
+    UserData, EpisodeData, VersionData, TimelineData, UserEventData, OrgaEntityData, CircleData, OrganizeData ){
     return {
-        LOG : Logger.get('AppModel'),
+        LOG : Logger.get('AppData'),
         init : function(vie) {
             this.vie = vie;
-            UserModel.init(this.vie);
-            EpisodeModel.init(this.vie);
-            VersionModel.init(this.vie);
-            TimelineModel.init(this.vie);
-            OrganizeModel.init(this.vie);
-            UserEventModel.init(this.vie);
-            OrgaEntityModel.init(this.vie);
-            CircleModel.init(this.vie);
-            this.LOG.debug("initialize AppModel");
+            UserData.init(this.vie);
+            EpisodeData.init(this.vie);
+            VersionData.init(this.vie);
+            TimelineData.init(this.vie);
+            OrganizeData.init(this.vie);
+            UserEventData.init(this.vie);
+            OrgaEntityData.init(this.vie);
+            CircleData.init(this.vie);
+            this.LOG.debug("initialize AppData");
             this.vie.entities.on('add', this.filter, this );
         },
         filter: function(model, collection, options ) {

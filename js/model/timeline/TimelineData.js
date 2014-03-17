@@ -1,14 +1,14 @@
-define(['logger', 'voc', 'underscore', 'model/Model' ], function(Logger, Voc, _, Model){
-    var m = Object.create(Model);
+define(['logger', 'voc', 'underscore', 'model/Data' ], function(Logger, Voc, _, Data){
+    var m = Object.create(Data);
     m.init = function(vie) {
-        this.LOG.debug("initialize TimelineModel");
+        this.LOG.debug("initialize TimelineData");
         this.vie = vie;
         this.vie.entities.on('add', this.filter, this);
         this.setIntegrityCheck(Voc.belongsToVersion, Voc.VERSION, Voc.hasWidget);
         this.setIntegrityCheck(Voc.belongsToUser, Voc.USER);
         this.setIntegrityCheck(Voc.hasEntity, Voc.USEREVENT);
     };
-    m.LOG = Logger.get('TimelineModel');
+    m.LOG = Logger.get('TimelineData');
     /** 
      * Filters entities from added entities to vie.entities
      */

@@ -1,6 +1,6 @@
 define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
-        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'model/organize/OrganizeModel', 'voc' ], 
-    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeModel, Voc){
+        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'model/organize/OrganizeData', 'voc' ], 
+    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('OrganizeView'),
         events:{
@@ -92,7 +92,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             var id = circle['id'];
             tracker.info(tracker.CREATEORGANIZECIRCLE, tracker.NULL, circle);
             delete circle['id'];
-            var model = OrganizeModel.createCircle(this.model, circle, {'by':this});
+            var model = OrganizeData.createCircle(this.model, circle, {'by':this});
             this.views[id] = new EntityView({'model' : model});
         },
 

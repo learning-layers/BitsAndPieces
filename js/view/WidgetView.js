@@ -3,8 +3,8 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker',
         'view/sss/UserEventView', 
         'view/timeline/TimelineView', 
         'view/organize/OrganizeView',
-        'model/organize/OrganizeModel'],
-    function(Logger, Backbone, $, Voc, tracker, EntityView, UserEventView, TimelineView, OrganizeView, OrganizeModel) {
+        'model/organize/OrganizeData'],
+    function(Logger, Backbone, $, Voc, tracker, EntityView, UserEventView, TimelineView, OrganizeView, OrganizeData) {
         return Backbone.View.extend({
             LOG: Logger.get("WidgetView"),
             initialize: function() {
@@ -91,7 +91,7 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker',
                             resource: id
                         };
                         tracker.info(tracker.DROPORGANIZEENTITY, id, entity);
-                        OrganizeModel.createEntity(that.model, entity);
+                        OrganizeData.createEntity(that.model, entity);
                     }
                 });
                 return organizeView;
