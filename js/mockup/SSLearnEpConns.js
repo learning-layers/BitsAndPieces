@@ -75,6 +75,12 @@ SSMockupEpisodes[MockupNS + 'episode/episodeX'] = {
     'user' : MockupNS + 'user/peter',
     'type' : 'Episode'
 };
+SSMockupEpisodes[MockupNS + 'episode/episodeY'] = {
+    'learnEpUri' : MockupNS + 'episode/episodeY',
+    'label' : 'Another episode',
+    'user' : MockupNS + 'user/peter',
+    'type' : 'Episode'
+};
 var SSMockupTimelineStates = {};
 SSMockupTimelineStates[MockupNS + 'version/versionX'] = {
     'learnEpTimelineStateUri' : MockupNS + 'timelinestate/versionX',
