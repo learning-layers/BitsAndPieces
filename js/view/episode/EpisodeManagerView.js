@@ -81,6 +81,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             // normalize to array
             set = set || [];
             if( !_.isArray(set)) set = [set];
+            else set = _.clone(set);
             var previous = this.model.previous(Voc.hasEpisode) || [];
             if( !_.isArray(previous)) previous = [previous];
             for( var i = 0; i < set.length; i++ ) {
