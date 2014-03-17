@@ -1,9 +1,9 @@
 define(['logger', 'voc', 'underscore', 'userParams',
-        'model/episode/UserData','model/episode/EpisodeData',
-        'model/episode/VersionData','model/timeline/TimelineData',
-        'model/timeline/UserEventData',
-        'model/organize/OrgaEntityData','model/organize/CircleData',
-        'model/organize/OrganizeData' ], 
+        'data/episode/UserData','data/episode/EpisodeData',
+        'data/episode/VersionData','data/timeline/TimelineData',
+        'data/timeline/UserEventData',
+        'data/organize/OrgaEntityData','data/organize/CircleData',
+        'data/organize/OrganizeData' ], 
 function(Logger, Voc, _, userParams,
     UserData, EpisodeData, VersionData, TimelineData, UserEventData, OrgaEntityData, CircleData, OrganizeData ){
     return {

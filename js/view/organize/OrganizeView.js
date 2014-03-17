@@ -1,5 +1,5 @@
 define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
-        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'model/organize/OrganizeData', 'voc' ], 
+        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'data/organize/OrganizeData', 'voc' ], 
     function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('OrganizeView'),

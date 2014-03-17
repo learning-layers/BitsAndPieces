@@ -3,7 +3,7 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker',
         'view/sss/UserEventView', 
         'view/timeline/TimelineView', 
         'view/organize/OrganizeView',
-        'model/organize/OrganizeData'],
+        'data/organize/OrganizeData'],
     function(Logger, Backbone, $, Voc, tracker, EntityView, UserEventView, TimelineView, OrganizeView, OrganizeData) {
         return Backbone.View.extend({
             LOG: Logger.get("WidgetView"),

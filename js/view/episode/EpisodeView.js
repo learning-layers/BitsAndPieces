@@ -1,4 +1,4 @@
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','model/episode/EpisodeData'], function(VIE, Logger, tracker, _, $, Backbone, Voc, EpisodeData){
+define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','data/episode/EpisodeData'], function(VIE, Logger, tracker, _, $, Backbone, Voc, EpisodeData){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeView'),
         events: {

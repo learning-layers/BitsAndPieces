@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'model/Data' ], function(Logger, Voc, _, Data){
+define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, Data){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize TimelineData");

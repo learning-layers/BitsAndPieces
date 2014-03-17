@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'model/Data', 'model/episode/EpisodeData'], function(Logger, Voc, Data, EpisodeData){
+define(['logger', 'voc', 'data/Data', 'data/episode/EpisodeData'], function(Logger, Voc, Data, EpisodeData){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize UserData");
@@ -42,7 +42,7 @@ define(['logger', 'voc', 'model/Data', 'model/episode/EpisodeData'], function(Lo
         if( !this.get(Voc.currentVersion) ) {
             this.save(Voc.currentVersion, version.getSubject());
         }
-        this.stopListening(this.vie.entities, 'add', require('model/episode/UserData').initCurrentVersion);
+        this.stopListening(this.vie.entities, 'add', require('data/episode/UserData').initCurrentVersion);
     };
     /**
      * Check if the user hasEpisode and create a new one if not.

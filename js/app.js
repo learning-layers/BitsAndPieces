@@ -1,5 +1,5 @@
 define(['vie', 'logger', 'tracker', 'userParams', 'service/SocialSemanticService', 'extender', 
-        'model/AppData',
+        'data/AppData',
         'view/AppView', 'voc'],
 function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
         AppData, AppView, Voc){

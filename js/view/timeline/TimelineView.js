@@ -1,4 +1,4 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'model/timeline/TimelineData', 'voc'], 
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'data/timeline/TimelineData', 'voc'], 
     function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineData, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('TimelineView'),

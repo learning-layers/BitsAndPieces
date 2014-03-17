@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'model/CopyMachine', 'model/Data' ], function(Logger, Voc, _, CopyMachine, Data){
+define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], function(Logger, Voc, _, CopyMachine, Data){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize OrganizeData");
