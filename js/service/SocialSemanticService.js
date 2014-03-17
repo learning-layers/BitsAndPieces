@@ -182,6 +182,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             function(object) {
                                 service.LOG.debug("handle result of EntityDescGet");
                                 service.LOG.debug("object", object);
+                                if( _.isEmpty(object['entityDesc'] ) )  {
+                                    loadable.reject(entity);
+                                    service.LOG.error("error:",resourceUri, " is empty");
+                                    return;
+                                }
                                 var entity = service.fixForVIE(object['entityDesc'], 'entityUri', 'entityType');
                                 var entityUri = object['entityDesc']['entityUri'];
                                 //var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
@@ -225,6 +230,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     loadable.resolve(entity);
                             },
                             function(object) {
+                                loadable.reject(entity);
                                 service.LOG.warn("error:",object);
                             },
                             userUri,
