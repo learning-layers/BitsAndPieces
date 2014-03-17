@@ -17,9 +17,13 @@ define(['logger', 'voc', 'underscore', 'model/Model', 'model/episode/VersionMode
             if( !model.isNew() ) {
                 this.fetchVersions(model);
             } else {
+                this.LOG.debug("new episode added", model);
+                this.LOG.debug("hasVersion", model.get(Voc.hasVersion));
                 if(model.has(Voc.hasVersion)) {
+                    this.LOG.debug("hasVersion", model.get(Voc.hasVersion));
                     if( _.isEmpty(model.get(Voc.hasVersion))) {
-                        model.set(Voc.hasVersion, VersionModel.newVersion(model));
+                        this.LOG.debug("hasVersion isEmpty");
+                        model.set(Voc.hasVersion, VersionModel.newVersion(model).getSubject());
                     }
                 }
             }
@@ -35,6 +39,10 @@ define(['logger', 'voc', 'underscore', 'model/Model', 'model/episode/VersionMode
                 em.LOG.debug("success fetchVersions");
                 em.LOG.debug("versions", versions);
                 em.vie.entities.addOrUpdate(versions);
+                if( _.isEmpty(versions) ) {
+                    em.LOG.debug("versions empty");
+                    episode.set(Voc.hasVersion, VersionModel.newVersion(episode).getSubject());
+                }
             }
         );
 
@@ -46,8 +54,9 @@ define(['logger', 'voc', 'underscore', 'model/Model', 'model/episode/VersionMode
         newEpisode.set(Voc.label, "New Episode");
         newEpisode.set(Voc.belongsToUser, user.getSubject());
         newEpisode.set('@type', Voc.EPISODE);
+        newEpisode.set(Voc.hasVersion, false);
         this.vie.entities.addOrUpdate(newEpisode);
-        VersionModel.newVersion(newEpisode, fromVersion);
+        //VersionModel.newVersion(newEpisode, fromVersion);
 
         newEpisode.save();
 
