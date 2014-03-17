@@ -610,7 +610,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 userUri,
                                 service.userKey,
                                 entity.get('label'),
-                                'private'
+                                'privateSpace'
                             );
                     });
                 } else {

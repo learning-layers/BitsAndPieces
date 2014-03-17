@@ -1,5 +1,5 @@
 var require = (function() {
-    var sss_url = 'http://kedemo.know-center.tugraz.at:8080/SSSClientSide/';
+    var sss_url = 'http://kedemo.know-center.tugraz.at:8080/SSSClientSide_Rella/';
     //var sss_url = 'http://127.0.0.1/sm-improved/lib/SocialSemanticServer/SSSClientSide/';
     return {
         baseUrl: 'js',
@@ -7,12 +7,12 @@ var require = (function() {
             'sss.jsutils' : sss_url + "JSUtilities/JSGlobals",
             'sss.globals' : sss_url + "SSSClientInterfaceGlobals/globals/SSGlobals",
             'sss.varu' : sss_url + "SSSClientInterfaceGlobals/globals/SSVarU",
-            //'sss.conn.entity' : sss_url + "SSSClientInterfaceREST/connectors/SSEntityConns",
-            //'sss.conn.userevent' : sss_url + "SSSClientInterfaceREST/connectors/SSUserEventConns",
-            //'sss.conn.learnep' : sss_url + "SSSClientInterfaceREST/connectors/SSLearnEpConns",
-            'sss.conn.entity' : 'mockup/SSResourceConns', 
-            'sss.conn.userevent' : 'mockup/SSUserEventConns', 
-            'sss.conn.learnep' : 'mockup/SSLearnEpConns', 
+            'sss.conn.entity' : sss_url + "SSSClientInterfaceREST/connectors/SSEntityConns",
+            'sss.conn.userevent' : sss_url + "SSSClientInterfaceREST/connectors/SSUserEventConns",
+            'sss.conn.learnep' : sss_url + "SSSClientInterfaceREST/connectors/SSLearnEpConns",
+            //'sss.conn.entity' : 'mockup/SSResourceConns', 
+            //'sss.conn.userevent' : 'mockup/SSUserEventConns', 
+            //'sss.conn.learnep' : 'mockup/SSLearnEpConns', 
             'vie' : '../lib/VIE/vie',
             'backbone' : '../lib/backbone/backbone-min',
             'underscore' : '../lib/underscore/underscore-min',
