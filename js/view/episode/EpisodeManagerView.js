@@ -78,6 +78,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         changeEpisodeSet: function(model, set, options) {
             this.LOG.debug('changeEpisodeSet', set);  
+            // normalize to array
+            set = set || [];
             if( !_.isArray(set)) set = [set];
             var previous = this.model.previous(Voc.hasEpisode) || [];
             if( !_.isArray(previous)) previous = [previous];

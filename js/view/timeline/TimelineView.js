@@ -33,6 +33,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         },
         changeEntitySet: function(model, set, options) {
             this.LOG.debug('changeEntitySet', set);  
+            set = set || [];
             if( !_.isArray(set)) set = [set];
             var previous = this.model.previous(Voc.hasEntity) || [];
             if( !_.isArray(previous)) previous = [previous];
