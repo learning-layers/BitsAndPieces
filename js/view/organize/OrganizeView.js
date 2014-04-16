@@ -197,13 +197,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             if( options.by && options.by === this ) return;
             this.LOG.debug("addCircle", options);
             var data = {
-                'cx' : entity.get('cx'),
-                'cy' : entity.get('cy'),
-                'rx' : entity.get('rx'),
-                'ry' : entity.get('ry'),
-                'Label' : entity.get('Label'),
-                'LabelX' : entity.get('LabelX'),
-                'LabelY' : entity.get('LabelY')
+                'cx' : entity.get(Voc.cx),
+                'cy' : entity.get(Voc.cy),
+                'rx' : entity.get(Voc.rx),
+                'ry' : entity.get(Voc.ry),
+                'Label' : entity.get(Voc.Label),
+                'LabelX' : entity.get(Voc.LabelX),
+                'LabelY' : entity.get(Voc.LabelY)
             };
             this.LOG.debug("data", data);
             var id = this.organize.drawCircle(null, data);
@@ -238,8 +238,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
 
             var view = new OrgaEntityView({model:entity});
             var data = {
-                'x' : entity.get('x'),
-                'y' : entity.get('y'),
+                'x' : entity.get(Voc.x),
+                'y' : entity.get(Voc.y),
                 'imageURL' : view.getIcon()
             };
             this.LOG.debug("data", data);

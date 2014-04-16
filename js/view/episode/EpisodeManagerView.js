@@ -33,7 +33,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             var label = this.$el.find('h1').text();
             label = label.replace(/(<([^>]+)>)/ig,"");
             this.renderLabel(this.currentEpisode, label);
-            if( this.currentEpisode.get('label') == label) return;
+            if( this.currentEpisode.get(Voc.label) == label) return;
             this.LOG.debug('changeLabel', label);
             tracker.info(tracker.RENAMEEPISODE, this.model.getSubject(), label);
             this.currentEpisode.save({'label': label});

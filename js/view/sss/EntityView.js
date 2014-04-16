@@ -132,7 +132,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
               'class' : 'entity',
               'about' : this.model.getSubject()
             });
-            var label = this.model.get('sss:label');
+            var label = this.model.get(Voc.label);
             if( label && label.isEntity ) label = label.getSubject();
             this.$el.html(//"<div class=\"entity\" about=\""+this.model.getSubject()+"\">"+
                     "<img src=\""+this.getIcon()+"\" class=\"small-icon\"> " + 

@@ -14,7 +14,7 @@ function(require, VIE, Logger, tracker, _, $, Backbone, EntityView){
             var list = $('<ul>');
             for( var prop in this.model.attributes) {
                 if(prop != '@type' && prop.indexOf('@') === 0 ) continue;
-                var property = VIE.Util.toCurie(prop, false,this.model.vie.namespaces ); // HACK, FIXME: view shall not deal with semantics resp. VIE
+                var property = this.model.vie.namespaces.curie(prop);
                 var item = $("<li><strong>"+property+"</strong>:</li>");
                 var val = this.model.get(prop);
                 this.LOG.debug('val',val);

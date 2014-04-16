@@ -10,7 +10,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.groupByEntityViews = [];
             this.EntityView = this.options.EntityView;
             this.GroupByEntityView = this.options.GroupByEntityView;
-            this.timeAttr = this.model.get('timeAttr');
+            this.timeAttr = this.model.get(Voc.timeAttr);
             if( this.timeAttr.isEntity ) this.timeAttr = this.timeAttr.getSubject();
             this.groupBy = this.options.groupBy;
             this.user = this.model.get(Voc.belongsToUser);
@@ -60,8 +60,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.LOG.debug("rearrangeVisibleArea");
             if (this.options.by && this.options.by === this ) return;
 
-            var startTime = this.model.get('start'); 
-            var endTime = this.model.get('end');
+            var startTime = this.model.get(Voc.start); 
+            var endTime = this.model.get(Voc.end);
             if( !startTime || !endTime )  return;
 
             TimelineData.fetchRange(this.model, startTime, endTime );
@@ -142,8 +142,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                     'start' : new Date(), // add a dummy event to force rendering
                     'content' : "x"
                 }], _.extend(this.options.timeline, {
-                'start' : this.model.get('start'),
-                'end' : this.model.get('end'),
+                'start' : this.model.get(Voc.start),
+                'end' : this.model.get(Voc.end),
                 'min' : new Date('2013-01-01'),
                 'max' : new Date('2015-01-01'),
                 'zoomMin' : 300000, // 5 minute
