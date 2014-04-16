@@ -13,7 +13,7 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
      * Filters entities from added entities to vie.entities
      */
     m.filter= function(model, collection, options) {
-        if( this.vie.namespaces.curie(model.get('@type').id) === Voc.ORGANIZE ) {
+        if(model.isof(Voc.ORGANIZE)){
             this.checkIntegrity(model, options);
             if( !model.isNew()) {
                 this.fetchCircles(model);
@@ -54,7 +54,7 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
         var that = this;
         this.vie.load({
             'organize' : organize.getSubject(),
-            'type' : type
+            'type' : this.vie.types.get(type)
         }).from('sss').execute().success(
             function(items) {
 

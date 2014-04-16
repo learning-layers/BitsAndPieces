@@ -13,7 +13,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
      * Filters entities from added entities to vie.entities
      */
     m.filter= function(model, collection, options) {
-        if( this.vie.namespaces.curie(model.get('@type').id) === Voc.TIMELINE ) {
+        if(model.isof(Voc.TIMELINE)){
             this.checkIntegrity(model, options);
             if( !model.isNew()) {
                 this.fetchRange(model);

@@ -8,8 +8,6 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker',
         return Backbone.View.extend({
             LOG: Logger.get("WidgetView"),
             initialize: function() {
-                var type = this.model.get('@type').id;
-                this.ctype = this.model.vie.namespaces.curie(type);
                 this.LOG.debug('el', this.el, this.$el);
                 this.listenTo(this.model, 'destroy', this.remove);
                 
@@ -21,12 +19,12 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker',
             render: function() {
                 this.LOG.debug('render widgetView', this);
                 var body;
-                if( this.ctype == Voc.TIMELINE ) {
+                if( this.model.isof( Voc.TIMELINE )) {
                     this.$el.append('<legend>Browse</legend>');
                     body = $('<div class="timelineFrame"></div>');
                     this.$el.append(body);
                     this.view = this.createTimeline(body);
-                } else if (this.ctype == Voc.ORGANIZE ) {
+                } else if (this.model.isof( Voc.ORGANIZE )) {
                     this.$el.append('<legend>Organize</legend>');
                     body = $('<div tabindex="1" style="width:100%; height:400px"></div>');                     
                     this.$el.append(body);
@@ -44,10 +42,10 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker',
                 return this;
             },
             isBrowse: function() {
-                return this.ctype == Voc.TIMELINE;
+                return this.model.isof(Voc.BROWSING_WIDGET);
             },
             isOrganize: function() {
-                return this.ctype == Voc.ORGANIZE;
+                return this.model.isof(Voc.ORGANIZING_WIDGET);
             },
             createTimeline: function(timelineBody) {
                 this.LOG.debug("adding TimelineView");

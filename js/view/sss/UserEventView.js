@@ -35,7 +35,7 @@ define(['view/sss/EntityView', 'logger', 'voc'], function(EntityView, Logger, Vo
             this.$el.html(//"<div class=\"entity\" about=\""+this.model.getSubject()+"\">"+
                     "<div class=\"labelable\">"+
                     "<img class=\"icon\" src=\""+this.getIcon()+"\" "+ 
-                    "alt=\"" + this.type + "\"/>"+
+                    "alt=\"" + this.type.id + "\"/>"+
                     (label ? 
                         "<label class=\"withlabel\">" +
                         "<strong>"+label+"</strong><br/>"+content:"<label class=\"nolabel\">no label")+

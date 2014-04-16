@@ -22,7 +22,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                     }, this);
             },
             filter: function(model, collection, options) {
-                if( this.vie.namespaces.curie(model.get('@type').id) === Voc.VERSION ) {
+                if(model.isof(Voc.VERSION)){
                     var version = model;
                     var AppView = this;
                     AppLog.debug('version added', model);

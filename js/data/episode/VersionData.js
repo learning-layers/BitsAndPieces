@@ -10,7 +10,7 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
 
     };
     m.filter= function(model, collection, options ) {
-        if( this.vie.namespaces.curie(model.get('@type').id) === Voc.VERSION ) {
+        if( model.isof(Voc.VERSION) ) {
             this.checkIntegrity(model, options);
             if(!model.isNew()) {
                 this.fetchWidgets(model);
@@ -27,7 +27,7 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
         var that = this;
         this.vie.load({
             'version' : version.getSubject(),
-            'type' : Voc.WIDGET
+            'type' : this.vie.types.get(Voc.WIDGET)
         }).from('sss').execute().success(
             function(widgets) {
                 that.LOG.debug('success fetchWidgets', _.clone(widgets));

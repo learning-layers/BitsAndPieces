@@ -22,7 +22,7 @@ function(Logger, Voc, _, userParams,
             this.vie.entities.on('add', this.filter, this );
         },
         filter: function(model, collection, options ) {
-            if( this.vie.namespaces.curie(model.get('@type').id) === Voc.VERSION ) {
+            if( model.isof(Voc.VERSION) ) {
                 // only initWidgets if hasWidget is defined
                 // otherwise it is unknown whether there are widgets for this version 
                 this.LOG.debug("Version has hasWidget?", model.has(Voc.hasWidget), model.get(Voc.hasWidget));

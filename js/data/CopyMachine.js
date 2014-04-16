@@ -4,13 +4,10 @@ define(['logger', 'voc', 'underscore', ], function(Logger, Voc, _, TimelineData,
         copy: function(entity, overrideAttributes) {
             if( !entity.isEntity ) return;
             
-            var type = entity.get('@type');
-            if(type.id) type = entity.vie.namespaces.uri(type.id);
-
-            if(type == entity.vie.namespaces.uri(Voc.TIMELINE)) {
+            if(entity.isof(Voc.TIMELINE)) {
                 return require('data/timeline/TimelineData').copy(entity, overrideAttributes);
             }
-            if(type == entity.vie.namespaces.uri(Voc.ORGANIZE)) {
+            if(entity.isof(Voc.ORGANIZE)) {
                 return require('data/organize/OrganizeData').copy(entity, overrideAttributes);
             }
             var newAttr = _.clone(entity.attributes);

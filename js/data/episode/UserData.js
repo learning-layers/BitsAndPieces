@@ -14,7 +14,7 @@ define(['logger', 'voc', 'data/Data', 'data/episode/EpisodeData'], function(Logg
      * Filters user entities from added entities to vie.entities
      */
     m.filter= function(user, collection, options) {
-        if( this.vie.namespaces.curie(user.get('@type').id) === Voc.USER ) {
+        if( user.isof(Voc.USER) ) {
             this.LOG.debug('user added', user);
             this.checkIntegrity(user, options);
             user.listenTo(this.vie.entities, 'add', this.initCurrentVersion);
@@ -37,7 +37,7 @@ define(['logger', 'voc', 'data/Data', 'data/episode/EpisodeData'], function(Logg
      * If user has no currentVersion set, use the given one.
      */
     m.initCurrentVersion= function(version) {
-        if( this.vie.namespaces.curie(version.get('@type').id) !== Voc.VERSION ) return;
+        if( !version.isof(Voc.VERSION)) return;
 
         if( !this.get(Voc.currentVersion) ) {
             this.save(Voc.currentVersion, version.getSubject());
@@ -65,7 +65,7 @@ define(['logger', 'voc', 'data/Data', 'data/episode/EpisodeData'], function(Logg
         var that = this;
         this.vie.load({
             'user': user.getSubject(),
-            'type' : Voc.EPISODE
+            'type' : this.vie.types.get(Voc.EPISODE)
         }).from('sss').execute().success(
             function(episodes) {
                 that.LOG.debug("success fetchEpisodes");

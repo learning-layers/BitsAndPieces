@@ -12,7 +12,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
      * Filters entities from added entities to vie.entities
      */
     m.filter= function(model, collection, options) {
-        if( this.vie.namespaces.curie(model.get('@type').id) === Voc.EPISODE ) {
+        if(model.isof(Voc.EPISODE)){
             this.checkIntegrity(model, options);
             if( !model.isNew() ) {
                 this.fetchVersions(model);
@@ -33,7 +33,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
         var em = this;
         this.vie.load({
             'episode' : episode.getSubject(),
-            'type' : Voc.VERSION
+            'type' : this.vie.types.get(Voc.VERSION)
         }).from('sss').execute().success(
             function(versions) {
                 em.LOG.debug("success fetchVersions");
