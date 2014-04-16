@@ -173,7 +173,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             if( type ) typeCurie = this.vie.namespaces.curie(type.id);
             this.LOG.debug("typeCurie", typeCurie);
             var service = this;
-            if( !typeCurie || typeCurie == this.types.THING || typeCurie == this.types.DOCUMENT ) {
+            //if( !typeCurie || typeCurie == this.types.THING || typeCurie == this.types.DOCUMENT ) {
+            if ( entity.isof('owl:Thing')){
                 this.onUrisReady(
                     this.user,
                     loadable.options.resource,
@@ -191,7 +192,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 var entityUri = object['entityDesc']['entityUri'];
                                 //var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
                                 var type = object['entityDesc']['entityType'];
-                                if( type && type.id && service.vie.namespaces.curie(type.id) == service.types.USER )  {
+                                service.LOG.debug('entityDesc.entityType', type);
+                                if( type && type == service.types.USER )  {
                                     new SSLearnEpVersionCurrentGet().handle(
                                         function(object2) {
                                             service.LOG.debug("handle result of VersionCurrentGet");
@@ -206,7 +208,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         entityUri,
                                         service.userKey 
                                         );
-                                } else if( type && type.id && service.vie.namespaces.curie(type.id) == service.types.USEREVENT )  {
+                                } else if( type && type == service.types.USEREVENT )  {
                                     new SSUserEventGet().handle(
                                         function(object2) {
                                             service.LOG.debug("handle result of UserEventTypeGet");
@@ -245,13 +247,10 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
 
         // Gets entities of a specific type
         TypeGet : function(loadable) {
-            var type = loadable.options.type.id ? loadable.options.type.id : loadable.options.type;
-
-            var typeCurie = this.vie.namespaces.curie(type);
-            this.LOG.debug("TypeGet: " + typeCurie);
+            var type = loadable.options.type;
 
             var service = this;
-            if( typeCurie == this.types.USEREVENT) {
+            if( type.isof(Voc.USER)) {
                 this.LOG.debug("SSUserEventsGet");
                 this.onUrisReady(
                     this.user,
@@ -287,7 +286,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             loadable.options.end
                         );
                 });
-            } else if( typeCurie == this.types.EPISODE ) {
+            } else if( type.isof(Voc.EPISODE )) {
                 this.LOG.debug("SSLearnEpsGet");
                 this.onUrisReady(
                     this.user,
@@ -298,11 +297,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 service.LOG.debug("objects", objects);
                                 var entityInstances = [];
                                 _.each(objects['learnEps'], function(object) {
+                                    object[Voc.belongsToUser] = object['user'];
+                                    delete object['user'];
                                     var entity = service.fixForVIE(object, 'learnEpUri');
-                                    entity[Voc.belongsToUser] = entity['user'];
-                                    delete entity['user'];
                                     //var vieEntity = new service.vie.Entity(entity);
-                                    entity['@type'] = Voc.EPISODE;
+                                    entity['@type'] = service.vie.namespaces.uri(Voc.EPISODE);
                                     entityInstances.push(entity);
                                 });
                                 loadable.resolve(entityInstances);
@@ -317,7 +316,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                 });
 
-            } else if( typeCurie == this.types.VERSION ) {
+            } else if( type.isof(Voc.VERSION )) {
                 this.LOG.debug("SSLearnEpVersionsGet");
                 this.onUrisReady(
                     this.user,
@@ -353,7 +352,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                 });
 
-            } else if (typeCurie == this.types.WIDGET ){
+            } else if (type.isof(Voc.WIDGET )){
                 // fetches Organize and Timeline stuff manually
                 // and buffers the data for later fetch 
 
@@ -381,9 +380,9 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 if( !organize ) {
                     organize = {
                         'uri' : service.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget'),
-                        'type' : service.vie.namespaces.uri('sss:' + service.types.ORGANIZE),
-                        'circleType' : service.vie.namespaces.uri('sss:' + service.types.CIRCLE),
-                        'orgaEntityType' : service.vie.namespaces.uri('sss:' + service.types.ORGAENTITY),
+                        'type' : service.vie.namespaces.uri( Voc.ORGANIZE),
+                        'circleType' : service.vie.namespaces.uri( Voc.CIRCLE),
+                        'orgaEntityType' : service.vie.namespaces.uri( Voc.ORGAENTITY),
                         'belongsToVersion' : loadable.options.version 
                     };
                     service.LOG.debug('buffer organize', organize);
@@ -412,8 +411,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     'uri' : object.learnEpTimelineStateUri,
                                     'type' : service.types.TIMELINE,
                                     'belongsToUser' : service.vie.namespaces.uri(service.user),
-                                    'timeAttr': service.vie.namespaces.uri('sss:timestamp'),
-                                    'predicate' : service.vie.namespaces.uri('sss:userEvent'),
+                                    'timeAttr': service.vie.namespaces.uri(Voc.timestampe),
+                                    'predicate' : service.vie.namespaces.uri(Voc.USEREVENT),
                                     'belongsToVersion' : service.vie.namespaces.uri(loadable.options.version),
                                     'start' : object.startTime,                            
                                     'end' : object.endTime
@@ -433,7 +432,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                 });
 
-            } else if (typeCurie == this.types.CIRCLE){
+            } else if (type.isof(Voc.CIRCLE)){
                 if (!loadable.options.organize) {
                     this.LOG.warn("no organize reference");
                     loadable.reject();
@@ -486,7 +485,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             versionUri
                         );
                 });
-            } else if (typeCurie == this.types.ORGAENTITY){
+            } else if (type.isof(Voc.ORGAENTITY)){
                 if (!loadable.options.organize) {
                     this.LOG.warn("no organize reference");
                     loadable.reject();
@@ -547,13 +546,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             if (!type) 
                 throw "Entity has no type, can't be saved";
 
-            var typeCurie = this.vie.namespaces.curie(type.id);
-
-            this.LOG.debug("typeCurie = " + typeCurie);
+            this.LOG.debug("type = " + type);
 
             var service = this;
 
-            if( typeCurie == this.types.TIMELINE ) {
+            if( type.isof(Voc.TIMELINE) ) {
                 this.LOG.debug("saving timeline");
                 var obj = this.fixFromVIE(entity);
                 obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('TimelineWidget')
@@ -582,7 +579,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 _.isDate(obj.end) ? (obj.end - 0) : obj.end
                             );
                 });
-            } else if( typeCurie == this.types.ORGANIZE ) {
+            } else if( type.isof(Voc.ORGANIZE )) {
                 this.LOG.debug("saving organize");
                 var obj = this.fixFromVIE(entity);
                 obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget')
@@ -596,7 +593,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         else
                             savable.resolve(true); // organize was updated
                 });
-            } else if( typeCurie == this.types.EPISODE ) {
+            } else if( type.isof(Voc.EPISODE )) {
                 this.LOG.debug("saving episode");
                 if( entity.isNew() ) {
                     this.onUrisReady(
@@ -642,7 +639,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             );
                     });
                 }
-            } else if( typeCurie == this.types.VERSION ) {
+            } else if( type.isof(Voc.VERSION )) {
                 this.LOG.debug("saving version");
                 var episode = entity.get(Voc.belongsToEpisode);
                 if( episode.isEntity ) episode = episode.getSubject();
@@ -666,7 +663,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 episodeUri
                             );
                 });
-            } else if( typeCurie == this.types.CIRCLE ) {
+            } else if( type.isof(Voc.CIRCLE )) {
                 this.LOG.debug("saving circle");
                 var organize = entity.get(Voc.belongsToOrganize);
                 if( organize.isEntity ) organize = organize.getSubject();
@@ -745,7 +742,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             });
                 });
 
-            } else if( typeCurie == this.types.ORGAENTITY ) {
+            } else if( type.isof(Voc.ORGAENTITY )) {
                 this.LOG.debug("saving orgaentity");
                 var organize = entity.get(Voc.belongsToOrganize);
                 if( organize.isEntity ) organize = organize.getSubject();
@@ -818,7 +815,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             });
                 });
 
-            } else if ( typeCurie == this.types.USER ) {
+            } else if ( type.isof(Voc.USER )) {
                 var fixEntity = this.fixFromVIE(entity);
                 if( fixEntity.currentVersion ) {
                     this.onUrisReady(
@@ -862,14 +859,12 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             if (!type) 
                 throw "Entity has no type, can't be saved";
 
-            var typeCurie = this.vie.namespaces.curie(type.id);
-
-            this.LOG.debug("typeCurie = " + typeCurie);
+            this.LOG.debug("type= " + type);
 
             var service = this;
             var fixEntity = this.fixFromVIE(entity);
 
-            if( typeCurie == this.types.CIRCLE ) {
+            if( type.isof(Voc.CIRCLE )) {
                 this.onUrisReady(
                     this.user,
                     fixEntity.uri,
@@ -890,7 +885,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             uriUri
                         );
                 });
-            } else if( typeCurie == this.types.ORGAENTITY ) {
+            } else if( type.isof(Voc.ORGAENTITY )) {
                 this.onUrisReady(
                     this.user,
                     fixEntity.uri,
@@ -923,18 +918,18 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
          */
         fixForVIE: function(object, idAttr, typeAttr) {
             var entity = _.clone(object);
-            /*
-            for( var prop in entity ) {
-                entity['sss:'+prop] = entity[prop];
-                delete entity[prop];
-            }
-            */
             if( !idAttr) idAttr = 'uri';
             if( !typeAttr) typeAttr = 'type';
             entity['@subject'] = object[idAttr];
             entity['@type'] = object[typeAttr];
             delete entity[typeAttr];
             delete entity[idAttr];
+
+            for( var prop in entity ) {
+                if( prop.indexOf('@') === 0 ) continue;
+                entity['sss:'+prop] = entity[prop];
+                delete entity[prop];
+            }
 
             return entity;
         },

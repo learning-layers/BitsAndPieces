@@ -13,6 +13,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('VersionData').setLevel(Logger.DEBUG);
     Logger.get('EpisodeData').setLevel(Logger.DEBUG);
     Logger.get('TimelineData').setLevel(Logger.DEBUG);
+    Logger.get('UserEventData').setLevel(Logger.DEBUG);
     Logger.get('TimelineView').setLevel(Logger.DEBUG);
     Logger.get('OrganizeView').setLevel(Logger.DEBUG);
     Logger.get('WidgetView').setLevel(Logger.DEBUG);
@@ -45,30 +46,35 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
             'sss': namespace
         }
     }, userParams));
-    v.namespaces.base(namespace);
     v.use(sss, 'sss');
+    //v.namespaces.base(namespace);
 
     extender.syncByVIE(v);
     //extender.autoResolveReferences(v);
 
     AppData.init(v);
 
-    $(document).ready(function(){
-        var user = new v.Entity;
-        user.set(user.idAttribute, userParams.user);
-        user.set('@type', Voc.USER);
-        user.fetch();
-        v.entities.addOrUpdate(user);
+    $.getJSON("schemata/ss.sss.json", {}, function(data) {
+        VIE.Util.loadSchemaOrg(v, data);
+        $(document).ready(function(){
+            var user = new v.Entity;
+            user.set(user.idAttribute, userParams.user);
+            user.set('@type', Voc.USER);
+            v.entities.addOrUpdate(user);
+            user.fetch();
 
-        var view = new AppView({
-            'model' : user,
-            'el' : 'body',
-            'vie' :  v
+            var view = new AppView({
+                'model' : user,
+                'el' : 'body',
+                'vie' :  v
+            });
+
+            view.render();
+
         });
-
-        view.render();
-
     });
+
+
 
     return null;
 

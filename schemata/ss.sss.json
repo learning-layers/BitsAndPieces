@@ -56,7 +56,7 @@
           "comment": "The name of the item.", 
           "comment_plain": "The name of the item.", 
           "domains": [
-            "Resource"
+            "http://eval.bp/Thing"
           ], 
           "id": "name", 
           "label": "Name", 
@@ -68,7 +68,7 @@
           "comment": "The time of the item. Will need to be something more detailed, eg. creationTime", 
           "comment_plain": "The time of the item.", 
           "domains": [
-            "Resource"
+            "http://eval.bp/Thing"
           ], 
           "id": "time", 
           "label": "Time", 
@@ -78,13 +78,13 @@
         } 
     },
     "types": {
-        "Resource":{
+        "http://eval.bp/Thing":{
             "ancestors": [
             ], 
             "comment": "", 
             "comment_plain": "", 
-            "id": "Resource", 
-            "label": "Resource", 
+            "id": "http://eval.bp/Thing", 
+            "label": "Thing", 
             "properties": [
                 "name",
                 "time"
@@ -92,68 +92,79 @@
             "specific_properties": [
             ], 
             "subtypes": [
-                "Collection",
-                "Discussion",
-                "Photo"
             ], 
             "supertypes": [
-            ], 
-            "url": "http://sss.ss/Resource"
+            ] 
         },
-        "Collection":{
+        "http://eval.bp/Episode":{
             "ancestors": [
-                "Resource" 
+                "http://eval.bp/Thing" 
             ], 
             "comment": "", 
             "comment_plain": "", 
-            "id": "Collection", 
-            "label": "Collection", 
+            "id": "http://eval.bp/Episode", 
+            "label": "Episode", 
             "properties": [
             ], 
             "specific_properties": [
             ], 
             "subtypes": [], 
             "supertypes": [
-                "Resource" 
-            ], 
-            "url": "http://sss.ss/Collection"
+                "http://eval.bp/Thing" 
+            ] 
         },
-        "Discussion":{
+        "http://eval.bp/Version":{
             "ancestors": [
-                "Resource" 
+                "http://eval.bp/Thing" 
             ], 
             "comment": "", 
             "comment_plain": "", 
-            "id": "Discussion", 
-            "label": "Discussion", 
+            "id": "http://eval.bp/Version", 
+            "label": "Version", 
             "properties": [
             ], 
             "specific_properties": [
             ], 
             "subtypes": [], 
             "supertypes": [
-                "Resource" 
-            ], 
-            "url": "http://sss.ss/Discussion"
+                "http://eval.bp/Thing" 
+            ] 
         },
-        "Photo":{
+        "http://eval.bp/userEvent":{
             "ancestors": [
-                "Resource" 
+                "http://eval.bp/Thing" 
             ], 
             "comment": "", 
             "comment_plain": "", 
-            "id": "Photo", 
-            "label": "Photo", 
+            "id": "http://eval.bp/userEvent", 
+            "label": "User Event", 
             "properties": [
             ], 
             "specific_properties": [
             ], 
-            "subtypes": [], 
-            "supertypes": [
-                "Resource" 
+            "subtypes": [
             ], 
-            "url": "http://sss.ss/Photo"
-
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/createPrivateRecord" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/createPrivateRecord", 
+            "label": "User Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
         }
 
     }
