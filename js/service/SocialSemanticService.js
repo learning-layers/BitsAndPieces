@@ -405,7 +405,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     'uri' : object.learnEpTimelineStateUri,
                                     'type' : service.types.TIMELINE,
                                     'belongsToUser' : service.vie.namespaces.uri(service.user),
-                                    'timeAttr': service.vie.namespaces.uri(Voc.timestampe),
+                                    'timeAttr': service.vie.namespaces.uri(Voc.timestamp),
                                     'predicate' : service.vie.namespaces.uri(Voc.USEREVENT),
                                     'belongsToVersion' : service.vie.namespaces.uri(loadable.options.version),
                                     'start' : object.startTime,                            
@@ -486,7 +486,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     return;
                 }
                 //map organize id to version id
-                var version = this.buffer[loadable.options.organize][Voc.belongsToVersion]; 
+                var version = this.buffer[loadable.options.organize]['belongsToVersion']; 
                 var entities = [];
                 this.onUrisReady(
                     this.user,
@@ -541,7 +541,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
 
             var service = this;
 
-            if( type.isof(Voc.TIMELINE) ) {
+            if( entity.isof(Voc.TIMELINE) ) {
                 this.LOG.debug("saving timeline");
                 var obj = this.fixFromVIE(entity);
                 obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('TimelineWidget')
@@ -570,7 +570,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 _.isDate(obj.end) ? (obj.end - 0) : obj.end
                             );
                 });
-            } else if( type.isof(Voc.ORGANIZE )) {
+            } else if( entity.isof(Voc.ORGANIZE )) {
                 this.LOG.debug("saving organize");
                 var obj = this.fixFromVIE(entity);
                 obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget')
@@ -584,7 +584,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         else
                             savable.resolve(true); // organize was updated
                 });
-            } else if( type.isof(Voc.EPISODE )) {
+            } else if( entity.isof(Voc.EPISODE )) {
                 this.LOG.debug("saving episode");
                 if( entity.isNew() ) {
                     this.onUrisReady(
@@ -630,7 +630,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             );
                     });
                 }
-            } else if( type.isof(Voc.VERSION )) {
+            } else if( entity.isof(Voc.VERSION )) {
                 this.LOG.debug("saving version");
                 var episode = entity.get(Voc.belongsToEpisode);
                 if( episode.isEntity ) episode = episode.getSubject();
@@ -654,7 +654,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 episodeUri
                             );
                 });
-            } else if( type.isof(Voc.CIRCLE )) {
+            } else if( entity.isof(Voc.CIRCLE )) {
                 this.LOG.debug("saving circle");
                 var organize = entity.get(Voc.belongsToOrganize);
                 if( organize.isEntity ) organize = organize.getSubject();
@@ -668,7 +668,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             savable.reject(entity);
                             return;
                         }
-                        var version = service.buffer[organizeUri][Voc.belongsToVersion];
+                        var version = service.buffer[organizeUri]['belongsToVersion'];
                         // end map
 
                         var fixEntity = service.fixFromVIE(entity);
@@ -733,7 +733,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             });
                 });
 
-            } else if( type.isof(Voc.ORGAENTITY )) {
+            } else if( entity.isof(Voc.ORGAENTITY )) {
                 this.LOG.debug("saving orgaentity");
                 var organize = entity.get(Voc.belongsToOrganize);
                 if( organize.isEntity ) organize = organize.getSubject();
@@ -747,7 +747,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             savable.reject(entity);
                             return;
                         }
-                        var version = service.buffer[organizeUri][Voc.belongsToVersion];
+                        var version = service.buffer[organizeUri]['belongsToVersion'];
                         // end map
 
                         var fixEntity = service.fixFromVIE(entity);
@@ -806,7 +806,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             });
                 });
 
-            } else if ( type.isof(Voc.USER )) {
+            } else if ( entity.isof(Voc.USER )) {
                 var fixEntity = this.fixFromVIE(entity);
                 if( fixEntity.currentVersion ) {
                     this.onUrisReady(
@@ -852,7 +852,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             var service = this;
             var fixEntity = this.fixFromVIE(entity);
 
-            if( type.isof(Voc.CIRCLE )) {
+            if( entity.isof(Voc.CIRCLE )) {
                 this.onUrisReady(
                     this.user,
                     fixEntity.uri,
@@ -873,7 +873,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             uriUri
                         );
                 });
-            } else if( type.isof(Voc.ORGAENTITY )) {
+            } else if( entity.isof(Voc.ORGAENTITY )) {
                 this.onUrisReady(
                     this.user,
                     fixEntity.uri,
@@ -929,7 +929,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
          */
         fixFromVIE: function(entity) {
             var object = _.clone(entity.attributes);
-            this.LOG.debug(JSON.stringify(object));
+            this.LOG.debug('fixFromVIE', JSON.stringify(object));
             for( var prop in object ) {
                 var curie = this.vie.namespaces.curie(prop);
                 object[curie] = object[prop];
