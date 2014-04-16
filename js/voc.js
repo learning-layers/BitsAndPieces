@@ -23,6 +23,7 @@ define([], {
     hasResource : 'sss:resource',
     hasEpisode : 'sss:hasEpisode',
     timestamp : 'sss:timestamp',
+    timeAttr : 'sss:timeAttr',
     circleType: 'sss:circleType', 
     orgaEntityType: 'sss:orgaEntityType',
     belongsToUser: 'sss:belongsToUser',
@@ -30,5 +31,16 @@ define([], {
     end: 'sss:end',
 
     label : 'sss:label',
-    content : 'sss:content'
+    content : 'sss:content',
+
+    Label : 'sss:Label',
+    LabelX : 'sss:LabelX',
+    LabelY : 'sss:LabelY',
+    rx : 'sss:rx',
+    ry : 'sss:ry',
+    cx : 'sss:cx',
+    cy : 'sss:cy',
+    x : 'sss:x',
+    y : 'sss:y'
+
 });
