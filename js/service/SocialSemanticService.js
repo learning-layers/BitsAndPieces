@@ -166,14 +166,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
         ResourceGet : function(loadable) {
             this.LOG.debug("ResourceGet");
             var entity = this.vie.entities.get(loadable.options.resource);
-            var type, typeCurie;
-            this.LOG.debug("entity", entity);
-            if( entity ) type = entity.get('@type');
-            this.LOG.debug("type", type);
-            if( type ) typeCurie = this.vie.namespaces.curie(type.id);
-            this.LOG.debug("typeCurie", typeCurie);
+            this.LOG.debug("entity", entity, ' is of ', entity.get("@type"));
             var service = this;
-            //if( !typeCurie || typeCurie == this.types.THING || typeCurie == this.types.DOCUMENT ) {
             if ( entity.isof('owl:Thing')){
                 this.onUrisReady(
                     this.user,
@@ -241,7 +235,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                 });
             } else {
-                this.LOG.warn("SocialSemanticService load for " + typeCurie + " not implemented");
+                this.LOG.warn("SocialSemanticService load for " + type.id + " not implemented");
             }
         },
 
@@ -301,7 +295,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     delete object['user'];
                                     var entity = service.fixForVIE(object, 'learnEpUri');
                                     //var vieEntity = new service.vie.Entity(entity);
-                                    entity['@type'] = service.vie.namespaces.uri(Voc.EPISODE);
+                                    entity['@type'] = Voc.EPISODE;
                                     entityInstances.push(entity);
                                 });
                                 loadable.resolve(entityInstances);
@@ -472,7 +466,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     delete fixEntity['learnEpVersionUri'];
                                     fixEntity.belongsToOrganize = loadable.options.organize;
                                     //var vieEntity = new service.vie.Entity(fixEntity);
-                                    fixEntity['@type'] = typeCurie;
+                                    fixEntity['@type'] = type.id;
                                     entities.push(fixEntity);
                                 });
                                 loadable.resolve(entities);
@@ -509,7 +503,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     delete fixEntity['entityUri'];
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
                                     //var vieEntity = new service.vie.Entity(fixEntity);
-                                    fixEntity['@type'] = typeCurie;
+                                    fixEntity['@type'] = type.id;
                                     entities.push(fixEntity);
                                 });
                                 loadable.resolve(entities);
@@ -525,7 +519,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
 
 
             } else {
-                this.LOG.warn("SocialSemanticService load for " + typeCurie + " not implemented");
+                this.LOG.warn("SocialSemanticService load for " + type.id + " not implemented");
             }
 
         },
@@ -542,11 +536,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             this.LOG.debug("savable.options", savable.options);
 
             var entity = savable.options.entity;
-            var type = entity.get('@type');
-            if (!type) 
-                throw "Entity has no type, can't be saved";
 
-            this.LOG.debug("type = " + type);
+            this.LOG.debug("entity", entity, " is of ", entity.get("@type"));
 
             var service = this;
 
@@ -839,7 +830,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 } else
                     savable.resolve(true);
             } else {
-                this.LOG.warn("SocialSemanticService save for " + typeCurie + " not implemented");
+                this.LOG.warn("SocialSemanticService save for " + type.id + " not implemented");
             }
         },
 
@@ -855,11 +846,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             this.LOG.debug("removable.options", removable.options);
 
             var entity = removable.options.entity;
-            var type = entity.get('@type');
-            if (!type) 
-                throw "Entity has no type, can't be saved";
 
-            this.LOG.debug("type= " + type);
+            this.LOG.debug("entity", entity, " is of ", entity.get("@type"));
 
             var service = this;
             var fixEntity = this.fixFromVIE(entity);
@@ -907,7 +895,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                 });
             } else {
-                this.LOG.warn("SocialSemanticService remove for " + typeCurie + " not implemented");
+                this.LOG.warn("SocialSemanticService remove for " + type.id + " not implemented");
             }
 
         },
