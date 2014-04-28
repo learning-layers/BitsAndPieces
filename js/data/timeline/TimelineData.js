@@ -41,7 +41,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         if( forUser.isEntity ) forUser = forUser.getSubject();
         var that = this;
         this.vie.load({
-            'type' : timeline.get('predicate'), //TODO check that property
+            'type' : this.vie.types.get(timeline.get(Voc.predicate)), //TODO check that property
             'start' : start - range,
             'end' : end -0 + range,
             'forUser' : forUser

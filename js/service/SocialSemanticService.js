@@ -244,7 +244,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             var type = loadable.options.type;
 
             var service = this;
-            if( type.isof(Voc.USER)) {
+            if( type.isof(Voc.USEREVENT)) {
                 this.LOG.debug("SSUserEventsGet");
                 this.onUrisReady(
                     this.user,
@@ -401,16 +401,17 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 }
                                 object = object['learnEpTimelineState'];
                                 //var vieEntity = new service.vie.Entity(service.fixForVIE({
-                                var entity = service.fixForVIE({
-                                    'uri' : object.learnEpTimelineStateUri,
-                                    'type' : service.types.TIMELINE,
-                                    'belongsToUser' : service.user,
-                                    'timeAttr': Voc.timestamp,
-                                    'predicate' : Voc.USEREVENT,
-                                    'belongsToVersion' : loadable.options.version,
-                                    'start' : object.startTime,                            
-                                    'end' : object.endTime
-                                });
+                                var entity = {};
+                                entity[VIE.prototype.Entity.prototype.idAttribute] = object.learnEpTimelineStateUri;
+                                entity['@type'] = Voc.TIMELINE;
+                                entity[Voc.belongsToUser] = service.user;
+                                entity[Voc.timeAttr]= Voc.timestamp;
+                                entity[Voc.predicate] = Voc.USEREVENT;
+                                entity[Voc.belongsToVersion] = loadable.options.version;
+                                entity[Voc.start] = object.startTime;                            
+                                entity[Voc.end] = object.endTime
+
+                                //entity = service.fixForVIE(entity);
 
                                 //service.buffer[vieEntity.getSubject()] = object;
                                 //loadable.resolve(vieEntity);
@@ -908,7 +909,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             var entity = _.clone(object);
             if( !idAttr) idAttr = 'uri';
             if( !typeAttr) typeAttr = 'type';
-            entity['@subject'] = object[idAttr];
+            entity[VIE.prototype.Entity.prototype.idAttribute] = object[idAttr];
             if (object[typeAttr]) {
                 entity['@type'] = object[typeAttr].indexOf('sss:') === 0 ? object[typeAttr] : "sss:"+object[typeAttr];
                 delete entity[typeAttr];
@@ -942,7 +943,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             object['type'] = entity.get('@type').id;
             object['uri'] = entity.getSubject();
             delete object['@type'];
-            delete object['@subject'];
+            delete object[VIE.prototype.Entity.prototype.idAttribute];
             return object;
         }
 

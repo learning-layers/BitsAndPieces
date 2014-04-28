@@ -41,6 +41,7 @@ define([], {
     cx : 'sss:cx',
     cy : 'sss:cy',
     x : 'sss:x',
-    y : 'sss:y'
+    y : 'sss:y',
 
+    predicate : 'rdfs:range'
 });

@@ -85,14 +85,14 @@ function(Logger, Voc, _, userParams,
                 newWidget = new this.vie.Entity;
                 newWidget.set('@type', Voc.TIMELINE);
                 newWidget.set(Voc.belongsToUser, userParams.user);
-                newWidget.set('timeAttr', Voc.timestamp);
-                newWidget.set('predicate', Voc.USEREVENT);
+                newWidget.set(Voc.timeAttr, Voc.timestamp);
+                newWidget.set(Voc.predicate, Voc.USEREVENT);
                     //'timelineCollection' : new vie.Collection([], {//new TL.Collection([], { 
                         //'model': Entity,
                         //'vie' : vie
                         //})},
-                newWidget.set('start', jSGlobals.getTime() - jSGlobals.dayInMilliSeconds);
-                newWidget.set('end', jSGlobals.getTime() + 3600000 );
+                newWidget.set(Voc.start, jSGlobals.getTime() - jSGlobals.dayInMilliSeconds);
+                newWidget.set(Voc.end, jSGlobals.getTime() + 3600000 );
                 newWidget.set(Voc.belongsToVersion, version.getSubject());
                 newWidget.save();
                 newWidgets.push(newWidget);
