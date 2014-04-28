@@ -83,11 +83,10 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker',
                         var id = ui.helper.attr('about');
                         that.LOG.debug("dropped " + id);
                         var offset = $(this).offset();
-                        var entity = {//ORGANIZE.Entity({
-                            x: ui.offset.left - offset.left,
-                            y: ui.offset.top - offset.top,
-                            resource: id
-                        };
+                        var entity = {};
+                        entity[Voc.x] = ui.offset.left - offset.left;
+                        entity[Voc.y] = ui.offset.top - offset.top;
+                        entity[Voc.hasResource] = id;
                         tracker.info(tracker.DROPORGANIZEENTITY, id, entity);
                         OrganizeData.createEntity(that.model, entity);
                     }

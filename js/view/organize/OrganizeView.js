@@ -82,6 +82,14 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.stopListening();
             Backbone.View.prototype.remove.call(this);
         },
+        mapAttributes : function(item) {
+            for( var prop in item ) {
+                item['sss:'+prop] = item[prop];
+                delete item[prop];
+            }
+            this.LOG.debug('mapAttributes > item', _.clone(item));
+            return item;
+        },
         AddCircle: function(event){
             this.LOG.debug("event", event);
             if( !event || !event.detail ) return;
@@ -92,7 +100,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             var id = circle['id'];
             tracker.info(tracker.CREATEORGANIZECIRCLE, tracker.NULL, circle);
             delete circle['id'];
-            var model = OrganizeData.createCircle(this.model, circle, {'by':this});
+            var model = OrganizeData.createCircle(this.model, this.mapAttributes(circle), {'by':this});
             this.views[id] = new EntityView({'model' : model});
         },
 
@@ -112,7 +120,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
             //circle['_organizeId'] = circle['id'];
             delete circle['id'];
-            view.model.save(circle, {'by': this});
+            view.model.save(this.mapAttributes(circle), {'by': this});
         },
 
         RemoveCircle: function(event){
@@ -153,7 +161,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             //entity['_organizeId'] = entity['id'];
             delete entity['id'];
             this.LOG.debug("view", view);
-            view.model.save(entity, {'by': this});
+            view.model.save(this.mapAttributes(entity), {'by': this});
         }, 
 
         RemoveEntity: function(event){
