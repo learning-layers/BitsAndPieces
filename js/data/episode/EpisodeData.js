@@ -54,9 +54,12 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
         newEpisode.set(Voc.label, "New Episode");
         newEpisode.set(Voc.belongsToUser, user.getSubject());
         newEpisode.set('@type', Voc.EPISODE);
-        newEpisode.set(Voc.hasVersion, false);
+        var newVersion = false;
+        if( fromVersion ) {
+            newVersion = VersionData.newVersion(newEpisode, fromVersion).getSubject();
+        }
+        newEpisode.set(Voc.hasVersion, newVersion);
         this.vie.entities.addOrUpdate(newEpisode);
-        //VersionData.newVersion(newEpisode, fromVersion);
 
         newEpisode.save();
 

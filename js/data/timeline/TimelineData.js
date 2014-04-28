@@ -79,7 +79,6 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
     m.copy= function(timeline, overrideAttributes) {
         var newAttr = _.clone(timeline.attributes);
         delete newAttr[timeline.idAttribute];
-        delete newAttr[this.vie.namespaces.uri(Voc.hasEntity)];
         newAttr = _.extend(newAttr, overrideAttributes || {});
         var newTimeline = new this.vie.Entity(newAttr);
         this.vie.entities.addOrUpdate(newTimeline);
