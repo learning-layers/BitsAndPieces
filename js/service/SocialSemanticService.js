@@ -604,7 +604,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 },
                                 userUri,
                                 service.userKey,
-                                entity.get('label'),
+                                entity.get(Voc.label),
                                 'privateSpace'
                             );
                     });
@@ -627,7 +627,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 userUri,
                                 service.userKey,
                                 entityUri,
-                                entity.get('label')
+                                entity.get(Voc.label)
                             );
                     });
                 }
