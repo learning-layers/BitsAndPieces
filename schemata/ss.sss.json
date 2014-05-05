@@ -80,6 +80,7 @@
     "types": {
         "http://eval.bp/Thing":{
             "ancestors": [
+                "http://www.w3.org/2002/07/owl#Thing" 
             ], 
             "comment": "", 
             "comment_plain": "", 
@@ -94,6 +95,24 @@
             "subtypes": [
             ], 
             "supertypes": [
+                "http://www.w3.org/2002/07/owl#Thing" 
+            ] 
+        },
+        "http://eval.bp/user":{
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/user", 
+            "label": "User", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
             ] 
         },
         "http://eval.bp/Episode":{
