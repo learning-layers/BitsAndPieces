@@ -57,15 +57,15 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             TimelineData.fetchRange( this.model, startTime, endTime );
         },
         rearrangeVisibleArea: function(model, collection, options ) {
-            this.LOG.debug("rearrangeVisibleArea");
-            if (this.options.by && this.options.by === this ) return;
+            this.LOG.debug("rearrangeVisibleArea", options && options.by);
+            if (options.by && options.by === this ) return;
 
             var startTime = this.model.get(Voc.start); 
             var endTime = this.model.get(Voc.end);
             if( !startTime || !endTime )  return;
 
             TimelineData.fetchRange(this.model, startTime, endTime );
-            this.timeline.setVisibleChartRange( startTime, endTime);
+            //this.timeline.setVisibleChartRange( startTime, endTime);
         },
         addEntity: function(entity, collection, options) {
             this.LOG.debug('addEntity');
@@ -162,10 +162,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             links.events.addListener(this.timeline, 'rangechanged', function(range){
                 view.LOG.debug('caught rangechanged: '+ range.start + ' - ' + range.end);
                 tracker.info(tracker.CHANGETIMELINERANGE, tracker.NULL, range);
-                view.model.save({
-                    'start' : range.start,
-                    'end' : range.end
-                }, { 'by' : view });
+                var vals = {};
+                vals[Voc.start] = range.start;
+                vals[Voc.end] = range.end;
+                view.model.save(vals, { 'by' : view });
                 //view.fetchRange(range.start,range.end);
             });
             return this;
