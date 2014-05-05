@@ -449,22 +449,16 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 service.LOG.debug("objects", object);
                                 var key, idAttr;
                                 _.each(object['learnEpVersion']['circles'], function(item){
-                                    item.Label = item['label'];
-                                    item.LabelX = item['xLabel'];
-                                    item.LabelY = item['yLabel'];
-                                    item.rx = item['xR'];
-                                    item.ry = item['yR'];
-                                    item.cx = item['xC'];
-                                    item.cy = item['yC'];
-                                    delete item['label'];
-                                    delete item['xLabel'];
-                                    delete item['yLabel'];
-                                    delete item['xR'];
-                                    delete item['yR'];
-                                    delete item['xC'];
-                                    delete item['yC'];
-                                    delete item['learnEpVersionUri'];
-                                    var fixEntity = service.fixForVIE(item, 'learnEpCircleUri');
+                                    var fixEntity = {};
+                                    fixEntity.Label = item['label'];
+                                    fixEntity.LabelX = item['xLabel'];
+                                    fixEntity.LabelY = item['yLabel'];
+                                    fixEntity.rx = item['xR'];
+                                    fixEntity.ry = item['yR'];
+                                    fixEntity.cx = item['xC'];
+                                    fixEntity.cy = item['yC'];
+                                    fixEntity.learnEpCircleUri = item['learnEpCircleUri'];
+                                    fixEntity = service.fixForVIE(fixEntity, 'learnEpCircleUri');
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
                                     //var vieEntity = new service.vie.Entity(fixEntity);
                                     fixEntity['@type'] = type.id;
@@ -499,9 +493,10 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 service.LOG.debug("objects", object);
                                 var key, idAttr;
                                 _.each(object['learnEpVersion']['entities'], function(item){
-                                    item[Voc.hasResource] = item['entityUri'];
-                                    delete item['entityUri'];
-                                    var fixEntity = service.fixForVIE(item, 'learnEpEntityUri');
+                                    var fixEntity = {};
+                                    fixEntity.learnEpEntityUri = item.learnEpEntityUri;
+                                    fixEntity = service.fixForVIE(fixEntity, 'learnEpEntityUri');
+                                    fixEntity[Voc.hasResource] = item['entityUri'];
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
                                     //var vieEntity = new service.vie.Entity(fixEntity);
                                     fixEntity['@type'] = type.id;
@@ -673,6 +668,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         // end map
 
                         var fixEntity = service.fixFromVIE(entity);
+                        service.LOG.debug("fixEntity", fixEntity);
 
                         if( entity.isNew() )
                             service.onUrisReady(
@@ -693,13 +689,13 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         userUri,
                                         service.userKey,
                                         versionUri,
-                                        fixEntity[Voc.Label],
-                                        fixEntity[Voc.LabelX],
-                                        fixEntity[Voc.LabelY],
-                                        fixEntity[Voc.rx],
-                                        fixEntity[Voc.ry],
-                                        fixEntity[Voc.cx],
-                                        fixEntity[Voc.cy]
+                                        fixEntity.Label,
+                                        fixEntity.LabelX,
+                                        fixEntity.LabelY,
+                                        fixEntity.rx,
+                                        fixEntity.ry,
+                                        fixEntity.cx,
+                                        fixEntity.cy
 
                                     );
                             });
@@ -722,13 +718,13 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         userUri,
                                         service.userKey,
                                         uriUri,
-                                        fixEntity[Voc.Label],
-                                        fixEntity[Voc.LabelX],
-                                        fixEntity[Voc.LabelY],
-                                        fixEntity[Voc.rx],
-                                        fixEntity[Voc.ry],
-                                        fixEntity[Voc.cx],
-                                        fixEntity[Voc.cy]
+                                        fixEntity.Label,
+                                        fixEntity.LabelX,
+                                        fixEntity.LabelY,
+                                        fixEntity.rx,
+                                        fixEntity.ry,
+                                        fixEntity.cx,
+                                        fixEntity.cy
 
                                     );
                             });
@@ -937,6 +933,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             this.LOG.debug('fixFromVIE', JSON.stringify(object));
             for( var prop in object ) {
                 var curie = this.vie.namespaces.curie(prop);
+                if( curie.indexOf('sss:') === 0 ) curie = curie.substring(4);
                 object[curie] = object[prop];
                 delete object[prop];
             }
