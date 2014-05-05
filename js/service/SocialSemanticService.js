@@ -539,13 +539,13 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
 
             if( entity.isof(Voc.TIMELINE) ) {
                 this.LOG.debug("saving timeline");
-                var obj = this.fixFromVIE(entity);
+                var obj = _.clone(entity.attributes);
                 obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('TimelineWidget')
                                          : obj.uri;
                 this.buffer[obj.uri] = obj;
                 this.onUrisReady(
                     this.user,
-                    obj[Voc.belongsToVersion],
+                    obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
                     function(userUri, versionUri) {
                         new SSLearnEpVersionSetTimelineState().handle(
                                 function(object) {
@@ -568,11 +568,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 });
             } else if( entity.isof(Voc.ORGANIZE )) {
                 this.LOG.debug("saving organize");
-                var obj = this.fixFromVIE(entity);
+                var obj = _.clone(entity.attributes);
                 obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget')
                                          : obj.uri;
                 this.onUrisReady(
-                    obj[Voc.belongsToVersion],
+                    obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
                     function() {
                         service.buffer[obj.uri] = obj;
                         if( entity.isNew() )
@@ -667,9 +667,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         var version = service.buffer[organizeUri]['belongsToVersion'];
                         // end map
 
-                        var fixEntity = service.fixFromVIE(entity);
-                        service.LOG.debug("fixEntity", fixEntity);
-
                         if( entity.isNew() )
                             service.onUrisReady(
                                 service.user,
@@ -689,20 +686,20 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         userUri,
                                         service.userKey,
                                         versionUri,
-                                        fixEntity.Label,
-                                        fixEntity.LabelX,
-                                        fixEntity.LabelY,
-                                        fixEntity.rx,
-                                        fixEntity.ry,
-                                        fixEntity.cx,
-                                        fixEntity.cy
+                                        entity.get(Voc.Label),
+                                        entity.get(Voc.LabelX),
+                                        entity.get(Voc.LabelY),
+                                        entity.get(Voc.rx),
+                                        entity.get(Voc.ry),
+                                        entity.get(Voc.cx),
+                                        entity.get(Voc.cy)
 
                                     );
                             });
                         else
                             service.onUrisReady(
                                 service.user,
-                                fixEntity.uri,
+                                entity.getSubject(),
                                 function(userUri, uriUri ) {
                                     new SSLearnEpVersionUpdateCircle().handle(
                                         function(object) {
@@ -718,13 +715,13 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         userUri,
                                         service.userKey,
                                         uriUri,
-                                        fixEntity.Label,
-                                        fixEntity.LabelX,
-                                        fixEntity.LabelY,
-                                        fixEntity.rx,
-                                        fixEntity.ry,
-                                        fixEntity.cx,
-                                        fixEntity.cy
+                                        entity.get(Voc.Label),
+                                        entity.get(Voc.LabelX),
+                                        entity.get(Voc.LabelY),
+                                        entity.get(Voc.rx),
+                                        entity.get(Voc.ry),
+                                        entity.get(Voc.cx),
+                                        entity.get(Voc.cy)
 
                                     );
                             });
@@ -746,14 +743,15 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         }
                         var version = service.buffer[organizeUri]['belongsToVersion'];
                         // end map
-
-                        var fixEntity = service.fixFromVIE(entity);
+                        //
+                        var resourceUri = entity.get(Voc.hasResource);
+                        if( resourceUri.isEntity ) resourceUri = resourceUri.getSubject();
 
                         if(entity.isNew() )
                             service.onUrisReady(
                                 service.user,
                                 version,
-                                fixEntity[Voc.hasResource],
+                                resourceUri,
                                 function(userUri, versionUri, resourceUri){
                                     new SSLearnEpVersionAddEntity().handle(
                                         function(object) {
@@ -770,16 +768,16 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         service.userKey,
                                         versionUri,
                                         resourceUri,
-                                        fixEntity[Voc.x],
-                                        fixEntity[Voc.y]
+                                        entity.get(Voc.x),
+                                        entity.get(Voc.y)
 
                                     );
                             });
                         else
                             service.onUrisReady(
                                 service.user,
-                                fixEntity.uri,
-                                fixEntity[Voc.hasResource],
+                                entity.getSubject(),
+                                resourceUri,
                                 function(userUri,uriUri,resourceUri){
                                     new SSLearnEpVersionUpdateEntity().handle(
                                         function(object) {
@@ -796,19 +794,20 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         service.userKey,
                                         uriUri,
                                         resourceUri,
-                                        fixEntity[Voc.x],
-                                        fixEntity[Voc.y]
+                                        entity.get(Voc.x),
+                                        entity.get(Voc.y)
 
                                     );
                             });
                 });
 
             } else if ( entity.isof(Voc.USER )) {
-                var fixEntity = this.fixFromVIE(entity);
-                if( fixEntity[Voc.currentVersion] ) {
+                var versionUri = entity.get(Voc.currentVersion);
+                if( versionUri.isEntity ) versionUri = versionUri.getSubject();
+                if( versionUri ) {
                     this.onUrisReady(
                         this.user,
-                        fixEntity[Voc.currentVersion],
+                        versionUri,
                         function(userUri, versionUri) {
                             new SSLearnEpVersionCurrentSet().handle(
                                 function(object) {
@@ -847,12 +846,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             this.LOG.debug("entity", entity, " is of ", entity.get("@type"));
 
             var service = this;
-            var fixEntity = this.fixFromVIE(entity);
 
             if( entity.isof(Voc.CIRCLE )) {
                 this.onUrisReady(
                     this.user,
-                    fixEntity.uri,
+                    entity.getSubject(),
                     function(userUri,uriUri){
                         new SSLearnEpVersionRemoveCircle().handle(
                             function(object) {
@@ -873,7 +871,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if( entity.isof(Voc.ORGAENTITY )) {
                 this.onUrisReady(
                     this.user,
-                    fixEntity.uri,
+                    entity.getSubject(),
                     function(userUri,uriUri){
                         new SSLearnEpVersionRemoveEntity().handle(
                             function(object) {
