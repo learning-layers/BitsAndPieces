@@ -43,7 +43,7 @@ var SSMockupResources = [
         'entityUri': MockupNS + 'user/peter',
         'label': 'Peter',
         'entityType' : 'user',
-        'currentVersion': MockupNS + 'version/versionY'
+        'currentVersion': MockupNS + 'version/versionX'
     },
     {
         'entityUri': MockupNS + 'user/paul',
