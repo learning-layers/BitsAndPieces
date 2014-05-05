@@ -88,7 +88,7 @@ var SSMockupUserEvents = [
         'resource': MockupNS + 'doc/document01',
         'user': MockupNS + 'user/peter',
         'content': 'Rename Private Record',
-        'timestamp': '2013-11-15T16:50:20+02:00'
+        'timestamp': '2014-01-15T16:50:20+02:00'
     },
     {
         'uri': 'sss:#useraction27',
@@ -96,7 +96,7 @@ var SSMockupUserEvents = [
         'resource': MockupNS + 'doc/document03',
         'user': MockupNS + 'user/peter',
         'content': 'Rename Private Record',
-        'timestamp': '2013-11-15T17:00:20+02:00'
+        'timestamp': '2014-01-15T17:00:20+02:00'
     },
     {
         'uri': 'sss:#useraction23',
@@ -104,7 +104,7 @@ var SSMockupUserEvents = [
         'resource': MockupNS + 'doc/document01',
         'user': MockupNS + 'user/peter',
         'content': 'Remove Private Record',
-        'timestamp': '2013-11-15T17:30:20+02:00'
+        'timestamp': '2014-01-15T17:30:20+02:00'
     },
     {
         'uri': 'sss:#useraction24',
@@ -112,7 +112,7 @@ var SSMockupUserEvents = [
         'resource': MockupNS + 'doc/document02',
         'user': MockupNS + 'user/peter',
         'content': 'Create Shared Record',
-        'timestamp': '2013-11-15T15:40:20+02:00'
+        'timestamp': '2014-01-15T15:40:20+02:00'
     },
     {
         'uri': 'sss:#useraction25',
@@ -120,7 +120,7 @@ var SSMockupUserEvents = [
         'resource': MockupNS + 'doc/document02',
         'user': MockupNS + 'user/peter',
         'content': 'Rename Shared Record',
-        'timestamp': '2013-11-15T16:20:20+02:00'
+        'timestamp': '2014-01-15T16:20:20+02:00'
     },
     {
         'uri': 'sss:#useraction26',
@@ -128,7 +128,7 @@ var SSMockupUserEvents = [
         'resource': MockupNS + 'doc/document02',
         'user': MockupNS + 'user/peter',
         'content': 'Remove Shared Record',
-        'timestamp': '2013-11-15T17:40:20+02:00'
+        'timestamp': '2014-01-15T17:40:20+02:00'
     }
 ];
 
