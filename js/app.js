@@ -39,7 +39,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     AppLog.debug('vie', v);
 
     var namespace = "http://eval.bp/" ;
-    userParams.init(username, namespace);
+    userParams.init(username, "armin", "kb");
 
     var sss = new SocialSemanticService(_.extend({
         'namespaces': {
