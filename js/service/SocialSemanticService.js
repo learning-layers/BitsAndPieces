@@ -543,6 +543,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('TimelineWidget')
                                          : obj.uri;
                 this.buffer[obj.uri] = obj;
+                var start = obj[this.vie.namespaces.uri(Voc.start)];
+                var end = obj[this.vie.namespaces.uri(Voc.end)];
                 this.onUrisReady(
                     this.user,
                     obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
@@ -562,8 +564,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 userUri,
                                 service.userKey,
                                 versionUri,
-                                _.isDate(obj.start) ? (obj.start - 0) : obj.start,
-                                _.isDate(obj.end) ? (obj.end - 0) : obj.end
+                                _.isDate(start) ? (start - 0) : start,
+                                _.isDate(end) ? (end - 0) : end
                             );
                 });
             } else if( entity.isof(Voc.ORGANIZE )) {
