@@ -245,13 +245,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             */
 
             var view = new OrgaEntityView({model:entity});
-            var data = {
-                'x' : entity.get(Voc.x),
-                'y' : entity.get(Voc.y),
-                'imageURL' : view.getIcon()
-            };
-            this.LOG.debug("data", data);
-            var id = this.organize.createAndDropSvgEntity(data);
+            var id = this.organize.createAndDropSvgEntity(view.getSvgData());
             view.setSvgId(id);
             this.LOG.debug("id in organize = " + id);
             //entity.set('_organizeId', id);
