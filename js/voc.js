@@ -43,5 +43,7 @@ define([], {
     x : 'sss:x',
     y : 'sss:y',
 
-    predicate : 'rdfs:range'
+    predicate : 'rdfs:range',
+
+    hasTag : 'sss:hasTag'
 });
