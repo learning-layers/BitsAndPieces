@@ -22,7 +22,7 @@ var SSMockupUserEvents = [
         'uri': 'sss:#ue01',
         'type': 'createPrivateCollection',
         'resource': MockupNS + 'coll/resource01',
-        'user': MockupNS + 'user/christoph/',
+        'user': MockupNS + 'user/christoph',
         'content': 'Create Private Collection',
         'timestamp': '2013-11-15T15:30:20+02:00'
     },
@@ -30,7 +30,7 @@ var SSMockupUserEvents = [
         'uri': 'sss:#ue02',
         'type': 'renamePrivateCollection',
         'resource': MockupNS + 'coll/resource01',
-        'user': MockupNS + 'user/christoph/',
+        'user': MockupNS + 'user/christoph',
         'content': 'Rename Private Collection',
         'timestamp': '2013-11-15T16:50:20+02:00'
     },
@@ -38,7 +38,7 @@ var SSMockupUserEvents = [
         'uri': 'sss:#ue07',
         'type': 'renamePrivateCollection',
         'resource': MockupNS + 'coll/resource03',
-        'user': MockupNS + 'user/christoph/',
+        'user': MockupNS + 'user/christoph',
         'content': 'Rename Private Collection',
         'timestamp': '2013-11-15T17:00:20+02:00'
     },
@@ -46,7 +46,7 @@ var SSMockupUserEvents = [
         'uri': 'sss:#ue03',
         'type': 'removePrivateCollection',
         'resource': MockupNS + 'coll/resource01',
-        'user': MockupNS + 'user/christoph/',
+        'user': MockupNS + 'user/christoph',
         'content': 'Remove Private Collection',
         'timestamp': '2013-11-15T17:30:20+02:00'
     },
@@ -54,7 +54,7 @@ var SSMockupUserEvents = [
         'uri': 'sss:#ue04',
         'type': 'createSharedCollection',
         'resource': MockupNS + 'coll/resource02',
-        'user': MockupNS + 'user/maria/',
+        'user': MockupNS + 'user/maria',
         'content': 'Create Shared Collection',
         'timestamp': '2013-11-15T15:40:20+02:00'
     },
@@ -62,7 +62,7 @@ var SSMockupUserEvents = [
         'uri': 'sss:#ue05',
         'type': 'renameSharedCollection',
         'resource': MockupNS + 'coll/resource02',
-        'user': MockupNS + 'user/maria/',
+        'user': MockupNS + 'user/maria',
         'content': 'Rename Shared Collection',
         'timestamp': '2013-11-15T16:20:20+02:00'
     },
@@ -70,7 +70,7 @@ var SSMockupUserEvents = [
         'uri': 'sss:#ue06',
         'type': 'removeSharedCollection',
         'resource': MockupNS + 'coll/resource02',
-        'user': MockupNS + 'user/maria/',
+        'user': MockupNS + 'user/maria',
         'content': 'Remove Shared Collection',
         'timestamp': '2013-11-15T17:40:20+02:00'
     },
@@ -78,57 +78,57 @@ var SSMockupUserEvents = [
         'uri': 'sss:#useraction21',
         'type': 'createPrivateRecord',
         'resource': MockupNS + 'doc/document01',
-        'user': MockupNS + 'user/peter/',
+        'user': MockupNS + 'user/peter',
         'content': 'Create Private Record',
-        'timestamp': '2014-01-27T12:30:20+02:00'
+        'timestamp': '2014-02-24T12:30:20+02:00'
     },
     {
         'uri': 'sss:#useraction22',
         'type': 'renamePrivateRecord',
         'resource': MockupNS + 'doc/document01',
-        'user': MockupNS + 'user/peter/',
+        'user': MockupNS + 'user/peter',
         'content': 'Rename Private Record',
-        'timestamp': '2013-11-15T16:50:20+02:00'
+        'timestamp': '2014-01-15T16:50:20+02:00'
     },
     {
         'uri': 'sss:#useraction27',
         'type': 'renamePrivateRecord',
         'resource': MockupNS + 'doc/document03',
-        'user': MockupNS + 'user/peter/',
+        'user': MockupNS + 'user/peter',
         'content': 'Rename Private Record',
-        'timestamp': '2013-11-15T17:00:20+02:00'
+        'timestamp': '2014-01-15T17:00:20+02:00'
     },
     {
         'uri': 'sss:#useraction23',
         'type': 'removePrivateRecord',
         'resource': MockupNS + 'doc/document01',
-        'user': MockupNS + 'user/peter/',
+        'user': MockupNS + 'user/peter',
         'content': 'Remove Private Record',
-        'timestamp': '2013-11-15T17:30:20+02:00'
+        'timestamp': '2014-01-15T17:30:20+02:00'
     },
     {
         'uri': 'sss:#useraction24',
         'type': 'createSharedRecord',
         'resource': MockupNS + 'doc/document02',
-        'user': MockupNS + 'user/peter/',
+        'user': MockupNS + 'user/peter',
         'content': 'Create Shared Record',
-        'timestamp': '2013-11-15T15:40:20+02:00'
+        'timestamp': '2014-01-15T15:40:20+02:00'
     },
     {
         'uri': 'sss:#useraction25',
         'type': 'renameSharedRecord',
         'resource': MockupNS + 'doc/document02',
-        'user': MockupNS + 'user/peter/',
+        'user': MockupNS + 'user/peter',
         'content': 'Rename Shared Record',
-        'timestamp': '2013-11-15T16:20:20+02:00'
+        'timestamp': '2014-01-15T16:20:20+02:00'
     },
     {
         'uri': 'sss:#useraction26',
         'type': 'removeSharedRecord',
         'resource': MockupNS + 'doc/document02',
-        'user': MockupNS + 'user/peter/',
+        'user': MockupNS + 'user/peter',
         'content': 'Remove Shared Record',
-        'timestamp': '2013-11-15T17:40:20+02:00'
+        'timestamp': '2014-01-15T17:40:20+02:00'
     }
 ];
 

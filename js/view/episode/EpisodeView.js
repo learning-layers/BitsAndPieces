@@ -1,4 +1,4 @@
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','model/episode/EpisodeModel'], function(VIE, Logger, tracker, _, $, Backbone, Voc, EpisodeModel){
+define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','data/episode/EpisodeData'], function(VIE, Logger, tracker, _, $, Backbone, Voc, EpisodeData){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeView'),
         events: {
@@ -14,7 +14,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','m
             return this;
         },
         render: function() {
-            this.$el.html('<h2>' + this.model.get('label') + '</h2><ul rel="'+this.model.vie.namespaces.uri(Voc.hasVersion)+'"></ul>');
+            this.$el.html('<h2>' + this.model.get(Voc.label) + '</h2><ul rel="'+this.model.vie.namespaces.uri(Voc.hasVersion)+'"></ul>');
             var ul = this.$el.find('ul');
             this.LOG.debug("this.model", this.model, this.highlit);
             var view = this;
@@ -26,7 +26,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','m
                 view.LOG.debug('version', version.getSubject());
                 if( view.highlit && version.getSubject() === view.highlit ) 
                     highlit = 'highlight';
-                var versionElem = $('<li class="version '+highlit+'" about="'+version.getSubject()+'">Version<div class="timestamp">' + new Date(version.get('timestamp')-0) + '</div></li>');
+                var versionElem = $('<li class="version '+highlit+'" about="'+version.getSubject()+'">Version<div class="timestamp">' + new Date(version.get(Voc.timestamp)-0) + '</div></li>');
                 if( version.isNew() ) {
                     version.once('change:'+version.idAttribute, 
                         function(model, value) {
@@ -48,7 +48,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','m
         },
         changeCurrentEpisode: function(event) {
             if( !event || !event.currentTarget ) return;
-            var id = EpisodeModel.getFirstVersion(this.model);
+            var id = EpisodeData.getFirstVersion(this.model);
             if( !id ) return;
             this.LOG.debug('EpisodeView changeCurrentEpisode, version = ' + id.getSubject());
             tracker.info(tracker.SWITCHEPISODE, id.getSubject());

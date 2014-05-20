@@ -56,7 +56,7 @@
           "comment": "The name of the item.", 
           "comment_plain": "The name of the item.", 
           "domains": [
-            "Resource"
+            "http://eval.bp/Thing"
           ], 
           "id": "name", 
           "label": "Name", 
@@ -68,7 +68,7 @@
           "comment": "The time of the item. Will need to be something more detailed, eg. creationTime", 
           "comment_plain": "The time of the item.", 
           "domains": [
-            "Resource"
+            "http://eval.bp/Thing"
           ], 
           "id": "time", 
           "label": "Time", 
@@ -78,13 +78,14 @@
         } 
     },
     "types": {
-        "Resource":{
+        "http://eval.bp/Thing":{
             "ancestors": [
+                "http://www.w3.org/2002/07/owl#Thing" 
             ], 
             "comment": "", 
             "comment_plain": "", 
-            "id": "Resource", 
-            "label": "Resource", 
+            "id": "http://eval.bp/Thing", 
+            "label": "Thing", 
             "properties": [
                 "name",
                 "time"
@@ -92,68 +93,1266 @@
             "specific_properties": [
             ], 
             "subtypes": [
-                "Collection",
-                "Discussion",
-                "Photo"
             ], 
             "supertypes": [
-            ], 
-            "url": "http://sss.ss/Resource"
+                "http://www.w3.org/2002/07/owl#Thing" 
+            ] 
         },
-        "Collection":{
+        "http://eval.bp/user":{
             "ancestors": [
-                "Resource" 
+                "http://eval.bp/Thing" 
             ], 
             "comment": "", 
             "comment_plain": "", 
-            "id": "Collection", 
-            "label": "Collection", 
+            "id": "http://eval.bp/user", 
+            "label": "User", 
             "properties": [
             ], 
             "specific_properties": [
             ], 
             "subtypes": [], 
             "supertypes": [
-                "Resource" 
-            ], 
-            "url": "http://sss.ss/Collection"
+                "http://eval.bp/Thing" 
+            ] 
         },
-        "Discussion":{
+        "http://eval.bp/Episode":{
             "ancestors": [
-                "Resource" 
+                "http://eval.bp/Thing" 
             ], 
             "comment": "", 
             "comment_plain": "", 
-            "id": "Discussion", 
-            "label": "Discussion", 
+            "id": "http://eval.bp/Episode", 
+            "label": "Episode", 
             "properties": [
             ], 
             "specific_properties": [
             ], 
             "subtypes": [], 
             "supertypes": [
-                "Resource" 
-            ], 
-            "url": "http://sss.ss/Discussion"
+                "http://eval.bp/Thing" 
+            ] 
         },
-        "Photo":{
+        "http://eval.bp/Version":{
             "ancestors": [
-                "Resource" 
+                "http://eval.bp/Thing" 
             ], 
             "comment": "", 
             "comment_plain": "", 
-            "id": "Photo", 
-            "label": "Photo", 
+            "id": "http://eval.bp/Version", 
+            "label": "Version", 
             "properties": [
             ], 
             "specific_properties": [
             ], 
             "subtypes": [], 
             "supertypes": [
-                "Resource" 
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/Widget":{
+            "ancestors": [
+                "http://eval.bp/Thing" 
             ], 
-            "url": "http://sss.ss/Photo"
-
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/Widget", 
+            "label": "Widget", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/BrowsingWidget":{
+            "ancestors": [
+                "http://eval.bp/Widget" 
+            ], 
+            "comment": "Class of Widgets with browsing features", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/BrowsingWidget", 
+            "label": "BrowsingWidget", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Widget" 
+            ] 
+        },
+        "http://eval.bp/OrganizingWidget":{
+            "ancestors": [
+                "http://eval.bp/Widget" 
+            ], 
+            "comment": "Class of Widgets with organizing features", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/OrganizingWidget", 
+            "label": "Organizing Widget", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Widget" 
+            ] 
+        },
+        "http://eval.bp/Timeline":{
+            "ancestors": [
+                "http://eval.bp/BrowsingWidget" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/Timeline", 
+            "label": "Timeline", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/BrowsingWidget" 
+            ] 
+        },
+        "http://eval.bp/Organize":{
+            "ancestors": [
+                "http://eval.bp/OrganizingWidget" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/Organize", 
+            "label": "Organize", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/OrganizingWidget" 
+            ] 
+        },
+        "http://eval.bp/coll" : {
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/coll", 
+            "label": "coll", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/entity" : {
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/entity", 
+            "label": "entity", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/disc" : {
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/disc", 
+            "label": "disc", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/discEntry" : {
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/discEntry", 
+            "label": "discEntry", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/file" : {
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/file", 
+            "label": "file", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/rating" : {
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/rating", 
+            "label": "rating", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/tag" : {
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/tag", 
+            "label": "tag", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/learnEp" : {
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/learnEp", 
+            "label": "learnEp", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/learnEpVersion" : {
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/learnEpVersion", 
+            "label": "learnEpVersion", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/learnEpCircle" : {
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/learnEpCircle", 
+            "label": "learnEpCircle", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/learnEpEntity" : {
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/learnEpEntity", 
+            "label": "learnEpEntity", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/evernoteNotebook" : {
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteNotebook", 
+            "label": "evernoteNotebook", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/evernoteNote" : {
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteNote", 
+            "label": "evernoteNote", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/evernoteResource" : {
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteResource", 
+            "label": "evernoteResource", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/userEvent":{
+            "ancestors": [
+                "http://eval.bp/Thing" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/userEvent", 
+            "label": "User Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/Thing" 
+            ] 
+        },
+        "http://eval.bp/addPrivateCollectionItem": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/addPrivateCollectionItem", 
+            "label": "addPrivateCollectionItem Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/addSharedCollectionItem": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/addSharedCollectionItem", 
+            "label": "addSharedCollectionItem Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/changeCollectionByAddPrivateCollectionItem": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/changeCollectionByAddPrivateCollectionItem", 
+            "label": "changeCollectionByAddPrivateCollectionItem Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/changeCollectionByAddSharedCollectionItem": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/changeCollectionByAddSharedCollectionItem", 
+            "label": "changeCollectionByAddSharedCollectionItem Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/subscribeCollection": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/subscribeCollection", 
+            "label": "subscribeCollection Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/unSubscribeCollection": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/unSubscribeCollection", 
+            "label": "unSubscribeCollection Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/createPrivateCollection": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/createPrivateCollection", 
+            "label": "createPrivateCollection Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/createSharedCollection": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/createSharedCollection", 
+            "label": "createSharedCollection Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/createPrivateRecord": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/createPrivateRecord", 
+            "label": "createPrivateRecord Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/createSharedRecord": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/createSharedRecord", 
+            "label": "createSharedRecord Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/rateEntity": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/rateEntity", 
+            "label": "rateEntity Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/discussEntity": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/discussEntity", 
+            "label": "discussEntity Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/addDiscussionComment": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/addDiscussionComment", 
+            "label": "addDiscussionComment Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/addPrivateTag": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/addPrivateTag", 
+            "label": "addPrivateTag Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/addSharedTag": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/addSharedTag", 
+            "label": "addSharedTag Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/removePrivateTag": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/removePrivateTag", 
+            "label": "removePrivateTag Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/removeSharedTag": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/removeSharedTag", 
+            "label": "removeSharedTag Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/renamePrivateCollectionItem": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/renamePrivateCollectionItem", 
+            "label": "renamePrivateCollectionItem Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/renameSharedCollectionItem": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/renameSharedCollectionItem", 
+            "label": "renameSharedCollectionItem Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/removePrivateCollectionItem": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/removePrivateCollectionItem", 
+            "label": "removePrivateCollectionItem Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/removeSharedCollectionItem": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/removeSharedCollectionItem", 
+            "label": "removeSharedCollectionItem Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/removePrivateCollection": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/removePrivateCollection", 
+            "label": "removePrivateCollection Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/removeSharedCollection": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/removeSharedCollection", 
+            "label": "removeSharedCollection Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/removePrivateRecord": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/removePrivateRecord", 
+            "label": "removePrivateRecord Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/removeSharedRecord": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/removeSharedRecord", 
+            "label": "removeSharedRecord Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/renameDiscussion": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/renameDiscussion", 
+            "label": "renameDiscussion Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/changeCollectionByRemovePrivateCollectionItem": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/changeCollectionByRemovePrivateCollectionItem", 
+            "label": "changeCollectionByRemovePrivateCollectionItem Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/changeCollectionByRemoveSharedCollectionItem": {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/changeCollectionByRemoveSharedCollectionItem", 
+            "label": "changeCollectionByRemoveSharedCollectionItem Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/renamePrivateCollection":{
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/renamePrivateCollection", 
+            "label": "renamePrivateCollection Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/renameSharedCollection":{
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/renameSharedCollection", 
+            "label": "renameSharedCollection Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/renamePrivateRecord":{
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/renamePrivateRecord", 
+            "label": "renamePrivateRecord Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/renameSharedRecord":{
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/renameSharedRecord", 
+            "label": "renameSharedRecord Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/shareCollection":{
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/shareCollection", 
+            "label": "shareCollection Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/shareDocument":{
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/shareDocument", 
+            "label": "shareDocument Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/evernoteNotebookCreate" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteNotebookCreate", 
+            "label": "evernoteNotebookCreate Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/evernoteNotebookUpdate" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteNotebookUpdate", 
+            "label": "evernoteNotebookUpdate Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/evernoteNotebookShare" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteNotebookShare", 
+            "label": "evernoteNotebookShare Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/evernoteNotebookFollow" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteNotebookFollow", 
+            "label": "evernoteNotebookFollow Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/evernoteNoteCreate" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteNoteCreate", 
+            "label": "evernoteNoteCreate Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/evernoteNoteUpdate" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteNoteUpdate", 
+            "label": "evernoteNoteUpdate Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/evernoteNoteDelete" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteNoteDelete", 
+            "label": "evernoteNoteDelete Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/evernoteNoteShare" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteNoteShare", 
+            "label": "evernoteNoteShare Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/evernoteNoteFollow" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteNoteFollow", 
+            "label": "evernoteNoteFollow Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/evernoteReminderDone" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteReminderDone", 
+            "label": "evernoteReminderDone Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/evernoteReminderCreate" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteReminderCreate", 
+            "label": "evernoteReminderCreate Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/evernoteResourceAdd" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteResourceAdd", 
+            "label": "evernoteResourceAdd Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/evernoteResourceFollow" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteResourceFollow", 
+            "label": "evernoteResourceFollow Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
+        },
+        "http://eval.bp/evernoteResourceShare" : {
+            "ancestors": [
+                "http://eval.bp/userEvent" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/evernoteResourceShare", 
+            "label": "evernoteResourceShare Event", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [
+            ], 
+            "supertypes": [
+                "http://eval.bp/userEvent" 
+            ] 
         }
 
     }

@@ -11,12 +11,10 @@ function(require, VIE, Logger, tracker, _, $, Backbone, EntityView){
             this.render();
         },
         render: function() {
-            var type = this.model.get('@type');
-            if( type && type.id ) type = this.model.vie.namespaces.curie(type.id);
             var list = $('<ul>');
             for( var prop in this.model.attributes) {
                 if(prop != '@type' && prop.indexOf('@') === 0 ) continue;
-                var property = VIE.Util.toCurie(prop, false,this.model.vie.namespaces ); // HACK, FIXME: view shall not deal with semantics resp. VIE
+                var property = this.model.vie.namespaces.curie(prop);
                 var item = $("<li><strong>"+property+"</strong>:</li>");
                 var val = this.model.get(prop);
                 this.LOG.debug('val',val);
@@ -29,12 +27,6 @@ function(require, VIE, Logger, tracker, _, $, Backbone, EntityView){
                                 'model' : val
                                });
                     res_cont = view.render().$el;
-                    /*
-                    if( property == 'resource' && type == 'userEvent') {
-                        var dView = new DETAIL.DetailView({
-                            'model' : val
-                        });
-                    }*/
                 } else if (property == 'timestamp' || property == 'creationTime')  {
                     res_cont = _.isNumber(val) ? new Date(val-0) : val;
                 } else res_cont = val;

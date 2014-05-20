@@ -65,22 +65,30 @@ SSMockupVersions[MockupNS + 'version/versionX'] = {
 SSMockupVersions[MockupNS + 'version/versionY'] = {
     'learnEpVersionUri' : MockupNS + 'version/versionY',
     'timestamp' : '2013-11-08T17:40:20+02:00',
-    'learnEpUri' : MockupNS + 'episode/episodeX',
+    'learnEpUri' : MockupNS + 'episode/episodeY',
     'type' : 'Version'
 };
 var SSMockupEpisodes = {};
 SSMockupEpisodes[MockupNS + 'episode/episodeX'] = {
     'learnEpUri' : MockupNS + 'episode/episodeX',
     'label' : 'An existing episode',
-    'user' : MockupNS + 'user/peter/',
+    'user' : MockupNS + 'user/peter',
+    'type' : 'Episode'
+};
+SSMockupEpisodes[MockupNS + 'episode/episodeY'] = {
+    'learnEpUri' : MockupNS + 'episode/episodeY',
+    'label' : 'Another episode',
+    'user' : MockupNS + 'user/peter2',
     'type' : 'Episode'
 };
 var SSMockupTimelineStates = {};
 SSMockupTimelineStates[MockupNS + 'version/versionX'] = {
-    'startTime' : '2013-11-04T17:40:20+02:00',
-    'endTime' : '2013-11-05T17:40:20+02:00'
+    'learnEpTimelineStateUri' : MockupNS + 'timelinestate/versionX',
+    'startTime' : '2014-02-14T17:40:20+02:00',
+    'endTime' : '2014-02-25T17:40:20+02:00'
 };
 SSMockupTimelineStates[MockupNS + 'version/versionY'] = {
+    'learnEpTimelineStateUri' : MockupNS + 'timelinestate/versionY',
     'startTime' : '2013-11-06T17:40:20+02:00',
     'endTime' : '2013-11-07T17:40:20+02:00'
 };
@@ -288,7 +296,7 @@ function SSLearnEpVersionGetTimelineState(){
         errorHandler({'error':"Timelinestate not found"});
         return;
     }
-    setTimeout(function(){resultHandler(SSMockupTimelineStates[learnEpVersionUri]);}, MockupTimeout);
+    setTimeout(function(){resultHandler({'learnEpTimelineState': SSMockupTimelineStates[learnEpVersionUri]});}, MockupTimeout);
 
 	};
 };

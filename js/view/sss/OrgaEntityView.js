@@ -26,6 +26,13 @@ define(['view/sss/EntityView', 'logger', 'jquery', 'voc'], function(EntityView, 
             this.svgId = id;
             this.$el = $('#' + this.svgId);
             this.LOG.debug('setSvgId', this.$el);
+        },
+        getSvgData: function() {
+            return {
+                'x' : this.model.get(Voc.x),
+                'y' : this.model.get(Voc.y),
+                'imageURL' : this.getIcon()
+            };
         }
     });
 });

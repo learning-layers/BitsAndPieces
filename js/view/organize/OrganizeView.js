@@ -1,6 +1,6 @@
 define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
-        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'model/organize/OrganizeModel', 'voc' ], 
-    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeModel, Voc){
+        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'data/organize/OrganizeData', 'voc' ], 
+    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('OrganizeView'),
         events:{
@@ -82,6 +82,14 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.stopListening();
             Backbone.View.prototype.remove.call(this);
         },
+        mapAttributes : function(item) {
+            for( var prop in item ) {
+                item['sss:'+prop] = item[prop];
+                delete item[prop];
+            }
+            this.LOG.debug('mapAttributes > item', _.clone(item));
+            return item;
+        },
         AddCircle: function(event){
             this.LOG.debug("event", event);
             if( !event || !event.detail ) return;
@@ -92,7 +100,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             var id = circle['id'];
             tracker.info(tracker.CREATEORGANIZECIRCLE, tracker.NULL, circle);
             delete circle['id'];
-            var model = OrganizeModel.createCircle(this.model, circle, {'by':this});
+            var model = OrganizeData.createCircle(this.model, this.mapAttributes(circle), {'by':this});
             this.views[id] = new EntityView({'model' : model});
         },
 
@@ -112,7 +120,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
             //circle['_organizeId'] = circle['id'];
             delete circle['id'];
-            view.model.save(circle, {'by': this});
+            view.model.save(this.mapAttributes(circle), {'by': this});
         },
 
         RemoveCircle: function(event){
@@ -153,7 +161,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             //entity['_organizeId'] = entity['id'];
             delete entity['id'];
             this.LOG.debug("view", view);
-            view.model.save(entity, {'by': this});
+            view.model.save(this.mapAttributes(entity), {'by': this});
         }, 
 
         RemoveEntity: function(event){
@@ -197,13 +205,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             if( options.by && options.by === this ) return;
             this.LOG.debug("addCircle", options);
             var data = {
-                'cx' : entity.get('cx'),
-                'cy' : entity.get('cy'),
-                'rx' : entity.get('rx'),
-                'ry' : entity.get('ry'),
-                'Label' : entity.get('Label'),
-                'LabelX' : entity.get('LabelX'),
-                'LabelY' : entity.get('LabelY')
+                'cx' : entity.get(Voc.cx),
+                'cy' : entity.get(Voc.cy),
+                'rx' : entity.get(Voc.rx),
+                'ry' : entity.get(Voc.ry),
+                'Label' : entity.get(Voc.Label),
+                'LabelX' : entity.get(Voc.LabelX),
+                'LabelY' : entity.get(Voc.LabelY)
             };
             this.LOG.debug("data", data);
             var id = this.organize.drawCircle(null, data);
@@ -237,13 +245,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             */
 
             var view = new OrgaEntityView({model:entity});
-            var data = {
-                'x' : entity.get('x'),
-                'y' : entity.get('y'),
-                'imageURL' : view.getIcon()
-            };
-            this.LOG.debug("data", data);
-            var id = this.organize.createAndDropSvgEntity(data);
+            var id = this.organize.createAndDropSvgEntity(view.getSvgData());
             view.setSvgId(id);
             this.LOG.debug("id in organize = " + id);
             //entity.set('_organizeId', id);

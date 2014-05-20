@@ -1,4 +1,4 @@
-define(['view/sss/EntityView', 'logger', 'underscore'], function(EntityView, Logger, _){
+define(['view/sss/EntityView', 'logger', 'underscore', 'voc'], function(EntityView, Logger, _, Voc){
     return EntityView.extend({
         LOG: Logger.get('UserView'),
         initialize: function() {
@@ -17,8 +17,8 @@ define(['view/sss/EntityView', 'logger', 'underscore'], function(EntityView, Log
             });
             this.$el.html(//"<div class=\"entity user\" about=\""+this.model.getSubject()+"\">"+
                     "<img class=\"icon\" src=\""+this.getIcon()+"\" "+ 
-                    "alt=\"User " + this.model.get('sss:label') + "\"/>"+
-                    "<div class=\"label\">"+this.model.get('sss:label')+"</div>");
+                    "alt=\"User " + this.model.get(Voc.label) + "\"/>"+
+                    "<div class=\"label\">"+this.model.get(Voc.label)+"</div>");
 
                     //"</div>");
             this.draggable();

@@ -166,14 +166,9 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
         ResourceGet : function(loadable) {
             this.LOG.debug("ResourceGet");
             var entity = this.vie.entities.get(loadable.options.resource);
-            var type, typeCurie;
-            this.LOG.debug("entity", entity);
-            if( entity ) type = entity.get('@type');
-            this.LOG.debug("type", type);
-            if( type ) typeCurie = this.vie.namespaces.curie(type.id);
-            this.LOG.debug("typeCurie", typeCurie);
+            this.LOG.debug("entity", entity, ' is of ', entity.get("@type"));
             var service = this;
-            if( !typeCurie || typeCurie == this.types.THING || typeCurie == this.types.DOCUMENT ) {
+            if ( entity.isof('owl:Thing')){
                 this.onUrisReady(
                     this.user,
                     loadable.options.resource,
@@ -182,26 +177,32 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             function(object) {
                                 service.LOG.debug("handle result of EntityDescGet");
                                 service.LOG.debug("object", object);
+                                if( _.isEmpty(object['entityDesc'] ) )  {
+                                    loadable.reject(entity);
+                                    service.LOG.error("error:",resourceUri, " is empty");
+                                    return;
+                                }
                                 var entity = service.fixForVIE(object['entityDesc'], 'entityUri', 'entityType');
-                                var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
-                                var type = vieEntity.get('@type');
-                                if( type && type.id && service.vie.namespaces.curie(type.id) == service.types.USER )  {
+                                var entityUri = object['entityDesc']['entityUri'];
+                                //var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
+                                var type = object['entityDesc']['entityType'];
+                                service.LOG.debug('entityDesc.entityType', type);
+                                if( type && type == service.types.USER )  {
                                     new SSLearnEpVersionCurrentGet().handle(
                                         function(object2) {
                                             service.LOG.debug("handle result of VersionCurrentGet");
                                             service.LOG.debug("object", object2);
-                                            vieEntity.set({
-                                                'currentVersion': object2['learnEpVersion']['learnEpVersionUri']});
-                                            loadable.resolve(vieEntity);
+                                            entity[Voc.currentVersion] = object2['learnEpVersion']['learnEpVersionUri'];
+                                            loadable.resolve(entity);
                                         },
                                         function(object2) {
                                             service.LOG.warn("error:", object2);
-                                            loadable.resolve(vieEntity);
+                                            loadable.resolve(entity);
                                         },
-                                        vieEntity.getSubject(),//this.vie.namespaces.uri(this.user),
+                                        entityUri,
                                         service.userKey 
                                         );
-                                } else if( type && type.id && service.vie.namespaces.curie(type.id) == service.types.USEREVENT )  {
+                                } else if( type && type == service.types.USEREVENT )  {
                                     new SSUserEventGet().handle(
                                         function(object2) {
                                             service.LOG.debug("handle result of UserEventTypeGet");
@@ -215,16 +216,17 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         },
                                         function(object2) {
                                             service.LOG.warn("error:", object2);
-                                            loadable.resolve(vieEntity);
+                                            loadable.resolve(entity);
                                         },
                                         service.vie.namespaces.uri(service.user),
                                         service.userKey ,
-                                        vieEntity.getSubject()
+                                        entity.getSubject()
                                         );
                                 } else
-                                    loadable.resolve(vieEntity);
+                                    loadable.resolve(entity);
                             },
                             function(object) {
+                                loadable.reject(entity);
                                 service.LOG.warn("error:",object);
                             },
                             userUri,
@@ -233,19 +235,16 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                 });
             } else {
-                this.LOG.warn("SocialSemanticService load for " + typeCurie + " not implemented");
+                this.LOG.warn("SocialSemanticService load for " + type.id + " not implemented");
             }
         },
 
         // Gets entities of a specific type
         TypeGet : function(loadable) {
-            var type = loadable.options.type.id ? loadable.options.type.id : loadable.options.type;
-
-            var typeCurie = this.vie.namespaces.curie(type);
-            this.LOG.debug("TypeGet: " + typeCurie);
+            var type = loadable.options.type;
 
             var service = this;
-            if( typeCurie == this.types.USEREVENT) {
+            if( type.isof(Voc.USEREVENT)) {
                 this.LOG.debug("SSUserEventsGet");
                 this.onUrisReady(
                     this.user,
@@ -281,7 +280,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             loadable.options.end
                         );
                 });
-            } else if( typeCurie == this.types.EPISODE ) {
+            } else if( type.isof(Voc.EPISODE )) {
                 this.LOG.debug("SSLearnEpsGet");
                 this.onUrisReady(
                     this.user,
@@ -292,12 +291,12 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 service.LOG.debug("objects", objects);
                                 var entityInstances = [];
                                 _.each(objects['learnEps'], function(object) {
+                                    object[Voc.belongsToUser] = object['user'];
+                                    delete object['user'];
                                     var entity = service.fixForVIE(object, 'learnEpUri');
-                                    entity[Voc.belongsToUser] = entity['user'];
-                                    delete entity['user'];
-                                    var vieEntity = new service.vie.Entity(entity);
-                                    vieEntity.set('@type', Voc.EPISODE);
-                                    entityInstances.push(vieEntity);
+                                    //var vieEntity = new service.vie.Entity(entity);
+                                    entity['@type'] = Voc.EPISODE;
+                                    entityInstances.push(entity);
                                 });
                                 loadable.resolve(entityInstances);
                             },
@@ -311,7 +310,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                 });
 
-            } else if( typeCurie == this.types.VERSION ) {
+            } else if( type.isof(Voc.VERSION )) {
                 this.LOG.debug("SSLearnEpVersionsGet");
                 this.onUrisReady(
                     this.user,
@@ -323,26 +322,16 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 service.LOG.debug("objects", objects);
                                 var entityInstances = [];
                                 _.each(objects['learnEpVersions'], function(object) {
+                                    object[Voc.belongsToEpisode] = object['learnEpUri'];
+                                    delete object['learnEpUri'];
+                                    delete object['circles'];
+                                    delete object['entities'];
                                     var entity = service.fixForVIE(object, 'learnEpVersionUri');
-                                    entity[Voc.belongsToEpisode] = entity['learnEpUri'];
-                                    delete entity['learnEpUri'];
-                                    delete entity['circles'];
-                                    delete entity['entities'];
-                                    var vieEntity = new service.vie.Entity(entity);
-                                    vieEntity.set('@type', Voc.VERSION);
-                                    entityInstances.push(vieEntity);
+                                    //var vieEntity = new service.vie.Entity(entity);
+                                    entity['@type'] = Voc.VERSION;
+                                    entityInstances.push(entity);
                                     // each version has a organize component
                                     // that would look like as if this object already exists on the server
-                                    var organize = {
-                                        'uri' : service.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget'),
-                                        'type' : service.vie.namespaces.uri('sss:' + service.types.ORGANIZE),
-                                        'circleType' : service.vie.namespaces.uri('sss:' + service.types.CIRCLE),
-                                        'orgaEntityType' : service.vie.namespaces.uri('sss:' + service.types.ORGAENTITY),
-                                        'belongsToVersion' : vieEntity.getSubject()
-                                    };
-                                    // we buffer that object for explicit retrieval of organize
-                                    // and store it in memory as it would come from the server
-                                    service.buffer[organize.uri] = organize;
 
                                 });
                                 loadable.resolve(entityInstances);
@@ -357,9 +346,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                 });
 
-            } else if (typeCurie == this.types.WIDGET ){
+            } else if (type.isof(Voc.WIDGET )){
                 // fetches Organize and Timeline stuff manually
                 // and buffers the data for later fetch 
+
+                this.LOG.debug('load timeline and organize');
 
                 var entities = [];
                 var finishedCalls = [];
@@ -380,11 +371,20 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         break;
                     }
                     
-                if( organize ) 
-                    //resolve('versionget', new OrganizeModel(this.fixForVIE(organize)));
-                    resolve('versionget', new service.vie.Entity(this.fixForVIE(organize)));
-                else
-                    resolve('versionget');
+                if( !organize ) {
+                    organize = {
+                        'uri' : service.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget'),
+                        'type' : Voc.ORGANIZE,
+                        'circleType' : Voc.CIRCLE,
+                        'orgaEntityType' : Voc.ORGAENTITY,
+                        'belongsToVersion' : loadable.options.version 
+                    };
+                    service.LOG.debug('buffer organize', organize);
+                    // we buffer that object for explicit retrieval of organize
+                    // and store it in memory as it would come from the server
+                    service.buffer[organize.uri] = organize;
+                }
+                resolve('versionget',this.fixForVIE(organize));
 
                 this.LOG.log("SSLearnEPGetTimelineState");
                 this.onUrisReady(
@@ -400,20 +400,22 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     return;
                                 }
                                 object = object['learnEpTimelineState'];
-                                var vieEntity = new service.vie.Entity(service.fixForVIE({
-                                    'uri' : object.learnEpTimelineStateUri,
-                                    'type' : service.types.TIMELINE,
-                                    'belongsToUser' : service.vie.namespaces.uri(service.user),
-                                    'timeAttr': service.vie.namespaces.uri('sss:timestamp'),
-                                    'predicate' : service.vie.namespaces.uri('sss:userEvent'),
-                                    'belongsToVersion' : service.vie.namespaces.uri(loadable.options.version),
-                                    'start' : object.startTime,                            
-                                    'end' : object.endTime
-                                }));
+                                //var vieEntity = new service.vie.Entity(service.fixForVIE({
+                                var entity = {};
+                                entity[VIE.prototype.Entity.prototype.idAttribute] = object.learnEpTimelineStateUri;
+                                entity['@type'] = Voc.TIMELINE;
+                                entity[Voc.belongsToUser] = service.user;
+                                entity[Voc.timeAttr]= Voc.timestamp;
+                                entity[Voc.predicate] = Voc.USEREVENT;
+                                entity[Voc.belongsToVersion] = loadable.options.version;
+                                entity[Voc.start] = object.startTime;                            
+                                entity[Voc.end] = object.endTime
+
+                                //entity = service.fixForVIE(entity);
 
                                 //service.buffer[vieEntity.getSubject()] = object;
                                 //loadable.resolve(vieEntity);
-                                resolve('timelineget', vieEntity);
+                                resolve('timelineget', entity);
                             },
                             function(object) {
                                 service.LOG.warn("error:", object);
@@ -425,7 +427,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                 });
 
-            } else if (typeCurie == this.types.CIRCLE){
+            } else if (type.isof(Voc.CIRCLE)){
                 if (!loadable.options.organize) {
                     this.LOG.warn("no organize reference");
                     loadable.reject();
@@ -447,7 +449,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 service.LOG.debug("objects", object);
                                 var key, idAttr;
                                 _.each(object['learnEpVersion']['circles'], function(item){
-                                    var fixEntity = service.fixForVIE(item, 'learnEpCircleUri');
+                                    var fixEntity = {};
                                     fixEntity.Label = item['label'];
                                     fixEntity.LabelX = item['xLabel'];
                                     fixEntity.LabelY = item['yLabel'];
@@ -455,17 +457,12 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     fixEntity.ry = item['yR'];
                                     fixEntity.cx = item['xC'];
                                     fixEntity.cy = item['yC'];
-                                    delete fixEntity['label'];
-                                    delete fixEntity['xLabel'];
-                                    delete fixEntity['yLabel'];
-                                    delete fixEntity['xR'];
-                                    delete fixEntity['yR'];
-                                    delete fixEntity['xC'];
-                                    delete fixEntity['yC'];
-                                    fixEntity.belongsToOrganize = loadable.options.organize;
-                                    var vieEntity = new service.vie.Entity(fixEntity);
-                                    vieEntity.set('@type', typeCurie);
-                                    entities.push(vieEntity);
+                                    fixEntity.learnEpCircleUri = item['learnEpCircleUri'];
+                                    fixEntity = service.fixForVIE(fixEntity, 'learnEpCircleUri');
+                                    fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
+                                    //var vieEntity = new service.vie.Entity(fixEntity);
+                                    fixEntity['@type'] = type.id;
+                                    entities.push(fixEntity);
                                 });
                                 loadable.resolve(entities);
                             },
@@ -477,14 +474,14 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             versionUri
                         );
                 });
-            } else if (typeCurie == this.types.ORGAENTITY){
+            } else if (type.isof(Voc.ORGAENTITY)){
                 if (!loadable.options.organize) {
                     this.LOG.warn("no organize reference");
                     loadable.reject();
                     return;
                 }
                 //map organize id to version id
-                var version = this.buffer[loadable.options.organize][Voc.belongsToVersion]; 
+                var version = this.buffer[loadable.options.organize]['belongsToVersion']; 
                 var entities = [];
                 this.onUrisReady(
                     this.user,
@@ -496,13 +493,14 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 service.LOG.debug("objects", object);
                                 var key, idAttr;
                                 _.each(object['learnEpVersion']['entities'], function(item){
-                                    var fixEntity = service.fixForVIE(item, 'learnEpEntityUri');
+                                    var fixEntity = {};
+                                    fixEntity.learnEpEntityUri = item.learnEpEntityUri;
+                                    fixEntity = service.fixForVIE(fixEntity, 'learnEpEntityUri');
                                     fixEntity[Voc.hasResource] = item['entityUri'];
-                                    delete fixEntity['entityUri'];
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
-                                    var vieEntity = new service.vie.Entity(fixEntity);
-                                    vieEntity.set('@type', typeCurie);
-                                    entities.push(vieEntity);
+                                    //var vieEntity = new service.vie.Entity(fixEntity);
+                                    fixEntity['@type'] = type.id;
+                                    entities.push(fixEntity);
                                 });
                                 loadable.resolve(entities);
                             },
@@ -517,7 +515,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
 
 
             } else {
-                this.LOG.warn("SocialSemanticService load for " + typeCurie + " not implemented");
+                this.LOG.warn("SocialSemanticService load for " + type.id + " not implemented");
             }
 
         },
@@ -534,25 +532,22 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             this.LOG.debug("savable.options", savable.options);
 
             var entity = savable.options.entity;
-            var type = entity.get('@type');
-            if (!type) 
-                throw "Entity has no type, can't be saved";
 
-            var typeCurie = this.vie.namespaces.curie(type.id);
-
-            this.LOG.debug("typeCurie = " + typeCurie);
+            this.LOG.debug("entity", entity, " is of ", entity.get("@type"));
 
             var service = this;
 
-            if( typeCurie == this.types.TIMELINE ) {
+            if( entity.isof(Voc.TIMELINE) ) {
                 this.LOG.debug("saving timeline");
-                var obj = this.fixFromVIE(entity);
+                var obj = _.clone(entity.attributes);
                 obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('TimelineWidget')
                                          : obj.uri;
                 this.buffer[obj.uri] = obj;
+                var start = obj[this.vie.namespaces.uri(Voc.start)];
+                var end = obj[this.vie.namespaces.uri(Voc.end)];
                 this.onUrisReady(
                     this.user,
-                    obj[Voc.belongsToVersion],
+                    obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
                     function(userUri, versionUri) {
                         new SSLearnEpVersionSetTimelineState().handle(
                                 function(object) {
@@ -569,17 +564,17 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 userUri,
                                 service.userKey,
                                 versionUri,
-                                _.isDate(obj.start) ? (obj.start - 0) : obj.start,
-                                _.isDate(obj.end) ? (obj.end - 0) : obj.end
+                                _.isDate(start) ? (start - 0) : start,
+                                _.isDate(end) ? (end - 0) : end
                             );
                 });
-            } else if( typeCurie == this.types.ORGANIZE ) {
+            } else if( entity.isof(Voc.ORGANIZE )) {
                 this.LOG.debug("saving organize");
-                var obj = this.fixFromVIE(entity);
+                var obj = _.clone(entity.attributes);
                 obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget')
                                          : obj.uri;
                 this.onUrisReady(
-                    obj[Voc.belongsToVersion],
+                    obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
                     function() {
                         service.buffer[obj.uri] = obj;
                         if( entity.isNew() )
@@ -587,7 +582,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         else
                             savable.resolve(true); // organize was updated
                 });
-            } else if( typeCurie == this.types.EPISODE ) {
+            } else if( entity.isof(Voc.EPISODE )) {
                 this.LOG.debug("saving episode");
                 if( entity.isNew() ) {
                     this.onUrisReady(
@@ -606,8 +601,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 },
                                 userUri,
                                 service.userKey,
-                                entity.get('label'),
-                                'private'
+                                entity.get(Voc.label),
+                                'privateSpace'
                             );
                     });
                 } else {
@@ -629,11 +624,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 userUri,
                                 service.userKey,
                                 entityUri,
-                                entity.get('label')
+                                entity.get(Voc.label)
                             );
                     });
                 }
-            } else if( typeCurie == this.types.VERSION ) {
+            } else if( entity.isof(Voc.VERSION )) {
                 this.LOG.debug("saving version");
                 var episode = entity.get(Voc.belongsToEpisode);
                 if( episode.isEntity ) episode = episode.getSubject();
@@ -657,7 +652,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 episodeUri
                             );
                 });
-            } else if( typeCurie == this.types.CIRCLE ) {
+            } else if( entity.isof(Voc.CIRCLE )) {
                 this.LOG.debug("saving circle");
                 var organize = entity.get(Voc.belongsToOrganize);
                 if( organize.isEntity ) organize = organize.getSubject();
@@ -671,10 +666,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             savable.reject(entity);
                             return;
                         }
-                        var version = service.buffer[organizeUri][Voc.belongsToVersion];
+                        var version = service.buffer[organizeUri]['belongsToVersion'];
                         // end map
-
-                        var fixEntity = service.fixFromVIE(entity);
 
                         if( entity.isNew() )
                             service.onUrisReady(
@@ -695,20 +688,20 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         userUri,
                                         service.userKey,
                                         versionUri,
-                                        fixEntity.Label,
-                                        fixEntity.LabelX,
-                                        fixEntity.LabelY,
-                                        fixEntity.rx,
-                                        fixEntity.ry,
-                                        fixEntity.cx,
-                                        fixEntity.cy
+                                        entity.get(Voc.Label),
+                                        entity.get(Voc.LabelX),
+                                        entity.get(Voc.LabelY),
+                                        entity.get(Voc.rx),
+                                        entity.get(Voc.ry),
+                                        entity.get(Voc.cx),
+                                        entity.get(Voc.cy)
 
                                     );
                             });
                         else
                             service.onUrisReady(
                                 service.user,
-                                fixEntity.uri,
+                                entity.getSubject(),
                                 function(userUri, uriUri ) {
                                     new SSLearnEpVersionUpdateCircle().handle(
                                         function(object) {
@@ -724,19 +717,19 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         userUri,
                                         service.userKey,
                                         uriUri,
-                                        fixEntity.Label,
-                                        fixEntity.LabelX,
-                                        fixEntity.LabelY,
-                                        fixEntity.rx,
-                                        fixEntity.ry,
-                                        fixEntity.cx,
-                                        fixEntity.cy
+                                        entity.get(Voc.Label),
+                                        entity.get(Voc.LabelX),
+                                        entity.get(Voc.LabelY),
+                                        entity.get(Voc.rx),
+                                        entity.get(Voc.ry),
+                                        entity.get(Voc.cx),
+                                        entity.get(Voc.cy)
 
                                     );
                             });
                 });
 
-            } else if( typeCurie == this.types.ORGAENTITY ) {
+            } else if( entity.isof(Voc.ORGAENTITY )) {
                 this.LOG.debug("saving orgaentity");
                 var organize = entity.get(Voc.belongsToOrganize);
                 if( organize.isEntity ) organize = organize.getSubject();
@@ -750,16 +743,17 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             savable.reject(entity);
                             return;
                         }
-                        var version = service.buffer[organizeUri][Voc.belongsToVersion];
+                        var version = service.buffer[organizeUri]['belongsToVersion'];
                         // end map
-
-                        var fixEntity = service.fixFromVIE(entity);
+                        //
+                        var resourceUri = entity.get(Voc.hasResource);
+                        if( resourceUri.isEntity ) resourceUri = resourceUri.getSubject();
 
                         if(entity.isNew() )
                             service.onUrisReady(
                                 service.user,
                                 version,
-                                fixEntity.resource,
+                                resourceUri,
                                 function(userUri, versionUri, resourceUri){
                                     new SSLearnEpVersionAddEntity().handle(
                                         function(object) {
@@ -776,16 +770,16 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         service.userKey,
                                         versionUri,
                                         resourceUri,
-                                        fixEntity.x,
-                                        fixEntity.y
+                                        entity.get(Voc.x),
+                                        entity.get(Voc.y)
 
                                     );
                             });
                         else
                             service.onUrisReady(
                                 service.user,
-                                fixEntity.uri,
-                                fixEntity.resource,
+                                entity.getSubject(),
+                                resourceUri,
                                 function(userUri,uriUri,resourceUri){
                                     new SSLearnEpVersionUpdateEntity().handle(
                                         function(object) {
@@ -802,19 +796,20 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         service.userKey,
                                         uriUri,
                                         resourceUri,
-                                        fixEntity.x,
-                                        fixEntity.y
+                                        entity.get(Voc.x),
+                                        entity.get(Voc.y)
 
                                     );
                             });
                 });
 
-            } else if ( typeCurie == this.types.USER ) {
-                var fixEntity = this.fixFromVIE(entity);
-                if( fixEntity.currentVersion ) {
+            } else if ( entity.isof(Voc.USER )) {
+                var versionUri = entity.get(Voc.currentVersion);
+                if( versionUri.isEntity ) versionUri = versionUri.getSubject();
+                if( versionUri ) {
                     this.onUrisReady(
                         this.user,
-                        fixEntity.currentVersion,
+                        versionUri,
                         function(userUri, versionUri) {
                             new SSLearnEpVersionCurrentSet().handle(
                                 function(object) {
@@ -833,7 +828,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 } else
                     savable.resolve(true);
             } else {
-                this.LOG.warn("SocialSemanticService save for " + typeCurie + " not implemented");
+                this.LOG.warn("SocialSemanticService save for " + type.id + " not implemented");
             }
         },
 
@@ -849,21 +844,15 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             this.LOG.debug("removable.options", removable.options);
 
             var entity = removable.options.entity;
-            var type = entity.get('@type');
-            if (!type) 
-                throw "Entity has no type, can't be saved";
 
-            var typeCurie = this.vie.namespaces.curie(type.id);
-
-            this.LOG.debug("typeCurie = " + typeCurie);
+            this.LOG.debug("entity", entity, " is of ", entity.get("@type"));
 
             var service = this;
-            var fixEntity = this.fixFromVIE(entity);
 
-            if( typeCurie == this.types.CIRCLE ) {
+            if( entity.isof(Voc.CIRCLE )) {
                 this.onUrisReady(
                     this.user,
-                    fixEntity.uri,
+                    entity.getSubject(),
                     function(userUri,uriUri){
                         new SSLearnEpVersionRemoveCircle().handle(
                             function(object) {
@@ -881,10 +870,10 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             uriUri
                         );
                 });
-            } else if( typeCurie == this.types.ORGAENTITY ) {
+            } else if( entity.isof(Voc.ORGAENTITY )) {
                 this.onUrisReady(
                     this.user,
-                    fixEntity.uri,
+                    entity.getSubject(),
                     function(userUri,uriUri){
                         new SSLearnEpVersionRemoveEntity().handle(
                             function(object) {
@@ -903,7 +892,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                 });
             } else {
-                this.LOG.warn("SocialSemanticService remove for " + typeCurie + " not implemented");
+                this.LOG.warn("SocialSemanticService remove for " + type.id + " not implemented");
             }
 
         },
@@ -914,18 +903,22 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
          */
         fixForVIE: function(object, idAttr, typeAttr) {
             var entity = _.clone(object);
-            /*
+            if( !idAttr) idAttr = 'uri';
+            if( !typeAttr) typeAttr = 'type';
+            entity[VIE.prototype.Entity.prototype.idAttribute] = object[idAttr];
+            if (object[typeAttr]) {
+                entity['@type'] = object[typeAttr].indexOf('sss:') === 0 ? object[typeAttr] : "sss:"+object[typeAttr];
+                delete entity[typeAttr];
+            }
+            delete entity[idAttr];
+
             for( var prop in entity ) {
+                if( prop.indexOf('@') === 0 ) continue;
+                if( prop.indexOf('sss:') === 0 ) continue;
+                if( prop.indexOf('http:') === 0 ) continue;
                 entity['sss:'+prop] = entity[prop];
                 delete entity[prop];
             }
-            */
-            if( !idAttr) idAttr = 'uri';
-            if( !typeAttr) typeAttr = 'type';
-            entity['@subject'] = object[idAttr];
-            entity['@type'] = object[typeAttr];
-            delete entity[typeAttr];
-            delete entity[idAttr];
 
             return entity;
         },
@@ -937,16 +930,17 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
          */
         fixFromVIE: function(entity) {
             var object = _.clone(entity.attributes);
-            this.LOG.debug(JSON.stringify(object));
+            this.LOG.debug('fixFromVIE', JSON.stringify(object));
             for( var prop in object ) {
                 var curie = this.vie.namespaces.curie(prop);
+                if( curie.indexOf('sss:') === 0 ) curie = curie.substring(4);
                 object[curie] = object[prop];
                 delete object[prop];
             }
             object['type'] = entity.get('@type').id;
             object['uri'] = entity.getSubject();
             delete object['@type'];
-            delete object['@subject'];
+            delete object[VIE.prototype.Entity.prototype.idAttribute];
             return object;
         }
 

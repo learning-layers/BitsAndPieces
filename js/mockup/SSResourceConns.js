@@ -20,33 +20,33 @@ var MockupTimeout = MockupTimeout || 100;
 
 var SSMockupResources = [
     {
-        'entityUri': MockupNS + 'user/maria/',
+        'entityUri': MockupNS + 'user/maria',
         'label': 'Maria',
         'entityType' : 'user'
     },
     {
-        'entityUri': MockupNS + 'user/tobias/',
+        'entityUri': MockupNS + 'user/tobias',
         'label': 'Tobias',
         'entityType' : 'user'
     },
     {
-        'entityUri': MockupNS + 'user/dieter/',
+        'entityUri': MockupNS + 'user/dieter',
         'label': 'Dieter',
         'entityType' : 'user'
     },
     {
-        'entityUri': MockupNS + 'user/christoph/',
+        'entityUri': MockupNS + 'user/christoph',
         'label': 'Christoph',
         'entityType' : 'user'
     },
     {
-        'entityUri': MockupNS + 'user/peter/',
+        'entityUri': MockupNS + 'user/peter',
         'label': 'Peter',
         'entityType' : 'user',
-        'currentVersion': MockupNS + 'version/versionY'
+        'currentVersion': MockupNS + 'version/versionX'
     },
     {
-        'entityUri': MockupNS + 'user/paul/',
+        'entityUri': MockupNS + 'user/paul',
         'label': 'Paul',
         'entityType' : 'user'
     },
