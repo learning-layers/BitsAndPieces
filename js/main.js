@@ -23,7 +23,8 @@ var require = (function() {
             'svg' : '../lib/svgjs/svg',
             'svg.draggable' : '../lib/svgjs/svg.draggable',
             'svg.foreignobject' : '../lib/svgjs/svg.foreignobject',
-            'organize' : '../lib/organize/organize'
+            'organize' : '../lib/organize/organize',
+            'text' : '../lib/text'
         },
         shim: {
             'logger' : { 

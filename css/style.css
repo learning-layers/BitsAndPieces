@@ -191,3 +191,15 @@ div#episodes button#createNewVersion {
 li.episode ul {
     display: block;
 }
+
+div#mySidebar {
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: 10px;
+}
+
+div#tabs {
+	width: 240px;
+	margin-left: 10px;
+}

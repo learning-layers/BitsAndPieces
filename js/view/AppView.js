@@ -5,8 +5,9 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
         'data/episode/EpisodeData',
         'data/episode/VersionData',
         'view/WidgetView',
-        'view/episode/EpisodeManagerView'], 
-    function(Logger, tracker, Backbone, $, Voc, userParams, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView){
+        'view/episode/EpisodeManagerView',
+        'view/sidebar/SidebarView'],
+    function(Logger, tracker, Backbone, $, Voc, userParams, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, SidebarView){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             initialize: function() {
@@ -50,6 +51,14 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                     vie : this.vie
                 });
                 this.episodeMgrView.render();
+
+                var sidebar = $('<div id="mySidebar"></div>');
+                this.$el.append( sidebar );
+                this.sidebarView = new SidebarView({
+                    el : sidebar,
+                    vie : this.vie
+                });
+                this.sidebarView.render();
             },
             drawWidget: function(versionElem, widget) {
                 AppLog.debug('drawWidget', widget);
