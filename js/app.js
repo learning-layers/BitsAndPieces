@@ -21,7 +21,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('DetailView').setLevel(Logger.OFF);
     Logger.get('EpisodeManagerView').setLevel(Logger.OFF);
     Logger.get('EpisodeView').setLevel(Logger.OFF);
-    Logger.get('EntityView').setLevel(Logger.OFF);
+    Logger.get('EntityView').setLevel(Logger.DEBUG);
     Logger.get('OrgaEntityView').setLevel(Logger.OFF);
     Logger.get('UserEventView').setLevel(Logger.OFF);
     Logger.get('UserView').setLevel(Logger.OFF);
@@ -30,6 +30,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('Add').setLevel(Logger.OFF);
     Logger.get('SocialSemanticService').setLevel(Logger.OFF);
     Logger.get('Mockup').setLevel(Logger.OFF);
+    Logger.get('SidebarView').setLevel(Logger.DEBUG);
 
     var username = window.location.search.substring(1);
     if( !username) return alert('no username given!');
@@ -39,7 +40,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     AppLog.debug('vie', v);
 
     var namespace = "http://eval.bp/" ;
-    userParams.init(username, "armin", "kb");
+    userParams.init(username, "eval", "bp");
 
     var sss = new SocialSemanticService(_.extend({
         'namespaces': {

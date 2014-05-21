@@ -12,14 +12,19 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc'], functio
             if( this.model === entity ) return;
             this.stopListening(this.model, 'change', this.render);
             this.model = entity;
-            this.listenTo(this.model, 'change', this.render);
+            if( entity ) {
+                this.listenTo(this.model, 'change', this.render);
+            }
             this.render();
         },
         render: function() {
+            this.$el.empty();
             if( !this.model ) {
                 // ... empty the sidebar content
+                this.$el.html("No bit selected")
                 return;
             }
+            this.$el.html(this.model.get(Voc.content));
             // ... rendering logic
         },
         setImportance: function(event, ui) {
@@ -31,7 +36,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc'], functio
         },
         deleteTag: function(e) {
             var tags = this.model.get(Voc.hasTag);
-            this.model.set(Voc.hasTag, _.without(tags, e.value)
+            this.model.set(Voc.hasTag, _.without(tags, e.value));
         },
         renderTags: function() {
             var tags = this.model.get(Voc.hasTag);
@@ -43,6 +48,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc'], functio
             if (e.keyCode == 13) {
                 this.addTag(); // TODO: get value from event
             }
-        },
+        }
     });
-}
+});

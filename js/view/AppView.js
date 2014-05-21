@@ -10,6 +10,9 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
     function(Logger, tracker, Backbone, $, Voc, userParams, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, SidebarView){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
+            events : {
+                'bnp:clickEntity' : 'clickEntity'
+            },
             initialize: function() {
                 this.vie = this.options.vie;
 
@@ -55,8 +58,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                 var sidebar = $('<div id="mySidebar"></div>');
                 this.$el.append( sidebar );
                 this.sidebarView = new SidebarView({
-                    el : sidebar,
-                    vie : this.vie
+                    el : sidebar
                 });
                 this.sidebarView.render();
             },
@@ -133,6 +135,9 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                 element.detach();
                 this.widgetFrame.prepend(element);
 
-            }
+            },
+            clickEntity: function(e) {
+                this.sidebarView.showBit(e.entity);
+            },
         });
 });

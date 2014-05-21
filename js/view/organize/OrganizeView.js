@@ -74,7 +74,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             _.each(circles, function(circle) {
                 view.addCircle(circle);
             }, this);
-            //this.delegateEvents();
+            this.stealthContainer = $("<div style=\"display:none\">");
+            this.$el.append(this.stealthContainer);
         },
         remove: function() {
             this.organize.clearCanvas();
@@ -197,7 +198,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
               pageY : offset.top + entity.y + 20
             });
             view.resourceView.$el.trigger(ev);
-                
+            return false;
         },
 
         addCircle: function(entity, collection, options ) {
@@ -245,6 +246,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             */
 
             var view = new OrgaEntityView({model:entity});
+            this.stealthContainer.append(view.resourceView.$el);
             var id = this.organize.createAndDropSvgEntity(view.getSvgData());
             view.setSvgId(id);
             this.LOG.debug("id in organize = " + id);

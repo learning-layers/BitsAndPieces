@@ -25,6 +25,7 @@ define(['view/sss/EntityView', 'logger', 'jquery', 'voc'], function(EntityView, 
             this.LOG.debug('setSvgId', id);
             this.svgId = id;
             this.$el = $('#' + this.svgId);
+            //this.resourceView.$el = this.$el;
             this.LOG.debug('setSvgId', this.$el);
         },
         getSvgData: function() {

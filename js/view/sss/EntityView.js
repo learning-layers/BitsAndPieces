@@ -108,12 +108,17 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             {
                 this.alreadyclicked=true;
                 var view = this;
-                view.detailView(e);
+                //view.detailView(e);
                 this.alreadyclickedTimeout=setTimeout(function(){
                     view.alreadyclicked=false; // reset when it happens
                     view.LOG.debug('_click timeOut');
                 },400); // <-- dblclick tolerance here
             }
+            var ev = $.Event('bnp:clickEntity', {
+                originalEvent : e,
+                entity : this.model
+            });
+            this.$el.trigger(ev);
             return false;
         },
         defer: function() {
