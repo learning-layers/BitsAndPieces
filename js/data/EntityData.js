@@ -36,15 +36,25 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         var that = this;
         var added = _.difference(set, previous);
         this.LOG.debug('added', added);
-        _.each(added, function(a){
+        _.each(added, function(tag){
             that.vie.save({
                 'entity' : model,
-                'tag' : a
+                'tag' : tag
             }).to('sss').execute().success(function(s){
                 that.LOG.debug('success addTag', s);
             });
         });
 
+        var deleted = _.difference(previous, set);
+        this.LOG.debug('deleted', deleted);
+        _.each(deleted, function(tag){
+            that.vie.remove({
+                'entity' : model,
+                'tag' : tag
+            }).from('sss').execute().success(function(s){
+                that.LOG.debug('success removeTag', s);
+            });
+        });
     }
     return m;
 

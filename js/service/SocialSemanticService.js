@@ -916,6 +916,30 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             uriUri
                         );
                 });
+            } else if ( entity.isof(Voc.ENTITY )) {
+                if( removable.options.tag ) {
+                    this.onUrisReady(
+                        this.user,
+                        entity.getSubject(),
+                        function(userUri, entityUri) {
+                            new SSTagsUserRemove().handle(
+                                function(object) {
+                                    service.LOG.debug('result removeTag', object);
+                                    removable.resolve(object);
+                                },
+                                function(object) {
+                                    service.LOG.warn('failed removeTag', object);
+                                    removable.reject(object);
+                                },
+                                userUri,
+                                service.userKey,
+                                entityUri,
+                                removable.options.tag,
+                                'privateSpace' // XXX need to determine space!
+                            );
+                        }
+                    );
+                }
             } else {
                 this.LOG.warn("SocialSemanticService remove for " + type.id + " not implemented");
             }
