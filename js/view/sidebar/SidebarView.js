@@ -14,6 +14,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         LOG: Logger.get('SidebarView'),
         initialize: function() {
+            this.is_hidden = true;
+            this.$el.addClass('sidebarHidden');
         },
         showBit: function(entity) {
             this.subViews['bit'].setEntity(entity);
@@ -30,21 +32,22 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.subViews['bit'].render();
         },
         showHide: function(e) {
-            // XXX: rewrite the whole thing
-            var width = this.$el.outerWidth();
+            var sidebar = this;
             if (this.isHidden()) {
-                width = 250;
+                this.$el.switchClass('sidebarHidden', 'sidebarShown', function() {
+                    sidebar.is_hidden = false;
+                });
             } else {
-                width = 10;
+                this.$el.switchClass('sidebarShown', 'sidebarHidden', function() {
+                    sidebar.is_hidden = true;
+                });
             }
-            this.$el.animate({ width: width }, 500);
         },
         isHidden: function() {
-            var width = this.$el.outerWidth();
-            return width < 250;
+            return this.is_hidden;
         },
         getTabId: function(key) {
             return '#tab-' + this.tabMap[key];
-        }
+        },
     });
 });
