@@ -71,12 +71,16 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.LOG.debug('addEntity');
             var entityView = this.addEntityView(entity);
             var time = entity.get(this.timeAttr);
-            if( !time ) this.LOG.warn("entity " + entity.getSubject() + " has invalid time");
+            if( !time ) {
+                this.LOG.warn("entity " + entity.getSubject() + " has invalid time");
+            }
             var entityEl = entityView.render().$el;
             var data = {
                 'start' : new Date(time),
                 'content' : entityEl.get(0)
             };
+            this.LOG.debug('data', data);
+            this.LOG.debug('entity.$el', entityEl);
             if( this.groupBy ) {
                 if( this.GroupByEntityView )  {
                     var groupByView = this.addGroupByEntityView(entity.get(this.groupBy));
@@ -86,17 +90,21 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             }
             this.LOG.debug("data['group']", data['group']);
             this.timeline.addItem(data);
+
+            this.listenTo(entity, 'change', this.changeEntity);
             return true;
             
         },
         changeEntity: function(entity, options ) {
             this.LOG.debug("coll changeEntity");
             var id = this.getEntityViewIndex(entity);
+            this.LOG.debug("id = ", id);
             //if( this.datesEqual(
                   //this.timeline.getItem(id), this.entityViews[id].model) ) return;
+            this.LOG.debug('changed time', this.timeAttr, entity.get(this.timeAttr));
             this.timeline.changeItem(id, {
                 'start': new Date(entity.get(this.timeAttr)),
-                'content' : this.entityViews[id].$el.html()
+                'content' : this.entityViews[id].$el.get(0)
             });
         },
         removeEntity: function(entity, collection, options) {

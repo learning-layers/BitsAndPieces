@@ -405,7 +405,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 entity[VIE.prototype.Entity.prototype.idAttribute] = object.learnEpTimelineStateUri;
                                 entity['@type'] = Voc.TIMELINE;
                                 entity[Voc.belongsToUser] = service.user;
-                                entity[Voc.timeAttr]= Voc.timestamp;
+                                entity[Voc.timeAttr]= Voc.creationTime;
                                 entity[Voc.predicate] = Voc.USEREVENT;
                                 entity[Voc.belongsToVersion] = loadable.options.version;
                                 entity[Voc.start] = object.startTime;                            
@@ -494,8 +494,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 var key, idAttr;
                                 _.each(object['learnEpVersion']['entities'], function(item){
                                     var fixEntity = {};
-                                    fixEntity.learnEpEntityUri = item.learnEpEntityUri;
-                                    fixEntity = service.fixForVIE(fixEntity, 'learnEpEntityUri');
+                                    fixEntity = service.fixForVIE(item, 'learnEpEntityUri');
                                     fixEntity[Voc.hasResource] = item['entityUri'];
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
                                     //var vieEntity = new service.vie.Entity(fixEntity);

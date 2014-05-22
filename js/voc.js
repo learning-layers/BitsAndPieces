@@ -7,6 +7,7 @@ define([], {
     VERSION: "sss:learnEpVersion",
     USER: "sss:user",
     ORGAENTITY: "sss:learnEpEntity",
+    ENTITY: "sss:entity",
     CIRCLE: "sss:learnEpCircle",
     WIDGET: "sss:Widget",
     BROWSING_WIDGET: "sss:BrowsingWidget",
@@ -23,6 +24,7 @@ define([], {
     hasResource : 'sss:resource',
     hasEpisode : 'sss:hasEpisode',
     timestamp : 'sss:timestamp',
+    creationTime : 'sss:creationTime',
     timeAttr : 'sss:timeAttr',
     circleType: 'sss:circleType', 
     orgaEntityType: 'sss:orgaEntityType',
@@ -45,5 +47,9 @@ define([], {
 
     predicate : 'rdfs:range',
 
-    hasTag : 'sss:hasTag'
+    hasTag : 'sss:hasTag',
+
+    author: 'sss:author',
+    tags : 'sss:tags',
+    importance : 'sss:importance'
 });

@@ -6,7 +6,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         this.vie.entities.on('add', this.filter, this);
         this.setIntegrityCheck(Voc.belongsToVersion, Voc.VERSION, Voc.hasWidget);
         this.setIntegrityCheck(Voc.belongsToUser, Voc.USER);
-        this.setIntegrityCheck(Voc.hasEntity, Voc.USEREVENT);
+        this.setIntegrityCheck(Voc.hasEntity, Voc.ENTITY);
     };
     m.LOG = Logger.get('TimelineData');
     /** 
@@ -48,10 +48,18 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         }).from('sss').execute().success(
             function(entities) {
                 that.LOG.debug('success fetchRange: ', _.clone(entities), 'timeline: ', timeline);
-                _.each(entities, function(entity){
-                    entity[Voc.belongsToTimeline] = timeline.getSubject();
-                });
                 entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
+                _.each(entities, function(userEvent){
+                    var entity = userEvent.get(Voc.hasResource);
+                    if( !entity.isEntity ) {
+                        that.LOG.debug('entity', _.clone(entity));
+                        entity = new that.vie.Entity;
+                        entity.set(that.vie.Entity.prototype.idAttribute, entity);
+                        entity.set('@type', Voc.ENTITY);
+                        that.vie.entities.addOrUpdate(entity);
+                    }
+                    entity.set(Voc.belongsToTimeline, timeline.getSubject());
+                });
                 /*
                 var current = timeline.get(Voc.hasEntity) || [];
                 if( !_.isArray(current)) current = [current];

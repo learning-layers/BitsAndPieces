@@ -4,8 +4,8 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         this.LOG.debug("initialize UserEventData");
         this.vie = vie;
         this.vie.entities.on('add', this.filter, this);
-        this.setIntegrityCheck(Voc.hasResource, Voc.THING);
-        this.setIntegrityCheck(Voc.belongsToTimeline, Voc.TIMELINE, Voc.hasEntity);
+        this.setIntegrityCheck(Voc.hasResource, Voc.ENTITY);
+        //this.setIntegrityCheck(Voc.belongsToTimeline, Voc.TIMELINE, Voc.hasEntity);
     };
     m.LOG = Logger.get('UserEventData');
     /** 

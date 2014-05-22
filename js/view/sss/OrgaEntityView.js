@@ -6,7 +6,7 @@ define(['view/sss/EntityView', 'logger', 'jquery', 'voc'], function(EntityView, 
         },
         initialize: function() {
             var resource = this.model.get(Voc.hasResource);
-            this.LOG.debug('initialize orgaentitzview', this.model);
+            this.LOG.debug('initialize orgaentitzview', this.model, resource);
             this.resourceView = new EntityView({
                 'model': resource
             });

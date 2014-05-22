@@ -58,7 +58,7 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
         }).from('sss').execute().success(
             function(items) {
 
-                that.LOG.debug('items fetched');
+                that.LOG.debug('items fetched', items);
                 _.each(items, function(item){
                     item[Voc.belongsToOrganize] = organize.getSubject();
                 });

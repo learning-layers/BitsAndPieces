@@ -140,11 +140,14 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             var label = this.model.get(Voc.label);
             if( label && label.isEntity ) label = label.getSubject();
             this.$el.html(//"<div class=\"entity\" about=\""+this.model.getSubject()+"\">"+
-                    "<img src=\""+this.getIcon()+"\" class=\"small-icon\"> " + 
-                    label );
-                
-
-                    //"</div>");
+                    "<div class=\"labelable\">"+
+                    "<img class=\"icon\" src=\""+this.getIcon()+"\" "+ 
+                    "alt=\"" + this.model.get('@type').id + "\"/>"+
+                    (label ? 
+                        "<label class=\"withlabel\">" +
+                        "<strong>"+label+"</strong>":"<label class=\"nolabel\">no label")+
+                        "</label>"+
+                    "</div>");
             this.LOG.debug('rendering ', this.model);
             this.draggable();
             return this;

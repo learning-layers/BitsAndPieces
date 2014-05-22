@@ -1,11 +1,11 @@
 define(['logger', 'voc', 'underscore', 'userParams',
         'data/episode/UserData','data/episode/EpisodeData',
         'data/episode/VersionData','data/timeline/TimelineData',
-        'data/timeline/UserEventData',
+        'data/timeline/UserEventData','data/EntityData',
         'data/organize/OrgaEntityData','data/organize/CircleData',
         'data/organize/OrganizeData' ], 
 function(Logger, Voc, _, userParams,
-    UserData, EpisodeData, VersionData, TimelineData, UserEventData, OrgaEntityData, CircleData, OrganizeData ){
+    UserData, EpisodeData, VersionData, TimelineData, UserEventData, EntityData, OrgaEntityData, CircleData, OrganizeData ){
     return {
         LOG : Logger.get('AppData'),
         init : function(vie) {
@@ -16,6 +16,7 @@ function(Logger, Voc, _, userParams,
             TimelineData.init(this.vie);
             OrganizeData.init(this.vie);
             UserEventData.init(this.vie);
+            EntityData.init(this.vie);
             OrgaEntityData.init(this.vie);
             CircleData.init(this.vie);
             this.LOG.debug("initialize AppData");
@@ -85,7 +86,7 @@ function(Logger, Voc, _, userParams,
                 newWidget = new this.vie.Entity;
                 newWidget.set('@type', Voc.TIMELINE);
                 newWidget.set(Voc.belongsToUser, userParams.user);
-                newWidget.set(Voc.timeAttr, Voc.timestamp);
+                newWidget.set(Voc.timeAttr, Voc.creationTime);
                 newWidget.set(Voc.predicate, Voc.USEREVENT);
                     //'timelineCollection' : new vie.Collection([], {//new TL.Collection([], { 
                         //'model': Entity,
