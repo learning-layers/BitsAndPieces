@@ -1,7 +1,7 @@
 // The SocialSemanticService wraps the SSS Client API.
 
 define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
-        'sss.conn.entity', 'sss.conn.userevent', 'sss.conn.learnep'], function(Logger, VIE, _, Voc, EntityView) {
+        'sss.conn.entity', 'sss.conn.userevent', 'sss.conn.learnep', 'sss.conn.tags'], function(Logger, VIE, _, Voc, EntityView) {
 
 // ## VIE.SocialSemanticService(options)
 // This is the constructor to instantiate a new service.
@@ -231,7 +231,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             },
                             userUri,
                             service.userKey,
-                            resourceUri
+                            resourceUri,
+                            true
                         );
                 });
             } else {
@@ -826,6 +827,31 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     });
                 } else
                     savable.resolve(true);
+            } else if ( entity.isof(Voc.ENTITY )) {
+                if( savable.options.tag ) {
+                    this.onUrisReady(
+                        this.user,
+                        entity.getSubject(),
+                        function(userUri, entityUri) {
+                            new SSTagAdd().handle(
+                                function(object) {
+                                    service.LOG.debug('result addTag', object);
+                                    savable.resolve(object);
+                                },
+                                function(object) {
+                                    service.LOG.warn('failed addTag', object);
+                                    savable.reject(object);
+                                },
+                                userUri,
+                                service.userKey,
+                                entityUri,
+                                savable.options.tag,
+                                'privateSpace' // XXX need to determine space!
+                            );
+                        }
+                    );
+                }
+                
             } else {
                 this.LOG.warn("SocialSemanticService save for " + type.id + " not implemented");
             }

@@ -15,21 +15,37 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         if(model.isof(Voc.ENTITY)){
             this.checkIntegrity(model, options);
             if ( model.has(Voc.author) ) {
-                var user = model.get(Voc.author);
-                if( user.isEntity ) {
-                    user.fetch();
-                }
-            } else {
-                model.on('change:'+this.vie.namespaces.uri(Voc.author), function(model, value, options) {
-                    var user = model.get(Voc.author);
-                    if( user.isEntity ) {
-                        user.fetch();
-                    }
-
-                });
-            }
+                this.initUser(model);
+            } 
+            model.on('change:'+this.vie.namespaces.uri(Voc.author), this.initUser, this); 
+            model.on('change:'+this.vie.namespaces.uri(Voc.hasTag), this.changedTags, this);
         }
     };
+    m.initUser = function(model, value, options) {
+        var user = model.get(Voc.author);
+        if( user.isEntity ) {
+            user.fetch();
+        }
+    };
+    m.changedTags = function(model, set, options) {
+        set = set || [];
+        if( !_.isArray(set)) set = [set];
+        var previous = model.previous(Voc.hasTag) || [];
+        if( !_.isArray(previous)) previous = [previous];
+        this.LOG.debug('previous', previous);  
+        var that = this;
+        var added = _.difference(set, previous);
+        this.LOG.debug('added', added);
+        _.each(added, function(a){
+            that.vie.save({
+                'entity' : model,
+                'tag' : a
+            }).to('sss').execute().success(function(s){
+                that.LOG.debug('success addTag', s);
+            });
+        });
+
+    }
     return m;
 
 });

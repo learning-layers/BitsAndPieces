@@ -31,7 +31,7 @@
     </div>
 
     <div class="tags">
-    <% _.each(entity.tags, function(tag) { %> <div class="tag"><%= tag %><span class="deleteTag">x</span></div> <% }); %></div>
+    <% _.each(entity.tags, function(tag) { %> <div class="tag"><%= tag %><span data-tag="<%= tag %>" class="deleteTag">x</span></div> <% }); %></div>
     </div>    
 
     <div class="predefined-tags">

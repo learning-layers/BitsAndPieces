@@ -3,7 +3,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
     return Backbone.View.extend({
         events: {
             'change .slider' : 'setImportance',
-            'keypress .tagInput' : 'updateOnEnter', 
+            'keypress .tag-search input' : 'updateOnEnter', 
             'click .deleteTag' : 'deleteTag'
         },
         LOG: Logger.get('BitSidebarView'),
@@ -32,22 +32,27 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.model.set(Voc.importance, ui.value );
         },
         addTag: function(tag) {
-            if (_.contains(this.model.get(Voc.hasTag), tag) ) return;
-            //... add Tag
+            var tags = this.getBitTags();
+            if (_.contains(tags, tag) ) return;
+            var newTags = _.clone(tags) || [];
+            newTags.push(tag);
+            this.model.set(Voc.hasTag, newTags);
+        },
+        getBitTags: function() {
+            var tags = this.model.get(Voc.hasTag) || [];
+            if( !_.isArray(tags)) return [tags];
+            return tags;
         },
         deleteTag: function(e) {
-            var tags = this.model.get(Voc.hasTag);
-            this.model.set(Voc.hasTag, _.without(tags, e.value));
-        },
-        renderTags: function() {
-            var tags = this.model.get(Voc.hasTag);
-            // ... render the tags
-        },
-        renderTag: function() {
+            var tags = this.getBitTags();
+            var newTags =_.without(tags, $(e.currentTarget).data("tag"));
+            this.LOG.debug("array the same", tags === newTags );
+            this.model.set(Voc.hasTag, newTags );
         },
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {
-                this.addTag(); // TODO: get value from event
+                this.LOG.debug('e', e);
+                this.addTag($(e.currentTarget).val()); // TODO: get value from event
             }
         },
         getBitViewData: function() {
@@ -61,8 +66,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 'creationTime' : this.model.get(Voc.creationTime),
                 'views' : '',
                 'edits' : '',
-                'tags' : this.model.get(Voc.tags),
-                'predefined' : this.model.get(Voc.tags),
+                'tags' : this.getBitTags(),
+                'predefined' : [],
                 'importance' : this.model.get(Voc.importance)
             }};
         }

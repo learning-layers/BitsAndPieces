@@ -47,9 +47,7 @@ define([], {
 
     predicate : 'rdfs:range',
 
-    hasTag : 'sss:hasTag',
-
     author: 'sss:author',
-    tags : 'sss:tags',
+    hasTag : 'sss:tags',
     importance : 'sss:importance'
 });
