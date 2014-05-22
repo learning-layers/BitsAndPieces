@@ -51,13 +51,6 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                 entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
                 _.each(entities, function(userEvent){
                     var entity = userEvent.get(Voc.hasResource);
-                    if( !entity.isEntity ) {
-                        that.LOG.debug('entity', _.clone(entity));
-                        entity = new that.vie.Entity;
-                        entity.set(that.vie.Entity.prototype.idAttribute, entity);
-                        entity.set('@type', Voc.ENTITY);
-                        that.vie.entities.addOrUpdate(entity);
-                    }
                     entity.set(Voc.belongsToTimeline, timeline.getSubject());
                 });
                 /*
