@@ -10,7 +10,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'episode' : 3
         },
         events: {
-            'click .show-hide': 'showHide'
+            'click .sidebar-handle': 'showHide'
         },
         LOG: Logger.get('SidebarView'),
         initialize: function() {

@@ -196,6 +196,28 @@ div#mySidebar {
 	position: fixed;
 	top: 0;
 	right: 0;
+	height: 100%;
+	z-index: 999;
+}
+
+div#mySidebar .sidebar-handle {
+	position: absolute;
+	top: 50%;
+	cursor: pointer;
+	height: 50px;
+	width: 30px;
+}
+
+div.sidebarShown .sidebar-handle {
+	background-image: url('../img/sidebar-handle-close.png');
+	background-size: 30px 50px;
+	background-repeat: no-repeat;
+}
+
+div.sidebarHidden .sidebar-handle {
+	background-image: url('../img/sidebar-handle-open.png');
+	background-size: 30px 50px;
+	background-repeat: no-repeat;
 }
 
 div.sidebarShown {
@@ -203,12 +225,13 @@ div.sidebarShown {
 }
 
 div.sidebarHidden {
-	width: 10px;
+	width: 20px;
 }
 
 div#tabs {
-	width: 340px;
-	margin-left: 10px;
+	width: 330px;
+	margin-left: 20px;
+	height: 100%;
 }
 
 div.tags div.tag {
@@ -224,4 +247,5 @@ div.tags div.tag {
 div.tags div.tag span.deleteTag {
 	margin-left: 5px;
 	color: gray;
+	cursor: pointer;
 }

@@ -10,4 +10,4 @@
     <div id="tab-2"></div>
     <div id="tab-3"></div>
 </div>
-<span class="show-hide">+</span>
+<span class="sidebar-handle"></span>
