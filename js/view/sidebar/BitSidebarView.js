@@ -1,4 +1,5 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc'], function(Logger, tracker, _, $, Backbone, Voc){
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
+        'text!templates/sidebar/bit.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitTemplate){
     return Backbone.View.extend({
         events: {
             'change .slider' : 'setImportance',
@@ -24,7 +25,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc'], functio
                 this.$el.html("No bit selected")
                 return;
             }
-            this.$el.html(this.model.get(Voc.content));
+            this.$el.html(_.template(BitTemplate, this.getBitViewData()));
             // ... rendering logic
         },
         setImportance: function(event, ui) {
@@ -48,6 +49,22 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc'], functio
             if (e.keyCode == 13) {
                 this.addTag(); // TODO: get value from event
             }
+        },
+        getBitViewData: function() {
+            var author = this.model.get(Voc.author);
+            if( author.isEntity ) {
+                author = author.get(Voc.label);
+            }
+            return {'entity' : {
+                'label' : this.model.get(Voc.label),
+                'author' : author,
+                'creationTime' : this.model.get(Voc.creationTime),
+                'views' : '',
+                'edits' : '',
+                'tags' : this.model.get(Voc.tags),
+                'predefined' : this.model.get(Voc.tags),
+                'importance' : this.model.get(Voc.importance)
+            }};
         }
     });
 });

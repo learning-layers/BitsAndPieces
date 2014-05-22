@@ -3,11 +3,11 @@
 </div>
 
 <div>
-    <label>Author:</label> <%= entity.user %>
+    <label>Author:</label> <%= entity.author %>
 </div>
 
 <div>
-    <label>Date:</label> <%= entity.timestamp %>
+    <label>Date:</label> <%= entity.creationTime %>
 </div>
 
 <div>
@@ -36,7 +36,7 @@
 
     <div class="predefined-tags">
         <label>Predefined tags:</label>
-        <select>
+        <select disabled>
         <% _.each(entity.predefined, function(predefined) { %>
             <option value="<%= predefined %>"><%= predefined %></option>
         <% }); %>
@@ -51,7 +51,7 @@
 
     <div>
         <label>Associated tasks:</label>
-        <input type="button" value="Create new task" />
+        <input disabled type="button" value="Create new task" />
     </div>
 
     <div>
