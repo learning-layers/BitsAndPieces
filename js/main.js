@@ -11,6 +11,7 @@ var require = (function() {
             'sss.conn.userevent' : sss_url + "SSSClientInterfaceREST/connectors/SSUserEventConns",
             'sss.conn.learnep' : sss_url + "SSSClientInterfaceREST/connectors/SSLearnEpConns",
             'sss.conn.tags' : sss_url + "SSSClientInterfaceREST/connectors/SSTagConns",
+            'sss.conn.search' : sss_url + "SSSClientInterfaceREST/connectors/SSSearchConns",
             //'sss.conn.entity' : 'mockup/SSResourceConns', 
             //'sss.conn.userevent' : 'mockup/SSUserEventConns', 
             //'sss.conn.learnep' : 'mockup/SSLearnEpConns', 

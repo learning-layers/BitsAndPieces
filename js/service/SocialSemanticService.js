@@ -1,7 +1,7 @@
 // The SocialSemanticService wraps the SSS Client API.
 
 define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
-        'sss.conn.entity', 'sss.conn.userevent', 'sss.conn.learnep', 'sss.conn.tags'], function(Logger, VIE, _, Voc, EntityView) {
+        'sss.conn.entity', 'sss.conn.userevent', 'sss.conn.learnep', 'sss.conn.tags', 'sss.conn.search'], function(Logger, VIE, _, Voc, EntityView) {
 
 // ## VIE.SocialSemanticService(options)
 // This is the constructor to instantiate a new service.
@@ -136,13 +136,50 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             });
         },
         analyze: function(analyzable) {
-            // in a certain way, analyze is the same as load
-            return this.load(analyzable);
+            var correct = analyzable instanceof this.vie.Analyzable 
+            if (!correct) {
+                throw new Error("Invalid Analyzable passed");
+            }
+            var service = this;
+            if( analyzable.options.service == "searchByTags" ) {
+                this.onUrisReady(
+                    this.user,
+                    function(userUri) {
+                        new SSSearchWithTags().handle(
+                            function(object) {
+                                service.LOG.debug("searchResult", object);
+                                var entities = [];
+                                // XXX : mockup stuff!! remove it when the service runs correctly
+                                object['searchResults'] = [
+                                    { 'label' : 'a label',
+                                      'space' : 'privateSpace',
+                                      'type' : 'entity',
+                                      'uri' : 'http://know-center.at'
+                                    }
+                                ];
+                                _.each(object['searchResults'], function(result) {
+                                    entities.push(service.fixForVIE(result));
+                                });
+                                analyzable.resolve(entities);
+                            },
+                            function(object) {
+                                service.LOG.warn("searchResult failed", object);
+                                analyzable.reject(object);
+                            },
+                            userUri,
+                            service.userKey,
+                            analyzable.options.op || "OR",
+                            analyzable.options.tags,
+                            analyzable.options.max
+                        );
+                    }
+                );
+            }
         },
         load: function(loadable) {
             var correct = loadable instanceof this.vie.Loadable || loadable instanceof this.vie.Analyzable;
             if (!correct) {
-                throw new Error("Invalid Loadable/Analyzable passed");
+                throw new Error("Invalid Loadable passed");
             }
             //if( !loadable.options.connector )
                 //throw new Error("No connector given");

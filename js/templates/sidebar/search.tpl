@@ -13,4 +13,5 @@
 
 <div class="results">
     <label>Results found:</label>
+    <div class="resultSet"></div>
 </div>

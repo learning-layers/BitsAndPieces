@@ -7,7 +7,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         this.setIntegrityCheck(Voc.belongsToTimeline, Voc.TIMELINE, Voc.hasEntity);
         this.setIntegrityCheck(Voc.author, Voc.USER);
     };
-    m.LOG = Logger.get('UserEventData');
+    m.LOG = Logger.get('EntityData');
     /** 
      * Filters entities from added entities to vie.entities
      */
@@ -60,6 +60,18 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             }).from('sss').execute().success(function(s){
                 that.LOG.debug('success removeTag', s);
             });
+        });
+    },
+    m.search = function(tags, callback) {
+        var that = this;
+        this.vie.analyze({
+            'service' : 'searchByTags',
+            'tags' : tags,
+            'max' : 20
+        }).using('sss').execute().success(function(entities){
+            that.LOG.debug('search entities', entities);
+            entities = that.vie.entities.addOrUpdate(entities);
+            callback(entities);
         });
     }
     return m;
