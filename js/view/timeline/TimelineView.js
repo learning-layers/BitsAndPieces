@@ -91,7 +91,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.LOG.debug("data['group']", data['group']);
             this.timeline.addItem(data);
 
-            this.listenTo(entity, 'change', this.changeEntity);
+            this.LOG.debug("change:", entity.vie.namespaces.uri(this.timeAttr));
+            this.listenTo(entity, 'change:' + entity.vie.namespaces.uri(this.timeAttr), this.changeEntity);
             return true;
             
         },
