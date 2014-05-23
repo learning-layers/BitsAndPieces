@@ -45,8 +45,7 @@
 
     <div class="importance">
         <label>Importance:</label>
-        <!-- XXX slider missing -->
-        <%= entity.importance %>
+        <div class="slider"></div>
     </div>
 
     <div>
