@@ -2,7 +2,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'text!templates/sidebar/bit.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitTemplate){
     return Backbone.View.extend({
         events: {
-            'change .slider' : 'setImportance',
+            'slidechange .slider' : 'setImportance',
             'keypress .tag-search input' : 'updateOnEnter', 
             'click .deleteTag' : 'deleteTag'
         },
@@ -33,16 +33,16 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 min : 1,
                 max : 4,
                 step : 1,
-                slide: this.setImportance,
 
             });
 
             this.$el.find('.deadline input.datepicker').datepicker();
         },
         getImportance: function() {
-            this.model.get(Voc.importance) || 1;
+            return this.model.get(Voc.importance) || 1;
         },
         setImportance: function(event, ui) {
+            this.LOG.debug("setImportance", ui.value);
             this.model.set(Voc.importance, ui.value );
         },
         addTag: function(tag) {
@@ -50,7 +50,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if (_.contains(tags, tag) ) return;
             var newTags = _.clone(tags) || [];
             newTags.push(tag);
-            this.model.set(Voc.hasTag, newTags);
+            var that = this;
+            this.model.set(Voc.hasTag, newTags, {
+                'error' : function() {
+                    that.$el.find(".tag-search input").effect("shake");
+                }
+            });
         },
         getBitTags: function() {
             var tags = this.model.get(Voc.hasTag) || [];
@@ -59,7 +64,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         deleteTag: function(e) {
             var tags = this.getBitTags();
-            var newTags =_.without(tags, $(e.currentTarget).data("tag"));
+            this.LOG.debug('deleted tag', $(e.currentTarget).data("tag"));
+            var newTags =_.without(tags, $(e.currentTarget).data("tag")+"");
             this.LOG.debug("array the same", tags === newTags );
             this.model.set(Voc.hasTag, newTags );
         },

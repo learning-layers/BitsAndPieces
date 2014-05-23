@@ -42,6 +42,12 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                 'tag' : tag
             }).to('sss').execute().success(function(s){
                 that.LOG.debug('success addTag', s);
+            }).fail(function(f){
+                var tags = model.get(Voc.hasTag) || [];
+                if( !_.isArray(tags)) tags = [tags];
+                model.set(Voc.hasTag, _.without(tags, tag));
+                that.LOG.debug('options', options);
+                options.error();
             });
         });
 
