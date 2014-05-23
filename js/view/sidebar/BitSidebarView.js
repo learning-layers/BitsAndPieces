@@ -26,6 +26,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 return;
             }
             this.$el.html(_.template(BitTemplate, this.getBitViewData()));
+
             // XXX need to define meanings for values
             this.$el.find('.importance .slider').slider({
                 value : this.getImportance(),
@@ -35,7 +36,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 slide: this.setImportance,
 
             });
-            // ... rendering logic
+
+            this.$el.find('.deadline input.datepicker').datepicker();
         },
         getImportance: function() {
             this.model.get(Voc.importance) || 1;

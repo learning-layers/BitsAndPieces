@@ -53,9 +53,9 @@
         <input disabled type="button" value="Create new task" />
     </div>
 
-    <div>
+    <div class="deadline">
         <label>Deadline to work with:</label>
-        <input type="text" value="" class="datepicker" />
+        <input type="text" value="" class="datepicker" placeholder="--/--/--" />
     </div>
 
     <div>

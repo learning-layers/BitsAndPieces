@@ -8,7 +8,7 @@
 
 <div class="filter">
     <label>Filter search result by deadline:</label>
-    <input class="datepicker" type="text" value="" />
+    <input class="datepicker" type="text" value="" placeholder="--/--/--" />
 </div>
 
 <div class="results">

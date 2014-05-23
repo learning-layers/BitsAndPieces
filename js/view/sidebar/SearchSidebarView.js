@@ -9,6 +9,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         render: function() {
             var search = _.template(SearchTemplate);
             this.$el.html(search);
+
+            this.$el.find('.filter input.datepicker').datepicker();
         }
     });
 });
