@@ -1,6 +1,6 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc', 
-        'view/sidebar/BitSidebarView',
-        'text!templates/sidebar/sidebar.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitSidebarView, Template){
+        'view/sidebar/BitSidebarView', 'view/sidebar/SearchSidebarView',
+        'text!templates/sidebar/sidebar.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitSidebarView, SearchSidebarView, SidebarTemplate){
     return Backbone.View.extend({
         subViews: {},
         tabMap : {
@@ -23,9 +23,15 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if( this.isHidden() ) this.showHide();
         },
         render: function() {
-            var tabs = _.template(Template, {});
+            var tabs = _.template(SidebarTemplate, {});
             this.$el.html(tabs);
             this.$el.find('#tabs').tabs();
+
+            this.subViews['search'] = new SearchSidebarView({
+                el : this.getTabId('search')
+            });
+            this.subViews['search'].render();
+
             this.subViews['bit'] = new BitSidebarView({
                 el : this.getTabId('bit')
             });
