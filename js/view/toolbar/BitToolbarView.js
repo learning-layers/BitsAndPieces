@@ -72,7 +72,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {
                 this.LOG.debug('e', e);
-                this.addTag($(e.currentTarget).val()); // TODO: get value from event
+                this.addTag($(e.currentTarget).val());
             }
         },
         getBitViewData: function() {
