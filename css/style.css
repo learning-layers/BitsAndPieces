@@ -249,3 +249,8 @@ div.tags div.tag span.deleteTag {
 	color: gray;
 	cursor: pointer;
 }
+
+div#tabs .results .resultSet label.withlabel {
+	position: relative;
+	top: 0px;
+}
