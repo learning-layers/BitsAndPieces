@@ -1,6 +1,6 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc', 
-        'view/sidebar/BitSidebarView', 'view/sidebar/SearchSidebarView',
-        'text!templates/sidebar/sidebar.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitSidebarView, SearchSidebarView, SidebarTemplate){
+        'view/toolbar/BitToolbarView', 'view/toolbar/SearchToolbarView',
+        'text!templates/toolbar/toolbar.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitToolbarView, SearchToolbarView, ToolbarTemplate){
     return Backbone.View.extend({
         subViews: {},
         tabMap : {
@@ -10,12 +10,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'episode' : 3
         },
         events: {
-            'click .sidebar-handle': 'showHide'
+            'click .toolbar-handle': 'showHide'
         },
-        LOG: Logger.get('SidebarView'),
+        LOG: Logger.get('ToolbarView'),
         initialize: function() {
             this.is_hidden = true;
-            this.$el.addClass('sidebarHidden');
+            this.$el.addClass('toolbarHidden');
         },
         showBit: function(entity) {
             this.subViews['bit'].setEntity(entity);
@@ -23,29 +23,29 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if( this.isHidden() ) this.showHide();
         },
         render: function() {
-            var tabs = _.template(SidebarTemplate, {});
+            var tabs = _.template(ToolbarTemplate, {});
             this.$el.html(tabs);
             this.$el.find('#tabs').tabs();
 
-            this.subViews['search'] = new SearchSidebarView({
+            this.subViews['search'] = new SearchToolbarView({
                 el : this.getTabId('search')
             });
             this.subViews['search'].render();
 
-            this.subViews['bit'] = new BitSidebarView({
+            this.subViews['bit'] = new BitToolbarView({
                 el : this.getTabId('bit')
             });
             this.subViews['bit'].render();
         },
         showHide: function(e) {
-            var sidebar = this;
+            var toolbar = this;
             if (this.isHidden()) {
-                this.$el.switchClass('sidebarHidden', 'sidebarShown', function() {
-                    sidebar.is_hidden = false;
+                this.$el.switchClass('toolbarHidden', 'toolbarShown', function() {
+                    toolbar.is_hidden = false;
                 });
             } else {
-                this.$el.switchClass('sidebarShown', 'sidebarHidden', function() {
-                    sidebar.is_hidden = true;
+                this.$el.switchClass('toolbarShown', 'toolbarHidden', function() {
+                    toolbar.is_hidden = true;
                 });
             }
         },

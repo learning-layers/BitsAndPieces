@@ -1,12 +1,12 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
-        'text!templates/sidebar/bit.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitTemplate){
+        'text!templates/toolbar/bit.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitTemplate){
     return Backbone.View.extend({
         events: {
             'slidechange .slider' : 'setImportance',
             'keypress .tag-search input' : 'updateOnEnter', 
             'click .deleteTag' : 'deleteTag'
         },
-        LOG: Logger.get('BitSidebarView'),
+        LOG: Logger.get('BitToolbarView'),
         initialize: function() {
         },
         setEntity: function(entity) {
@@ -21,7 +21,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         render: function() {
             this.$el.empty();
             if( !this.model ) {
-                // ... empty the sidebar content
+                // ... empty the toolbar content
                 this.$el.html("No bit selected")
                 return;
             }

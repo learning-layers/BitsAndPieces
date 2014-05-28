@@ -6,8 +6,8 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
         'data/episode/VersionData',
         'view/WidgetView',
         'view/episode/EpisodeManagerView',
-        'view/sidebar/SidebarView'],
-    function(Logger, tracker, Backbone, $, Voc, userParams, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, SidebarView){
+        'view/toolbar/ToolbarView'],
+    function(Logger, tracker, Backbone, $, Voc, userParams, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {
@@ -55,12 +55,12 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                 });
                 this.episodeMgrView.render();
 
-                var sidebar = $('<div id="mySidebar"></div>');
-                this.$el.append( sidebar );
-                this.sidebarView = new SidebarView({
-                    el : sidebar
+                var toolbar = $('<div id="myToolbar"></div>');
+                this.$el.append( toolbar );
+                this.toolbarView = new ToolbarView({
+                    el : toolbar
                 });
-                this.sidebarView.render();
+                this.toolbarView.render();
             },
             drawWidget: function(versionElem, widget) {
                 AppLog.debug('drawWidget', widget);
@@ -137,7 +137,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
 
             },
             clickEntity: function(e) {
-                this.sidebarView.showBit(e.entity);
+                this.toolbarView.showBit(e.entity);
             },
         });
 });

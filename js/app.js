@@ -30,7 +30,9 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('Add').setLevel(Logger.OFF);
     Logger.get('SocialSemanticService').setLevel(Logger.OFF);
     Logger.get('Mockup').setLevel(Logger.OFF);
-    Logger.get('SidebarView').setLevel(Logger.DEBUG);
+    Logger.get('ToolbarView').setLevel(Logger.DEBUG);
+    Logger.get('SearchToolbarView').setLevel(Logger.DEBUG);
+    Logger.get('BitToolbarView').setLevel(Logger.DEBUG);
 
     var username = window.location.search.substring(1);
     if( !username) return alert('no username given!');

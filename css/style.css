@@ -192,7 +192,7 @@ li.episode ul {
     display: block;
 }
 
-div#mySidebar {
+div#myToolbar {
 	position: fixed;
 	top: 0;
 	right: 0;
@@ -200,7 +200,7 @@ div#mySidebar {
 	z-index: 999;
 }
 
-div#mySidebar .sidebar-handle {
+div#myToolbar .toolbar-handle {
 	position: absolute;
 	top: 50%;
 	cursor: pointer;
@@ -208,23 +208,23 @@ div#mySidebar .sidebar-handle {
 	width: 30px;
 }
 
-div.sidebarShown .sidebar-handle {
-	background-image: url('../img/sidebar-handle-close.png');
+div.toolbarShown .toolbar-handle {
+	background-image: url('../img/toolbar-handle-close.png');
 	background-size: 30px 50px;
 	background-repeat: no-repeat;
 }
 
-div.sidebarHidden .sidebar-handle {
-	background-image: url('../img/sidebar-handle-open.png');
+div.toolbarHidden .toolbar-handle {
+	background-image: url('../img/toolbar-handle-open.png');
 	background-size: 30px 50px;
 	background-repeat: no-repeat;
 }
 
-div.sidebarShown {
+div.toolbarShown {
 	width: 350px;
 }
 
-div.sidebarHidden {
+div.toolbarHidden {
 	width: 20px;
 }
 
