@@ -21,18 +21,20 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('DetailView').setLevel(Logger.OFF);
     Logger.get('EpisodeManagerView').setLevel(Logger.OFF);
     Logger.get('EpisodeView').setLevel(Logger.OFF);
-    Logger.get('EntityView').setLevel(Logger.DEBUG);
+    Logger.get('EntityView').setLevel(Logger.OFF);
     Logger.get('OrgaEntityView').setLevel(Logger.OFF);
     Logger.get('UserEventView').setLevel(Logger.OFF);
     Logger.get('UserView').setLevel(Logger.OFF);
-    Logger.get('App').setLevel(Logger.DEBUG);
+    Logger.get('App').setLevel(Logger.OFF);
     Logger.get('AppData').setLevel(Logger.OFF);
     Logger.get('Add').setLevel(Logger.OFF);
     Logger.get('SocialSemanticService').setLevel(Logger.OFF);
     Logger.get('Mockup').setLevel(Logger.OFF);
-    Logger.get('ToolbarView').setLevel(Logger.DEBUG);
-    Logger.get('SearchToolbarView').setLevel(Logger.DEBUG);
-    Logger.get('BitToolbarView').setLevel(Logger.DEBUG);
+    Logger.get('ToolbarView').setLevel(Logger.OFF);
+    Logger.get('SearchToolbarView').setLevel(Logger.OFF);
+    Logger.get('BitToolbarView').setLevel(Logger.OFF);
+    Logger.get('EntityData').setLevel(Logger.OFF);
+    Logger.get('OrgaEntityData').setLevel(Logger.OFF);
 
     var username = window.location.search.substring(1);
     if( !username) return alert('no username given!');
