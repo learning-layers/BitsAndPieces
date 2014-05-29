@@ -43,7 +43,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             'owl:Thing' : 'img/sss/thing.png',
             'sss:user/peter/' : 'img/sss/user2.png',
             'sss:user/paul/' : 'img/sss/user1.png',
-            'sss:entity' : 'img/sss/thing.png',
+            'sss:entity' : 'img/sss/entityLink.png',
             'sss:disc' : 'img/sss/discuss.png',
             'sss:discEntry' : 'img/sss/discuss.png',
             'sss:file' : 'img/sss/document.png',
@@ -133,14 +133,23 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             window.open(resource);
         },
         render: function() {
+            var label,
+                view_class;
+
             this.$el.attr({
               'class' : 'entity',
               'about' : this.model.getSubject()
             });
-            var label = this.model.get(Voc.label);
+            label = this.model.get(Voc.label);
+            view_class = 'labelable';
+
+            if( true === this.model.get(Voc.isUsed) ) {
+                view_class += ' used';
+            }
+
             if( label && label.isEntity ) label = label.getSubject();
             this.$el.html(//"<div class=\"entity\" about=\""+this.model.getSubject()+"\">"+
-                    "<div class=\"labelable\">"+
+                    "<div class=\"" + view_class + "\">"+
                     "<img class=\"icon\" src=\""+this.getIcon()+"\" "+ 
                     "alt=\"" + this.model.get('@type').id + "\"/>"+
                     (label ? 

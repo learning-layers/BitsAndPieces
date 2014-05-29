@@ -49,5 +49,6 @@ define([], {
 
     author: 'sss:author',
     hasTag : 'sss:tags',
-    importance : 'sss:importance'
+    importance : 'sss:importance',
+    isUsed : 'sss:isUsed'
 });

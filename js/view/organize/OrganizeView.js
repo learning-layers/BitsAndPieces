@@ -252,7 +252,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.LOG.debug("id in organize = " + id);
             //entity.set('_organizeId', id);
             this.views[id] = view;
-            
+
+            // Setting entity as used
+            view.resourceView.model.set(Voc.isUsed, true);
         },
         changeEntity: function(entity, collection, options) {
             options = options || {};

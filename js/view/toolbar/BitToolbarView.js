@@ -43,7 +43,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         setImportance: function(event, ui) {
             this.LOG.debug("setImportance", ui.value);
-            this.model.set(Voc.importance, ui.value );
+            this.model.set(Voc.importance, ui.value);
         },
         addTag: function(tag) {
             var tags = this.getBitTags();
