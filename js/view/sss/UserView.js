@@ -21,13 +21,18 @@ define(['view/sss/EntityView', 'logger', 'underscore', 'voc'], function(EntityVi
                     "<div class=\"label\">"+this.model.get(Voc.label)+"</div>");
 
                     //"</div>");
-            this.draggable();
+            // XXX Prevent user dragging and dropping
+            //this.draggable();
             return this;
         },
         _getIcon: function() {
           this.LOG.debug(this.model.getSubject());
           this.LOG.debug(this.model.vie.namespaces.curie(this.model.getSubject()));
           return this.icons[this.model.vie.namespaces.curie(this.model.getSubject())];
+        },
+        _click: function(e) {
+            // XXX This currently prevents user from using entity click event
+            return false;
         }
 
     });
