@@ -1,10 +1,13 @@
 define([], {
     user : "",
     ueTrackUser : "",
-    userKey : "681V454J1P3H4W3B367BB79615U184N22356I3E",
+    userKey : "FischersFritzFischtFrischeFische",
     init: function(username, space, app) {
             var namespace = "http://"+space+"."+app+"/";
-            this.user = namespace + 'user/'+username;
+            //this.user = namespace + 'user/'+username;
+            // XXX THIS IS HARD CODED; SHOULD BE TAKEN FROM AUTH API CALL
+            this.user = 'http://eval.bp/140187632648701900010/';
+            //this.user = 'http://eval.bp/1401967344571539000790/';
             this.ueTrackUser = namespace + 'user/ue_track_'+username;
         }
 });

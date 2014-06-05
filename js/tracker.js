@@ -1,9 +1,9 @@
-define(['userParams', 'logger', 'sss.conn.userevent'], 
+define(['userParams', 'logger', 'sss.conns'],
     function(userParams, Logger) {
         tracker = Logger.get('Tracker');
         tracker.setLevel(Logger.INFO);
         tracker.setHandler(function(messages, context){
-            new SSUserEventAdd().handle(
+            new SSUserEventAdd(
                     function(object){
                         AppLog.info('USEREVENT ADDED', object);
                     },

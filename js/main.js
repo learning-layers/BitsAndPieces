@@ -1,20 +1,14 @@
 var require = (function() {
-    var sss_url = 'http://kedemo.know-center.tugraz.at:8080/SocialSemanticServerClientSide_Rella/';
+    //var sss_url = 'http://kedemo.know-center.tugraz.at:8080/SocialSemanticServerClientSide_Rella/';
     //var sss_url = 'http://localhost/sm/lib/SocialSemanticServer/SSSClientSide/';
+    var sss_url = 'http://localhost:8080/SocialSemanticServerClientSide/';
     return {
         baseUrl: 'js',
         paths: {
             'sss.jsutils' : sss_url + "JSUtilities/JSGlobals",
             'sss.globals' : sss_url + "SSSClientInterfaceGlobals/globals/SSGlobals",
             'sss.varu' : sss_url + "SSSClientInterfaceGlobals/globals/SSVarU",
-            'sss.conn.entity' : sss_url + "SSSClientInterfaceREST/connectors/SSEntityConns",
-            'sss.conn.userevent' : sss_url + "SSSClientInterfaceREST/connectors/SSUserEventConns",
-            'sss.conn.learnep' : sss_url + "SSSClientInterfaceREST/connectors/SSLearnEpConns",
-            'sss.conn.tags' : sss_url + "SSSClientInterfaceREST/connectors/SSTagConns",
-            'sss.conn.search' : sss_url + "SSSClientInterfaceREST/connectors/SSSearchConns",
-            //'sss.conn.entity' : 'mockup/SSResourceConns', 
-            //'sss.conn.userevent' : 'mockup/SSUserEventConns', 
-            //'sss.conn.learnep' : 'mockup/SSLearnEpConns', 
+            'sss.conns' : sss_url + "SSSClientInterfaceREST/SSConns",
             'vie' : '../lib/VIE/vie',
             'backbone' : '../lib/backbone/backbone-min',
             'underscore' : '../lib/underscore/underscore-min',
@@ -32,9 +26,7 @@ var require = (function() {
             'logger' : { 
                 'exports' : 'Logger'
             },
-            'sss.conn.userevent' : [ 'sss.jsutils', 'sss.globals', 'sss.varu', 'logger'],
-            'sss.conn.entity' : [ 'sss.jsutils', 'sss.globals', 'sss.varu', 'logger'],
-            'sss.conn.learnep' : [ 'sss.jsutils', 'sss.globals', 'sss.varu', 'logger'],
+            'sss.conns' : [ 'sss.jsutils', 'sss.globals', 'sss.varu', 'logger'],
             'vie' : {
                 'deps' : ['backbone', 'jquery', 'underscore'],
                 'exports' : 'VIE'

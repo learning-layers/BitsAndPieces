@@ -22,7 +22,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         search: function(searchString) {
             var that = this;
-            EntityData.search(searchString, function(results) {
+            var tags = [searchString];
+            EntityData.search(tags, function(results) {
                 var box = that.$el.find('.results .resultSet');
                 _.each(that.searchResultSet, function(view) {
                     view.remove();

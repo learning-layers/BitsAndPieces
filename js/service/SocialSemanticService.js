@@ -1,7 +1,7 @@
 // The SocialSemanticService wraps the SSS Client API.
 
 define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
-        'sss.conn.entity', 'sss.conn.userevent', 'sss.conn.learnep', 'sss.conn.tags', 'sss.conn.search'], function(Logger, VIE, _, Voc, EntityView) {
+        'sss.conns'], function(Logger, VIE, _, Voc, EntityView) {
 
 // ## VIE.SocialSemanticService(options)
 // This is the constructor to instantiate a new service.
@@ -145,20 +145,12 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        new SSSearchWithTags().handle(
+                        new SSSearchWithTags(
                             function(object) {
                                 service.LOG.debug("searchResult", object);
                                 var entities = [];
-                                // XXX : mockup stuff!! remove it when the service runs correctly
-                                object['searchResults'] = [
-                                    { 'label' : 'a label',
-                                      'space' : 'privateSpace',
-                                      'type' : 'entity',
-                                      'uri' : 'http://know-center.at'
-                                    }
-                                ];
                                 _.each(object['searchResults'], function(result) {
-                                    entities.push(service.fixForVIE(result));
+                                    entities.push(service.fixForVIE(result, 'entity'));
                                 });
                                 analyzable.resolve(entities);
                             },
@@ -210,26 +202,26 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     loadable.options.resource,
                     function(userUri, resourceUri) {
-                        new SSEntityDescGet().handle(
+                        new SSEntityDescGet(
                             function(object) {
                                 service.LOG.debug("handle result of EntityDescGet");
                                 service.LOG.debug("object", object);
-                                if( _.isEmpty(object['entityDesc'] ) )  {
+                                if( _.isEmpty(object['desc'] ) )  {
                                     loadable.reject(entity);
                                     service.LOG.error("error:",resourceUri, " is empty");
                                     return;
                                 }
-                                var entity = service.fixForVIE(object['entityDesc'], 'entityUri', 'entityType');
-                                var entityUri = object['entityDesc']['entityUri'];
+                                var entity = service.fixForVIE(object['desc'], 'entity', 'type');
+                                var entityUri = object['desc']['entity'];
                                 //var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
-                                var type = object['entityDesc']['entityType'];
-                                service.LOG.debug('entityDesc.entityType', type);
+                                var type = object['desc']['type'];
+                                service.LOG.debug('desc.type', type);
                                 if( type && type == service.types.USER )  {
-                                    new SSLearnEpVersionCurrentGet().handle(
+                                    new SSLearnEpVersionCurrentGet(
                                         function(object2) {
                                             service.LOG.debug("handle result of VersionCurrentGet");
                                             service.LOG.debug("object", object2);
-                                            entity[Voc.currentVersion] = object2['learnEpVersion']['learnEpVersionUri'];
+                                            entity[Voc.currentVersion] = object2['learnEpVersion']['id'];
                                             loadable.resolve(entity);
                                         },
                                         function(object2) {
@@ -240,7 +232,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         service.userKey 
                                         );
                                 } else if( type && type == service.types.USEREVENT )  {
-                                    new SSUserEventGet().handle(
+                                    new SSUserEventGet(
                                         function(object2) {
                                             service.LOG.debug("handle result of UserEventTypeGet");
                                             service.LOG.debug("object", object2);
@@ -289,7 +281,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     loadable.options.forUser,
                     loadable.options.resource,
                     function(userUri, forUserUri, resourceUri) {
-                        new SSUserEventsGet().handle(
+                        new SSUserEventsGet(
                             function(objects) {
                                 service.LOG.debug("handle result of userEventsOfUser");
                                 service.LOG.debug("objects", objects);
@@ -323,7 +315,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        new SSLearnEpsGet().handle(
+                        new SSLearnEpsGet(
                             function(objects) {
                                 service.LOG.debug("handle result of epsGet");
                                 service.LOG.debug("objects", objects);
@@ -331,7 +323,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 _.each(objects['learnEps'], function(object) {
                                     object[Voc.belongsToUser] = object['user'];
                                     delete object['user'];
-                                    var entity = service.fixForVIE(object, 'learnEpUri');
+                                    var entity = service.fixForVIE(object, 'id');
                                     //var vieEntity = new service.vie.Entity(entity);
                                     entity['@type'] = Voc.EPISODE;
                                     entityInstances.push(entity);
@@ -354,17 +346,17 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     loadable.options.episode,
                     function(userUri, episodeUri) {
-                        new SSLearnEpVersionsGet().handle(
+                        new SSLearnEpVersionsGet(
                             function(objects) {
                                 service.LOG.debug("handle result of epVersionsGet");
                                 service.LOG.debug("objects", objects);
                                 var entityInstances = [];
                                 _.each(objects['learnEpVersions'], function(object) {
-                                    object[Voc.belongsToEpisode] = object['learnEpUri'];
-                                    delete object['learnEpUri'];
+                                    object[Voc.belongsToEpisode] = object['learnEp'];
+                                    delete object['learnEp'];
                                     delete object['circles'];
                                     delete object['entities'];
-                                    var entity = service.fixForVIE(object, 'learnEpVersionUri');
+                                    var entity = service.fixForVIE(object, 'id');
                                     //var vieEntity = new service.vie.Entity(entity);
                                     entity['@type'] = Voc.VERSION;
                                     entityInstances.push(entity);
@@ -429,7 +421,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     loadable.options.version,
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionGetTimelineState().handle(
+                        new SSLearnEpVersionGetTimelineState(
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpGetTimelineState");
                                 service.LOG.debug("object", object);
@@ -481,7 +473,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     version,
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionGet().handle(
+                        new SSLearnEpVersionGet(
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionGet");
                                 service.LOG.debug("objects", object);
@@ -495,8 +487,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     fixEntity.ry = item['yR'];
                                     fixEntity.cx = item['xC'];
                                     fixEntity.cy = item['yC'];
-                                    fixEntity.learnEpCircleUri = item['learnEpCircleUri'];
-                                    fixEntity = service.fixForVIE(fixEntity, 'learnEpCircleUri');
+                                    fixEntity.learnEpCircleUri = item['learnEpCircle'];
+                                    fixEntity = service.fixForVIE(fixEntity, 'learnEpCircle');
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
                                     //var vieEntity = new service.vie.Entity(fixEntity);
                                     fixEntity['@type'] = type.id;
@@ -525,7 +517,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     version,
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionGet().handle(
+                        new SSLearnEpVersionGet(
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionGet");
                                 service.LOG.debug("objects", object);
@@ -533,7 +525,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 _.each(object['learnEpVersion']['entities'], function(item){
                                     var fixEntity = {};
                                     fixEntity = service.fixForVIE(item, 'learnEpEntityUri');
-                                    fixEntity[Voc.hasResource] = item['entityUri'];
+                                    fixEntity[Voc.hasResource] = item['entity'];
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
                                     //var vieEntity = new service.vie.Entity(fixEntity);
                                     fixEntity['@type'] = type.id;
@@ -586,7 +578,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionSetTimelineState().handle(
+                        new SSLearnEpVersionSetTimelineState(
                                 function(object) {
                                     service.LOG.debug("handle result of LearnEpVersionSetTimelinState");
                                     service.LOG.debug("object", object);
@@ -625,11 +617,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.onUrisReady(
                         this.user,
                         function(userUri) {
-                            new SSLearnEpCreate().handle(
+                            new SSLearnEpCreate(
                                 function(object) {
                                     service.LOG.debug("handle result of LearnEpCreate");
                                     service.LOG.debug("object", object);
-                                    savable.resolve({'uri':object['learnEpUri']});
+                                    savable.resolve({'uri':object['learnEp']});
                                 },
                                 function(object) {
                                     service.LOG.warn("error:");
@@ -647,7 +639,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri){
-                            new SSEntityLabelSet().handle(
+                            new SSEntityLabelSet(
                                 function(object) {
                                     service.LOG.debug("handle result of SSLabelSet");
                                     service.LOG.debug("object", object);
@@ -673,11 +665,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     episode,
                     function( userUri, episodeUri) {
-                        new SSLearnEpVersionCreate().handle(
+                        new SSLearnEpVersionCreate(
                                 function(object) {
                                     service.LOG.debug("handle result of LearnEpVersionCreate");
                                     service.LOG.debug("object", object);
-                                    savable.resolve({'uri':object['learnEpVersionUri']});
+                                    savable.resolve({'uri':object['id']});
                                 },
                                 function(object) {
                                     service.LOG.warn("error:");
@@ -711,7 +703,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 service.user,
                                 version,
                                 function(userUri, versionUri) {
-                                    new SSLearnEpVersionAddCircle().handle(
+                                    new SSLearnEpVersionAddCircle(
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionAddCircle");
                                             service.LOG.debug("object", object);
@@ -740,7 +732,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 service.user,
                                 entity.getSubject(),
                                 function(userUri, uriUri ) {
-                                    new SSLearnEpVersionUpdateCircle().handle(
+                                    new SSLearnEpVersionUpdateCircle(
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionUpdateCircle");
                                             service.LOG.debug("object", object);
@@ -792,7 +784,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 version,
                                 resourceUri,
                                 function(userUri, versionUri, resourceUri){
-                                    new SSLearnEpVersionAddEntity().handle(
+                                    new SSLearnEpVersionAddEntity(
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionAddEntity");
                                             service.LOG.debug("object", object);
@@ -818,7 +810,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 entity.getSubject(),
                                 resourceUri,
                                 function(userUri,uriUri,resourceUri){
-                                    new SSLearnEpVersionUpdateEntity().handle(
+                                    new SSLearnEpVersionUpdateEntity(
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionUpdateEntity");
                                             service.LOG.debug("object", object);
@@ -848,7 +840,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         versionUri,
                         function(userUri, versionUri) {
-                            new SSLearnEpVersionCurrentSet().handle(
+                            new SSLearnEpVersionCurrentSet(
                                 function(object) {
                                     service.LOG.debug("handle result of VersionCurrentSet");
                                     service.LOG.debug("object", object);
@@ -870,7 +862,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri) {
-                            new SSTagAdd().handle(
+                            new SSTagAdd(
                                 function(object) {
                                     service.LOG.debug('result addTag', object);
                                     savable.resolve(object);
@@ -916,7 +908,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     entity.getSubject(),
                     function(userUri,uriUri){
-                        new SSLearnEpVersionRemoveCircle().handle(
+                        new SSLearnEpVersionRemoveCircle(
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionRemoveCircle");
                                 service.LOG.debug("object", object);
@@ -937,7 +929,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     entity.getSubject(),
                     function(userUri,uriUri){
-                        new SSLearnEpVersionRemoveEntity().handle(
+                        new SSLearnEpVersionRemoveEntity(
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionRemoveEntity");
                                 service.LOG.debug("object", object);
@@ -959,7 +951,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri) {
-                            new SSTagsUserRemove().handle(
+                            new SSTagsUserRemove(
                                 function(object) {
                                     service.LOG.debug('result removeTag', object);
                                     removable.resolve(object);
@@ -989,7 +981,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
          */
         fixForVIE: function(object, idAttr, typeAttr) {
             var entity = _.clone(object);
-            if( !idAttr) idAttr = 'uri';
+            if( !idAttr) idAttr = 'id';
             if( !typeAttr) typeAttr = 'type';
             entity[VIE.prototype.Entity.prototype.idAttribute] = object[idAttr];
             if (object[typeAttr]) {
@@ -1024,7 +1016,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 delete object[prop];
             }
             object['type'] = entity.get('@type').id;
-            object['uri'] = entity.getSubject();
+            object['id'] = entity.getSubject();
             delete object['@type'];
             delete object[VIE.prototype.Entity.prototype.idAttribute];
             return object;

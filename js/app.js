@@ -8,7 +8,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     var AppLog = Logger.get('App');
     var AddLog = Logger.get('Add');
     Logger.get('Data').setLevel(Logger.OFF);
-    Logger.get('UserData').setLevel(Logger.OFF);
+    Logger.get('UserData').setLevel(Logger.DEBUG);
     Logger.get('OrganizeData').setLevel(Logger.OFF);
     Logger.get('CircleData').setLevel(Logger.OFF);
     Logger.get('VersionData').setLevel(Logger.OFF);
@@ -19,13 +19,13 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('OrganizeView').setLevel(Logger.OFF);
     Logger.get('WidgetView').setLevel(Logger.OFF);
     Logger.get('DetailView').setLevel(Logger.OFF);
-    Logger.get('EpisodeManagerView').setLevel(Logger.OFF);
+    Logger.get('EpisodeManagerView').setLevel(Logger.DEBUG);
     Logger.get('EpisodeView').setLevel(Logger.OFF);
     Logger.get('EntityView').setLevel(Logger.OFF);
     Logger.get('OrgaEntityView').setLevel(Logger.OFF);
     Logger.get('UserEventView').setLevel(Logger.OFF);
     Logger.get('UserView').setLevel(Logger.OFF);
-    Logger.get('App').setLevel(Logger.OFF);
+    Logger.get('App').setLevel(Logger.DEBUG);
     Logger.get('AppData').setLevel(Logger.OFF);
     Logger.get('Add').setLevel(Logger.OFF);
     Logger.get('SocialSemanticService').setLevel(Logger.OFF);
