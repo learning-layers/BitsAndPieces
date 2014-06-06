@@ -964,7 +964,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri) {
-                            new SSTagsUserRemove(
+                            new SSTagsRemove(
                                 function(object) {
                                     service.LOG.debug('result removeTag', object);
                                     removable.resolve(object);
