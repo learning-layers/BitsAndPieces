@@ -63,7 +63,9 @@ define(['logger', 'voc'], function(Logger, Voc){
         },
         _removeIntegrity: function(model, collection, options) {
             this.LOG.debug('removeIntegrity', model);
-            var key;
+            var key,
+                that;
+            that = this;
             for( key in this.integrity ) {
                 if( this.integrity[key].foreignKey ) {
                     this.LOG.debug('check', key, this.integrity[key].foreignKey);
