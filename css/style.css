@@ -250,6 +250,11 @@ div.tags div.tag span.deleteTag {
 	cursor: pointer;
 }
 
+div#tabs .results .resultSet .entity {
+	display: inline-block;
+	margin: 1px;
+}
+
 div#tabs .results .resultSet label.withlabel {
 	position: relative;
 	top: 0px;
