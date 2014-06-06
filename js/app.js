@@ -25,7 +25,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('OrgaEntityView').setLevel(Logger.OFF);
     Logger.get('UserEventView').setLevel(Logger.OFF);
     Logger.get('UserView').setLevel(Logger.OFF);
-    Logger.get('App').setLevel(Logger.OFF);
+    Logger.get('App').setLevel(Logger.DEBUG);
     Logger.get('AppData').setLevel(Logger.OFF);
     Logger.get('Add').setLevel(Logger.OFF);
     Logger.get('SocialSemanticService').setLevel(Logger.OFF);

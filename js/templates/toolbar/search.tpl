@@ -4,11 +4,13 @@
 </div>
 
 <div class="cloud">
+    TAGCLOUD NOT IMPLEMENTED
 </div>
 
 <div class="filter">
     <label>Filter search result by deadline:</label>
-    <input class="datepicker" type="text" value="" placeholder="--/--/--" />
+    <input class="datepicker" type="text" value="" placeholder="Select a date" disabled="disabled" />
+    <a href="#" class="clearDatepicker">[X]</a>
 </div>
 
 <div class="results">

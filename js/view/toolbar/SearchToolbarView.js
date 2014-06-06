@@ -5,6 +5,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         searchResultSet : [],
         events: {
             'keypress .search input' : 'updateOnEnter', 
+            'click .filter .clearDatepicker' : 'clearDatepicker'
         },
         LOG: Logger.get('SearchToolbarView'),
         initialize: function() {
@@ -38,6 +39,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 });
     
             });
+        },
+        clearDatepicker : function(e) {
+            e.preventDefault();
+            this.$el.find('.filter input.datepicker').val('');
         }
     });
 });
