@@ -4,19 +4,19 @@ define(['userParams', 'logger', 'sss.conns'],
         tracker.setLevel(Logger.INFO);
         tracker.setHandler(function(messages, context){
             // XXX Need to fix and then enable user events
-            /*new SSUserEventAdd(
+            new SSUserEventAdd(
                     function(object){
                         AppLog.info('USEREVENT ADDED', object);
                     },
                     function(object){
                         AppLog.error('USEREVENT NOT ADDED', object);
                     },
-                    userParams.ueTrackUser,
+                    userParams.user,
                     userParams.userKey,
                     messages[0],
                     messages[1] || null,
                     (new Date()).getTime()+(messages[2] ? ";"+JSON.stringify(messages[2]): "")
-            );*/
+            );
         });
          
 
