@@ -77,8 +77,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         getBitViewData: function() {
             var author = this.model.get(Voc.author);
-            if( author.isEntity ) {
+            if( author && author.isEntity ) {
                 author = author.get(Voc.label);
+            } else {
+                author = '';
+                this.model.fetch();
             }
             return {'entity' : {
                 'label' : this.model.get(Voc.label),
