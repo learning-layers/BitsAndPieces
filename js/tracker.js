@@ -3,7 +3,8 @@ define(['userParams', 'logger', 'sss.conns'],
         tracker = Logger.get('Tracker');
         tracker.setLevel(Logger.INFO);
         tracker.setHandler(function(messages, context){
-            new SSUserEventAdd(
+            // XXX Need to fix and then enable user events
+            /*new SSUserEventAdd(
                     function(object){
                         AppLog.info('USEREVENT ADDED', object);
                     },
@@ -15,7 +16,7 @@ define(['userParams', 'logger', 'sss.conns'],
                     messages[0],
                     messages[1] || null,
                     (new Date()).getTime()+(messages[2] ? ";"+JSON.stringify(messages[2]): "")
-            );
+            );*/
         });
          
 
