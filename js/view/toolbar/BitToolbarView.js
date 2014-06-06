@@ -81,7 +81,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 author = author.get(Voc.label);
             } else {
                 author = '';
-                this.model.fetch();
             }
             return {'entity' : {
                 'label' : this.model.get(Voc.label),

@@ -696,7 +696,14 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             savable.reject(entity);
                             return;
                         }
+
                         var version = service.buffer[organizeUri]['belongsToVersion'];
+                        // XXX THIS IS FIX FOR CASE WHEN NEW EPISODE HAS JUST BEEN CREATED
+                        // FOR SOME REASON THE LOOKS OF IT ARE DIFFERENT AND USE NAMESPACE
+                        // URIS INSTEAD ONE PARAMETER NAMES
+                        if (version === undefined) {
+                            version = service.buffer[organizeUri][service.vie.namespaces.uri(Voc.belongsToVersion)];
+                        }
                         // end map
 
                         if( entity.isNew() )
@@ -774,6 +781,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             return;
                         }
                         var version = service.buffer[organizeUri]['belongsToVersion'];
+                        // XXX This deals with case of newly added version
+                        // For some reason NAMESPACE URI is used instead of PARAMETER
+                        if (version === undefined) {
+                            version = service.buffer[organizeUri][service.vie.namespaces.uri(Voc.belongsToVersion)];
+                        }
                         // end map
                         //
                         var resourceUri = entity.get(Voc.hasResource);
