@@ -433,7 +433,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 object = object['learnEpTimelineState'];
                                 //var vieEntity = new service.vie.Entity(service.fixForVIE({
                                 var entity = {};
-                                entity[VIE.prototype.Entity.prototype.idAttribute] = object.learnEpTimelineState;
+                                entity[VIE.prototype.Entity.prototype.idAttribute] = object.id;
                                 entity['@type'] = Voc.TIMELINE;
                                 entity[Voc.belongsToUser] = service.user;
                                 entity[Voc.timeAttr]= Voc.creationTime;
@@ -488,8 +488,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     fixEntity.ry = item['yR'];
                                     fixEntity.cx = item['xC'];
                                     fixEntity.cy = item['yC'];
-                                    fixEntity.learnEpCircle = item['learnEpCircle'];
-                                    fixEntity = service.fixForVIE(fixEntity, 'learnEpCircle');
+                                    fixEntity.id = item['id'];
+                                    fixEntity = service.fixForVIE(fixEntity, 'id');
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
                                     //var vieEntity = new service.vie.Entity(fixEntity);
                                     fixEntity['@type'] = type.id;
@@ -525,7 +525,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 var key, idAttr;
                                 _.each(object['learnEpVersion']['entities'], function(item){
                                     var fixEntity = {};
-                                    fixEntity = service.fixForVIE(item, 'learnEpEntity');
+                                    fixEntity = service.fixForVIE(item, 'id');
                                     fixEntity[Voc.hasResource] = item['entity'];
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
                                     //var vieEntity = new service.vie.Entity(fixEntity);
