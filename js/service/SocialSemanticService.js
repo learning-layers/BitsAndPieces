@@ -869,7 +869,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     });
                 } else
                     savable.resolve(true);
-            } else if ( entity.isof(Voc.ENTITY )) {
+            } else if ( entity.isof(Voc.ENTITY) || entity.isof(Voc.FILE) ) {
                 if( savable.options.tag ) {
                     this.onUrisReady(
                         this.user,
@@ -958,7 +958,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             uriUri
                         );
                 });
-            } else if ( entity.isof(Voc.ENTITY )) {
+            } else if ( entity.isof(Voc.ENTITY) || entity.isof(Voc.FILE) ) {
                 if( removable.options.tag ) {
                     this.onUrisReady(
                         this.user,

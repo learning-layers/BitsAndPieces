@@ -12,7 +12,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
      * Filters entities from added entities to vie.entities
      */
     m.filter= function(model, collection, options) {
-        if(model.isof(Voc.ENTITY)){
+        if(model.isof(Voc.ENTITY) || model.isof(Voc.FILE)){
             this.checkIntegrity(model, options);
             if ( model.has(Voc.author) ) {
                 this.initUser(model);

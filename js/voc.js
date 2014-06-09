@@ -8,6 +8,7 @@ define([], {
     USER: "sss:user",
     ORGAENTITY: "sss:learnEpEntity",
     ENTITY: "sss:entity",
+    FILE: "sss:file",
     CIRCLE: "sss:learnEpCircle",
     WIDGET: "sss:Widget",
     BROWSING_WIDGET: "sss:BrowsingWidget",
