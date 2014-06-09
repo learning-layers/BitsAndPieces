@@ -4,7 +4,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         events: {
             'slidechange .slider' : 'setImportance',
             'keypress .tag-search input' : 'updateOnEnter', 
-            'click .deleteTag' : 'deleteTag'
+            'click .deleteTag' : 'deleteTag',
+            'click .deadline .clearDatepicker' : 'clearDatepicker'
         },
         LOG: Logger.get('BitToolbarView'),
         initialize: function() {
@@ -90,6 +91,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 'predefined' : [],
                 'importance' : this.model.get(Voc.importance)
             }};
+        },
+        clearDatepicker: function(e) {
+            e.preventDefault();
+            this.$el.find('.deadline input.datepicker').val('');
         }
     });
 });

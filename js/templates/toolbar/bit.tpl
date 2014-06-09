@@ -55,12 +55,13 @@
 
     <div class="deadline">
         <label>Deadline to work with:</label>
-        <input type="text" value="" class="datepicker" placeholder="--/--/--" />
+        <input type="text" value="" class="datepicker" placeholder="Select a date" disabled="disabled" />
+        <a href="#" class="clearDatepicker">[X]</a>
     </div>
 
     <div>
         Annotations:
-        <textarea></textarea>
-        <input type="button" value="Add new" />
+        <textarea disabled="disabled"></textarea>
+        <input type="button" value="Add new" disabled="disabled" />
     </div>
 </div>
