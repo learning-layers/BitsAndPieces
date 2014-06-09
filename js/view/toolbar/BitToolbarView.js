@@ -79,14 +79,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             var author = this.model.get(Voc.author);
             if( author && author.isEntity ) {
                 author = author.get(Voc.label);
-            } else {
-                author = '';
-                // XXX This fetches an entity if the author is not set
-                // Mostly used in case of entities coming from search
-                // Should probably be deal with elsewhere
-                // NB! tagAdd is called for every tag added to a model
-                // Need to deal with that somehow
-                this.model.fetch();
             }
             return {'entity' : {
                 'label' : this.model.get(Voc.label),

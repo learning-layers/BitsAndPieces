@@ -71,6 +71,14 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         }).using('sss').execute().success(function(entities){
             that.LOG.debug('search entities', entities);
             entities = that.vie.entities.addOrUpdate(entities);
+            _.each(entities, function(entity) {
+                // XXX This is quite a bad check, in case the search results will
+                // change in future. Need a better check to determine entity
+                // being fully loaded.
+                if ( !entity.has(Voc.author) ) {
+                    entity.fetch();
+                }
+            });
             callback(entities);
         });
     }

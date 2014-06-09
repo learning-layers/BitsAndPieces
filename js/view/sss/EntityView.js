@@ -47,6 +47,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             'sss:disc' : 'img/sss/discuss.png',
             'sss:discEntry' : 'img/sss/discuss.png',
             'sss:file' : 'img/sss/document.png',
+            'sss:filePdf' : 'img/sss/entityFilePdf.png',
+            'sss:filePng' : 'img/sss/entityImageJpg.png',
+            'sss:fileDoc' : 'img/sss/entityFileDoc.png',
             'sss:rating' : 'img/sss/rate.png',
             'sss:tag' : 'img/evernote/tag.png',
             //'sss:userEvent' : 'img/sss/userEvent.png',
@@ -203,17 +206,34 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
 
         },
         getIcon: function(type) {
+            var name,
+                mimeType;
             // TODO: make clear use of URIs
             this.LOG.debug('model', _.clone(this.model.attributes));
             if( !type ) type = this.model.get('@type');
             this.LOG.debug('type', type);
             if( !type ) return this.icons['unknown'];
-            var name = this.model.vie.namespaces.curie(type.id);
+            name = this.model.vie.namespaces.curie(type.id);
             this.LOG.debug('name', name);
             if( name === 'user' ) {
                 name = this.model.vie.namespaces.curie(this.model.getSubject());
                 if( !this.icons[name]) name = 'user';
             }
+
+            if ( 'sss:file' === name ) {
+                mimeType  = this.model.get(Voc.hasMimeType);
+                if ( mimeType ) {
+                    switch( mimeType ) {
+                        case 'application/pdf':
+                            name = 'sss:filePdf';
+                            break;
+                        case 'image/png':
+                            name = 'sss:filePng';
+                            break;
+                    }
+                }
+            }
+
             if( !this.icons[name]) return this.icons['unknown'];
             return this.icons[name];
         }

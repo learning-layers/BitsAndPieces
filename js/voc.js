@@ -50,5 +50,6 @@ define([], {
     author: 'sss:author',
     hasTag : 'sss:tags',
     importance : 'sss:importance',
-    isUsed : 'sss:isUsed'
+    isUsed : 'sss:isUsed',
+    hasMimeType : 'sss:mimeType'
 });
