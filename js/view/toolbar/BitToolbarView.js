@@ -84,7 +84,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return {'entity' : {
                 'label' : this.model.get(Voc.label),
                 'author' : author,
-                'creationTime' : this.model.get(Voc.creationTime),
+                'creationTime' : $.datepicker.formatDate('dd.mm.yy', new Date(this.model.get(Voc.creationTime))),
                 'views' : '',
                 'edits' : '',
                 'tags' : this.getBitTags(),
