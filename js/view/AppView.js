@@ -1,4 +1,4 @@
-define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
+define(['logger', 'tracker', 'backbone', 'jquery', 'voc','UserAuth',
         'data/timeline/TimelineData', 
         'data/organize/OrganizeData',
         'data/episode/UserData',
@@ -7,11 +7,12 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
         'view/WidgetView',
         'view/episode/EpisodeManagerView',
         'view/toolbar/ToolbarView'],
-    function(Logger, tracker, Backbone, $, Voc, userParams, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView){
+    function(Logger, tracker, Backbone, $, Voc, UserAuth, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {
-                'bnp:clickEntity' : 'clickEntity'
+                'bnp:clickEntity' : 'clickEntity',
+                'click #logout' : 'logOut'
             },
             initialize: function() {
                 this.vie = this.options.vie;
@@ -44,6 +45,8 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
                 }
             },
             render: function() {
+                var logout = $('<a href="#" id="logout">Logout</a>');
+                this.$el.append(logout);
                 var episodes = $('<div id="myEpisodes1"></div>');
                 this.widgetFrame = $('<div id="myWidgets"></div>');
                 this.$el.append( episodes );
@@ -139,5 +142,11 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
             clickEntity: function(e) {
                 this.toolbarView.showBit(e.entity);
             },
+            logOut: function(e) {
+                e.preventDefault();
+                if (UserAuth.logout()) {
+                    document.location.reload();
+                }
+            }
         });
 });

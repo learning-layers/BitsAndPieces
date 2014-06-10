@@ -1,8 +1,9 @@
 define(['vie', 'logger', 'tracker', 'userParams', 'service/SocialSemanticService', 'extender', 
         'data/AppData',
-        'view/AppView', 'voc'],
+        'view/AppView', 'view/LoginFormView', 'voc',
+        'jquery-cookie'],
 function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
-        AppData, AppView, Voc){
+        AppData, AppView, LoginFormView, Voc){
     VIE.Util.useRealUri = true;
     Logger.useDefaults();
     var AppLog = Logger.get('App');
@@ -35,16 +36,21 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('BitToolbarView').setLevel(Logger.OFF);
     Logger.get('EntityData').setLevel(Logger.OFF);
     Logger.get('OrgaEntityData').setLevel(Logger.OFF);
+    Logger.get('UserAuth').setLevel(Logger.OFF);
 
-    var username = window.location.search.substring(1);
-    if( !username) return alert('no username given!');
+    if ( !userParams.isAuthenticated) {
+        var loginView = new LoginFormView({
+            'el' : 'body'
+        });
+        loginView.render();
+        return null;
+    }
 
     var v = new VIE();
 
     AppLog.debug('vie', v);
 
     var namespace = "http://eval.bp/" ;
-    userParams.init(username, "eval", "bp");
 
     var sss = new SocialSemanticService(_.extend({
         'namespaces': {

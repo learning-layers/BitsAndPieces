@@ -266,3 +266,12 @@ div#tabs .results .resultSet label.withlabel {
     filter: gray; /* IE6-9 */
     -webkit-filter: grayscale(100%); /* Chrome 19+, Safari 6+, Safari 6+ iOS */
 }
+
+form.loginForm {
+	position: absolute;
+	margin: auto;
+	left: 0;
+	right: 0;
+	top: 50%;
+	text-align: center;
+}

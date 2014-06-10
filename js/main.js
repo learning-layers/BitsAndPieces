@@ -14,6 +14,7 @@ var require = (function() {
             'underscore' : '../lib/underscore/underscore-min',
             'jquery' : '../lib/jquery/js/jquery-1.9.1',
             'jquery-ui' : '../lib/jquery/js/jquery-ui-1.10.3.custom.min',
+            'jquery-cookie' : '../lib/jquery-cookie/jquery.cookie',
             'logger' : '../lib/logger',
             'chap-timeline' : '../lib/chap-links-library/timeline',
             'svg' : '../lib/svgjs/svg',
@@ -46,7 +47,10 @@ var require = (function() {
                 'exports': 'links.Timeline'     
             },
             'svg.draggable' : ['svg'],
-            'svg.foreignobject' : ['svg']
+            'svg.foreignobject' : ['svg'],
+            'jquery-cookie' : {
+                'deps' : ['jquery']
+            }
         }
     };
 }());
