@@ -61,7 +61,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 // This is here to make sure that all entities have finished
                 // loading and have some tags associated with them.
                 if ( result.model.get(Voc.hasTag) === undefined) {
-                    console.log("WTF");
                     _.defer(function() {
                         that.displayTagcloud();
                     });
