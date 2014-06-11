@@ -22,7 +22,7 @@ define([], {
     hasEntity: 'sss:hasEntity',
     hasVersion: 'sss:hasVersion',
     hasWidget: 'sss:hasWidget',
-    hasResource : 'sss:resource',
+    hasResource : 'sss:entity',
     hasEpisode : 'sss:hasEpisode',
     timestamp : 'sss:timestamp',
     creationTime : 'sss:creationTime',
