@@ -3,8 +3,7 @@
     <input type="text" value="" placeholder="Enter tag" />
 </div>
 
-<div class="cloud">
-    TAGCLOUD NOT IMPLEMENTED
+<div class="tagcloud">
 </div>
 
 <div class="filter">

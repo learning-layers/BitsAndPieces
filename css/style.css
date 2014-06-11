@@ -275,3 +275,7 @@ form.loginForm {
 	top: 50%;
 	text-align: center;
 }
+
+.tagcloud a {
+	text-decoration: none;
+}
