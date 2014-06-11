@@ -14,6 +14,10 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
     m.filter= function(model, collection, options) {
         if(model.isof(Voc.ORGAENTITY)){
             this.checkIntegrity(model, options);
+            var entity = model.get(Voc.hasResource);
+            if ( entity.isEntity ) {
+                entity.fetch();
+            }
         }
     };
     return m;
