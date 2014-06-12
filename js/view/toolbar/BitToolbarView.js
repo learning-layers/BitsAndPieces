@@ -52,10 +52,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             var newTags = _.clone(tags) || [];
             newTags.push(tag);
             var that = this;
+            // Make sure to set user_initiated flag
             this.model.set(Voc.hasTag, newTags, {
                 'error' : function() {
                     that.$el.find(".tag-search input").effect("shake");
-                }
+                },
+                'user_initiated' : true
             });
         },
         getBitTags: function() {
@@ -68,7 +70,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.LOG.debug('deleted tag', $(e.currentTarget).data("tag"));
             var newTags =_.without(tags, $(e.currentTarget).data("tag")+"");
             this.LOG.debug("array the same", tags === newTags );
-            this.model.set(Voc.hasTag, newTags );
+            // Make sure to set user_initiated flag
+            this.model.set(Voc.hasTag, newTags, {
+                'user_initiated' : true
+            });
         },
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {

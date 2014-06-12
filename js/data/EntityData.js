@@ -28,6 +28,9 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         }
     };
     m.changedTags = function(model, set, options) {
+        options = options || {};
+        // Only change in case user_initiated flag is set
+        if ( options.user_initiated !== true ) return;
         set = set || [];
         if( !_.isArray(set)) set = [set];
         var previous = model.previous(Voc.hasTag) || [];
