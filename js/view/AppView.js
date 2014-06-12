@@ -140,7 +140,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','UserAuth',
 
             },
             clickEntity: function(e) {
-                this.toolbarView.showBit(e.entity);
+                this.toolbarView.setBit(e.entity);
             },
             logOut: function(e) {
                 e.preventDefault();
