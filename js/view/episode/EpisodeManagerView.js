@@ -135,12 +135,16 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             var version = this.model.get(Voc.currentVersion);
             this.LOG.debug('create new episode from version', version);
             tracker.info(tracker.CREATENEWEPISODEFROMVERSION, version.getSubject());
-            EpisodeData.newEpisode(this.model, version );
+            var newEpisode = EpisodeData.newEpisode(this.model, version );
+            var newVersion = newEpisode.get(Voc.hasVersion);
+            this.model.save(Voc.currentVersion, newVersion.getSubject());
         },
         createBlank: function() {
             this.LOG.debug('create new episode from scratch');
             tracker.info(tracker.CREATENEWEPISODEFROMSCRATCH, tracker.NULL);
-            EpisodeData.newEpisode(this.model);
+            var newEpisode = EpisodeData.newEpisode(this.model);
+            var newVersion = newEpisode.get(Voc.hasVersion);
+            this.model.save(Voc.currentVersion, newVersion.getSubject());
         }
 
     });
