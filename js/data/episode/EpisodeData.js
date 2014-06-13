@@ -16,17 +16,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
             this.checkIntegrity(model, options);
             if( !model.isNew() ) {
                 this.fetchVersions(model);
-            } else {
-                this.LOG.debug("new episode added", model);
-                this.LOG.debug("hasVersion", model.get(Voc.hasVersion));
-                if(model.has(Voc.hasVersion)) {
-                    this.LOG.debug("hasVersion", model.get(Voc.hasVersion));
-                    if( _.isEmpty(model.get(Voc.hasVersion))) {
-                        this.LOG.debug("hasVersion isEmpty");
-                        model.set(Voc.hasVersion, VersionData.newVersion(model).getSubject());
-                    }
-                }
-            }
+            } 
         }
     };
     m.fetchVersions= function(episode) {
@@ -55,10 +45,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
         newEpisode.set(Voc.belongsToUser, user.getSubject());
         newEpisode.set('@type', Voc.EPISODE);
         this.vie.entities.addOrUpdate(newEpisode);
-        var newVersion = false;
-        if( fromVersion ) {
-            newVersion = VersionData.newVersion(newEpisode, fromVersion).getSubject();
-        }
+        newVersion = VersionData.newVersion(newEpisode, fromVersion).getSubject();
         newEpisode.set(Voc.hasVersion, newVersion);
 
         newEpisode.save();

@@ -14,6 +14,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.views = {};
             this.LOG.debug('options', this.options);
             this.vie = this.options.vie;
+            // TODO "createFromHere" button should only be visible if there are versions and a version is selected
             this.$el.html('<img src="css/img/menu_small.png" id="toggleEpisodes"/><h1 contenteditable="true"></h1>' + 
                     '<div id="episodes"><button id="createNewVersion">New Version</button><button id="createBlank">Create new Episode from scratch</button><button id="createFromHere">Create new Episode from here</button><ul></ul></div>');
 
@@ -137,9 +138,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             EpisodeData.newEpisode(this.model, version );
         },
         createBlank: function() {
-            var version = this.model.get(Voc.currentVersion);
             this.LOG.debug('create new episode from scratch');
-            tracker.info(tracker.CREATENEWEPISODEFROMSCRATCH, version.getSubject());
+            tracker.info(tracker.CREATENEWEPISODEFROMSCRATCH, tracker.NULL);
             EpisodeData.newEpisode(this.model);
         }
 

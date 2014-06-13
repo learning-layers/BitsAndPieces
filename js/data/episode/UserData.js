@@ -19,30 +19,10 @@ define(['logger', 'voc', 'data/Data', 'data/episode/EpisodeData'], function(Logg
             this.checkIntegrity(user, options);
             if( !user.isNew() ) {
                 this.fetchEpisodes(user);
-            } else {
-                if( user.has(Voc.hasEpisode)) {
-                    var eps = user.get(Voc.hasEpisode)||[];
-                    if( !_.isArray(eps) ) eps = [eps];
-                    this.initEpisodes(user, eps);
-                }
-            }
-            user.on('change:'+this.vie.namespaces.uri(Voc.hasEpisode),
-                this.initEpisodes, this);
-
+            } 
         }
     };
 
-    /**
-     * Check if the user hasEpisode and create a new one if not.
-     * Otherwise make sure that the episodes are loaded.
-     */
-    m.initEpisodes= function(user, episodes, options) {
-        this.LOG.debug("initEpisodes");
-        if( _.isEmpty(episodes) ) {
-            user.set(Voc.hasEpisode, 
-                EpisodeData.newEpisode(user).getSubject());
-        }
-    };
     /**
      * Fetch the episodes belonging to the user.
      * @params VIE.Entity user
