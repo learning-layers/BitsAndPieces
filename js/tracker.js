@@ -3,7 +3,6 @@ define(['userParams', 'logger', 'sss.conns'],
         tracker = Logger.get('Tracker');
         tracker.setLevel(Logger.INFO);
         tracker.setHandler(function(messages, context){
-            // XXX Need to fix and then enable user events
             new SSUserEventAdd(
                     function(object){
                         AppLog.info('USEREVENT ADDED', object);

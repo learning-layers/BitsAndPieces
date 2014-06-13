@@ -21,7 +21,7 @@ define(['view/sss/EntityView', 'logger', 'underscore', 'voc'], function(EntityVi
                     "<div class=\"label\">"+this.model.get(Voc.label)+"</div>");
 
                     //"</div>");
-            // XXX Prevent user dragging and dropping
+            // Prevent user dragging and dropping
             //this.draggable();
             return this;
         },
@@ -31,7 +31,7 @@ define(['view/sss/EntityView', 'logger', 'underscore', 'voc'], function(EntityVi
           return this.icons[this.model.vie.namespaces.curie(this.model.getSubject())];
         },
         _click: function(e) {
-            // XXX This currently prevents user from using entity click event
+            // This currently prevents user from using entity click event
             return false;
         }
 

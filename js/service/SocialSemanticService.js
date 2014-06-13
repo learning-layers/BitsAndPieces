@@ -976,8 +976,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 userUri,
                                 service.userKey,
                                 entityUri,
-                                removable.options.tag,
-                                'privateSpace' // XXX need to determine space!
+                                removable.options.tag
                             );
                         }
                     );
