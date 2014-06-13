@@ -17,7 +17,6 @@ define(['logger', 'voc', 'data/Data', 'data/episode/EpisodeData'], function(Logg
         if( user.isof(Voc.USER) ) {
             this.LOG.debug('user added', user);
             this.checkIntegrity(user, options);
-            user.listenTo(this.vie.entities, 'add', this.initCurrentVersion);
             if( !user.isNew() ) {
                 this.fetchEpisodes(user);
             } else {
@@ -32,18 +31,7 @@ define(['logger', 'voc', 'data/Data', 'data/episode/EpisodeData'], function(Logg
 
         }
     };
-    /**
-     * To be called in the context of a user entity.
-     * If user has no currentVersion set, use the given one.
-     */
-    m.initCurrentVersion= function(version) {
-        if( !version.isof(Voc.VERSION)) return;
 
-        if( !this.get(Voc.currentVersion) ) {
-            this.save(Voc.currentVersion, version.getSubject());
-        }
-        this.stopListening(this.vie.entities, 'add', require('data/episode/UserData').initCurrentVersion);
-    };
     /**
      * Check if the user hasEpisode and create a new one if not.
      * Otherwise make sure that the episodes are loaded.
