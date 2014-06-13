@@ -35,7 +35,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.LOG.debug('changeEntitySet', set);  
             set = set || [];
             if( !_.isArray(set)) set = [set];
-            var previous = this.model.previous(Voc.hasEntity) || [];
+            var previous = Backbone.Model.prototype.previous.call(this.model, Voc.hasEntity) || [];
             if( !_.isArray(previous)) previous = [previous];
             this.LOG.debug('previous', previous);  
             var that = this;
