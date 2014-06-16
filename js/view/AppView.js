@@ -16,6 +16,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','UserAuth',
             },
             initialize: function() {
                 this.vie = this.options.vie;
+                this.widgetViews = [];
 
                 this.vie.entities.on('add', this.filter, this );
                 var that = this;
@@ -85,6 +86,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','UserAuth',
                     versionElem.append(widgetView.$el);
                 }
                 widgetView.render();
+                this.widgetViews.push(widgetView);
             },
             draw: function(version) {
                 if( !version ) return;
@@ -139,8 +141,25 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','UserAuth',
                 this.widgetFrame.prepend(element);
 
             },
+            browseCurrentBrowseWidget: function(entity) {
+                var version = this.model.get(Voc.currentVersion);
+
+                _.each(this.widgetViews, function(widget) {
+                    if ( widget.isBrowse() && widget.model.get(Voc.belongsToVersion) === version ) {
+                        // Call browseTo on current widget view attribute
+                        // filled with real widget view
+                        console.log('WTF', widget);
+                        widget.view.browseTo(entity);
+                    }
+                });
+            },
             clickEntity: function(e) {
                 this.toolbarView.setBit(e.entity);
+
+                if ( e.viewContext && e.viewContext === this.toolbarView ) {
+                    AppLog.debug("clickEntity called within ToolbarView context");
+                    this.browseCurrentBrowseWidget(e.entity);
+                }
             },
             logOut: function(e) {
                 e.preventDefault();

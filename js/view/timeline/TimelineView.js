@@ -218,6 +218,18 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         },
         getSelectedItem: function() {
             return this.timeline.getSelection()[0].row;
+        },
+        browseTo: function(entity) {
+            this.LOG.debug("browseTo called with entity", entity);
+            var diff = this.model.get(Voc.end) - this.model.get(Voc.start),
+                vals = {},
+                start = new Date(entity.get(Voc.creationTime) - diff / 2),
+                end = new Date(entity.get(Voc.creationTime) + diff / 2);
+
+            vals[Voc.start] = start;
+            vals[Voc.end] = end;
+            this.model.save(vals, { 'by' : this });
+            this.timeline.setVisibleChartRange(start, end, true);
         }
 
     });

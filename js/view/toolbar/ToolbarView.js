@@ -10,7 +10,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'episode' : 3
         },
         events: {
-            'click .toolbar-handle': 'showHide'
+            'click .toolbar-handle': 'showHide',
+            'bnp:clickEntity' : 'clickEntity'
         },
         LOG: Logger.get('ToolbarView'),
         initialize: function() {
@@ -53,5 +54,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         getTabId: function(key) {
             return '#tab-' + this.tabMap[key];
         },
+        clickEntity: function(e) {
+            // Setting viewContext to event
+            e['viewContext'] = this;
+        }
     });
 });
