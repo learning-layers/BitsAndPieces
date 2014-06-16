@@ -36,7 +36,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             if( this.currentEpisode.get(Voc.label) == label) return;
             this.LOG.debug('changeLabel', label);
             tracker.info(tracker.RENAMEEPISODE, this.model.getSubject(), label);
-            this.currentEpisode.save({'label': label});
+            this.currentEpisode.save(Voc.label, label);
         },
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {
