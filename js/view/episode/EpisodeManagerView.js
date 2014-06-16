@@ -18,8 +18,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.$el.html('<img src="css/img/menu_small.png" id="toggleEpisodes"/><h1 contenteditable="true"></h1>' + 
                     '<div id="episodes"><button id="createNewVersion">New Version</button><button id="createBlank">Create new Episode from scratch</button><button id="createFromHere">Create new Episode from here</button><ul></ul></div>');
 
-            this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), 
-                this.render, this);
+            this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), this.episodeVersionChanged, this);
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEpisode), this.changeEpisodeSet, this);
             var view = this;
         },
@@ -145,6 +144,15 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             var newEpisode = EpisodeData.newEpisode(this.model);
             var newVersion = newEpisode.get(Voc.hasVersion);
             this.model.save(Voc.currentVersion, newVersion.getSubject());
+        },
+        episodeVersionChanged: function() {
+            this.render();
+
+            var ev = $.Event('bnp:episodeVersionChanged', {
+                entity: this.model.get(Voc.currentVersion),
+                viewContext: this
+            });
+            this.$el.trigger(ev);
         }
 
     });

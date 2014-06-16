@@ -12,6 +12,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','UserAuth',
         return Backbone.View.extend({
             events : {
                 'bnp:clickEntity' : 'clickEntity',
+                'bnp:episodeVersionChanged' : 'episodeVersionChanged',
                 'click #logout' : 'logOut'
             },
             initialize: function() {
@@ -148,7 +149,6 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','UserAuth',
                     if ( widget.isBrowse() && widget.model.get(Voc.belongsToVersion) === version ) {
                         // Call browseTo on current widget view attribute
                         // filled with real widget view
-                        console.log('WTF', widget);
                         widget.view.browseTo(entity);
                     }
                 });
@@ -165,6 +165,12 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','UserAuth',
                 e.preventDefault();
                 if (UserAuth.logout()) {
                     document.location.reload();
+                }
+            },
+            episodeVersionChanged: function(e) {
+                if ( e.viewContext && e.viewContext === this.episodeMgrView ) {
+                    AppLog.debug('episodeVersionChanged triggered by EpisodeManagerView', e);
+                    this.toolbarView.setEpisodeVersion(e.entity);
                 }
             }
         });

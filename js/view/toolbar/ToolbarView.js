@@ -1,6 +1,6 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc', 
-        'view/toolbar/BitToolbarView', 'view/toolbar/SearchToolbarView',
-        'text!templates/toolbar/toolbar.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitToolbarView, SearchToolbarView, ToolbarTemplate){
+        'view/toolbar/BitToolbarView', 'view/toolbar/SearchToolbarView', 'view/toolbar/EpisodeToolbarView',
+        'text!templates/toolbar/toolbar.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitToolbarView, SearchToolbarView, EpisodeToolbarView, ToolbarTemplate){
     return Backbone.View.extend({
         subViews: {},
         tabMap : {
@@ -21,6 +21,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         setBit: function(entity) {
             this.subViews['bit'].setEntity(entity);
         },
+        setEpisodeVersion: function(entity) {
+            this.subViews['episode'].setEntity(entity);
+        },
         render: function() {
             var tabs = _.template(ToolbarTemplate, {});
             this.$el.html(tabs);
@@ -35,6 +38,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 el : this.getTabId('bit')
             });
             this.subViews['bit'].render();
+
+            this.subViews['episode'] = new EpisodeToolbarView({
+                el : this.getTabId('episode')
+            });
+            this.subViews['episode'].render();
         },
         showHide: function(e) {
             var toolbar = this;
