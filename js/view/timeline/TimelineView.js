@@ -19,12 +19,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 throw Error("no timeline configuration provided");
             }
 
-            //this.model.timelineCollection.on('add', this.addEntity, this);
-            //this.model.timelineCollection.on('change', this.changeEntity, this);
-            //this.model.timelineCollection.on('remove', this.removeEntity, this);
-            //this.model.timelineCollection.on('reset', this.refreshEntities, this);
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.start), this.rearrangeVisibleArea, this);
-            this.model.on('change:' + this.model.vie.namespaces.uri(Voc.end), this.rearrangeVisibleArea, this);
+            // TODO: resolve this hack: only fire on start change to avoid double execution
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEntity), this.changeEntitySet, this);
 
             this.LOG.debug('TimelineView initialized');
@@ -52,20 +48,16 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 that.removeEntity(a);
             });
         },
-        fetchRange: function(startTime, endTime){
-            // Fetch entities currently visible
-            TimelineData.fetchRange( this.model, startTime, endTime );
-        },
         rearrangeVisibleArea: function(model, collection, options ) {
             this.LOG.debug("rearrangeVisibleArea", options && options.by);
             if (options.by && options.by === this ) return;
 
-            var startTime = this.model.get(Voc.start); 
-            var endTime = this.model.get(Voc.end);
+            var startTime = new Date(this.model.get(Voc.start)); 
+            var endTime = new Date(this.model.get(Voc.end));
             if( !startTime || !endTime )  return;
-
-            TimelineData.fetchRange(this.model, startTime, endTime );
-            //this.timeline.setVisibleChartRange( startTime, endTime);
+            this.LOG.debug('startTime', startTime);
+            this.LOG.debug('endTime', endTime);
+            this.timeline.setVisibleChartRange( startTime, endTime);
         },
         addEntity: function(entity, collection, options) {
             this.LOG.debug('addEntity');
@@ -79,19 +71,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 'start' : new Date(time),
                 'content' : entityEl.get(0)
             };
-            this.LOG.debug('data', data);
-            this.LOG.debug('entity.$el', entityEl);
-            if( this.groupBy ) {
-                if( this.GroupByEntityView )  {
-                    var groupByView = this.addGroupByEntityView(entity.get(this.groupBy));
-                    data['group'] = groupByView.render().$el.html();
-                } else 
-                    data['group'] = entity.get(this.groupBy);
-            }
-            this.LOG.debug("data['group']", data['group']);
             this.timeline.addItem(data);
 
-            this.LOG.debug("change:", entity.vie.namespaces.uri(this.timeAttr));
             this.listenTo(entity, 'change:' + entity.vie.namespaces.uri(this.timeAttr), this.changeEntity);
             return true;
             
@@ -99,10 +80,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         changeEntity: function(entity, options ) {
             this.LOG.debug("coll changeEntity");
             var id = this.getEntityViewIndex(entity);
-            this.LOG.debug("id = ", id);
-            //if( this.datesEqual(
-                  //this.timeline.getItem(id), this.entityViews[id].model) ) return;
-            this.LOG.debug('changed time', this.timeAttr, entity.get(this.timeAttr));
             this.timeline.changeItem(id, {
                 'start': new Date(entity.get(this.timeAttr)),
                 'content' : this.entityViews[id].$el.get(0)
@@ -115,9 +92,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 this.entityViews.splice(id, 1);
             }
         },
-        refreshEntities: function(collection, options) {
-
-        },
         render: function() {
             if( this.timeline ) {
                 this.timeline.redraw();
@@ -126,6 +100,19 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             this.$el.empty();
 
+            this.renderUser();
+            this.renderTimeline();
+
+            var view = this;
+            // add entities which are already contained
+            var entities = this.model.get(Voc.hasEntity) || [];
+            if( !_.isArray(entities)) entities = [entities];
+            _.each(entities, function(entity) {
+                view.addEntity(entity);
+            });
+            return this;
+        },
+        renderUser: function () {
             if( this.user && this.user.isEntity) {
                 var par = $('<div class="user-container">');
                 this.userDOM = $('<div class="user">');
@@ -142,6 +129,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             this.LOG.debug('this.user of timeline', this.user.getSubject());
 
+        },
+        renderTimeline: function() {
             // Instantiate our timeline object.
             this.timelineDOM = document.createElement('div');
             this.timelineDOM.setAttribute('class', 'timeline');
@@ -162,11 +151,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.LOG.debug('timeline', this.timeline);
 
             var view = this;
-            var entities = this.model.get(Voc.hasEntity) || [];
-            if( !_.isArray(entities)) entities = [entities];
-            _.each(entities, function(entity) {
-                view.addEntity(entity);
-            });
             // bind timeline's internal events to model
             links.events.addListener(this.timeline, 'rangechanged', function(range){
                 view.LOG.debug('caught rangechanged: '+ range.start + ' - ' + range.end);
@@ -175,9 +159,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 vals[Voc.start] = range.start;
                 vals[Voc.end] = range.end;
                 view.model.save(vals, { 'by' : view });
-                //view.fetchRange(range.start,range.end);
             });
-            return this;
         },
         getEntityViewIndex: function (entity) {
             for( var i = 0; i < this.entityViews.length; i++ ) {
