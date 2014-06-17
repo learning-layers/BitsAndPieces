@@ -47,6 +47,12 @@
     <div class="importance">
         <label>Importance:</label>
         <div class="slider"></div>
+        <div class="indicators">
+            <img src="img/sss/indicator/importance-low.png"  class="importanceLow" alt="importance-low" />
+            <img src="img/sss/indicator/importance-medium.png" class="importanceMedium" alt="importance-medium" />
+            <img src="img/sss/indicator/importance-high.png" class="importanceHigh" alt="importance-high" />
+            <img src="img/sss/indicator/importance-favourite.png" class="importanceFavourite" alt="importance-favourite" />
+        </div>
     </div>
 
     <div>

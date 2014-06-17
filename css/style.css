@@ -261,6 +261,26 @@ div#tabs .results .resultSet label.withlabel {
 	top: 0px;
 }
 
+div#tabs .importance .indicators .importanceLow {
+	position: relative;
+	left: -5px;
+}
+
+div#tabs .importance .indicators .importanceMedium {
+	position: relative;
+	left: 22%;
+}
+
+div#tabs .importance .indicators .importanceHigh {
+	position: relative;
+	left: 46%;
+}
+
+div#tabs .importance .indicators .importanceFavourite {
+	position: relative;
+	left: 70%;
+}
+
 /* Solution from: http://www.karlhorky.com/2012/06/cross-browser-image-grayscale-with-css.html */
 .used img {
     filter: url("data:image/svg+xml;utf8,&lt;svg xmlns=\'http://www.w3.org/2000/svg\'&gt;&lt;filter id=\'grayscale\'&gt;&lt;feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/&gt;&lt;/filter&gt;&lt;/svg&gt;#grayscale"); /* Firefox 10+, Firefox on Android */
