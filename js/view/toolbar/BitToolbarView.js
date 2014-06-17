@@ -5,7 +5,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'slidechange .slider' : 'setImportance',
             'keypress .tag-search input' : 'updateOnEnter', 
             'click .deleteTag' : 'deleteTag',
-            'click .deadline .clearDatepicker' : 'clearDatepicker'
+            'click .deadline .clearDatepicker' : 'clearDatepicker',
+            'keypress .bitTitle span' : 'updateOnEnter',
+            'blur .bitTitle span' : 'changeLabel'
         },
         LOG: Logger.get('BitToolbarView'),
         initialize: function() {
@@ -78,7 +80,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {
                 this.LOG.debug('e', e);
-                this.addTag($(e.currentTarget).val());
+                if ( e.currentTarget.nodeName === 'INPUT' ) {
+                    this.addTag($(e.currentTarget).val());
+                } else if ( e.currentTarget.nodeName === 'SPAN' ) {
+                    $(e.currentTarget).blur();
+                }
             }
         },
         getBitViewData: function() {
@@ -100,6 +106,23 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         clearDatepicker: function(e) {
             e.preventDefault();
             this.$el.find('.deadline input.datepicker').val('');
+        },
+        changeLabel: function(e) {
+            var that = this,
+            currentTarget = $(e.currentTarget),
+            label = currentTarget.text();
+
+            label = label.replace(/(<([^>]+)>)/ig,"");
+            currentTarget.html(label);
+            if( this.model.get(Voc.label) == label) return;
+            this.LOG.debug('changeLabel', label);
+            // Make sure to set user_initiated flag
+            this.model.set(Voc.label, label, {
+                'error' : function() {
+                    that.$el.find('.bitTitle > span').effect("shake");
+                },
+                'user_initiated' : true
+            });
         }
     });
 });

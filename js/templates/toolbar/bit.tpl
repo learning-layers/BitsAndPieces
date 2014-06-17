@@ -1,5 +1,6 @@
-<div>
-    Bit title: <%= entity.label %>
+<div class="bitTitle">
+    Bit title:
+    <span contenteditable="true"><%= entity.label %></span>
 </div>
 
 <div>

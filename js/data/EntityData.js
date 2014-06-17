@@ -19,6 +19,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             } 
             model.on('change:'+this.vie.namespaces.uri(Voc.author), this.initUser, this); 
             model.on('change:'+this.vie.namespaces.uri(Voc.hasTag), this.changedTags, this);
+            model.on('change:'+this.vie.namespaces.uri(Voc.label), this.setLabel, this);
         }
     };
     m.initUser = function(model, value, options) {
@@ -65,6 +66,23 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             });
         });
     },
+    m.setLabel = function(model, label, options) {
+        var that = this;
+        options = options || {};
+        // Only change if user_initiated flag is set to true
+        if ( options.user_initiated !== true ) return;
+        if ( model.previous(Voc.label) === label ) return;
+        this.vie.save({
+            'entity' : model,
+            'label' : label
+        }).to('sss').execute().success(function(s) {
+            that.LOG.debug('success setLabel', s);
+        }).fail(function(f) {
+            if ( options.error ) {
+                options.error();
+            }
+        });
+    };
     m.search = function(tags, callback) {
         var that = this;
         this.vie.analyze({

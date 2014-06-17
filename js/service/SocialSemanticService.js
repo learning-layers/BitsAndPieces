@@ -892,6 +892,26 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             );
                         }
                     );
+                } else if ( savable.options.label) {
+                    this.onUrisReady(
+                        entity.getSubject(),
+                        function(entityUri) {
+                            new SSEntityLabelSet(
+                                function(object) {
+                                    service.LOG.debug('result entity setLabel', object);
+                                    savable.resolve(object);
+                                },
+                                function(object) {
+                                    service.LOG.debug('railed entity setLabel', object);
+                                    savable.reject(entity);
+                                },
+                                service.user,
+                                service.userKey,
+                                entityUri,
+                                savable.options.label
+                            );
+                        }
+                    );
                 }
                 
             } else {
