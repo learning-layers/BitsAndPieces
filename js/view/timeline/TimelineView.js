@@ -1,15 +1,22 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'data/timeline/TimelineData', 'voc'], 
-    function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineData, Voc){
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'data/timeline/TimelineData', 'view/timeline/EntitiesHelper', 'voc'], 
+    function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineData, EntitiesHelper, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('TimelineView'),
         initialize: function() {
             if (!this.model ) {
                 throw Error("no timeline model provided");
             }
-            this.entityViews = [];
-            this.EntityView = this.options.EntityView;
+
             this.timeAttr = this.model.get(Voc.timeAttr);
             if( this.timeAttr.isEntity ) this.timeAttr = this.timeAttr.getSubject();
+
+            this.entitiesHelper = new EntitiesHelper(
+                this.timeAttr,
+                this.options.EntityView, 
+                null, 
+                this.model.vie.namespaces.uri(this.timeAttr)
+            );
+
             this.user = this.model.get(Voc.belongsToUser);
 
             if (!this.options.timeline) {
@@ -59,36 +66,17 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         },
         addEntity: function(entity, collection, options) {
             this.LOG.debug('addEntity');
-            var entityView = this.addEntityView(entity);
-            var time = entity.get(this.timeAttr);
-            if( !time ) {
-                this.LOG.warn("entity " + entity.getSubject() + " has invalid time");
-            }
-            var entityEl = entityView.render().$el;
-            var data = {
-                'start' : new Date(time),
-                'content' : entityEl.get(0)
-            };
-            this.timeline.addItem(data);
-
+            this.entitiesHelper.addEntityView(entity, this.timeAttr);
             this.listenTo(entity, 'change:' + entity.vie.namespaces.uri(this.timeAttr), this.changeEntity);
             return true;
             
         },
         changeEntity: function(entity, options ) {
             this.LOG.debug("coll changeEntity");
-            var id = this.getEntityViewIndex(entity);
-            this.timeline.changeItem(id, {
-                'start': new Date(entity.get(this.timeAttr)),
-                'content' : this.entityViews[id].$el.get(0)
-            });
+            this.entitiesHelper.changeEntityView(entity, this.timeAttr);
         },
         removeEntity: function(entity, collection, options) {
-            var id = this.getEntityViewIndex(entity);
-            if( id !== undefined ) { // if view was already deleted
-                this.timeline.deleteItem(id);
-                this.entityViews.splice(id, 1);
-            }
+            this.entitiesHelper.removeEntityView(entity, this.timeAttr);
         },
         render: function() {
             if( this.timeline ) {
@@ -148,6 +136,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.timeline.deleteItem(0); // remove dummy node
             this.LOG.debug('timeline', this.timeline);
 
+            this.entitiesHelper.setTimeline(this.timeline);
+
             var view = this;
             // bind timeline's internal events to model
             links.events.addListener(this.timeline, 'rangechanged', function(range){
@@ -158,26 +148,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 vals[Voc.end] = range.end;
                 view.model.save(vals, { 'by' : view });
             });
-        },
-        getEntityViewIndex: function (entity) {
-            for( var i = 0; i < this.entityViews.length; i++ ) {
-                if( this.entityViews[i].model.cid == entity.cid )
-                    return i;
-            }
-            return -1;
-        },
-        getEntityView: function(entity)  {
-            return _.find(this.entityViews, function(entityView){
-                return entityView.model.cid == entity.cid;
-            });
-        },
-        addEntityView: function(entity) {
-            var view = this.getEntityView(entity);
-            if( view ) return view;
-
-            view = new this.EntityView({ model: entity });
-            this.entityViews.push( view );
-            return view;
         },
         datesEqual: function(item, entity) {
             return new Date(item.start).toUTCString() == 
