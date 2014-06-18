@@ -7,12 +7,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 throw Error("no timeline model provided");
             }
             this.entityViews = [];
-            this.groupByEntityViews = [];
             this.EntityView = this.options.EntityView;
-            this.GroupByEntityView = this.options.GroupByEntityView;
             this.timeAttr = this.model.get(Voc.timeAttr);
             if( this.timeAttr.isEntity ) this.timeAttr = this.timeAttr.getSubject();
-            this.groupBy = this.options.groupBy;
             this.user = this.model.get(Voc.belongsToUser);
 
             if (!this.options.timeline) {
@@ -174,25 +171,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 return entityView.model.cid == entity.cid;
             });
         },
-        getGroupByEntityView: function(entity)  {
-            return _.find(this.groupByEntityViews, function(entityView){
-                return entityView.model.cid == entity.cid;
-            });
-        },
         addEntityView: function(entity) {
             var view = this.getEntityView(entity);
             if( view ) return view;
 
             view = new this.EntityView({ model: entity });
             this.entityViews.push( view );
-            return view;
-        },
-        addGroupByEntityView: function(entity) {
-            var view = this.getGroupByEntityView(entity);
-            if( view ) return view;
-
-            view = new this.GroupByEntityView({ model: entity });
-            this.groupByEntityViews.push( view );
             return view;
         },
         datesEqual: function(item, entity) {
