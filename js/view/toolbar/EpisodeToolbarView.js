@@ -6,11 +6,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         LOG: Logger.get('EpisodeToolbarView'),
         initialize: function() {
         },
-        setEntity: function(entity) {
-            if( this.model === entity ) return;
+        setEntity: function(version) {
+            this.LOG.debug('Provided version', version);
+            this.LOG.debug('Version episode', version.get(Voc.belongsToEpisode));
+            if( this.model === version ) return;
             //this.stopListening(this.model, 'change', this.render);
-            this.model = entity;
-            if( entity ) {
+            this.model = version;
+            if( version ) {
                 //this.listenTo(this.model, 'change', this.render);
             }
             this.render();
