@@ -16,7 +16,8 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
             this.checkIntegrity(model, options);
             if( !model.isNew() ) {
                 this.fetchVersions(model);
-            } 
+            }
+            model.on('change:'+this.vie.namespaces.uri(Voc.label), this.setLabel, this);
         }
     };
     m.fetchVersions= function(episode) {
@@ -61,6 +62,23 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
         coll.comparator = this.vie.namespaces.uri(Voc.timestamp);
         coll.add(episode.get(Voc.hasVersion));
         return coll;
+    };
+    m.setLabel = function(model, label, options) {
+        var that = this;
+        options = options || {};
+        // Only change if user_initiated flag is set to true
+        if ( options.user_initiated !== true ) return;
+        if ( model.previous(Voc.label) === label ) return;
+        this.vie.save({
+            'entity' : model,
+            'label' : label
+        }).to('sss').execute().success(function(s) {
+            that.LOG.debug('success setLabel', s);
+        }).fail(function(f) {
+            if ( options.error ) {
+                options.error();
+            }
+        });
     };
     return m;
 });

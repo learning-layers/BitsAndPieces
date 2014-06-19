@@ -636,6 +636,9 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             );
                     });
                 } else {
+                    // TODO Will need to write a condition to check
+                    // if label is being changed or something else
+                    // Please see ENTITY case for an example
                     this.onUrisReady(
                         this.user,
                         entity.getSubject(),
