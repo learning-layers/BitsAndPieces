@@ -230,6 +230,10 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
                         case 'image/png':
                             name = 'sss:filePng';
                             break;
+                        case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                        case 'application/msword':
+                            name = 'sss:fileDoc';
+                            break;
                     }
                 }
             }
