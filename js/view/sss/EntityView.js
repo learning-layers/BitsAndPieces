@@ -240,6 +240,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
 
             if( !this.icons[name]) return this.icons['unknown'];
             return this.icons[name];
+        },
+        /**
+         * Returns the average width of an entity.
+         * TODO fix hard-coded width
+         */
+        getWidth: function() {
+            return 40;
         }
     });
 });

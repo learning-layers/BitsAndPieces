@@ -49,14 +49,15 @@ function(Logger){
         },
         removeEntityView: function(entity) {
             var id = this.getEntityViewIndex(entity);
-            if( id === undefined ) return; // if view was already deleted
+            if( id === -1 ) return; // if view was already deleted
 
             this.timeline.deleteItem(id);
             this.entityViews[id].remove();
             this.entityViews.splice(id, 1);
         },
-        setTimeline: function(timeline) {
+        setTimeline: function(timeline, dom) {
             this.timeline = timeline;
+            this.timelineDOM = dom;
         }
     };
     return EntitiesHelper;

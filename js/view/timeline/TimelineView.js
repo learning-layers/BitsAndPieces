@@ -1,4 +1,4 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'data/timeline/TimelineData', 'view/timeline/EntitiesHelper', 'voc'], 
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'data/timeline/TimelineData', 'view/timeline/ClusterHelper', 'voc'], 
     function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineData, EntitiesHelper, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('TimelineView'),
@@ -9,11 +9,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             this.timeAttr = this.model.get(Voc.timeAttr);
             if( this.timeAttr.isEntity ) this.timeAttr = this.timeAttr.getSubject();
+            this.timeAttr = this.model.vie.namespaces.uri(this.timeAttr);
 
             this.entitiesHelper = new EntitiesHelper(
                 this.timeAttr,
                 this.options.EntityView, 
-                null, 
+                this.options.ClusterView, 
                 this.model.vie.namespaces.uri(this.timeAttr)
             );
 
@@ -136,7 +137,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.timeline.deleteItem(0); // remove dummy node
             this.LOG.debug('timeline', this.timeline);
 
-            this.entitiesHelper.setTimeline(this.timeline);
+            this.entitiesHelper.setTimeline(this.timeline, this.timelineDOM);
 
             var view = this;
             // bind timeline's internal events to model

@@ -38,6 +38,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('OrgaEntityData').setLevel(Logger.OFF);
     Logger.get('UserAuth').setLevel(Logger.OFF);
     Logger.get('EpisodeToolbarView').setLevel(Logger.OFF);
+    Logger.get('EntitiesHelper').setLevel(Logger.OFF);
 
     if ( !userParams.isAuthenticated) {
         var loginView = new LoginFormView({
