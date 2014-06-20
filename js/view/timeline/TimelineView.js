@@ -14,8 +14,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.entitiesHelper = new EntitiesHelper(
                 this.timeAttr,
                 this.options.EntityView, 
-                this.options.ClusterView, 
-                this.model.vie.namespaces.uri(this.timeAttr)
+                this.options.ClusterView 
             );
 
             this.user = this.model.get(Voc.belongsToUser);

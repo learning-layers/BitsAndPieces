@@ -1,9 +1,10 @@
 define(['logger', 'backbone', 'jquery', 'voc', 'tracker',
         'view/sss/EntityView', 
+        'view/sss/ClusterView', 
         'view/timeline/TimelineView', 
         'view/organize/OrganizeView',
         'data/organize/OrganizeData'],
-    function(Logger, Backbone, $, Voc, tracker, EntityView, TimelineView, OrganizeView, OrganizeData) {
+    function(Logger, Backbone, $, Voc, tracker, EntityView, ClusterView, TimelineView, OrganizeView, OrganizeData) {
         return Backbone.View.extend({
             LOG: Logger.get("WidgetView"),
             initialize: function() {
@@ -53,6 +54,7 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker',
                 var timelineView = new TimelineView({
                     model : this.model,
                     EntityView: EntityView,
+                    ClusterView: ClusterView,
                     //GroupByEntityView: SSS.UserView,
                     el: timelineBody,
                     //groupBy: this.vie.namespaces.uri('sss:user'),

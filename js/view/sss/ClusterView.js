@@ -14,9 +14,9 @@ define(['underscore', 'backbone', 'logger', 'jquery'], function(_, Backbone, Log
         },
         render: function() {
             var entities = this.model.get('entities');
-            var label = "cluster of " + entities.length + " bits";
+            var label = entities.length + " bits";
             this.$el.html(
-                    "<div class=\"cluster\">"+
+                    "<div class=\"cluster labelable\">"+
                     "<img class=\"icon\" src=\"img/sss/stack.png\" "+ 
                     "alt=\"" + label + "\"/>"+
                     "<label class=\"withlabel\">" +

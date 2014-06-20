@@ -19,9 +19,10 @@ function(_, Backbone, EntitiesHelper){
             this.LOG.debug('addEntityView', entity);
             this.sortedEntities.add(entity); 
 
-            this.clusterByTime(entity);
+            this.clusterByEntity(entity);
         },
-        clusterByTime: function(ec) {
+        clusterByEntity: function(ec) {
+            this.LOG.debug("clusterByEntity, ec = ", ec );
             var s = this.sortedEntities.indexOf(ec, true);
 
             var eacs = [];
@@ -33,17 +34,27 @@ function(_, Backbone, EntitiesHelper){
                 eacs.push(this.sortedEntities.at(s+1));
             }
 
-            this.LOG.debug('clusterByTime, eacs', eacs);
+            this.LOG.debug('clusterByEntity, eacs', eacs);
             var new_eacs = this.recluster(eacs);
-            this.LOG.debug('clusterByTime, new_eacs', new_eacs);
+            this.LOG.debug('clusterByEntity, new_eacs', new_eacs);
+            this.removeAll(eacs);
+            this.addAll(new_eacs);
+        },
+        removeAll: function(eacs) {
             var that = this;
             _.each(eacs, function(e) {
+                that.LOG.debug('remove', e);
                 EntitiesHelper.prototype.removeEntityView.call(that, e);
                 that.sortedEntities.remove(e);
             });
+        },
+        addAll: function(eacs) {
+            var that = this;
             _.each(new_eacs, function(e) {
+                that.LOG.debug('add', e);
                 that.sortedEntities.add(e);
                 if( e.isCluster ) {
+                    that.LOG.debug('isCluster', e);
                     that.addClusterView(e);
                 } else {
                     EntitiesHelper.prototype.addEntityView.call(that, e);
@@ -92,42 +103,34 @@ function(_, Backbone, EntitiesHelper){
 
             this.LOG.debug('removeEntityView', entity);
             if( cluster = this.getCluster(entity) ) {
+                this.LOG.debug('entity is in cluster', cluster);
                 this.setCluster(entity, null);
 
                 var entities = _.without(cluster.get('entities'), entity);
+                this.LOG.debug('entities without entity', entities);
                 if( entities.length == 1 ) {
                     entity = entities[0];
+                    EntitiesHelper.prototype.removeEntityView.call(this, cluster);
+                    this.sortedEntities.remove(cluster);
+                    this.setCluster(entity, null);
+
                 } else {
                     cluster.set('entities', entities);
                     entity = cluster;
                 }
-                this.clusterByTime(entity);
+                this.clusterByEntity(entity);
             } else {
                 EntitiesHelper.prototype.removeEntityView.call(this, entity);
+                this.sortedEntities.remove(entity);
             }
-        },
-        ____getEntityViewIndex: function (entity) {
-            for( var i = 0; i < this.entityViews.length; i++ ) {
-                if( this.entityViews[i].model && this.entityViews[i].model === entity ||
-                    this.entityViews[i].entities && this.entityViews[i].contains(entity))
-                    return i;
-            }
-            return -1;
-        },
-        ____getEntityView: function(entity)  {
-            return _.find(this.entityViews, function(entityView){
-                return entityView.model && entityView.model === entity ||
-                    entityView.entities && entityView.contains(entity);
-            });
         },
         addClusterView: function(cluster) {
-            this.sortedEntities.add(cluster);
             var view = new this.ClusterView({
                 'model': cluster
             });
             this.entityViews.push(view);
             var data = {
-                'start' : new Date(custer.get(this.timeAttr)),
+                'start' : new Date(cluster.get(this.timeAttr)),
                 'content' : view.render().$el.get(0)
             };
             this.LOG.debug('addClusterView', cluster, view, data);
@@ -140,8 +143,9 @@ function(_, Backbone, EntitiesHelper){
             var cluster = new Backbone.Model({
                     'entities' : entities,
                 });
+            var that = this;
             _.each(entities, function(e){
-                this.setCluster(e, cluster);
+                that.setCluster(e, cluster);
             });
             cluster.set(this.timeAttr, avg_time);
             this.LOG.debug('createCluster', cluster);
