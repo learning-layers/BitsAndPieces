@@ -176,6 +176,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
               this.LOG.warn("Organize.CollectionView didn't know of this orgaEntity!");
               return;
             }
+            var that = this;
+            var orgaentities = that.model.vie.entities.filter(function(entity) {
+                return entity.attributes['@type'] === Voc.ORGAENTITY && entity.get(that.model.vie.namespaces.uri(Voc.ENTITY)) === view.resourceView.model;
+            });
+            if ( orgaentities.length <= 1 ) {
+                view.resourceView.model.set(Voc.isUsed, false);
+            }
             tracker.info(tracker.DELETEORGANIZEENTITY, view.model.getSubject(), entity);
             //var eEntity = view.orgaEntityCollection.findWhere({'_organizeId' : entity.id });
             view.model.destroy({'by':this});

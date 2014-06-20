@@ -492,7 +492,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     fixEntity = service.fixForVIE(fixEntity, 'id');
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
                                     //var vieEntity = new service.vie.Entity(fixEntity);
-                                    fixEntity['@type'] = type.id;
+                                    fixEntity['@type'] = Voc.CIRCLE;
                                     entities.push(fixEntity);
                                 });
                                 loadable.resolve(entities);
@@ -529,7 +529,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     fixEntity[Voc.hasResource] = item['entity'];
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
                                     //var vieEntity = new service.vie.Entity(fixEntity);
-                                    fixEntity['@type'] = type.id;
+                                    fixEntity['@type'] = Voc.ORGAENTITY;
                                     entities.push(fixEntity);
                                 });
                                 loadable.resolve(entities);
@@ -701,9 +701,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         }
 
                         var version = service.buffer[organizeUri]['belongsToVersion'];
-                        // XXX THIS IS FIX FOR CASE WHEN NEW EPISODE HAS JUST BEEN CREATED
-                        // FOR SOME REASON THE LOOKS OF IT ARE DIFFERENT AND USE NAMESPACE
-                        // URIS INSTEAD ONE PARAMETER NAMES
+                        // Newly created episode case
+                        // Namespace URI is used instead
                         if (version === undefined) {
                             version = service.buffer[organizeUri][service.vie.namespaces.uri(Voc.belongsToVersion)];
                         }
@@ -784,7 +783,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             return;
                         }
                         var version = service.buffer[organizeUri]['belongsToVersion'];
-                        // XXX This deals with case of newly added version
+                        // This deals with case of newly added version
                         // For some reason NAMESPACE URI is used instead of PARAMETER
                         if (version === undefined) {
                             version = service.buffer[organizeUri][service.vie.namespaces.uri(Voc.belongsToVersion)];
