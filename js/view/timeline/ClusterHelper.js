@@ -40,6 +40,33 @@ function(_, Backbone, EntitiesHelper){
             this.removeAll(eacs);
             this.addAll(new_eacs);
         },
+        clusterByRange: function(start, end) {
+            start = new Date(start);
+            end = new Date(end);
+            var that = this;
+            var eacs = this.sortedEntities.filter(function(ec) {
+                var time = new Date(ec.get(that.timeAttr));
+                return time >= start && time < end;
+            });
+            
+            var entities = [];
+            _.each(eacs, function(ec) {
+                if( ec.isCluster ) {
+                    var es = ec.get('entities')
+                    _.each(es, function(e){
+                        entities.push(e);
+                    });
+                } else {
+                    entities.push(ec);
+                }
+            });
+
+            this.LOG.debug('clusterByRange', 'start', start, 'end', end, 'entities', entities);
+            var new_eacs = this.recluster(entities);
+            this.LOG.debug('clusterByRange, new_eacs', new_eacs);
+            this.removeAll(eacs);
+            this.addAll(new_eacs);
+        },
         removeAll: function(eacs) {
             var that = this;
             _.each(eacs, function(e) {
@@ -50,7 +77,7 @@ function(_, Backbone, EntitiesHelper){
         },
         addAll: function(eacs) {
             var that = this;
-            _.each(new_eacs, function(e) {
+            _.each(eacs, function(e) {
                 that.LOG.debug('add', e);
                 that.sortedEntities.add(e);
                 if( e.isCluster ) {

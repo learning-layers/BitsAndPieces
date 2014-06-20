@@ -142,10 +142,21 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             // bind timeline's internal events to model
             links.events.addListener(this.timeline, 'rangechanged', function(range){
                 view.LOG.debug('caught rangechanged: '+ range.start + ' - ' + range.end);
-                tracker.info(tracker.CHANGETIMELINERANGE, tracker.NULL, range);
+                //tracker.info(tracker.CHANGETIMELINERANGE, tracker.NULL, range);
                 var vals = {};
                 vals[Voc.start] = range.start;
                 vals[Voc.end] = range.end;
+                var prev_start = new Date(view.model.get(Voc.start));
+                var prev_end = new Date(view.model.get(Voc.end));
+                var prev_range = prev_end - prev_start;
+                var start = new Date(range.start);
+                var end = new Date(range.end);
+                var range = end - start;
+
+                if( prev_range != range ) {
+                    view.entitiesHelper.clusterByRange(start, end);
+                }
+
                 view.model.save(vals, { 'by' : view });
             });
         },
