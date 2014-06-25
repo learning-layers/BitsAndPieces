@@ -89,8 +89,11 @@ function(_, Backbone, EntitiesHelper){
             });
         },
         recluster: function(entities) {
-            var c = entities[0];
             var result = [];
+            if( entities.length == 0 ) {
+                return result;
+            }
+            var c = entities[0];
             var secsPerEntity = this.calcSecsPerEntity();
             for( var i = 0; i < entities.length-1; i++ ) {
                 if( this.checkCluster(c, entities[i+1], secsPerEntity) ) {
