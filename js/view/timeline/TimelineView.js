@@ -195,15 +195,21 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.LOG.debug('minamx', minmax);
 
             var range = minmax['max'] - minmax['min'];
+            var start = minmax['min'] - range/this.expandMarginPercent;
+            var end = minmax['max'] + range/this.expandMarginPercent;
 
             var vals = {};
-            vals[Voc.start] = minmax['min'] - range/this.expandMarginPercent;
-            vals[Voc.end] = minmax['max'] + range/this.expandMarginPercent;
+            vals[Voc.start] = new Date(start);
+            vals[Voc.end] = new Date(end);
 
             this.LOG.debug('expand', 'start', vals[Voc.start], 'end', vals[Voc.end]);
 
-            this.model.save(vals, { 'by' : false });
-            //this.timeline.setVisibleChartRange( vals[Voc.start], vals[Voc.end]);
+            this.timeline.setVisibleChartRange( start, end);
+            this.reclusterByRangeChange(
+                    new Date(this.model.get(Voc.start)), new Date(this.model.get(Voc.end)),
+                    vals[Voc.start], vals[Voc.end]
+                );
+            this.model.save(vals, { 'by' : this });
         },
         minmax: function(entities) {
             var min, max;
