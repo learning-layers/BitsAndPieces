@@ -3,7 +3,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
     return Backbone.View.extend({
         events: {
             'keypress input[name="label"]' : 'updateOnEnter',
-            'blur input[name="label"]' : 'changeLabel'
+            'blur input[name="label"]' : 'changeLabel',
+            'change input[name="sharetype"]' : 'shareTypeChanged',
+            'click input[name="share"]' : 'shareEpisode'
         },
         LOG: Logger.get('EpisodeToolbarView'),
         initialize: function() {
@@ -59,6 +61,16 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 },
                 'user_initiated' : true
             });
+        },
+        shareTypeChanged: function(e) {
+            if ( $(e.currentTarget).val() === 'coediting' ) {
+                this.$el.find('input[name="onlyselected"]').prop('disabled', true).prop('checked', false);
+            } else if ( $(e.currentTarget).val() === 'separatecopy' ) {
+                this.$el.find('input[name="onlyselected"]').prop('disabled', false);
+            }
+        },
+        shareEpisode: function(e) {
+            alert("Share episode clicked");
         }
     });
 });
