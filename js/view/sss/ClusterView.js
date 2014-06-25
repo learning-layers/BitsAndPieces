@@ -1,13 +1,11 @@
 define(['underscore', 'backbone', 'logger', 'jquery'], function(_, Backbone, Logger, $) {
     return Backbone.View.extend({
         LOG: Logger.get('ClusterView'),
+        events: {
+            'click' : 'click'
+        },
         initialize: function(options) {
             this.model.on('change:entities', this.render, this);
-        },
-        addEntity: function(entity) {
-            if( _.contains(this.entities,entity) ) return;
-            this.entities.push(entity);
-            this.render();
         },
         contains: function(entity) {
             return _.contains(this.model.get('entities'), entity);
@@ -24,6 +22,13 @@ define(['underscore', 'backbone', 'logger', 'jquery'], function(_, Backbone, Log
                     "</label>"+
                     "</div>");
             return this;
+        },
+        click: function(e) {
+            var ev = $.Event('bnp:clickCluster', {
+                originalEvent : e,
+                cluster : this.model
+            });
+            this.$el.trigger(ev);
         }
     });
 });

@@ -2,6 +2,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
     function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineData, EntitiesHelper, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('TimelineView'),
+        events: {
+            'bnp:clickCluster' : 'expand'
+        },
         initialize: function() {
             if (!this.model ) {
                 throw Error("no timeline model provided");
@@ -10,6 +13,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.timeAttr = this.model.get(Voc.timeAttr);
             if( this.timeAttr.isEntity ) this.timeAttr = this.timeAttr.getSubject();
             this.timeAttr = this.model.vie.namespaces.uri(this.timeAttr);
+            this.expandMarginPercent = 10;
 
             this.entitiesHelper = new EntitiesHelper(
                 this.timeAttr,
@@ -62,7 +66,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             if( !startTime || !endTime )  return;
             this.LOG.debug('startTime', startTime);
             this.LOG.debug('endTime', endTime);
+            var range = this.timeline.getVisibleChartRange();
             this.timeline.setVisibleChartRange( startTime, endTime);
+            this.reclusterByRangeChange( 
+                    new Date(range.start), new Date(range.end),
+                    startTime, endTime);
         },
         addEntity: function(entity, collection, options) {
             this.LOG.debug('addEntity');
@@ -130,7 +138,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 'end' : this.model.get(Voc.end),
                 'min' : new Date('2013-01-01'),
                 'max' : new Date('2015-01-01'),
-                'zoomMin' : 300000, // 5 minute
+                //'zoomMin' : 300000, // 5 minute
                 'zoomMax' : 4320000000 // 5 days
             }));
             this.timeline.deleteItem(0); // remove dummy node
@@ -146,19 +154,20 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 var vals = {};
                 vals[Voc.start] = range.start;
                 vals[Voc.end] = range.end;
-                var prev_start = new Date(view.model.get(Voc.start));
-                var prev_end = new Date(view.model.get(Voc.end));
-                var prev_range = prev_end - prev_start;
-                var start = new Date(range.start);
-                var end = new Date(range.end);
-                var range = end - start;
-
-                if( prev_range != range ) {
-                    view.entitiesHelper.clusterByRange(start, end);
-                }
+                view.reclusterByRangeChange(
+                    new Date(view.model.get(Voc.start)), new Date(view.model.get(Voc.end)), 
+                    new Date(range.start), new Date(range.end));
 
                 view.model.save(vals, { 'by' : view });
             });
+        },
+        reclusterByRangeChange: function(prev_start, prev_end, start, end) {
+            var prev_range = prev_end - prev_start;
+            var range = end - start;
+
+            if( prev_range != range ) {
+                this.entitiesHelper.clusterByRange(start, end);
+            }
         },
         datesEqual: function(item, entity) {
             return new Date(item.start).toUTCString() == 
@@ -178,6 +187,36 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             vals[Voc.end] = end;
             this.model.save(vals, { 'by' : this });
             this.timeline.setVisibleChartRange(start, end, true);
+        },
+        expand: function(e) {
+            this.LOG.debug('clickCluster event', e);
+            var entities = e.cluster.get('entities');
+            var minmax = this.minmax(entities);
+            this.LOG.debug('minamx', minmax);
+
+            var range = minmax['max'] - minmax['min'];
+
+            var vals = {};
+            vals[Voc.start] = minmax['min'] - range/this.expandMarginPercent;
+            vals[Voc.end] = minmax['max'] + range/this.expandMarginPercent;
+
+            this.LOG.debug('expand', 'start', vals[Voc.start], 'end', vals[Voc.end]);
+
+            this.model.save(vals, { 'by' : false });
+            //this.timeline.setVisibleChartRange( vals[Voc.start], vals[Voc.end]);
+        },
+        minmax: function(entities) {
+            var min, max;
+            var that = this;
+            _.each(entities, function(entity) {
+                var time = entity.get(that.timeAttr);
+                if( min === undefined || time < min ) min = time;
+                if( max === undefined || time > min ) max = time;
+            });
+            return {
+                'min' : min,
+                'max' : max
+            };
         }
 
     });
