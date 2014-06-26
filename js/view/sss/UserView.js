@@ -1,4 +1,4 @@
-define(['view/sss/EntityView', 'logger', 'underscore', 'voc'], function(EntityView, Logger, _, Voc){
+define(['view/sss/EntityView', 'logger', 'underscore', 'jquery', 'voc'], function(EntityView, Logger, _, $, Voc){
     return EntityView.extend({
         LOG: Logger.get('UserView'),
         initialize: function() {

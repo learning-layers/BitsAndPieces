@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'data/Data', 'data/episode/EpisodeData'], function(Logger, Voc, Data, EpisodeData){
+define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'], function(Logger, Voc, _, Data, EpisodeData){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize UserData");

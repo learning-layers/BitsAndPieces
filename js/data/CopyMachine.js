@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', ], function(Logger, Voc, _, TimelineData, OrganizeData) {
+define(['logger', 'voc', 'underscore'], function(Logger, Voc, _) {
     return {
         LOG : Logger.get('CopyMachine'),
         copy: function(entity, overrideAttributes) {

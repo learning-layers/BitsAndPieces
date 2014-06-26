@@ -1,4 +1,4 @@
-define(['logger', 'voc'], function(Logger, Voc){
+define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
     return {
         LOG: Logger.get('Data'),
         setIntegrityCheck: function(key, type, foreignKey) {

@@ -1,10 +1,10 @@
-define(['logger', 'backbone', 'jquery', 'voc', 'tracker',
+define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery',
         'view/sss/EntityView', 
         'view/sss/ClusterView', 
         'view/timeline/TimelineView', 
         'view/organize/OrganizeView',
         'data/organize/OrganizeData'],
-    function(Logger, Backbone, $, Voc, tracker, EntityView, ClusterView, TimelineView, OrganizeView, OrganizeData) {
+    function(Logger, Backbone, $, Voc, tracker, _, $, EntityView, ClusterView, TimelineView, OrganizeView, OrganizeData) {
         return Backbone.View.extend({
             LOG: Logger.get("WidgetView"),
             initialize: function() {
