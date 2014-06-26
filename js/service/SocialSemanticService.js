@@ -262,7 +262,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             userUri,
                             service.userKey,
                             resourceUri,
-                            true
+                            true, // tags
+                            false, // rating
+                            false, // discussions
+                            false, // events
+                            true // thumbnail
                         );
                 });
             } else {

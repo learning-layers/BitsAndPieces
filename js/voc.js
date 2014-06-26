@@ -55,5 +55,6 @@ define([], {
     hasTag : 'sss:tags',
     importance : 'sss:importance',
     isUsed : 'sss:isUsed',
-    hasMimeType : 'sss:mimeType'
+    hasMimeType : 'sss:mimeType',
+    hasThumbnail : 'sss:thumb'
 });

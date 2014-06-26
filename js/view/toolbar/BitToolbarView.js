@@ -100,7 +100,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 'edits' : '',
                 'tags' : this.getBitTags(),
                 'predefined' : [],
-                'importance' : this.model.get(Voc.importance)
+                'importance' : this.model.get(Voc.importance),
+                'thumb' : this.getEntityThumbnail()
             }};
         },
         clearDatepicker: function(e) {
@@ -123,6 +124,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 },
                 'user_initiated' : true
             });
+        },
+        getEntityThumbnail: function() {
+            return this.model.get(Voc.hasThumbnail);
         }
     });
 });

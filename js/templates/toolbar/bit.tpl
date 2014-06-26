@@ -19,9 +19,12 @@
     <label>Amount of edits:</label> <%= entity.edits %>
 </div>
 
-<div>
-    Thumbnail
-</div>
+<% if ( entity.thumb ) { %>
+    <div class="thumbnail">
+        <label>Thumbnail</label>
+        <img src="<%= entity.thumb %>" alt="thumbnail" />
+    </div>
+<% } %>
 
 <div class="properties">
     Properties
