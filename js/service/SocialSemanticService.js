@@ -871,7 +871,9 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     });
                 } else
                     savable.resolve(true);
-            } else if ( entity.isof(Voc.ENTITY) || entity.isof(Voc.FILE) ) {
+            } else if ( entity.isof(Voc.ENTITY) || entity.isof(Voc.FILE)
+                    || entity.isof(Voc.EVERNOTE_RESOURCE) || entity.isof(Voc.EVERNOTE_NOTE)
+                    || entity.isof(Voc.EVERNOTE_NOTEBOOK) ) {
                 if( savable.options.tag ) {
                     this.onUrisReady(
                         this.user,
@@ -980,7 +982,9 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             uriUri
                         );
                 });
-            } else if ( entity.isof(Voc.ENTITY) || entity.isof(Voc.FILE) ) {
+            } else if ( entity.isof(Voc.ENTITY) || entity.isof(Voc.FILE)
+                    || entity.isof(Voc.EVERNOTE_RESOURCE) || entity.isof(Voc.EVERNOTE_NOTE)
+                    || entity.isof(Voc.EVERNOTE_NOTEBOOK) ) {
                 if( removable.options.tag ) {
                     this.onUrisReady(
                         this.user,

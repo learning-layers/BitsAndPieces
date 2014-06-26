@@ -319,6 +319,57 @@
                 "http://eval.bp/Thing" 
             ] 
         },
+        "http://eval.bp/evernoteResource" : {
+            "ancestors": [
+                "http://eval.bp/Thing"
+            ],
+            "comment": "",
+            "comment_plain": "",
+            "id": "http://eval.bp/evernoteResource",
+            "label": "evernoteResource",
+            "properties": [
+            ],
+            "specific_properties": [
+            ],
+            "subtypes": [],
+            "supertypes": [
+                "http://eval.bp/Thing"
+            ]
+        },
+        "http://eval.bp/evernoteNote" : {
+            "ancestors": [
+                "http://eval.bp/Thing"
+            ],
+            "comment": "",
+            "comment_plain": "",
+            "id": "http://eval.bp/evernoteNote",
+            "label": "evernoteNote",
+            "properties": [
+            ],
+            "specific_properties": [
+            ],
+            "subtypes": [],
+            "supertypes": [
+                "http://eval.bp/Thing"
+            ]
+        },
+        "http://eval.bp/evernoteNotebook" : {
+            "ancestors": [
+                "http://eval.bp/Thing"
+            ],
+            "comment": "",
+            "comment_plain": "",
+            "id": "http://eval.bp/evernoteNotebook",
+            "label": "evernoteNotebook",
+            "properties": [
+            ],
+            "specific_properties": [
+            ],
+            "subtypes": [],
+            "supertypes": [
+                "http://eval.bp/Thing"
+            ]
+        },
         "http://eval.bp/rating" : {
             "ancestors": [
                 "http://eval.bp/Thing" 
