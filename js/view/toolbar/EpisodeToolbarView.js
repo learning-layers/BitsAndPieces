@@ -1,5 +1,6 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
-        'text!templates/toolbar/episode.tpl'], function(Logger, tracker, _, $, Backbone, Voc, EpisodeTemplate){
+        'text!templates/toolbar/episode.tpl',
+        'data/episode/EpisodeData'], function(Logger, tracker, _, $, Backbone, Voc, EpisodeTemplate, EpisodeData){
     return Backbone.View.extend({
         events: {
             'keypress input[name="label"]' : 'updateOnEnter',
@@ -70,7 +71,42 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             }
         },
         shareEpisode: function(e) {
-            alert("Share episode clicked");
+            var that = this,
+                shareType = this.$el.find('input[name="sharetype"]:checked').val(),
+                onlySelected = this.$el.find('input[name="onlyselected"]').is(':checked'),
+                shareWith = this.$el.find('input[name="sharewith"]').val(),
+                notificationText = this.$el.find('textarea[name="notificationtext"]').val(),
+                users = [],
+                excluded = [];
+
+            if ( _.isEmpty(shareWith.trim()) || _.isEmpty(notificationText.trim()) ) {
+                alert('Some required fields are empty');
+            }
+
+            // XXX This has to be changed
+            // to really provide selected users
+            users.push(shareWith);
+
+            if ( shareType === 'coediting' ) {
+                EpisodeData.shareEpisode(that.model, users, notificationText);
+                this._cleanUpAfterSharing();
+            } else if ( shareType === 'separatecopy' ) {
+                // Determine if some bits need to be excluded
+                // Call SSEntityCopy
+                if ( onlySelected === true ) {
+                    this.LOG.debug('Only selected bits');
+                    // XXX Need to determine sharable entities and circles
+                }
+                EpisodeData.copyEpisode(that.model, users, excluded, notificationText);
+                this._cleanUpAfterSharing();
+            } else {
+                this.LOG.debug('Invalid share type');
+            }
+        },
+        _cleanUpAfterSharing: function() {
+            this.$el.find('#coediting').trigger('click');
+            this.$el.find('input[name="sharewith"]').val('');
+            this.$el.find('textarea[name="notificationtext"]').val('');
         }
     });
 });

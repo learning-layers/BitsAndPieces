@@ -37,6 +37,7 @@
     <div>
         <label>Share to folder:</label>
         <select name="sharetofolder" disabled="disabled">
+            <option value="None">None</option>
         </select>
     </div>
 

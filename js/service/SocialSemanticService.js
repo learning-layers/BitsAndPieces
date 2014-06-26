@@ -166,6 +166,43 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                     }
                 );
+            } else if ( analyzable.options.service == "entityShare" ) {
+                this.onUrisReady(
+                    function() {
+                        new SSEntityShare(
+                            function(object) {
+                                service.LOG.debug("entityShare success", object);
+                            },
+                            function(object) {
+                                service.LOG.debug("entityShare failed", object);
+                            },
+                            service.user,
+                            service.userKey,
+                            analyzable.options.entity,
+                            analyzable.options.users,
+                            analyzable.options.comment || ''
+                        );
+                    }
+                );
+            } else if ( analyzable.options.service == "entityCopy" ) {
+                this.onUrisReady(
+                    function() {
+                        new SSEntityCopy(
+                            function(object) {
+                                service.LOG.debug("entityCopy success", object);
+                            },
+                            function(object) {
+                                service.LOG.debug("entityCopy failed", object);
+                            },
+                            service.user,
+                            service.userKey,
+                            analyzable.options.entity,
+                            analyzable.options.users,
+                            analyzable.options.exclude || [],
+                            analyzable.options.comment || ''
+                        );
+                    }
+                );
             }
         },
         load: function(loadable) {
