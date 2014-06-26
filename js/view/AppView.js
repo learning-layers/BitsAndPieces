@@ -1,4 +1,4 @@
-define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
+define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore', 'userParams',
         'data/timeline/TimelineData', 
         'data/organize/OrganizeData',
         'data/episode/UserData',
@@ -6,7 +6,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','userParams',
         'data/episode/VersionData',
         'view/WidgetView',
         'view/episode/EpisodeManagerView'], 
-    function(Logger, tracker, Backbone, $, Voc, userParams, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView){
+    function(Logger, tracker, Backbone, $, Voc, _, userParams, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             initialize: function() {

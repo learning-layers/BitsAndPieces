@@ -1,8 +1,8 @@
 define(['vie', 'logger', 'tracker', 'userParams', 'service/SocialSemanticService', 'extender', 
-        'data/AppData',
+        'data/AppData', 'underscore',
         'view/AppView', 'voc'],
 function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
-        AppData, AppView, Voc){
+        AppData, _, AppView, Voc){
     VIE.Util.useRealUri = true;
     Logger.useDefaults();
     var AppLog = Logger.get('App');
