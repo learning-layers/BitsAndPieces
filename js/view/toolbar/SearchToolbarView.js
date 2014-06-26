@@ -52,7 +52,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 fontMin = 10,
                 fontMax = 30,
                 frequMin = 1,
-                frequMax = 1;
+                frequMax = 1,
+                tmpTags;
 
             that.tagCloud = {};
             box.empty();
@@ -67,7 +68,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     return;
                 }
                 if ( result.model.get(Voc.hasTag) ) {
-                    _.each(result.model.get(Voc.hasTag), function(tag) {
+                    tmpTags = result.model.get(Voc.hasTag);
+                    // Deals with single tag case
+                    if ( _.isString(tmpTags) ) {
+                        tmpTags = [tmpTags];
+                    }
+                    _.each(tmpTags, function(tag) {
                         if ( _.has(that.tagCloud, tag) ) {
                             that.tagCloud[tag] += 1;
                         } else {
@@ -94,10 +100,16 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             });
         },
         filterSearchResults: function(e) {
+            var tag = $(e.currentTarget).data('tag'),
+                tmpTags;
             e.preventDefault();
-            var tag = $(e.currentTarget).data('tag');
             _.each(this.searchResultSet, function(result) {
-                if ( _.indexOf(result.model.get(Voc.hasTag), tag) !== -1 ) {
+                // Deals with single tag case
+                tmpTags = result.model.get(Voc.hasTag);
+                if ( _.isString(tmpTags) ) {
+                    tmpTags = [tmpTags];
+                }
+                if ( _.indexOf(tmpTags, tag) !== -1 ) {
                     result.$el.show();
                 } else {
                     result.$el.hide();
