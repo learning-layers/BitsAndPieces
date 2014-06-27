@@ -7,7 +7,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'blur input[name="label"]' : 'changeLabel',
             'change input[name="sharetype"]' : 'shareTypeChanged',
             'click input[name="share"]' : 'shareEpisode',
-            'click .selectedUser > span' : 'removeSelectedUser'
+            'click .selectedUser > span' : 'removeSelectedUser',
+            'click input[name="onlyselected"]' : 'clickOnlySelected'
         },
         LOG: Logger.get('EpisodeToolbarView'),
         initialize: function() {
@@ -119,10 +120,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 this._cleanUpAfterSharing();
             } else if ( shareType === 'separatecopy' ) {
                 // Determine if some bits need to be excluded
-                // Call SSEntityCopy
                 if ( onlySelected === true ) {
                     this.LOG.debug('Only selected bits');
-                    // XXX Need to determine sharable entities and circles
+                    if ( !_.isEmpty(this.$el.find('select[name="only"]').val()) ) {
+                        _.each(this.$el.find('select[name="only"] option:not(:selected)'), function(element) {
+                            excluded.push($(element).val());
+                        });
+                    }
                 }
                 EpisodeData.copyEpisode(that.model, this.selectedUsers, excluded, notificationText);
                 this._cleanUpAfterSharing();
@@ -135,6 +139,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.$el.find('input[name="sharewith"]').val('');
             this.$el.find('textarea[name="notificationtext"]').val('');
             this.$el.find('.selectedUser').remove();
+            this.$el.find('select[name="only"]').remove();
             this.selectedUsers = [];
         },
         addSelectedUser: function(event, ui, autocomplete) {
@@ -148,6 +153,43 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             var removable = $(e.currentTarget).parent();
             delete this.selectedUsers[_.indexOf(this.selectedUsers, removable.data('value'))];
             removable.remove();
+        },
+        getCurrentEntitiesAndCircles: function() {
+            var response = {
+                circles: [],
+                entities: []
+            },
+            version = this.model.get(Voc.hasVersion),
+                widgets = version.get(Voc.hasWidget);
+            _.each(widgets, function(widget) {
+                if ( widget.get('@type').isof(Voc.ORGANIZE) ) {
+                    response.circles = widget.get(Voc.hasCircle),
+                    response.entities = widget.get(Voc.hasEntity);
+                }
+            });
+
+            return response;
+        },
+        clickOnlySelected: function(e) {
+            var current = this.getCurrentEntitiesAndCircles();
+            if ( $(e.currentTarget).is(':checked') ) {
+                // Add and render
+                var select = $('<select name="only" multiple="multiple" class="shareBitsOnly"></select>'),
+                    circles = $('<optgroup label="Circles"></optgroup>'),
+                    entities = $('<optgroup label="Entities"></optgrpup>');
+                _.each(current.circles, function(circle) {
+                    circles.append('<option value="' + circle.attributes['@subject'] + '">' + circle.get(Voc.Label) + '</option>');
+                });
+                _.each(current.entities, function(orgaentity) {
+                    var entity = orgaentity.get(Voc.hasResource);
+                    entities.append('<option value="' + orgaentity.attributes['@subject']+ '">' + entity.get(Voc.label) + '</option>');
+                });
+                select.append(circles);
+                select.append(entities);
+                $(e.currentTarget).after(select);
+            } else {
+                this.$el.find('select[name="only"]').remove();
+            }
         }
     });
 });

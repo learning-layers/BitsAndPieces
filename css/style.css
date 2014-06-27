@@ -316,3 +316,7 @@ form.loginForm {
 .selectedUser span {
 	cursor: pointer;
 }
+
+.shareBitsOnly {
+	max-width: 250px;
+}
