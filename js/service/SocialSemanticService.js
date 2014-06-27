@@ -203,6 +203,31 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                     }
                 );
+            } else if ( analyzable.options.service == "userAll" ) {
+                this.onUrisReady(
+                    function() {
+                        new SSUserAll(
+                            function(object) {
+                                service.LOG.debug("userAll success", object);
+                                var users = [];
+                                _.each(object['users'], function(result) {
+                                    // Required parameter type is missing
+                                    //result['type'] = 'user';
+                                    //users.push(service.fixForVIE(result, 'id'));
+                                    users.push(result);
+                                });
+                                analyzable.resolve(users);
+
+                            },
+                            function(object) {
+                                service.LOG.debug("userAll failed", object);
+                                analyzable.reject(object);
+                            },
+                            service.user,
+                            service.userKey
+                        );
+                    }
+                );
             }
         },
         load: function(loadable) {

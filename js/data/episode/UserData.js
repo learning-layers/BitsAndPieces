@@ -45,5 +45,18 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
             }
         );
     }
+    m.fetchAllUsers = function() {
+        var that = this,
+            defer = $.Deferred();
+        this.vie.analyze({
+            'service' : 'userAll',
+        }).using('sss').execute().success(function(users){
+            that.LOG.debug('user entities', users);
+            //users = that.vie.entities.addOrUpdate(users);
+            defer.resolve(users);
+        });
+
+        return defer;
+    };
     return m;
 });
