@@ -6,16 +6,14 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             'click button#createFromHere' : 'createFromHere',
             'click button#createNewVersion' : 'createNewVersion',
             'click #toggleEpisodes' : 'toggleEpisodes',
-            'mouseleave #episodes' : 'toggleEpisodes',
-            'keypress h1' : 'updateOnEnter',
-            'blur h1' : 'changeLabel'
+            'mouseleave #episodes' : 'toggleEpisodes'
         },
         initialize: function() {
             this.views = {};
             this.LOG.debug('options', this.options);
             this.vie = this.options.vie;
             // TODO "createFromHere" button should only be visible if there are versions and a version is selected
-            this.$el.html('<img src="css/img/menu_small.png" id="toggleEpisodes"/><h1 contenteditable="true"></h1>' + 
+            this.$el.html('<img src="css/img/menu_small.png" id="toggleEpisodes"/><h1></h1>' + 
                     '<div id="episodes"><button id="createNewVersion">New Version</button><button id="createBlank">Create new Episode from scratch</button><button id="createFromHere">Create new Episode from here</button><ul></ul></div>');
 
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), this.episodeVersionChanged, this);
@@ -27,16 +25,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             if( episodes.css('display') == 'none')
                 tracker.info(tracker.OPENEPISODESDIALOG, tracker.NULL);
             episodes.toggle();
-        },
-        changeLabel: function() {
-            if( !this.currentEpisode ) return;
-            var label = this.$el.find('h1').text();
-            label = label.replace(/(<([^>]+)>)/ig,"");
-            this.renderLabel(this.currentEpisode, label);
-            if( this.currentEpisode.get(Voc.label) == label) return;
-            this.LOG.debug('changeLabel', label);
-            tracker.info(tracker.RENAMEEPISODE, this.model.getSubject(), label);
-            this.currentEpisode.save(Voc.label, label);
         },
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {
