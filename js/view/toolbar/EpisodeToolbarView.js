@@ -163,8 +163,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 widgets = version.get(Voc.hasWidget);
             _.each(widgets, function(widget) {
                 if ( widget.get('@type').isof(Voc.ORGANIZE) ) {
-                    response.circles = widget.get(Voc.hasCircle),
-                    response.entities = widget.get(Voc.hasEntity);
+                    response.circles = widget.get(Voc.hasCircle) || [];
+                    if( !_.isArray(response.circles)) response.circles = [response.circles];
+                    response.entities = widget.get(Voc.hasEntity) || [];
+                    if( !_.isArray(response.entities)) response.entities = [response.entities];
                 }
             });
 
