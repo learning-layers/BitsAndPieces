@@ -325,3 +325,18 @@ form.loginForm {
 .shareBitsOnly {
 	max-width: 250px;
 }
+
+ul.episodeListing {
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+ul.episodeListing li {
+    cursor: pointer;
+}
+
+ul.episodeListing .episodeLabel {
+    display: inline-block;
+    cursor: pointer;
+}

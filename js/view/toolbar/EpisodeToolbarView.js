@@ -1,7 +1,8 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'text!templates/toolbar/episode.tpl',
-        'data/episode/EpisodeData', 'data/episode/UserData'], function(Logger, tracker, _, $, Backbone, Voc, EpisodeTemplate, EpisodeData, UserData){
+        'data/episode/EpisodeData', 'data/episode/UserData', 'view/toolbar/EpisodeListingView'], function(Logger, tracker, _, $, Backbone, Voc, EpisodeTemplate, EpisodeData, UserData, EpisodeListingView){
     return Backbone.View.extend({
+        episodeViews: [],
         events: {
             'keypress input[name="label"]' : 'updateOnEnter',
             'blur input[name="label"]' : 'changeLabel',
@@ -13,6 +14,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         LOG: Logger.get('EpisodeToolbarView'),
         initialize: function() {
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), this.episodeVersionChanged, this);
+            this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEpisode), this.changeEpisodeSet, this);
             this.searchableUsers = [];
             this.selectedUsers = [];
             var that = this;
@@ -52,6 +54,24 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     event.preventDefault();
                     that.addSelectedUser(event, ui, this);
                 }
+            });
+
+            this.addOrUpdateEpisodeViews();
+        },
+        addOrUpdateEpisodeViews: function() {
+            var that = this,
+                box = this.$el.find('.episodes .myEpisodes .episodeListing'),
+                episodes = this.getEpisodes();
+            _.each(this.episodeViews, function(view) {
+                view.remove();
+            });
+            this.episodeViews = [];
+            _.each(episodes, function(episode) {
+                var view = new EpisodeListingView({
+                    model: episode
+                });
+                box.append(view.render().$el);
+                that.episodeViews.push(view);
             });
         },
         updateOnEnter: function(e) {
@@ -192,6 +212,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             } else {
                 this.$el.find('select[name="only"]').remove();
             }
+        },
+        getEpisodes: function() {
+            return this.model.get(Voc.hasEpisode);
         }
     });
 });
