@@ -185,11 +185,11 @@ li.episode ul li.highlight {
 
 /* hide versions */
 div#episodes button#createNewVersion {
-    display: block;
+    display: none;
 }
 
 li.episode ul {
-    display: block;
+    display: none;
 }
 
 div#myToolbar {
