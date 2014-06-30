@@ -183,6 +183,11 @@ li.episode ul li.highlight {
     font-weight: bold;
 }
 
+/* hide episode derivation */
+div#episodes button#createFromHere {
+    display: none;
+}
+
 /* hide versions */
 div#episodes button#createNewVersion {
     display: none;
