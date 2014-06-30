@@ -257,13 +257,25 @@ div.tags div.tag span.deleteTag {
 }
 
 div#tabs .results .resultSet .entity {
+	display: block;
+	height: 50px;
+	margin: 2px;
+}
+
+div#tabs .results .resultSet .entity .labelable {
+	max-width: 250px;
+}
+
+div#tabs .results .resultSet .entity .labelable img.icon {
+	margin:0;
 	display: inline-block;
-	margin: 1px;
 }
 
 div#tabs .results .resultSet label.withlabel {
 	position: relative;
-	top: 0px;
+	top: -40px;
+	left: 5px;
+	display: inline;
 }
 
 div#tabs .importance .indicators .importanceLow {
