@@ -147,12 +147,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         episodeVersionChanged: function() {
             this.render();
-
-            var ev = $.Event('bnp:episodeVersionChanged', {
-                entity: this.model.get(Voc.currentVersion),
-                viewContext: this
-            });
-            this.$el.trigger(ev);
         }
 
     });

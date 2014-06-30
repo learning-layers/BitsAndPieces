@@ -12,6 +12,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         LOG: Logger.get('EpisodeToolbarView'),
         initialize: function() {
+            this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), this.episodeVersionChanged, this);
             this.searchableUsers = [];
             this.selectedUsers = [];
             var that = this;
@@ -24,26 +25,20 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 });
             });
         },
-        setEntity: function(version) {
-            var episode = version.get(Voc.belongsToEpisode);
-            // XXX
-            // If version has not episode, then it is not set
-            // need to either add some listener or do something else
-            // so that episode is set when version is fully loaded
-            this.LOG.debug('Provided version', version);
-            this.LOG.debug('Version episode', episode);
-            if( this.model === episode ) return;
-            this.stopListening(this.model, 'change', this.render);
-            this.model = episode;
-            if( episode ) {
-                this.listenTo(this.model, 'change', this.render);
-            }
+        episodeVersionChanged: function() {
             this.render();
+        },
+        getCurrentVersion: function() {
+            return this.model.get(Voc.currentVersion);
+        },
+        getCurrentEpisode: function() {
+            var version = this.getCurrentVersion();
+            return version.get(Voc.belongsToEpisode);
         },
         render: function() {
             var that = this;
             this.$el.empty();
-            if( !this.model ) {
+            if( !this.getCurrentVersion() || !this.getCurrentEpisode() ) {
                 // ... empty the toolbar content
                 this.$el.html("No episode");
                 return;
@@ -68,9 +63,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             }
         },
         getEpisodeViewData: function() {
+            var episode = this.getCurrentEpisode();
             return {
                 entity : {
-                    label : this.model.get(Voc.label),
+                    label : episode.get(Voc.label),
                     description : ''
                 }
             };
@@ -78,12 +74,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         changeLabel: function(e) {
             var that = this,
             currentTarget = $(e.currentTarget),
-            label = currentTarget.val();
+            label = currentTarget.val(),
+            episode = this.getCurrentEpisode();
 
-            if( this.model.get(Voc.label) == label) return;
+            if( episode.get(Voc.label) == label) return;
             this.LOG.debug('changeLabel', label);
             // Make sure to set user_initiated flag
-            this.model.set(Voc.label, label, {
+            episode.set(Voc.label, label, {
                 'error' : function() {
                     that.$el.find('input[name="label"]').effect("shake");
                 },
@@ -92,7 +89,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         shareTypeChanged: function(e) {
             if ( $(e.currentTarget).val() === 'coediting' ) {
-                this.$el.find('input[name="onlyselected"]').prop('disabled', true).prop('checked', false);
+                var onlyselected = this.$el.find('input[name="onlyselected"]');
+                if ( onlyselected.is(':checked') ) {
+                    onlyselected.trigger('click');
+                }
+                onlyselected.prop('disabled', true)
             } else if ( $(e.currentTarget).val() === 'separatecopy' ) {
                 this.$el.find('input[name="onlyselected"]').prop('disabled', false);
             }
@@ -103,7 +104,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 onlySelected = this.$el.find('input[name="onlyselected"]').is(':checked'),
                 notificationText = this.$el.find('textarea[name="notificationtext"]').val(),
                 users = [],
-                excluded = [];
+                excluded = [],
+                episode = this.getCurrentEpisode();
 
             if ( _.isEmpty(notificationText.trim()) ) {
                 alert('Some required fields are empty');
@@ -116,19 +118,17 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             }
 
             if ( shareType === 'coediting' ) {
-                EpisodeData.shareEpisode(that.model, this.selectedUsers, notificationText);
+                EpisodeData.shareEpisode(episode, this.selectedUsers, notificationText);
                 this._cleanUpAfterSharing();
             } else if ( shareType === 'separatecopy' ) {
                 // Determine if some bits need to be excluded
                 if ( onlySelected === true ) {
                     this.LOG.debug('Only selected bits');
-                    if ( !_.isEmpty(this.$el.find('select[name="only"]').val()) ) {
-                        _.each(this.$el.find('select[name="only"] option:not(:selected)'), function(element) {
-                            excluded.push($(element).val());
-                        });
-                    }
+                    _.each(this.$el.find('select[name="only"] option:not(:selected)'), function(element) {
+                        excluded.push($(element).val());
+                    });
                 }
-                EpisodeData.copyEpisode(that.model, this.selectedUsers, excluded, notificationText);
+                EpisodeData.copyEpisode(episode, this.selectedUsers, excluded, notificationText);
                 this._cleanUpAfterSharing();
             } else {
                 this.LOG.debug('Invalid share type');
@@ -159,8 +159,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 circles: [],
                 entities: []
             },
-            version = this.model.get(Voc.hasVersion),
-                widgets = version.get(Voc.hasWidget);
+            version = this.getCurrentVersion(),
+            widgets = version.get(Voc.hasWidget);
             _.each(widgets, function(widget) {
                 if ( widget.get('@type').isof(Voc.ORGANIZE) ) {
                     response.circles = widget.get(Voc.hasCircle) || [];

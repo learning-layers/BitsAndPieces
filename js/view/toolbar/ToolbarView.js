@@ -21,9 +21,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         setBit: function(entity) {
             this.subViews['bit'].setEntity(entity);
         },
-        setEpisodeVersion: function(entity) {
-            this.subViews['episode'].setEntity(entity);
-        },
         render: function() {
             var tabs = _.template(ToolbarTemplate, {});
             this.$el.html(tabs);
@@ -40,6 +37,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.subViews['bit'].render();
 
             this.subViews['episode'] = new EpisodeToolbarView({
+                model: this.model,
                 el : this.getTabId('episode')
             });
             this.subViews['episode'].render();

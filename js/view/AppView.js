@@ -12,7 +12,6 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore', 'UserAuth
         return Backbone.View.extend({
             events : {
                 'bnp:clickEntity' : 'clickEntity',
-                'bnp:episodeVersionChanged' : 'episodeVersionChanged',
                 'click #logout' : 'logOut'
             },
             initialize: function() {
@@ -63,6 +62,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore', 'UserAuth
                 var toolbar = $('<div id="myToolbar"></div>');
                 this.$el.append( toolbar );
                 this.toolbarView = new ToolbarView({
+                    model: this.model,
                     el : toolbar
                 });
                 this.toolbarView.render();
@@ -165,12 +165,6 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore', 'UserAuth
                 e.preventDefault();
                 if (UserAuth.logout()) {
                     document.location.reload();
-                }
-            },
-            episodeVersionChanged: function(e) {
-                if ( e.viewContext && e.viewContext === this.episodeMgrView ) {
-                    AppLog.debug('episodeVersionChanged triggered by EpisodeManagerView', e);
-                    this.toolbarView.setEpisodeVersion(e.entity);
                 }
             }
         });
