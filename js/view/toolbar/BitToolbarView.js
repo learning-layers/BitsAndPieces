@@ -1,5 +1,6 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
-        'text!templates/toolbar/bit.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitTemplate){
+        'text!templates/toolbar/bit.tpl',
+        'data/EntityData'], function(Logger, tracker, _, $, Backbone, Voc, BitTemplate, EntityData){
     return Backbone.View.extend({
         events: {
             'slidechange .slider' : 'setImportance',

@@ -228,6 +228,26 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                     }
                 );
+            } else if ( analyzable.options.service == "recommTagsBasedOnUserEntityTagTime" ) {
+                this.onUrisReady(
+                    function() {
+                        new SSScaffRecommTagsBasedOnUserEntityTagTime(
+                            function(object) {
+                                service.LOG.debug("recommTagsBasedOnUserEntityTagTime success", object);
+                                analyzable.resolve(object);
+                            },
+                            function(object) {
+                                service.LOG.debug("recommTagsBasedOnUserEntityTagTime failed", object);
+                                analyzable.reject(object);
+                            },
+                            service.user,
+                            service.userKey,
+                            analyzable.options.forUser || null,
+                            analyzable.options.entity || null,
+                            analyzable.options.maxTags || 20
+                        );
+                    }
+                );
             }
         },
         load: function(loadable) {
