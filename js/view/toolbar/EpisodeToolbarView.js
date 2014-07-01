@@ -6,6 +6,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         events: {
             'keypress input[name="label"]' : 'updateOnEnter',
             'blur input[name="label"]' : 'changeLabel',
+            'keypress textarea[name="description"]' : 'updateOnEnter',
+            'blur textarea[name="description"]' : 'changeDescription',
             'change input[name="sharetype"]' : 'shareTypeChanged',
             'click input[name="share"]' : 'shareEpisode',
             'click .selectedUser > span' : 'removeSelectedUser',
@@ -77,9 +79,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {
                 this.LOG.debug('updateOnEnter', e);
-                if ( $(e.currentTarget).attr('name') === 'label' ) {
+                if ( $(e.currentTarget).attr('name') === 'label' || $(e.currentTarget).attr('name') === 'description' ) {
                     $(e.currentTarget).blur();
                 }
+
             }
         },
         getEpisodeViewData: function() {
@@ -87,7 +90,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return {
                 entity : {
                     label : episode.get(Voc.label),
-                    description : ''
+                    description : episode.get(Voc.description)
                 }
             };
         },
@@ -106,6 +109,23 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 },
                 'user_initiated' : true
             });
+        },
+        changeDescription: function(e) {
+            var that = this,
+                currentTarget = $(e.currentTarget),
+                description = currentTarget.val(),
+                episode = this.getCurrentEpisode();
+
+            if( episode.get(Voc.description) == description) return;
+            this.LOG.debug('changeDescription', description);
+            // Make sure to set user_initiated flag
+            episode.set(Voc.description, description, {
+                'error' : function() {
+                    that.$el.find('textarea[name="description"]').effect("shake");
+                },
+                'user_initiated' : true
+            });
+
         },
         shareTypeChanged: function(e) {
             if ( $(e.currentTarget).val() === 'coediting' ) {
@@ -214,7 +234,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             }
         },
         getEpisodes: function() {
-            return this.model.get(Voc.hasEpisode);
+            var episodes = this.model.get(Voc.hasEpisode) || [];
+            if( !_.isArray(episodes)) episodes = [episodes];
+            return episodes;
         }
     });
 });

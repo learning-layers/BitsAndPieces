@@ -38,6 +38,7 @@ define([], {
 
     label : 'sss:label',
     content : 'sss:content',
+    description : 'sss:description',
 
     Label : 'sss:Label',
     LabelX : 'sss:LabelX',

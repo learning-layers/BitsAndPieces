@@ -702,14 +702,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             );
                     });
                 } else {
-                    // TODO Will need to write a condition to check
-                    // if label is being changed or something else
-                    // Please see ENTITY case for an example
                     this.onUrisReady(
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri){
-                            new SSEntityLabelSet(
+                            new SSEntityUpdate(
                                 function(object) {
                                     service.LOG.debug("handle result of SSLabelSet");
                                     service.LOG.debug("object", object);
@@ -723,7 +720,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 userUri,
                                 service.userKey,
                                 entityUri,
-                                entity.get(Voc.label)
+                                savable.options.label || null,
+                                savable.options.description || null
                             );
                     });
                 }
@@ -966,7 +964,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.onUrisReady(
                         entity.getSubject(),
                         function(entityUri) {
-                            new SSEntityLabelSet(
+                            new SSEntityUpdate(
                                 function(object) {
                                     service.LOG.debug('result entity setLabel', object);
                                     savable.resolve(object);
