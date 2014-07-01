@@ -213,10 +213,6 @@ div#myToolbar .toolbar-handle {
 	width: 30px;
 }
 
-div#myToolbar .ui-widget-content {
-	overflow-y: auto;
-}
-
 div.toolbarShown .toolbar-handle {
 	background-image: url('../img/toolbar-handle-close.png');
 	background-size: 30px 50px;
@@ -241,6 +237,10 @@ div#tabs {
 	width: 330px;
 	margin-left: 20px;
 	height: 100%;
+}
+
+div#tabs.ui-widget-content {
+	overflow-y: auto;
 }
 
 div.tags div.tag {
