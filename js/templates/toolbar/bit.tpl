@@ -1,5 +1,5 @@
 <div class="bitTitle">
-    Bit title:
+    <label>Bit Title:</label>
     <span contenteditable="true"><%= entity.label %></span>
 </div>
 
@@ -15,7 +15,7 @@
     <label>Amount of views:</label> <%= entity.views %>
 </div>
 
-<div>
+<div style="display:none;">
     <label>Amount of edits:</label> <%= entity.edits %>
 </div>
 
@@ -40,7 +40,7 @@
         </div>
     </div>
 
-    <div class="tag-search">
+    <div class="tagSearch">
         <label>User's tags:</label>
         <input type="text" value="" placeholder="add new tag" />
     </div>
@@ -50,13 +50,19 @@
     <% _.each(entity.tags, function(tag) { %> <div class="tag"><%= tag %><span data-tag="<%= tag %>" class="deleteTag">x</span></div> <% }); %></div>
     </div>    
 
-    <div class="predefined-tags">
+    <div class="predefinedTags">
         <label>Predefined tags:</label>
         <select disabled>
         <% _.each(entity.predefined, function(predefined) { %>
             <option value="<%= predefined %>"><%= predefined %></option>
         <% }); %>
         </select>
+    </div>
+
+    <div class="recommendedTags">
+        <label>Recommended tags (click to add):</label>
+        <div class="tagcloud">
+        </div>
     </div>
 
     <div>

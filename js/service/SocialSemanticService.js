@@ -234,7 +234,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         new SSScaffRecommTagsBasedOnUserEntityTagTime(
                             function(object) {
                                 service.LOG.debug("recommTagsBasedOnUserEntityTagTime success", object);
-                                analyzable.resolve(object);
+                                analyzable.resolve(object.tags || []);
                             },
                             function(object) {
                                 service.LOG.debug("recommTagsBasedOnUserEntityTagTime failed", object);

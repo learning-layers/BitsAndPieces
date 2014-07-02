@@ -4,16 +4,18 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
     return Backbone.View.extend({
         events: {
             'slidechange .slider' : 'setImportance',
-            'keypress .tag-search input' : 'updateOnEnter', 
+            'keypress .tagSearch input' : 'updateOnEnter',
             'click .deleteTag' : 'deleteTag',
             'click .deadline .clearDatepicker' : 'clearDatepicker',
             'keypress .bitTitle span' : 'updateOnEnter',
-            'blur .bitTitle span' : 'changeLabel'
+            'blur .bitTitle span' : 'changeLabel',
+            'click .recommendedTags .tagcloud a' : 'clickRecommendedTag'
         },
         LOG: Logger.get('BitToolbarView'),
         initialize: function() {
         },
         setEntity: function(entity) {
+            var that = this;
             if( this.model === entity ) return;
             this.stopListening(this.model, 'change', this.render);
             this.model = entity;
@@ -24,6 +26,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if ( _.isEmpty(this.model.get(Voc.hasViewCount)) && this.model.get(Voc.hasViewCount) !== 0 ) {
                 EntityData.loadViewCount(this.model);
             }
+            // Load recommended tags
+            if ( _.isEmpty(this.model.get(Voc.hasTagRecommendation)) && this.model.get(Voc.hasTagRecommendation) !== [] ) {
+                EntityData.loadRecommTagsBasedOnUserEntityTagTime(this.model);
+            }
+
             this.render();
         },
         render: function() {
@@ -45,6 +52,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             });
 
             this.$el.find('.deadline input.datepicker').datepicker();
+
+            this.addOrUpdateRecommendedTags(this.model.get(Voc.hasTagRecommendation));
         },
         getImportance: function() {
             return this.model.get(Voc.importance) || 1;
@@ -62,7 +71,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             // Make sure to set user_initiated flag
             this.model.set(Voc.hasTag, newTags, {
                 'error' : function() {
-                    that.$el.find(".tag-search input").effect("shake");
+                    that.$el.find(".tagSearch input").effect("shake");
                 },
                 'user_initiated' : true
             });
@@ -132,6 +141,24 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         getEntityThumbnail: function() {
             return this.model.get(Voc.hasThumbnail);
+        },
+        clickRecommendedTag: function(e) {
+            e.preventDefault();
+            var tag = $(e.currentTarget).data('tag');
+            this.addTag(tag);
+        },
+        addOrUpdateRecommendedTags: function(tags) {
+            var tagcloud = this.$el.find('.recommendedTags .tagcloud'),
+                fontMin = 10,
+                fontMax = 30;
+            tagcloud.empty();
+            if ( !_.isEmpty(tags) ) {
+                _.each(tags, function(tag) {
+                    var fontSize = fontMax * tag.likelihood;
+                    if ( fontSize < fontMin ) fontSize += fontMin;
+                    tagcloud.append(' <a href="#" data-tag="' + tag.label + '" style="font-size:' + fontSize + 'pt">' + tag.label + '</a>');
+                });
+            }
         }
     });
 });
