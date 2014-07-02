@@ -11,7 +11,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'change input[name="sharetype"]' : 'shareTypeChanged',
             'click input[name="share"]' : 'shareEpisode',
             'click .selectedUser > span' : 'removeSelectedUser',
-            'click input[name="onlyselected"]' : 'clickOnlySelected'
+            'click input[name="onlyselected"]' : 'clickOnlySelected',
+            'keypress input[name="search"]' : 'updateOnEnter'
         },
         LOG: Logger.get('EpisodeToolbarView'),
         initialize: function() {
@@ -60,10 +61,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
             this.addOrUpdateEpisodeViews();
         },
-        addOrUpdateEpisodeViews: function() {
+        addOrUpdateEpisodeViews: function(episodes) {
             var that = this,
-                box = this.$el.find('.toolbarSectionEpisodes .myEpisodes .episodeListing'),
+                box = this.$el.find('.toolbarSectionEpisodes .myEpisodes .episodeListing');
+            if ( !_.isArray(episodes) ) {
                 episodes = this.getEpisodes();
+            }
             _.each(this.episodeViews, function(view) {
                 view.remove();
             });
@@ -79,8 +82,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {
                 this.LOG.debug('updateOnEnter', e);
-                if ( $(e.currentTarget).attr('name') === 'label' || $(e.currentTarget).attr('name') === 'description' ) {
-                    $(e.currentTarget).blur();
+                var currentTarget = $(e.currentTarget);
+                if ( currentTarget.attr('name') === 'label' || currentTarget.attr('name') === 'description' ) {
+                    currentTarget.blur();
+                } else if ( currentTarget.attr('name') === 'search' ) {
+                    this.addOrUpdateEpisodeViews( this.searchEpisodes(currentTarget.val()) );
                 }
 
             }
@@ -237,6 +243,25 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             var episodes = this.model.get(Voc.hasEpisode) || [];
             if( !_.isArray(episodes)) episodes = [episodes];
             return episodes;
+        },
+        searchEpisodes: function(searchable) {
+            var regexp = new RegExp(searchable, 'i'),
+                episodes = this.getEpisodes(),
+                returned = [];
+
+            searchable = searchable.trim();
+
+            if ( _.isEmpty(searchable) ) return episodes;
+
+            _.each(episodes, function(episode) {
+                var label = episode.get(Voc.label),
+                    description = episode.get(Voc.description);
+                if ( label.search(regexp) !== -1 || description.search(regexp) !== -1 ) {
+                    returned.push(episode);
+                }
+            });
+
+            return returned;
         }
     });
 });
