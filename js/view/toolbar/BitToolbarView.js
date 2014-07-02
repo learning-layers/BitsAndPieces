@@ -20,6 +20,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if( entity ) {
                 this.listenTo(this.model, 'change', this.render);
             }
+            // Load view count if not loaded yet
+            if ( _.isEmpty(this.model.get(Voc.hasViewCount)) && this.model.get(Voc.hasViewCount) !== 0 ) {
+                EntityData.loadViewCount(this.model);
+            }
             this.render();
         },
         render: function() {
@@ -97,7 +101,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 'label' : this.model.get(Voc.label),
                 'author' : author,
                 'creationTime' : $.datepicker.formatDate('dd.mm.yy', new Date(this.model.get(Voc.creationTime))),
-                'views' : '',
+                'views' : this.model.get(Voc.hasViewCount) || 0,
                 'edits' : '',
                 'tags' : this.getBitTags(),
                 'predefined' : [],

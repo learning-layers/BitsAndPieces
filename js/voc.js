@@ -57,5 +57,6 @@ define([], {
     importance : 'sss:importance',
     isUsed : 'sss:isUsed',
     hasMimeType : 'sss:mimeType',
-    hasThumbnail : 'sss:thumb'
+    hasThumbnail : 'sss:thumb',
+    hasViewCount : 'sss:viewEntity'
 });

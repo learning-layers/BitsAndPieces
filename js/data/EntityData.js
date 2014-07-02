@@ -119,6 +119,17 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
 
         return defer;
     }
+    m.loadViewCount = function(model) {
+        var that = this;
+        this.vie.analyze({
+            'service' : 'ueCountGet',
+            'entity' : model.attributes['@subject'],
+            'type' : 'viewEntity'
+        }).using('sss').execute().success(function(count){
+            that.LOG.debug('count', count);
+            model.set(Voc.hasViewCount, count);
+        });
+    }
 
     return m;
 

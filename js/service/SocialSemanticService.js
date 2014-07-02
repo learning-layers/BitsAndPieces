@@ -248,7 +248,30 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                     }
                 );
+            } else if ( analyzable.options.service == "ueCountGet" ) {
+                this.onUrisReady(
+                    function() {
+                        new SSUECountGet(
+                            function(object) {
+                                service.LOG.debug("ueCountGet success", object);
+                                analyzable.resolve(object.count || 0);
+                            },
+                            function(object) {
+                                service.LOG.debug("ueCountGet failed", object);
+                                analyzable.reject(object);
+                            },
+                            service.user,
+                            service.userKey,
+                            analyzable.options.forUser || null,
+                            analyzable.options.entity || null,
+                            analyzable.options.startTime || null,
+                            analyzable.options.endTime || null,
+                            analyzable.options.type || null
+                        );
+                    }
+                );
             }
+
         },
         load: function(loadable) {
             var correct = loadable instanceof this.vie.Loadable || loadable instanceof this.vie.Analyzable;
