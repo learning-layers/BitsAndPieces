@@ -62,7 +62,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         addOrUpdateEpisodeViews: function() {
             var that = this,
-                box = this.$el.find('.episodes .myEpisodes .episodeListing'),
+                box = this.$el.find('.toolbarSectionEpisodes .myEpisodes .episodeListing'),
                 episodes = this.getEpisodes();
             _.each(this.episodeViews, function(view) {
                 view.remove();
