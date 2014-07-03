@@ -277,9 +277,12 @@ div#tabs .results .resultSet .entity .labelable img.icon {
 
 div#tabs .results .resultSet label.withlabel {
 	position: relative;
-	top: -40px;
+	top: 0px;
 	left: 5px;
-	display: inline;
+	display: inline-block;
+	min-height: 50px;
+	vertical-align: text-bottom;
+	width: 200px;
 }
 
 div#tabs .importance .indicators .importanceLow {
