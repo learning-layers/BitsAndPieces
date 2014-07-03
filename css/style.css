@@ -358,4 +358,6 @@ ul.episodeListing li {
 ul.episodeListing .episodeLabel {
     display: inline-block;
     cursor: pointer;
+	min-height: 46px;
+	vertical-align: text-bottom;
 }
