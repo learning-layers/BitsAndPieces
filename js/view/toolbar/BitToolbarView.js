@@ -42,7 +42,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             }
             this.$el.html(_.template(BitTemplate, this.getBitViewData()));
 
-            // XXX need to define meanings for values
             this.$el.find('.importance .slider').slider({
                 value : this.getImportance(),
                 min : 1,
@@ -60,7 +59,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         setImportance: function(event, ui) {
             this.LOG.debug("setImportance", ui.value);
-            this.model.set(Voc.importance, ui.value);
+            this.model.set(Voc.importance, ui.value, {
+                'user_initiated' : true
+            });
         },
         addTag: function(tag) {
             var tags = this.getBitTags();

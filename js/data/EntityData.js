@@ -21,6 +21,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             model.on('change:'+this.vie.namespaces.uri(Voc.author), this.initUser, this); 
             model.on('change:'+this.vie.namespaces.uri(Voc.hasTag), this.changedTags, this);
             model.on('change:'+this.vie.namespaces.uri(Voc.label), this.setLabel, this);
+            model.on('change:'+this.vie.namespaces.uri(Voc.importance), this.setImportance, this);
         }
     };
     m.initUser = function(model, value, options) {
@@ -79,6 +80,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         }).to('sss').execute().success(function(s) {
             that.LOG.debug('success setLabel', s);
         }).fail(function(f) {
+            that.LOG.debug('fail setLabel', f);
             if ( options.error ) {
                 options.error();
             }
@@ -127,6 +129,21 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             model.set(Voc.hasViewCount, count);
         });
     }
+    m.setImportance = function(model, importance, options) {
+        var that = this;
+        options = options || {};
+        // Only change if user_initiated flag is set to true
+        if ( options.user_initiated !== true ) return;
+        if ( model.previous(Voc.importance) === importance ) return;
+        this.vie.save({
+            'entity' : model,
+            'importance' : importance
+        }).to('sss').execute().success(function(s) {
+            that.LOG.debug('success setImportance', s);
+        }).fail(function(f) {
+            that.LOG.debug('fail setImportance', f);
+        });
+    };
 
     return m;
 

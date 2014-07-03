@@ -316,6 +316,27 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     service.LOG.error("error:",resourceUri, " is empty");
                                     return;
                                 }
+
+                                // Extract importance from flags
+                                // Remove flags from object
+                                if ( _.isArray(object['desc']['flags']) ) {
+                                    if ( !_.isEmpty(object['desc']['flags']) ) {
+                                        var importance;
+                                            creationTime = 1;
+                                        _.each(object['desc']['flags'], function(flag) {
+                                            // In case multiple are provided
+                                            if ( flag.type === 'importance'  && flag.creationTime > creationTime) {
+                                                importance = flag.value;
+                                                creationTime = flag.creationTime;
+                                            }
+                                        });
+                                        if ( importance ) {
+                                            object['desc']['importance'] = importance;
+                                        }
+                                    }
+                                    delete object['desc']['flags'];
+                                }
+
                                 var entity = service.fixForVIE(object['desc'], 'entity', 'type');
                                 var entityUri = object['desc']['entity'];
                                 //var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
@@ -371,7 +392,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             false, // rating
                             false, // discussions
                             false, // events
-                            true // thumbnail
+                            true, // thumbnail
+                            true // flags
                         );
                 });
             } else {
@@ -1003,7 +1025,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             );
                         }
                     );
-                } else if ( savable.options.label) {
+                } else if ( savable.options.label ) {
                     this.onUrisReady(
                         entity.getSubject(),
                         function(entityUri) {
@@ -1020,6 +1042,28 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 service.userKey,
                                 entityUri,
                                 savable.options.label
+                            );
+                        }
+                    );
+                } else if ( savable.options.importance ) {
+                    this.onUrisReady(
+                        entity.getSubject(),
+                        function(entityUri) {
+                            new SSFlagsSet(
+                                function(object) {
+                                    service.LOG.debug('setImportance success', object);
+                                    savable.resolve(object);
+                                },
+                                function(object) {
+                                    service.LOG.debug('setImportance fail', object);
+                                    savable.reject(entity);
+                                },
+                                service.user,
+                                service.userKey,
+                                [entityUri],
+                                ['importance'],
+                                null,
+                                savable.options.importance
                             );
                         }
                     );
