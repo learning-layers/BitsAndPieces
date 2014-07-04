@@ -96,6 +96,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             });
             _.each(that.tagCloud, function(frequ, tag) {
                 var fontSize = (frequ == frequMin) ? fontMin : (frequ / frequMax) * (fontMax - fontMin) + fontMin;
+                if ( fontSize > fontMax ) {
+                    fontSize = fontMax;
+                }
                 box.append(' <a href="#" style="font-size:' + fontSize+ 'pt;" data-tag="' + tag + '">' + tag + '</a>');
             });
         },
