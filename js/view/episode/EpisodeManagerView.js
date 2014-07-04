@@ -1,4 +1,4 @@
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'voc'], function(VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, Voc){
+define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc'], function(VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
@@ -6,7 +6,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             'click button#createFromHere' : 'createFromHere',
             'click button#createNewVersion' : 'createNewVersion',
             'click #toggleEpisodes' : 'toggleEpisodes',
-            'mouseleave #episodes' : 'toggleEpisodes'
+            'mouseleave #episodes' : 'toggleEpisodes',
+            'click button#logout' : 'logOut',
+            'click button#dataImportEvernote' : 'dataImportEvernote'
         },
         initialize: function() {
             this.views = {};
@@ -14,7 +16,11 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.vie = this.options.vie;
             // TODO "createFromHere" button should only be visible if there are versions and a version is selected
             this.$el.html('<img src="css/img/menu_small.png" id="toggleEpisodes"/><h1></h1>' + 
-                    '<div id="episodes"><button id="createNewVersion">New Version</button><button id="createBlank">Create new Episode from scratch</button><button id="createFromHere">Create new Episode from here</button><ul></ul></div>');
+
+                    '<div id="episodes">' +
+                    '<button id="logout">Logout</button>' + 
+                    '<button id="dataImportEvernote">Import from Evernote</button>' + 
+                    '<button id="createNewVersion">New Version</button><button id="createBlank">Create new Episode from scratch</button><button id="createFromHere">Create new Episode from here</button><ul></ul></div>');
 
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), this.episodeVersionChanged, this);
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEpisode), this.changeEpisodeSet, this);
@@ -135,6 +141,15 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         episodeVersionChanged: function() {
             this.render();
+        },
+        logOut: function(e) {
+            e.preventDefault();
+            if (UserAuth.logout()) {
+                document.location.reload();
+            }
+        },
+        dataImportEvernote: function(e) {
+            UserData.dataImportEvernote(this.model);
         }
 
     });

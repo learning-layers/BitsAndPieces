@@ -29,6 +29,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.start), this.rearrangeVisibleArea, this);
             // TODO: resolve this hack: only fire on start change to avoid double execution
+            // TODO: change to listening to user model. user model shall hold the user events
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEntity), this.changeEntitySet, this);
 
             this.LOG.debug('TimelineView initialized');

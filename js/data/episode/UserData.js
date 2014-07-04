@@ -58,5 +58,16 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
 
         return defer;
     };
+    m.dataImportEvernote = function(user) {
+        var that = this;
+        this.vie.analyze({
+            'service' : 'dataImportEvernote',
+            'user' : user
+        }).from('sss').execute().success(function(users) {
+            // TODO fetch user events
+            // update the set of user events in the user model
+            // triggers update of timeline which listens to changes in user events array of its user
+        });
+    };
     return m;
 });

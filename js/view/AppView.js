@@ -1,4 +1,4 @@
-define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore', 'UserAuth',
+define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
         'data/timeline/TimelineData', 
         'data/organize/OrganizeData',
         'data/episode/UserData',
@@ -7,12 +7,11 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore', 'UserAuth
         'view/WidgetView',
         'view/episode/EpisodeManagerView',
         'view/toolbar/ToolbarView'],
-    function(Logger, tracker, Backbone, $, Voc, _, UserAuth, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView){
+    function(Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {
                 'bnp:clickEntity' : 'clickEntity',
-                'click #logout' : 'logOut'
             },
             initialize: function() {
                 this.vie = this.options.vie;
@@ -46,8 +45,6 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore', 'UserAuth
                 }
             },
             render: function() {
-                var logout = $('<a href="#" id="logout">Logout</a>');
-                this.$el.append(logout);
                 var episodes = $('<div id="myEpisodes1"></div>');
                 this.widgetFrame = $('<div id="myWidgets"></div>');
                 this.$el.append( episodes );
@@ -159,12 +156,6 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore', 'UserAuth
                 if ( e.viewContext && e.viewContext === this.toolbarView ) {
                     AppLog.debug("clickEntity called within ToolbarView context");
                     this.browseCurrentBrowseWidget(e.entity);
-                }
-            },
-            logOut: function(e) {
-                e.preventDefault();
-                if (UserAuth.logout()) {
-                    document.location.reload();
                 }
             }
         });
