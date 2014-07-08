@@ -59,5 +59,7 @@ define([], {
     hasMimeType : 'sss:mimeType',
     hasThumbnail : 'sss:thumb',
     hasViewCount : 'sss:viewEntity',
-    hasTagRecommendation : 'sss:tagRecommendation'
+    hasTagRecommendation : 'sss:tagRecommendation',
+
+    hasUserEvent : 'sss:hasUserEvent'
 });

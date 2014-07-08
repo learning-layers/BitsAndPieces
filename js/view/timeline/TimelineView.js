@@ -27,10 +27,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 throw Error("no timeline configuration provided");
             }
 
-            this.model.on('change:' + this.model.vie.namespaces.uri(Voc.start), this.rearrangeVisibleArea, this);
             // TODO: resolve this hack: only fire on start change to avoid double execution
-            // TODO: change to listening to user model. user model shall hold the user events
-            this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEntity), this.changeEntitySet, this);
+            this.model.on('change:' + this.model.vie.namespaces.uri(Voc.start), this.rearrangeVisibleArea, this);
+            this.user.on('change:' + this.model.vie.namespaces.uri(Voc.hasUserEvent), this.changeEntitySet, this);
 
             this.LOG.debug('TimelineView initialized');
 
@@ -40,8 +39,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.LOG.debug('changeEntitySet', set);  
             set = set || [];
             if( !_.isArray(set)) set = [set];
-            var previous = Backbone.Model.prototype.previous.call(this.model, 
-                this.model.vie.namespaces.uri(Voc.hasEntity)) || [];
+            var previous = Backbone.Model.prototype.previous.call(this.user, 
+                this.model.vie.namespaces.uri(Voc.hasUserEvent)) || [];
             if( !_.isArray(previous)) previous = [previous];
             this.LOG.debug('previous', previous);  
             var that = this;
@@ -49,13 +48,15 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.LOG.debug('added', added);
             _.each(added, function(a){
                 a = that.model.vie.entities.get(a);
-                that.addEntity(a);
+                var entity = a.get(Voc.hasResource);
+                that.addEntity(entity);
             });
             
             var deleted = _.difference(previous, set);
             _.each(deleted, function(a){
                 a = that.model.vie.entities.get(a);
-                that.removeEntity(a);
+                var entity = a.get(Voc.hasResource);
+                that.removeEntity(entity);
             });
         },
         rearrangeVisibleArea: function(model, collection, options ) {
@@ -100,9 +101,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             var view = this;
             // add entities which are already contained
-            var entities = this.model.get(Voc.hasEntity) || [];
-            if( !_.isArray(entities)) entities = [entities];
-            _.each(entities, function(entity) {
+            var userevents = this.user.get(Voc.hasUserEvent) || [];
+            if( !_.isArray(userevents)) userevents = [userevents];
+            _.each(userevents, function(ue) {
+                var entity = ue.get(Voc.hasResource);
                 view.addEntity(entity);
             });
             return this;
@@ -181,8 +183,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.LOG.debug("browseTo called with entity", entity);
             var diff = this.model.get(Voc.end) - this.model.get(Voc.start),
                 vals = {},
-                start = new Date(entity.get(Voc.creationTime) - diff / 2),
-                end = new Date(entity.get(Voc.creationTime) + diff / 2);
+                start = new Date(entity.get(this.timeAttr) - diff / 2),
+                end = new Date(entity.get(this.timeAttr) + diff / 2);
 
             vals[Voc.start] = start;
             vals[Voc.end] = end;

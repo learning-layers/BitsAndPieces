@@ -1,3 +1,4 @@
+// TODO EpisodeManagerView could be renamed to MenuView
 define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc'], function(VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
@@ -149,7 +150,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             }
         },
         dataImportEvernote: function(e) {
-            UserData.dataImportEvernote(this.model);
+            var el = this.$el.find('button#dataImportEvernote');
+            el.text('importing ...');
+            el.prop('disabled', true);
+            UserData.dataImportEvernote(this.model, function(user) {
+                el.text('Import from Evernote');
+                el.removeProp('disabled');
+            });
         }
 
     });

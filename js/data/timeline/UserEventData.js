@@ -5,7 +5,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         this.vie = vie;
         this.vie.entities.on('add', this.filter, this);
         this.setIntegrityCheck(Voc.hasResource, Voc.ENTITY);
-        //this.setIntegrityCheck(Voc.belongsToTimeline, Voc.TIMELINE, Voc.hasEntity);
+        this.setIntegrityCheck(Voc.belongsToUser, Voc.USER, Voc.hasUserEvent);
     };
     m.LOG = Logger.get('UserEventData');
     /** 

@@ -58,16 +58,51 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
 
         return defer;
     };
-    m.dataImportEvernote = function(user) {
+    m.dataImportEvernote = function(user, success) {
         var that = this;
         this.vie.analyze({
             'service' : 'dataImportEvernote',
             'user' : user
         }).from('sss').execute().success(function(users) {
-            // TODO fetch user events
-            // update the set of user events in the user model
-            // triggers update of timeline which listens to changes in user events array of its user
+            that.fetchRange(user, user.get(Voc.end));
+            success(user);
         });
+    };
+    m.fetchRange= function( user, start, end ) {
+        var margin = 600000;
+        var now = new Date((new Date()).getTime() + margin);
+        if( !start ) start = new Date(0);
+        if( !end ) end = now;
+        if( typeof start !== Date ) start = new Date(start);
+        if( typeof end !== Date ) end = new Date(end);
+        // start and end of user store the timestamps of the last fetch
+        var lastStart = user.get(Voc.start);
+        var lastEnd = user.get(Voc.end);
+        if( lastStart && start > lastStart )  {
+            start = new Date(lastEnd.getTime() - margin);
+        }
+        if( end > now ) end = now;
+        this.LOG.debug("fetchRange:", start, ";", end);
+        // Fetch entities currently visible
+        var forUser = user.getSubject();
+        var that = this;
+        this.vie.load({
+            'type' : this.vie.types.get(Voc.USEREVENT),
+            'start' : start.getTime(),
+            'end' : end.getTime(),
+            'forUser' : forUser
+        }).from('sss').execute().success(
+            function(entities) {
+                // store the timestamps of this fetch
+                if ( lastStart === undefined || start < lastStart ) user.set(Voc.start, start);
+                if ( lastEnd === undefined || end > lastEnd ) user.set(Voc.end, end);
+                that.LOG.debug('success fetchRange: ', _.clone(entities), 'user: ', user);
+                entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
+                _.each(entities, function(userEvent){
+                    userEvent.set(Voc.belongsToUser, forUser);
+                });
+            }
+        );
     };
     return m;
 });
