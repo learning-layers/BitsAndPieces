@@ -69,7 +69,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
         });
     };
     m.fetchRange= function( user, start, end ) {
-        var margin = 600000;
+        var margin = 86400000;
         var now = new Date((new Date()).getTime() + margin);
         if( !start ) start = new Date(0);
         if( !end ) end = now;
@@ -78,9 +78,9 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
         // start and end of user store the timestamps of the last fetch
         var lastStart = user.get(Voc.start);
         var lastEnd = user.get(Voc.end);
-        if( lastStart && start > lastStart )  {
-            start = new Date(lastEnd.getTime() - margin);
-        }
+        //if( lastStart && start > lastStart )  {
+            //start = new Date(lastEnd.getTime() - margin);
+        //}
         if( end > now ) end = now;
         this.LOG.debug("fetchRange:", start, ";", end);
         // Fetch entities currently visible
