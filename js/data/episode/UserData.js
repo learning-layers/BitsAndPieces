@@ -64,7 +64,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
             'service' : 'dataImportEvernote',
             'user' : user
         }).from('sss').execute().success(function(users) {
-            that.fetchRange(user, user.get(Voc.end));
+            that.fetchRange(user);
             success(user);
         });
     };
