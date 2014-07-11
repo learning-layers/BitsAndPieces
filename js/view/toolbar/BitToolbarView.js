@@ -22,14 +22,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if( entity ) {
                 this.listenTo(this.model, 'change', this.render);
             }
-            // Load view count if not loaded yet
-            if ( _.isEmpty(this.model.get(Voc.hasViewCount)) && this.model.get(Voc.hasViewCount) !== 0 ) {
-                EntityData.loadViewCount(this.model);
-            }
-            // Load recommended tags
-            if ( _.isEmpty(this.model.get(Voc.hasTagRecommendation)) && this.model.get(Voc.hasTagRecommendation) !== [] ) {
-                EntityData.loadRecommTagsBasedOnUserEntityTagTime(this.model);
-            }
 
             this.render();
         },
@@ -51,6 +43,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             });
 
             this.$el.find('.deadline input.datepicker').datepicker();
+
+            this.LOG.debug("render", this.model.changed);
 
             this.addOrUpdateRecommendedTags(this.model.get(Voc.hasTagRecommendation));
         },

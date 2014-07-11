@@ -22,6 +22,8 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             model.on('change:'+this.vie.namespaces.uri(Voc.hasTag), this.changedTags, this);
             model.on('change:'+this.vie.namespaces.uri(Voc.label), this.setLabel, this);
             model.on('change:'+this.vie.namespaces.uri(Voc.importance), this.setImportance, this);
+            this.loadViewCount(model);
+            this.loadRecommTagsBasedOnUserEntityTagTime(model);
         }
     };
     m.initUser = function(model, value, options) {
@@ -48,6 +50,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                 'tag' : tag
             }).to('sss').execute().success(function(s){
                 that.LOG.debug('success addTag', s);
+                that.loadRecommTagsBasedOnUserEntityTagTime(model);
             }).fail(function(f){
                 var tags = model.get(Voc.hasTag) || [];
                 if( !_.isArray(tags)) tags = [tags];
@@ -64,6 +67,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                 'entity' : model,
                 'tag' : tag
             }).from('sss').execute().success(function(s){
+                that.loadRecommTagsBasedOnUserEntityTagTime(model);
                 that.LOG.debug('success removeTag', s);
             });
         });
@@ -78,6 +82,8 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             'entity' : model,
             'label' : label
         }).to('sss').execute().success(function(s) {
+            // TODO check whether tag recomms can change due to label change
+            that.loadRecommTagsBasedOnUserEntityTagTime(model);
             that.LOG.debug('success setLabel', s);
         }).fail(function(f) {
             that.LOG.debug('fail setLabel', f);
