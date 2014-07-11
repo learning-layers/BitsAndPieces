@@ -65,20 +65,20 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             'sss:evernoteNote' : 'img/sss/evernoteNote.png',
             'sss:evernoteResource' : 'img/sss/thing.png',
 
-            'sss:evernoteNotebookCreate' : 'img/sss/addCollection.png',
-            'sss:evernoteNotebookUpdate' : 'img/sss/editCollection.png',
-            'sss:evernoteNotebookShare' : 'img/sss/shareCollection.png',
-            'sss:evernoteNotebookFollow' : 'img/sss/subscribeCollection.png',
+            //'sss:evernoteNotebookCreate' : 'img/sss/addCollection.png',
+            //'sss:evernoteNotebookUpdate' : 'img/sss/editCollection.png',
+            //'sss:evernoteNotebookShare' : 'img/sss/shareCollection.png',
+            //'sss:evernoteNotebookFollow' : 'img/sss/subscribeCollection.png',
             'sss:evernoteNoteCreate' : 'img/sss/addDocument.png',
             'sss:evernoteNoteUpdate' : 'img/sss/editDocument.png',
             'sss:evernoteNoteDelete' : 'img/sss/deleteDocument.png',
             'sss:evernoteNoteShare' : 'img/sss/shareDocument.png',
             'sss:evernoteNoteFollow' : 'img/sss/subscribeDocument.png',
-            'sss:evernoteReminderDone' : 'img/sss/reminderDone.png',
-            'sss:evernoteReminderCreate' : 'img/sss/reminder.png',
-            'sss:evernoteResourceAdd' : 'img/sss/addCollectionItem.png',
-            'sss:evernoteResourceFollow' : 'img/sss/subscribeResource.png',
-            'sss:evernoteResourceShare' : 'img/sss/shareResource.png'
+            //'sss:evernoteReminderDone' : 'img/sss/reminderDone.png',
+            //'sss:evernoteReminderCreate' : 'img/sss/reminder.png',
+            //'sss:evernoteResourceAdd' : 'img/sss/addCollectionItem.png',
+            //'sss:evernoteResourceFollow' : 'img/sss/subscribeResource.png',
+            //'sss:evernoteResourceShare' : 'img/sss/shareResource.png'
 
         },
         events : {
