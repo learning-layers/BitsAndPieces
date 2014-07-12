@@ -1,16 +1,31 @@
 define(['logger', 'voc', 'underscore', 'userParams',
-        'data/episode/UserData','data/episode/EpisodeData',
-        'data/episode/VersionData','data/timeline/TimelineData',
-        'data/timeline/UserEventData','data/EntityData',
-        'data/organize/OrgaEntityData','data/organize/CircleData',
+        'data/episode/UserData',
+        'data/sss/CategoryData',
+        'data/episode/EpisodeData',
+        'data/episode/VersionData',
+        'data/timeline/TimelineData',
+        'data/timeline/UserEventData',
+        'data/EntityData',
+        'data/organize/OrgaEntityData',
+        'data/organize/CircleData',
         'data/organize/OrganizeData' ], 
 function(Logger, Voc, _, userParams,
-    UserData, EpisodeData, VersionData, TimelineData, UserEventData, EntityData, OrgaEntityData, CircleData, OrganizeData ){
+    UserData, 
+    CategoryData, 
+    EpisodeData, 
+    VersionData, 
+    TimelineData, 
+    UserEventData, 
+    EntityData, 
+    OrgaEntityData, 
+    CircleData, 
+    OrganizeData ){
     return {
         LOG : Logger.get('AppData'),
         init : function(vie) {
             this.vie = vie;
             UserData.init(this.vie);
+            CategoryData.init(this.vie);
             EpisodeData.init(this.vie);
             VersionData.init(this.vie);
             TimelineData.init(this.vie);

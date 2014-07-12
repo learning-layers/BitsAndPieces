@@ -283,6 +283,19 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     service.user,
                     service.userKey
                 );
+            } else if ( analyzable.options.service == "categoriesPredefinedGet" ) {
+                new SSCategoriesPredefinedGet(
+                    function(result) {
+                        service.LOG.debug("categoriesPredefinedGet success", result);
+                        analyzable.resolve(result.categories);
+                    },
+                    function(result) {
+                        service.LOG.error("categoriesPredefinedGet error", result);
+                        analyzable.reject(result);
+                    },
+                    service.user,
+                    service.userKey
+                );
             }
 
         },

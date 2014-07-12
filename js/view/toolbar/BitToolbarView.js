@@ -1,6 +1,7 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'text!templates/toolbar/bit.tpl',
-        'data/EntityData'], function(Logger, tracker, _, $, Backbone, Voc, BitTemplate, EntityData){
+        'data/EntityData',
+        'data/sss/CategoryData'], function(Logger, tracker, _, $, Backbone, Voc, BitTemplate, EntityData, CategoryData){
     return Backbone.View.extend({
         events: {
             'slidechange .slider' : 'setImportance',
@@ -108,7 +109,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 'views' : this.model.get(Voc.hasViewCount) || 0,
                 'edits' : '',
                 'tags' : this.getBitTags(),
-                'predefined' : [],
+                'predefined' : CategoryData.getPredefinedCategories(),
                 'importance' : this.model.get(Voc.importance),
                 'thumb' : this.getEntityThumbnail()
             }};
