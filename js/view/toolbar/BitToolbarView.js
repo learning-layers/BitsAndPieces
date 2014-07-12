@@ -47,7 +47,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
             this.LOG.debug("render", this.model.changed);
 
-            this.addOrUpdateRecommendedTags(this.model.get(Voc.hasTagRecommendation));
+            var tags = this.model.get(Voc.hasTagRecommendation) || [];
+            if (!_.isArray(tags)) tags = [tags];
+            this.addOrUpdateRecommendedTags(tags);
         },
         getImportance: function() {
             return this.model.get(Voc.importance) || 1;
