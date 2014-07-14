@@ -55,9 +55,9 @@
 
         <div class="predefinedTags">
             <label class="subsectionLabel">Predefined tags:</label>
-            <select disabled>
+            <select multiple="multiple">
             <% _.each(entity.predefined, function(predefined) { %>
-                <option value="<%= predefined %>"><%= predefined %></option>
+                <option value="<%= predefined.label %>" <%= predefined.selected ? "selected=\"selected\"" : "" %>><%= predefined.label %></option>
             <% }); %>
             </select>
         </div>

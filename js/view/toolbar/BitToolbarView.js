@@ -10,7 +10,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'click .deadline .clearDatepicker' : 'clearDatepicker',
             'keypress .bitTitle span' : 'updateOnEnter',
             'blur .bitTitle span' : 'changeLabel',
-            'click .recommendedTags .tagcloud a' : 'clickRecommendedTag'
+            'click .recommendedTags .tagcloud a' : 'clickRecommendedTag',
+            'change .predefinedTags select' : 'changePredefinedCategories'
         },
         LOG: Logger.get('BitToolbarView'),
         initialize: function() {
@@ -104,14 +105,31 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if( author && author.isEntity ) {
                 author = author.get(Voc.label);
             }
+            var predefinedCategories = CategoryData.getPredefinedCategories();
+            var tags = this.getBitTags();
+
+            var tagIndex;
+            for( var i = 0; i < predefinedCategories.length; i++ ) {
+                tagIndex = _.indexOf(tags, predefinedCategories[i]);
+                predefinedCategories[i] = {
+                    'label' : predefinedCategories[i],
+                    'selected' : tagIndex != -1
+                };
+                if( tagIndex != -1 ) {
+                    tags.splice(tagIndex, 1);
+                }
+            }
+
+            this.LOG.debug('after: tags', tags, 'predefined', predefinedCategories );
+
             return {'entity' : {
                 'label' : this.model.get(Voc.label),
                 'author' : author,
                 'creationTime' : $.datepicker.formatDate('dd.mm.yy', new Date(this.model.get(Voc.creationTime))),
                 'views' : this.model.get(Voc.hasViewCount) || 0,
                 'edits' : '',
-                'tags' : this.getBitTags(),
-                'predefined' : CategoryData.getPredefinedCategories(),
+                'tags' : tags,
+                'predefined' : predefinedCategories,
                 'importance' : this.model.get(Voc.importance),
                 'thumb' : this.getEntityThumbnail()
             }};
@@ -157,6 +175,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     tagcloud.append(' <a href="#" data-tag="' + tag.label + '" style="font-size:' + fontSize + 'pt">' + tag.label + '</a>');
                 });
             }
+        },
+        changePredefinedCategories: function(e) {
+            this.LOG.debug('event', e);
         }
     });
 });
