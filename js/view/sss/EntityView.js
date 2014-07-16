@@ -143,7 +143,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
               'class' : 'entity',
               'about' : this.model.getSubject()
             });
-            label = this.model.get(Voc.label);
+            label = this.model.get(Voc.label) || "";
             view_class = 'labelable';
 
             if( true === this.model.get(Voc.isUsed) ) {
@@ -153,11 +153,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             if( label && label.isEntity ) label = label.getSubject();
             this.$el.html(//"<div class=\"entity\" about=\""+this.model.getSubject()+"\">"+
                     "<div class=\"" + view_class + "\">"+
-                    "<img class=\"icon\" src=\""+this.getIcon()+"\" "+ 
-                    "alt=\"" + this.model.get('@type').id + "\"/>"+
-                    (label ? 
+                    "<img class=\"icon\" src=\""+this.getIcon()+"\"/>"+ 
                         "<label class=\"withlabel\">" +
-                        "<strong>"+label+"</strong>":"<label class=\"nolabel\">no label")+
+                        "<strong>"+label+"</strong>"+
                         "</label>"+
                     "</div>");
             this.LOG.debug('rendering ', this.model);
