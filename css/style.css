@@ -192,21 +192,14 @@ li.episode ul {
     display: none;
 }
 
-div.cluster div.contents {
-    display: none;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-}
-
-div.cluster div.contents > *{
+div.cluster .entity, div.cluster .buttons {
     float: left;
 }
 
-div.cluster:hover div.contents {
-    display: block;
+div.cluster button {
+    display:block;
+    font-size:0.5em;
 }
-
 
 div#myToolbar {
 	position: fixed;

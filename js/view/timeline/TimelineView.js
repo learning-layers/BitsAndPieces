@@ -3,7 +3,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
     return Backbone.View.extend({
         LOG: Logger.get('TimelineView'),
         events: {
-            'bnp:clickCluster' : 'expand'
+            'bnp:zoomCluster' : 'expand',
+            'bnp:expanded' : 'redraw',
+            'bnp:unexpanded' : 'redraw'
         },
         initialize: function() {
             if (!this.model ) {
@@ -226,6 +228,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 'min' : min,
                 'max' : max
             };
+        },
+        redraw: function(e) {
+            this.LOG.debug('clickCluster', e);
+            this.timeline.redraw();
         }
 
     });
