@@ -66,8 +66,14 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
             'user' : user
         }).from('sss').execute().success(function(users) {
             that.fetchRange(user);
-            callbacks['success'](user);
-        }).fail(function() {callbacks['error']()});
+            if( callbacks && callbacks.success ) {
+                callbacks.success(user);
+            }
+        }).fail(function() {
+            if( callbacks && callbacks.error ) {
+                callbacks.error()
+            }
+        });
     };
     m.fetchRange= function( user, start, end, force ) {
         var margin = 600000;
