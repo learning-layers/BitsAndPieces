@@ -48,11 +48,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             var that = this;
             var added = _.difference(set, previous);
             this.LOG.debug('added', added);
-            _.each(added, function(a){
-                a = that.model.vie.entities.get(a);
-                var entity = a.get(Voc.hasResource);
-                that.addEntity(entity);
-            });
+            this.addEntities(added);
             
             var deleted = _.difference(previous, set);
             _.each(deleted, function(a){
@@ -75,6 +71,14 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.reclusterByRangeChange( 
                     new Date(range.start), new Date(range.end),
                     startTime, endTime);
+        },
+        addEntities: function(entities) {
+            var that = this;
+            _.each(entities, function(ue) {
+                if( !ue.isEntity ) ue = that.model.vie.entities.get(ue);
+                var entity = ue.get(Voc.hasResource);
+                that.addEntity(entity);
+            });
         },
         addEntity: function(entity, collection, options) {
             this.LOG.debug('addEntity');
@@ -105,10 +109,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             // add entities which are already contained
             var userevents = this.user.get(Voc.hasUserEvent) || [];
             if( !_.isArray(userevents)) userevents = [userevents];
-            _.each(userevents, function(ue) {
-                var entity = ue.get(Voc.hasResource);
-                view.addEntity(entity);
-            });
+            this.addEntities(userevents);
             return this;
         },
         renderUser: function () {
@@ -183,7 +184,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         },
         browseTo: function(entity) {
             this.LOG.debug("browseTo called with entity", entity);
-            var diff = this.model.get(Voc.end) - this.model.get(Voc.start),
+            var range = this.timeline.getVisibleChartRange();
+            var diff = range.end - range.start;
                 vals = {},
                 start = new Date(entity.get(this.timeAttr) - diff / 2),
                 end = new Date(entity.get(this.timeAttr) + diff / 2);
