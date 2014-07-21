@@ -153,10 +153,15 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             var el = this.$el.find('button#dataImportEvernote');
             el.text('importing ...');
             el.prop('disabled', true);
-            UserData.dataImportEvernote(this.model, function(user) {
-                el.text('Import from Evernote');
-                el.removeProp('disabled');
-            });
+            UserData.dataImportEvernote(this.model, {
+                'success' : function(user) {
+                    el.text('Import from Evernote');
+                    el.removeProp('disabled');
+                    alert("Import successful!");
+                },
+                'error' : function() {
+                    alert("Import failed");
+                }});
         }
 
     });

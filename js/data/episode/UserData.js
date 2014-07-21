@@ -59,15 +59,15 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
 
         return defer;
     };
-    m.dataImportEvernote = function(user, success) {
+    m.dataImportEvernote = function(user, callbacks) {
         var that = this;
         this.vie.analyze({
             'service' : 'dataImportEvernote',
             'user' : user
         }).from('sss').execute().success(function(users) {
             that.fetchRange(user);
-            success(user);
-        });
+            callbacks['success'](user);
+        }).fail(function() {callbacks['error']()});
     };
     m.fetchRange= function( user, start, end, force ) {
         var margin = 600000;
