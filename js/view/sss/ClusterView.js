@@ -2,7 +2,9 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
     return Backbone.View.extend({
         LOG: Logger.get('ClusterView'),
         events: {
-            'click .expandable' : 'click',
+            'click .expandable' : 'expand',
+            'mouseover .expandable' : 'expand',
+            'mouseleave .expanded' : 'close',
             'click .expanded .close' : 'close',
             'click .expanded .zoom' : 'zoom'
         },
@@ -41,9 +43,6 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
                     "</label>");
             }
             return this;
-        },
-        click: function(e) {
-            this.expand();
         },
         expand: function() {
             this.expanded = true;
