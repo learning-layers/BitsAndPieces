@@ -143,7 +143,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 'end' : this.model.get(Voc.end),
                 'min' : new Date('2013-01-01'),
                 'max' : new Date('2015-01-01'),
-                //'zoomMin' : 300000, // 5 minute
+                'zoomMin' : 300000, // 5 minute
                 'zoomMax' : 4320000000 // 5 days
             }));
             this.timeline.deleteItem(0); // remove dummy node
