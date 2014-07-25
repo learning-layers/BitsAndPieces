@@ -3,8 +3,9 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
         LOG: Logger.get('ClusterView'),
         events: {
             'click .expandable' : 'expand',
-            'mouseover .expandable' : 'expand',
-            'mouseleave .expanded' : 'close',
+            // XXX mouseover/leave don't work in junction with dragndrop of bits from the preview box
+            //'mouseover .expandable' : 'expand', 
+            //'mouseleave .expanded' : 'close',
             'click .expanded .close' : 'close',
             'click .expanded .zoom' : 'zoom'
         },
