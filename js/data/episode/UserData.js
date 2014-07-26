@@ -75,7 +75,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
             }
         });
     };
-    m.fetchRange= function( user, start, end, force ) {
+    m.fetchRange= function( user, start, end, callbacks ) {
         var margin = 600000;
         var now = new Date((new Date()).getTime() + margin);
         if( !start ) start = new Date(0);
@@ -107,9 +107,16 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
                 if ( lastEnd === undefined || end > lastEnd ) user.set(Voc.end, end);
                 that.LOG.debug('success fetchRange: ', _.clone(entities), 'user: ', user);
                 entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
-                _.each(entities, function(userEvent){
-                    userEvent.set(Voc.belongsToUser, forUser);
+                var currentEvents = user.get(Voc.hasUserEvent) || [];
+                if( !_.isArray(currentEvents)) currentEvents = [currentEvents];
+                currentEvents = _.union(currentEvents, entities);
+                var uris = _.map(currentEvents, function(userEvent){
+                    return userEvent.getSubject();
                 });
+                user.set(Voc.hasUserEvent, uris);
+                if( callbacks && _.isFunction(callbacks.success) ) {
+                    callbacks.success(entities);
+                }
             }
         );
     };

@@ -2,6 +2,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
     function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineData, EntitiesHelper, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('TimelineView'),
+        waitingForLastOne : 0,
         events: {
             'bnp:zoomCluster' : 'expand',
             'bnp:expanded' : 'redraw',
@@ -24,6 +25,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             );
 
             this.user = this.model.get(Voc.belongsToUser);
+            this.waitingForLastOne = 0;
 
             if (!this.options.timeline) {
                 throw Error("no timeline configuration provided");
@@ -75,11 +77,38 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         },
         addEntities: function(entities) {
             var that = this;
+            var lastOne;
+            var initRange = !this.model.get(Voc.start) && !this.model.get(Voc.end);
+            this.LOG.debug("initRange", initRange, this.model.get(Voc.start), this.model.get(Voc.end));
+            var readyEntities = [];
             _.each(entities, function(ue) {
                 if( !ue.isEntity ) ue = that.model.vie.entities.get(ue);
                 var entity = ue.get(Voc.hasResource);
                 that.addEntity(entity);
+                if( !initRange ) return;
+
+                that.waitingForLastOne++;
+                if( !entity.get(that.timeAttr) ) {
+                    entity.once("change:"+that.timeAttr, that.checkLastOne, that);
+                    return;
+                }
+                readyEntities.push(entity);
+                that.LOG.debug('addEntities', entity, that.waitingForLastOne);
             });
+            _.each(readyEntities, function(entity) {
+                that.checkLastOne(entity);
+            });
+        },
+        checkLastOne: function(entity) {
+            this.waitingForLastOne--;
+            this.LOG.debug('checkLastOne', entity, this.waitingForLastOne);
+            if( !this.lastOne || this.lastOne.get(this.timeAttr) < entity.get(this.timeAttr) ) {
+                this.lastOne = entity;
+            }
+            if( this.waitingForLastOne == 0 ) {
+                this.browseTo(this.lastOne);
+            }
+
         },
         addEntity: function(entity, collection, options) {
             if( this.entitiesHelper.contains(entity) ) {
@@ -139,12 +168,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.timelineDOM.setAttribute('class', 'timeline');
             this.$el.append(this.timelineDOM);
             this.timeline = new Timeline(this.timelineDOM);
+            this.LOG.debug("draw timeline", this.model.get(Voc.start), this.model.get(Voc.end));
             this.timeline.draw( [{
                     'start' : new Date(), // add a dummy event to force rendering
                     'content' : "x"
                 }], _.extend(this.options.timeline, {
-                'start' : this.model.get(Voc.start),
-                'end' : this.model.get(Voc.end),
+                'start' : this.model.get(Voc.start) || new Date(jSGlobals.getTime() - jSGlobals.dayInMilliSeconds),
+                'end' : this.model.get(Voc.end) || new Date(jSGlobals.getTime() + 3600000),
                 'min' : new Date('2013-01-01'),
                 'max' : new Date('2015-01-01'),
                 'zoomMin' : 300000, // 5 minute
@@ -186,16 +216,22 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             return this.timeline.getSelection()[0].row;
         },
         browseTo: function(entity) {
-            this.LOG.debug("browseTo called with entity", entity);
+            // wait for the time attribute if not set yet
+            if( !entity.get(this.timeAttr) ) {
+                entity.once('change:' + this.timeAttr, this.browseTo, this);
+                return;
+            }
+            this.LOG.debug("browseTo called with entity", entity, JSON.stringify(entity.attributes));
             var range = this.timeline.getVisibleChartRange();
             var diff = range.end - range.start;
                 vals = {},
-                start = new Date(entity.get(this.timeAttr) - diff / 2),
-                end = new Date(entity.get(this.timeAttr) + diff / 2);
+                start = new Date(parseInt(entity.get(this.timeAttr) - diff / 2)),
+                end = new Date(parseInt(entity.get(this.timeAttr) + diff / 2));
 
             vals[Voc.start] = start;
             vals[Voc.end] = end;
             this.model.save(vals, { 'by' : this });
+            this.LOG.debug("start", parseInt(entity.get(this.timeAttr) - diff / 2), start, "end", parseInt(entity.get(this.timeAttr) + diff / 2), end);
             this.timeline.setVisibleChartRange(start, end, true);
         },
         expand: function(e) {
