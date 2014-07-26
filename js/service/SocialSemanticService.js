@@ -583,12 +583,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpGetTimelineState");
                                 service.LOG.debug("object", object);
-                                if( !object['learnEpTimelineState']) {
-                                    resolve('timelineget');
-                                    return;
-                                }
-                                object = object['learnEpTimelineState'];
-                                //var vieEntity = new service.vie.Entity(service.fixForVIE({
+
                                 var entity = {};
                                 entity[VIE.prototype.Entity.prototype.idAttribute] = object.id;
                                 entity['@type'] = Voc.TIMELINE;
@@ -596,8 +591,18 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 entity[Voc.timeAttr]= Voc.creationTime;
                                 entity[Voc.predicate] = Voc.USEREVENT;
                                 entity[Voc.belongsToVersion] = loadable.options.version;
-                                entity[Voc.start] = object.startTime;                            
-                                entity[Voc.end] = object.endTime
+
+                                if( !object['learnEpTimelineState']) {
+                                    // init time range
+                                    //entity[Voc.start] = jSGlobals.getTime() - jSGlobals.dayInMilliSeconds;
+                                    //entity[Voc.end] = jSGlobals.getTime() + 3600000;
+
+                                } else {
+                                    object = object['learnEpTimelineState'];
+                                    //var vieEntity = new service.vie.Entity(service.fixForVIE({
+                                    entity[Voc.start] = object.startTime;                            
+                                    entity[Voc.end] = object.endTime
+                                }
 
                                 //entity = service.fixForVIE(entity);
 
