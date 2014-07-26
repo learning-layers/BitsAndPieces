@@ -9,7 +9,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             'click #toggleEpisodes' : 'toggleEpisodes',
             'mouseleave #episodes' : 'toggleEpisodes',
             'click button#logout' : 'logOut',
-            'click button#dataImportEvernote' : 'dataImportEvernote'
+            //'click button#dataImportEvernote' : 'dataImportEvernote'
         },
         initialize: function() {
             this.views = {};
@@ -20,8 +20,11 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
 
                     '<div id="episodes">' +
                     '<button id="logout">Logout</button>' + 
-                    '<button id="dataImportEvernote">Import from Evernote</button>' + 
-                    '<button id="createNewVersion">New Version</button><button id="createBlank">Create new Episode from scratch</button><button id="createFromHere">Create new Episode from here</button><ul></ul></div>');
+                    '<button disabled="disabled" id="dataImportEvernote">Import from Evernote</button>' + 
+                    '<button id="createNewVersion">New Version</button>'+
+                    '<button id="createBlank">Create New Episode</button>'+
+                    '<button id="createFromHere">Create new Episode from here</button>'+
+                    '<div class="note">(For a new import from Evernote contact dtheiler@tugraz.at)</div><ul></ul></div>');
 
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), this.episodeVersionChanged, this);
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEpisode), this.changeEpisodeSet, this);

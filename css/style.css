@@ -88,8 +88,12 @@ div#episodes {
 }
 
 div#episodes button {
-    display: block;
     cursor: pointer;
+}
+
+div#episodes .note {
+    font-size: 0.6em;
+    font-style: italic;
 }
 
 div#episodes ul {

@@ -17,7 +17,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
         if( user.isof(Voc.USER) ) {
             this.LOG.debug('user added', user);
             this.checkIntegrity(user, options);
-            this.dataImportEvernote(user);
+            //this.dataImportEvernote(user);
             if( !user.isNew() ) {
                 this.fetchEpisodes(user);
             } 
