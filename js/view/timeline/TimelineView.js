@@ -54,6 +54,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             _.each(deleted, function(a){
                 a = that.model.vie.entities.get(a);
                 var entity = a.get(Voc.hasResource);
+                // TODO don't remove entity if referenced by another user event
                 that.removeEntity(entity);
             });
         },
@@ -81,7 +82,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             });
         },
         addEntity: function(entity, collection, options) {
-            this.LOG.debug('addEntity');
+            if( this.entitiesHelper.contains(entity) ) {
+                return false;
+            }
             this.entitiesHelper.addEntityView(entity, this.timeAttr);
             this.listenTo(entity, 'change:' + entity.vie.namespaces.uri(this.timeAttr), this.changeEntity);
             return true;
