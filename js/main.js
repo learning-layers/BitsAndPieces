@@ -50,8 +50,12 @@ var require = (function() {
             'svg.foreignobject' : ['svg'],
             'jquery-cookie' : {
                 'deps' : ['jquery']
+            },
+            'jquery-ui' : {
+                'deps' : ['jquery']
             }
-        }
+        },
+        urlArgs: "bust=" + parseInt((new Date()).getTime()/100000)
     };
 }());
 
