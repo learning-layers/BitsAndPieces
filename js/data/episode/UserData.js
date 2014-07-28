@@ -20,6 +20,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
             //this.dataImportEvernote(user);
             if( !user.isNew() ) {
                 this.fetchEpisodes(user);
+                this.fetchRange(user);
             } 
         }
     };
