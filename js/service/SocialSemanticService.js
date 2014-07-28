@@ -296,6 +296,32 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     service.user,
                     service.userKey
                 );
+            } else if ( analyzable.options.service == "EntityDescsGet" ) {
+                new SSEntityDescsGet(
+                    function(result) {
+                        var entities = [];
+                        _.each(result['descs'], function(object) {
+                            service.fixEntityDesc(object);
+                            var entity = service.fixForVIE(object, 'entity', 'type');
+                            entities.push(entity);
+                        });
+                        analyzable.resolve(entities);
+                    },
+                    function(result) {
+                        service.LOG.error("EntityDescsGet", result);
+                        analyzable.reject(result);
+                    },
+                    service.user,
+                    service.userKey,
+                    analyzable.options.entities,
+                    analyzable.options.types,
+                    true,   //getTags
+                    false,  //getOverallRating
+                    false,   //getDiscs
+                    false,  //getUEs
+                    true,   //getThumb
+                    true    //getFlags
+                );
             }
 
         },
@@ -343,25 +369,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     return;
                                 }
 
-                                // Extract importance from flags
-                                // Remove flags from object
-                                if ( _.isArray(object['desc']['flags']) ) {
-                                    if ( !_.isEmpty(object['desc']['flags']) ) {
-                                        var importance;
-                                            creationTime = 1;
-                                        _.each(object['desc']['flags'], function(flag) {
-                                            // In case multiple are provided
-                                            if ( flag.type === 'importance'  && flag.creationTime > creationTime) {
-                                                importance = flag.value;
-                                                creationTime = flag.creationTime;
-                                            }
-                                        });
-                                        if ( importance ) {
-                                            object['desc']['importance'] = importance;
-                                        }
-                                    }
-                                    delete object['desc']['flags'];
-                                }
+                                service.fixEntityDesc(object['desc']);
 
                                 var entity = service.fixForVIE(object['desc'], 'entity', 'type');
                                 var entityUri = object['desc']['entity'];
@@ -1191,6 +1199,28 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 }
             } else {
                 this.LOG.warn("SocialSemanticService remove for " + type.id + " not implemented");
+            }
+
+        },
+        fixEntityDesc: function(object) {
+            // Extract importance from flags
+            // Remove flags from object
+            if ( _.isArray(object['flags']) ) {
+                if ( !_.isEmpty(object['flags']) ) {
+                    var importance;
+                        creationTime = 1;
+                    _.each(object['flags'], function(flag) {
+                        // In case multiple are provided
+                        if ( flag.type === 'importance'  && flag.creationTime > creationTime) {
+                            importance = flag.value;
+                            creationTime = flag.creationTime;
+                        }
+                    });
+                    if ( importance ) {
+                        object['importance'] = importance;
+                    }
+                }
+                delete object['flags'];
             }
 
         },

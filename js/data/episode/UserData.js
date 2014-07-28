@@ -111,15 +111,29 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
                 var currentEvents = user.get(Voc.hasUserEvent) || [];
                 if( !_.isArray(currentEvents)) currentEvents = [currentEvents];
                 currentEvents = _.union(currentEvents, entities);
+                var entityUris = [];
                 var uris = _.map(currentEvents, function(userEvent){
+                    var entity = userEvent.get(Voc.hasResource);
+                    if( entity.isEntity) entity = entity.getSubject();
+                    entityUris.push(entity);
                     return userEvent.getSubject();
                 });
                 user.set(Voc.hasUserEvent, uris);
+                that.fetchData(user, entityUris);
                 if( callbacks && _.isFunction(callbacks.success) ) {
                     callbacks.success(entities);
                 }
             }
         );
+    };
+    m.fetchData = function(user, entityUris) {
+        var that = this;
+        this.vie.analyze({
+            'service' : 'EntityDescsGet',
+            'entities' : entityUris
+        }).from('sss').execute().success(function(entities) {
+            that.vie.entities.addOrUpdate(entities);
+        });
     };
     return m;
 });
