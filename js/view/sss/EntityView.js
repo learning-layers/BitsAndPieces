@@ -211,6 +211,24 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             if( !type ) type = this.model.get('@type');
             this.LOG.debug('type', type);
             if( !type ) return this.icons['unknown'];
+            if( _.isArray(type)) {
+                // decide which type to use
+                var i, j, push;
+                for( i = 0; i < type.length; i++ ){
+                    push = true;
+                    for( j = 0; j < type.length; j++ ){
+                        if( i != j && type[i].subsumes(type[j])) {
+                            push = false;
+                            break;
+                        }
+                    }
+                    if( push ) {
+                        type = type[i];
+                        break;
+                    }
+                }
+            }
+            if( _.isArray(type)) { type = type[0]; }
             name = this.model.vie.namespaces.curie(type.id);
             this.LOG.debug('name', name);
             if( name === 'user' ) {
