@@ -209,7 +209,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        new SSSearchWithTags(
+                        service.resolve('SSSearchWithTags', 
                             function(object) {
                                 service.LOG.debug("searchResult", object);
                                 var entities = [];
@@ -233,7 +233,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if ( analyzable.options.service == "entityShare" ) {
                 this.onUrisReady(
                     function() {
-                        new SSEntityShare(
+                        service.resolve('SSEntityShare', 
                             function(object) {
                                 service.LOG.debug("entityShare success", object);
                             },
@@ -251,7 +251,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if ( analyzable.options.service == "entityCopy" ) {
                 this.onUrisReady(
                     function() {
-                        new SSEntityCopy(
+                        service.resolve('SSEntityCopy', 
                             function(object) {
                                 service.LOG.debug("entityCopy success", object);
                             },
@@ -270,7 +270,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if ( analyzable.options.service == "userAll" ) {
                 this.onUrisReady(
                     function() {
-                        new SSUserAll(
+                        service.resolve('SSUserAll', 
                             function(object) {
                                 service.LOG.debug("userAll success", object);
                                 var users = [];
@@ -295,7 +295,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if ( analyzable.options.service == "recommTagsBasedOnUserEntityTagTime" ) {
                 this.onUrisReady(
                     function() {
-                        new SSScaffRecommTagsBasedOnUserEntityTagTime(
+                        service.resolve('SSScaffRecommTagsBasedOnUserEntityTagTime', 
                             function(object) {
                                 service.LOG.debug("recommTagsBasedOnUserEntityTagTime success", object);
                                 analyzable.resolve(object.tags || []);
@@ -315,7 +315,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if ( analyzable.options.service == "ueCountGet" ) {
                 this.onUrisReady(
                     function() {
-                        new SSUECountGet(
+                        service.resolve('SSUECountGet', 
                             function(object) {
                                 service.LOG.debug("ueCountGet success", object);
                                 analyzable.resolve(object.count || 0);
@@ -335,7 +335,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     }
                 );
             } else if ( analyzable.options.service == "dataImportEvernote" ) {
-                new SSDataImportEvernote(
+                service.resolve('SSDataImportEvernote', 
                     function(object) {
                         service.LOG.debug("dataImportEvernote success", object);
                         analyzable.resolve();
@@ -348,7 +348,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     service.userKey
                 );
             } else if ( analyzable.options.service == "categoriesPredefinedGet" ) {
-                new SSCategoriesPredefinedGet(
+                service.resolve('SSCategoriesPredefinedGet', 
                     function(result) {
                         service.LOG.debug("categoriesPredefinedGet success", result);
                         analyzable.resolve(result.categories);
@@ -361,7 +361,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     service.userKey
                 );
             } else if ( analyzable.options.service == "EntityDescsGet" ) {
-                new SSEntityDescsGet(
+                service.resolve('SSEntityDescsGet', 
                     function(result) {
                         var entities = [];
                         _.each(result['descs'], function(object) {
@@ -441,7 +441,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 var type = object['desc']['type'];
                                 service.LOG.debug('desc.type', type);
                                 if( type && type == service.types.USER )  {
-                                    new SSLearnEpVersionCurrentGet(
+                                    service.resolve('SSLearnEpVersionCurrentGet',
                                         function(object2) {
                                             service.LOG.debug("handle result of VersionCurrentGet");
                                             service.LOG.debug("object", object2);
@@ -456,7 +456,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         service.userKey 
                                         );
                                 } else if( type && type == service.types.USEREVENT )  {
-                                    new SSUserEventGet(
+                                    service.resolve('SSUserEventGet', 
                                         function(object2) {
                                             service.LOG.debug("handle result of UserEventTypeGet");
                                             service.LOG.debug("object", object2);
@@ -511,7 +511,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     loadable.options.forUser,
                     loadable.options.resource,
                     function(userUri, forUserUri, resourceUri) {
-                        new SSUserEventsGet(
+                        service.resolve('SSUserEventsGet', 
                             function(objects) {
                                 service.LOG.debug("handle result of userEventsOfUser");
                                 service.LOG.debug("objects", objects);
@@ -545,7 +545,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        new SSLearnEpsGet(
+                        service.resolve('SSLearnEpsGet', 
                             function(objects) {
                                 service.LOG.debug("handle result of epsGet");
                                 service.LOG.debug("objects", objects);
@@ -576,7 +576,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     loadable.options.episode,
                     function(userUri, episodeUri) {
-                        new SSLearnEpVersionsGet(
+                        service.resolve('SSLearnEpVersionsGet', 
                             function(objects) {
                                 service.LOG.debug("handle result of epVersionsGet");
                                 service.LOG.debug("objects", objects);
@@ -651,7 +651,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     loadable.options.version,
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionGetTimelineState(
+                        service.resolve('SSLearnEpVersionGetTimelineState', 
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpGetTimelineState");
                                 service.LOG.debug("object", object);
@@ -813,7 +813,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionSetTimelineState(
+                        service.resolve('SSLearnEpVersionSetTimelineState', 
                                 function(object) {
                                     service.LOG.debug("handle result of LearnEpVersionSetTimelinState");
                                     service.LOG.debug("object", object);
@@ -852,7 +852,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.onUrisReady(
                         this.user,
                         function(userUri) {
-                            new SSLearnEpCreate(
+                            service.resolve('SSLearnEpCreate', 
                                 function(object) {
                                     service.LOG.debug("handle result of LearnEpCreate");
                                     service.LOG.debug("object", object);
@@ -874,7 +874,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri){
-                            new SSEntityUpdate(
+                            service.resolve('SSEntityUpdate', 
                                 function(object) {
                                     service.LOG.debug("handle result of SSLabelSet");
                                     service.LOG.debug("object", object);
@@ -901,7 +901,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     episode,
                     function( userUri, episodeUri) {
-                        new SSLearnEpVersionCreate(
+                        service.resolve('SSLearnEpVersionCreate', 
                                 function(object) {
                                     service.LOG.debug("handle result of LearnEpVersionCreate");
                                     service.LOG.debug("object", object);
@@ -945,7 +945,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 service.user,
                                 version,
                                 function(userUri, versionUri) {
-                                    new SSLearnEpVersionAddCircle(
+                                    service.resolve('SSLearnEpVersionAddCircle', 
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionAddCircle");
                                             service.LOG.debug("object", object);
@@ -974,7 +974,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 service.user,
                                 entity.getSubject(),
                                 function(userUri, uriUri ) {
-                                    new SSLearnEpVersionUpdateCircle(
+                                    service.resolve('SSLearnEpVersionUpdateCircle', 
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionUpdateCircle");
                                             service.LOG.debug("object", object);
@@ -1031,7 +1031,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 version,
                                 resourceUri,
                                 function(userUri, versionUri, resourceUri){
-                                    new SSLearnEpVersionAddEntity(
+                                    service.resolve('SSLearnEpVersionAddEntity', 
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionAddEntity");
                                             service.LOG.debug("object", object);
@@ -1057,7 +1057,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 entity.getSubject(),
                                 resourceUri,
                                 function(userUri,uriUri,resourceUri){
-                                    new SSLearnEpVersionUpdateEntity(
+                                    service.resolve('SSLearnEpVersionUpdateEntity', 
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionUpdateEntity");
                                             service.LOG.debug("object", object);
@@ -1087,7 +1087,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         versionUri,
                         function(userUri, versionUri) {
-                            new SSLearnEpVersionCurrentSet(
+                            service.resolve('SSLearnEpVersionCurrentSet', 
                                 function(object) {
                                     service.LOG.debug("handle result of VersionCurrentSet");
                                     service.LOG.debug("object", object);
@@ -1111,7 +1111,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri) {
-                            new SSTagAdd(
+                            service.resolve('SSTagAdd', 
                                 function(object) {
                                     service.LOG.debug('result addTag', object);
                                     savable.resolve(object);
@@ -1132,7 +1132,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.onUrisReady(
                         entity.getSubject(),
                         function(entityUri) {
-                            new SSEntityUpdate(
+                            service.resolve('SSEntityUpdate', 
                                 function(object) {
                                     service.LOG.debug('result entity setLabel', object);
                                     savable.resolve(object);
@@ -1152,7 +1152,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.onUrisReady(
                         entity.getSubject(),
                         function(entityUri) {
-                            new SSFlagsSet(
+                            service.resolve('SSFlagsSet', 
                                 function(object) {
                                     service.LOG.debug('setImportance success', object);
                                     savable.resolve(object);
@@ -1199,7 +1199,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     entity.getSubject(),
                     function(userUri,uriUri){
-                        new SSLearnEpVersionRemoveCircle(
+                        service.resolve('SSLearnEpVersionRemoveCircle', 
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionRemoveCircle");
                                 service.LOG.debug("object", object);
@@ -1220,7 +1220,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     entity.getSubject(),
                     function(userUri,uriUri){
-                        new SSLearnEpVersionRemoveEntity(
+                        service.resolve('SSLearnEpVersionRemoveEntity', 
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionRemoveEntity");
                                 service.LOG.debug("object", object);
@@ -1244,7 +1244,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri) {
-                            new SSTagsRemove(
+                            service.resolve('SSTagsRemove', 
                                 function(object) {
                                     service.LOG.debug('result removeTag', object);
                                     removable.resolve(object);
