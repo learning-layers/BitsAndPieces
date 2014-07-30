@@ -75,7 +75,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 var val = this.options.namespaces[key];
                 this.vie.namespaces.add(key, val);
             }
-            this.LOG.debug('service', this);
         },
         /**
          * Waits for the given blank node references in arguments to turn into URIs.
@@ -154,42 +153,35 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             }
             var that = this;
             var found;
-            var p = {
-                'params' : params, 
-                'resultHandlers' : [resultHandler],
-                'errorHandlers' : [errorHandler],
-                'next' : null,
-                'prev' : null
-                    
-            };
-            this.LOG.debug('resolve', serviceCall, p);
-            if( this.pendingCalls[serviceCall] ) {
-                if( found = this.findPendingCall(serviceCall, params) ) {
-                    this.LOG.debug('resolve params found', found);
+            this.LOG.debug('resolve', serviceCall, params);
+            if( _.isArray(this.pendingCalls[serviceCall]) ) {
+                if( found = _.find(this.pendingCalls[serviceCall], function(f) {
+                    return _.isEqual(f.params, params);
+                })) {
+                    this.LOG.debug('resolve params found');
                     found.resultHandlers.push(resultHandler);
                     found.errorHandlers.push(errorHandler);
                     return;
                 }
-                p.prev = this.pendingCalls[serviceCall].last;
-                p.prev.next = p;
-                this.pendingCalls[serviceCall].last = p;
             } else {
-                this.pendingCalls[serviceCall] = {
-                    'first' : p,
-                    'last' : p
-                };
+                this.pendingCalls[serviceCall] = [];
             }
-            this.LOG.debug('resolve pendingCalls['+serviceCall+']', this.pendingCalls[serviceCall]);
+            var pos = this.pendingCalls[serviceCall].push({
+                'params' : params, 
+                'resultHandlers' : [resultHandler],
+                'errorHandlers' : [errorHandler]
+            }) - 1;
+            this.LOG.debug('resolve pos', pos);
             var newParams = [
                     function(result) {
-                        that.unlinkPendingCall(serviceCall, p);
+                        var p = that.pendingCalls[serviceCall].splice(pos, 1);
                         that.LOG.debug("resolve resultHandlers", p);
                         _.each(p.resultHandlers, function(f) {
                             f(result);
                         });
                     },
                     function(result) {
-                        that.unlinkPendingCall(serviceCall, p);
+                        var p = that.pendingCalls[serviceCall].splice(pos, 1);
                         _.each(p.errorHandlers, function(f) {
                             f(result);
                         });
@@ -197,33 +189,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 .concat(params);
             this.LOG.debug('resolve newParams', newParams);
             window[serviceCall].apply(window, newParams);
-        },
-        /**
-         * Iterate through list of pending calls and return whether params is found
-         */
-        findPendingCall: function(serviceCall, params) {
-            var p;
-            if( !(p = this.pendingCalls[serviceCall].first)){
-                return null;
-            }
-            do {
-                if( _.isEqual(p.params, params) ) {
-                    return p;
-                }
-            }while(p = p.next);
-            return null;
-        },
-        unlinkPendingCall: function(serviceCall, p ) {
-            if( p.prev ) {
-                p.prev.next = p.next;
-            } else {
-                this.pendingCalls[serviceCall].first = p.next;
-            }
-            if( p.next ) {
-                p.next.prev = p.prev;
-            } else {
-                this.pendingCalls[serviceCall].last = p.prev;
-            }
         },
         analyze: function(analyzable) {
             var correct = analyzable instanceof this.vie.Analyzable 
