@@ -69,11 +69,13 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             WIDGET: "Widget",
             DOCUMENT: "Document"
         },
+        pendingCalls: [],
         init: function() {
             for (var key in this.options.namespaces) {
                 var val = this.options.namespaces[key];
                 this.vie.namespaces.add(key, val);
             }
+            this.LOG.debug('service', this);
         },
         /**
          * Waits for the given blank node references in arguments to turn into URIs.
@@ -134,6 +136,94 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     }
                 }
             });
+        },
+        resolve: function() {
+            var i = 0;
+            var serviceCall;
+            var resultHandler;
+            var errorHandler;
+            var params = [];
+            for( var prop in arguments ) {
+                if( i == 0 ) { serviceCall = arguments[i]; }
+                if( i == 1 ) { resultHandler = arguments[i]; }
+                if( i == 2 ) { errorHandler = arguments[i]; }
+                if( i > 2 ) {
+                    params.push(arguments[i]);
+                }
+                i++;
+            }
+            var that = this;
+            var found;
+            var p = {
+                'params' : params, 
+                'resultHandlers' : [resultHandler],
+                'errorHandlers' : [errorHandler],
+                'next' : null,
+                'prev' : null
+                    
+            };
+            this.LOG.debug('resolve', serviceCall, p);
+            if( this.pendingCalls[serviceCall] ) {
+                if( found = this.findPendingCall(serviceCall, params) ) {
+                    this.LOG.debug('resolve params found', found);
+                    found.resultHandlers.push(resultHandler);
+                    found.errorHandlers.push(errorHandler);
+                    return;
+                }
+                p.prev = this.pendingCalls[serviceCall].last;
+                p.prev.next = p;
+                this.pendingCalls[serviceCall].last = p;
+            } else {
+                this.pendingCalls[serviceCall] = {
+                    'first' : p,
+                    'last' : p
+                };
+            }
+            this.LOG.debug('resolve pendingCalls['+serviceCall+']', this.pendingCalls[serviceCall]);
+            var newParams = [
+                    function(result) {
+                        that.unlinkPendingCall(serviceCall, p);
+                        that.LOG.debug("resolve resultHandlers", p);
+                        _.each(p.resultHandlers, function(f) {
+                            f(result);
+                        });
+                    },
+                    function(result) {
+                        that.unlinkPendingCall(serviceCall, p);
+                        _.each(p.errorHandlers, function(f) {
+                            f(result);
+                        });
+                    }]
+                .concat(params);
+            this.LOG.debug('resolve newParams', newParams);
+            window[serviceCall].apply(window, newParams);
+        },
+        /**
+         * Iterate through list of pending calls and return whether params is found
+         */
+        findPendingCall: function(serviceCall, params) {
+            var p;
+            if( !(p = this.pendingCalls[serviceCall].first)){
+                return null;
+            }
+            do {
+                if( _.isEqual(p.params, params) ) {
+                    return p;
+                }
+            }while(p = p.next);
+            return null;
+        },
+        unlinkPendingCall: function(serviceCall, p ) {
+            if( p.prev ) {
+                p.prev.next = p.next;
+            } else {
+                this.pendingCalls[serviceCall].first = p.next;
+            }
+            if( p.next ) {
+                p.next.prev = p.prev;
+            } else {
+                this.pendingCalls[serviceCall].last = p.prev;
+            }
         },
         analyze: function(analyzable) {
             var correct = analyzable instanceof this.vie.Analyzable 
@@ -359,7 +449,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     loadable.options.resource,
                     function(userUri, resourceUri) {
-                        new SSEntityDescGet(
+                        service.resolve('SSEntityDescGet', 
                             function(object) {
                                 service.LOG.debug("handle result of EntityDescGet");
                                 service.LOG.debug("object", object);
@@ -644,7 +734,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     version,
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionGet(
+                        service.resolve('SSLearnEpVersionGet',
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionGet");
                                 service.LOG.debug("objects", object);
@@ -688,7 +778,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     version,
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionGet(
+                        service.resolve('SSLearnEpVersionGet',
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionGet");
                                 service.LOG.debug("objects", object);
