@@ -69,7 +69,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             WIDGET: "Widget",
             DOCUMENT: "Document"
         },
-        pendingCalls: [],
+        pendingCalls: {},
+        pendingCallsCount : 0,
         init: function() {
             for (var key in this.options.namespaces) {
                 var val = this.options.namespaces[key];
@@ -137,6 +138,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             });
         },
         resolve: function() {
+            this.LOG.debug('resolve', this);
             var i = 0;
             var serviceCall;
             var resultHandler;
@@ -154,34 +156,34 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             var that = this;
             var found;
             this.LOG.debug('resolve', serviceCall, params);
-            if( _.isArray(this.pendingCalls[serviceCall]) ) {
-                if( found = _.find(this.pendingCalls[serviceCall], function(f) {
-                    return _.isEqual(f.params, params);
-                })) {
+            if( this.pendingCalls[serviceCall] ) {
+                if( found = this.findPendingCall(serviceCall, params)) {
                     this.LOG.debug('resolve params found');
                     found.resultHandlers.push(resultHandler);
                     found.errorHandlers.push(errorHandler);
                     return;
                 }
             } else {
-                this.pendingCalls[serviceCall] = [];
+                this.pendingCalls[serviceCall] = {};
             }
-            var pos = this.pendingCalls[serviceCall].push({
+            var p = {
                 'params' : params, 
                 'resultHandlers' : [resultHandler],
                 'errorHandlers' : [errorHandler]
-            }) - 1;
+            };
+            var pos = this.pendingCallsCount++;
+            this.pendingCalls[serviceCall][pos] = p;
             this.LOG.debug('resolve pos', pos);
             var newParams = [
                     function(result) {
-                        var p = that.pendingCalls[serviceCall].splice(pos, 1);
+                        delete that.pendingCalls[serviceCall][pos];
                         that.LOG.debug("resolve resultHandlers", p);
                         _.each(p.resultHandlers, function(f) {
                             f(result);
                         });
                     },
                     function(result) {
-                        var p = that.pendingCalls[serviceCall].splice(pos, 1);
+                        delete that.pendingCalls[serviceCall][pos];
                         _.each(p.errorHandlers, function(f) {
                             f(result);
                         });
@@ -189,6 +191,13 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 .concat(params);
             this.LOG.debug('resolve newParams', newParams);
             window[serviceCall].apply(window, newParams);
+        },
+        findPendingCall: function(serviceCall, params) {
+            for( var fp in this.pendingCalls[serviceCall] ) {
+                if( _.isEqual(this.pendingCalls[serviceCall][fp].params, params) ) {
+                    return this.pendingCalls[serviceCall][fp];
+                }
+            }
         },
         analyze: function(analyzable) {
             var correct = analyzable instanceof this.vie.Analyzable 
