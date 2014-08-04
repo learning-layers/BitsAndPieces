@@ -23,7 +23,8 @@ function(_, Backbone, EntitiesHelper){
         },
         clusterByEntity: function(ec) {
             this.LOG.debug("clusterByEntity, ec = ", ec );
-            var s = this.sortedEntities.indexOf(ec, true);
+            var s = this.sortedEntities.indexOf(ec, false);
+            if( s < 0 ) return;
 
             var eacs = [];
             if( s > 0 ) {
