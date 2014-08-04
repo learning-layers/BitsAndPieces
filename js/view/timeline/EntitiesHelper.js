@@ -58,6 +58,9 @@ function(Logger){
         setTimeline: function(timeline, dom) {
             this.timeline = timeline;
             this.timelineDOM = dom;
+        },
+        contains: function(entity) {
+            return this.getEntityViewIndex(entity) != -1;
         }
     };
     return EntitiesHelper;

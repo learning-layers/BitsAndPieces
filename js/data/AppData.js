@@ -107,10 +107,7 @@ function(Logger, Voc, _, userParams,
                         //'model': Entity,
                         //'vie' : vie
                         //})},
-                newWidget.set(Voc.start, jSGlobals.getTime() - jSGlobals.dayInMilliSeconds);
-                newWidget.set(Voc.end, jSGlobals.getTime() + 3600000 );
                 newWidget.set(Voc.belongsToVersion, version.getSubject());
-                newWidget.save();
                 newWidgets.push(newWidget);
             //}
         

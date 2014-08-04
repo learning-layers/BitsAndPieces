@@ -35,21 +35,16 @@ img.small-icon {
 
 .entity .labelable {
     max-width:50px;
+    overflow: hidden;
 }
 
 .labelable label {
     text-align: left;
     border: 0 none;
-    bottom: -1.5em;
-    display: none;
+    display: block;
     font-family: sans;
-    font-size: 70%;
-    left: 0;
-    position: absolute;
-    z-index: 1000;
-}
-.labelable:hover label {
-    display:block;
+    font-size: 50%;
+    margin-top: 2px;
 }
 label.nolabel {
     font-style: italic;
@@ -93,8 +88,12 @@ div#episodes {
 }
 
 div#episodes button {
-    display: block;
     cursor: pointer;
+}
+
+div#episodes .note {
+    font-size: 0.6em;
+    font-style: italic;
 }
 
 div#episodes ul {
@@ -195,6 +194,15 @@ div#episodes button#createNewVersion {
 
 li.episode ul {
     display: none;
+}
+
+div.cluster .entity, div.cluster .buttons {
+    float: left;
+}
+
+div.cluster button {
+    display:block;
+    font-size:0.5em;
 }
 
 div#myToolbar {

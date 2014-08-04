@@ -234,6 +234,17 @@ function(_, Backbone, EntitiesHelper){
             if( dist < 0 ) dist *= -1;
             return dist < distance;
         },
+        contains: function(entity) {
+            return this.sortedEntities.find(function(ec) {
+                if( ec.isCluster ) {
+                    return _.find(ec.get('entities'), function(e) {
+                        if( entity === e ) return true;
+                    });
+                } else {
+                    return ec === entity;
+                }
+            });
+        }
     });
     return ClusterHelper;
 });

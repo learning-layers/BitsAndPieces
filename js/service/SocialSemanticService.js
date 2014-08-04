@@ -69,6 +69,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             WIDGET: "Widget",
             DOCUMENT: "Document"
         },
+        pendingCalls: {},
+        pendingCallsCount : 0,
         init: function() {
             for (var key in this.options.namespaces) {
                 var val = this.options.namespaces[key];
@@ -135,6 +137,68 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 }
             });
         },
+        resolve: function() {
+            this.LOG.debug('resolve', this);
+            var i = 0;
+            var serviceCall;
+            var resultHandler;
+            var errorHandler;
+            var params = [];
+            for( var prop in arguments ) {
+                if( i == 0 ) { serviceCall = arguments[i]; }
+                if( i == 1 ) { resultHandler = arguments[i]; }
+                if( i == 2 ) { errorHandler = arguments[i]; }
+                if( i > 2 ) {
+                    params.push(arguments[i]);
+                }
+                i++;
+            }
+            var that = this;
+            var found;
+            this.LOG.debug('resolve', serviceCall, params);
+            if( this.pendingCalls[serviceCall] ) {
+                if( found = this.findPendingCall(serviceCall, params)) {
+                    this.LOG.debug('resolve params found');
+                    found.resultHandlers.push(resultHandler);
+                    found.errorHandlers.push(errorHandler);
+                    return;
+                }
+            } else {
+                this.pendingCalls[serviceCall] = {};
+            }
+            var p = {
+                'params' : params, 
+                'resultHandlers' : [resultHandler],
+                'errorHandlers' : [errorHandler]
+            };
+            var pos = this.pendingCallsCount++;
+            this.pendingCalls[serviceCall][pos] = p;
+            this.LOG.debug('resolve pos', pos);
+            var newParams = [
+                    function(result) {
+                        delete that.pendingCalls[serviceCall][pos];
+                        that.LOG.debug("resolve resultHandlers", p);
+                        _.each(p.resultHandlers, function(f) {
+                            f(result);
+                        });
+                    },
+                    function(result) {
+                        delete that.pendingCalls[serviceCall][pos];
+                        _.each(p.errorHandlers, function(f) {
+                            f(result);
+                        });
+                    }]
+                .concat(params);
+            this.LOG.debug('resolve newParams', newParams);
+            window[serviceCall].apply(window, newParams);
+        },
+        findPendingCall: function(serviceCall, params) {
+            for( var fp in this.pendingCalls[serviceCall] ) {
+                if( _.isEqual(this.pendingCalls[serviceCall][fp].params, params) ) {
+                    return this.pendingCalls[serviceCall][fp];
+                }
+            }
+        },
         analyze: function(analyzable) {
             var correct = analyzable instanceof this.vie.Analyzable 
             if (!correct) {
@@ -145,7 +209,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        new SSSearchWithTags(
+                        service.resolve('SSSearchWithTags', 
                             function(object) {
                                 service.LOG.debug("searchResult", object);
                                 var entities = [];
@@ -169,7 +233,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if ( analyzable.options.service == "entityShare" ) {
                 this.onUrisReady(
                     function() {
-                        new SSEntityShare(
+                        service.resolve('SSEntityShare', 
                             function(object) {
                                 service.LOG.debug("entityShare success", object);
                             },
@@ -187,7 +251,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if ( analyzable.options.service == "entityCopy" ) {
                 this.onUrisReady(
                     function() {
-                        new SSEntityCopy(
+                        service.resolve('SSEntityCopy', 
                             function(object) {
                                 service.LOG.debug("entityCopy success", object);
                             },
@@ -206,7 +270,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if ( analyzable.options.service == "userAll" ) {
                 this.onUrisReady(
                     function() {
-                        new SSUserAll(
+                        service.resolve('SSUserAll', 
                             function(object) {
                                 service.LOG.debug("userAll success", object);
                                 var users = [];
@@ -231,7 +295,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if ( analyzable.options.service == "recommTagsBasedOnUserEntityTagTime" ) {
                 this.onUrisReady(
                     function() {
-                        new SSScaffRecommTagsBasedOnUserEntityTagTime(
+                        service.resolve('SSScaffRecommTagsBasedOnUserEntityTagTime', 
                             function(object) {
                                 service.LOG.debug("recommTagsBasedOnUserEntityTagTime success", object);
                                 analyzable.resolve(object.tags || []);
@@ -251,7 +315,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if ( analyzable.options.service == "ueCountGet" ) {
                 this.onUrisReady(
                     function() {
-                        new SSUECountGet(
+                        service.resolve('SSUECountGet', 
                             function(object) {
                                 service.LOG.debug("ueCountGet success", object);
                                 analyzable.resolve(object.count || 0);
@@ -271,7 +335,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     }
                 );
             } else if ( analyzable.options.service == "dataImportEvernote" ) {
-                new SSDataImportEvernote(
+                service.resolve('SSDataImportEvernote', 
                     function(object) {
                         service.LOG.debug("dataImportEvernote success", object);
                         analyzable.resolve();
@@ -284,7 +348,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     service.userKey
                 );
             } else if ( analyzable.options.service == "categoriesPredefinedGet" ) {
-                new SSCategoriesPredefinedGet(
+                service.resolve('SSCategoriesPredefinedGet', 
                     function(result) {
                         service.LOG.debug("categoriesPredefinedGet success", result);
                         analyzable.resolve(result.categories);
@@ -295,6 +359,32 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     },
                     service.user,
                     service.userKey
+                );
+            } else if ( analyzable.options.service == "EntityDescsGet" ) {
+                service.resolve('SSEntityDescsGet', 
+                    function(result) {
+                        var entities = [];
+                        _.each(result['descs'], function(object) {
+                            service.fixEntityDesc(object);
+                            var entity = service.fixForVIE(object, 'entity', 'type');
+                            entities.push(entity);
+                        });
+                        analyzable.resolve(entities);
+                    },
+                    function(result) {
+                        service.LOG.error("EntityDescsGet", result);
+                        analyzable.reject(result);
+                    },
+                    service.user,
+                    service.userKey,
+                    analyzable.options.entities,
+                    analyzable.options.types,
+                    true,   //getTags
+                    false,  //getOverallRating
+                    false,   //getDiscs
+                    false,  //getUEs
+                    true,   //getThumb
+                    true    //getFlags
                 );
             }
 
@@ -333,7 +423,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     loadable.options.resource,
                     function(userUri, resourceUri) {
-                        new SSEntityDescGet(
+                        service.resolve('SSEntityDescGet', 
                             function(object) {
                                 service.LOG.debug("handle result of EntityDescGet");
                                 service.LOG.debug("object", object);
@@ -343,25 +433,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     return;
                                 }
 
-                                // Extract importance from flags
-                                // Remove flags from object
-                                if ( _.isArray(object['desc']['flags']) ) {
-                                    if ( !_.isEmpty(object['desc']['flags']) ) {
-                                        var importance;
-                                            creationTime = 1;
-                                        _.each(object['desc']['flags'], function(flag) {
-                                            // In case multiple are provided
-                                            if ( flag.type === 'importance'  && flag.creationTime > creationTime) {
-                                                importance = flag.value;
-                                                creationTime = flag.creationTime;
-                                            }
-                                        });
-                                        if ( importance ) {
-                                            object['desc']['importance'] = importance;
-                                        }
-                                    }
-                                    delete object['desc']['flags'];
-                                }
+                                service.fixEntityDesc(object['desc']);
 
                                 var entity = service.fixForVIE(object['desc'], 'entity', 'type');
                                 var entityUri = object['desc']['entity'];
@@ -369,7 +441,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 var type = object['desc']['type'];
                                 service.LOG.debug('desc.type', type);
                                 if( type && type == service.types.USER )  {
-                                    new SSLearnEpVersionCurrentGet(
+                                    service.resolve('SSLearnEpVersionCurrentGet',
                                         function(object2) {
                                             service.LOG.debug("handle result of VersionCurrentGet");
                                             service.LOG.debug("object", object2);
@@ -384,7 +456,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                         service.userKey 
                                         );
                                 } else if( type && type == service.types.USEREVENT )  {
-                                    new SSUserEventGet(
+                                    service.resolve('SSUserEventGet', 
                                         function(object2) {
                                             service.LOG.debug("handle result of UserEventTypeGet");
                                             service.LOG.debug("object", object2);
@@ -439,7 +511,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     loadable.options.forUser,
                     loadable.options.resource,
                     function(userUri, forUserUri, resourceUri) {
-                        new SSUserEventsGet(
+                        service.resolve('SSUserEventsGet', 
                             function(objects) {
                                 service.LOG.debug("handle result of userEventsOfUser");
                                 service.LOG.debug("objects", objects);
@@ -473,7 +545,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        new SSLearnEpsGet(
+                        service.resolve('SSLearnEpsGet', 
                             function(objects) {
                                 service.LOG.debug("handle result of epsGet");
                                 service.LOG.debug("objects", objects);
@@ -504,7 +576,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     loadable.options.episode,
                     function(userUri, episodeUri) {
-                        new SSLearnEpVersionsGet(
+                        service.resolve('SSLearnEpVersionsGet', 
                             function(objects) {
                                 service.LOG.debug("handle result of epVersionsGet");
                                 service.LOG.debug("objects", objects);
@@ -579,16 +651,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     loadable.options.version,
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionGetTimelineState(
+                        service.resolve('SSLearnEpVersionGetTimelineState', 
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpGetTimelineState");
                                 service.LOG.debug("object", object);
-                                if( !object['learnEpTimelineState']) {
-                                    resolve('timelineget');
-                                    return;
-                                }
-                                object = object['learnEpTimelineState'];
-                                //var vieEntity = new service.vie.Entity(service.fixForVIE({
+
                                 var entity = {};
                                 entity[VIE.prototype.Entity.prototype.idAttribute] = object.id;
                                 entity['@type'] = Voc.TIMELINE;
@@ -596,8 +663,18 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 entity[Voc.timeAttr]= Voc.creationTime;
                                 entity[Voc.predicate] = Voc.USEREVENT;
                                 entity[Voc.belongsToVersion] = loadable.options.version;
-                                entity[Voc.start] = object.startTime;                            
-                                entity[Voc.end] = object.endTime
+
+                                if( !object['learnEpTimelineState']) {
+                                    // init time range
+                                    //entity[Voc.start] = jSGlobals.getTime() - jSGlobals.dayInMilliSeconds;
+                                    //entity[Voc.end] = jSGlobals.getTime() + 3600000;
+
+                                } else {
+                                    object = object['learnEpTimelineState'];
+                                    //var vieEntity = new service.vie.Entity(service.fixForVIE({
+                                    entity[Voc.start] = object.startTime;                            
+                                    entity[Voc.end] = object.endTime
+                                }
 
                                 //entity = service.fixForVIE(entity);
 
@@ -631,7 +708,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     version,
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionGet(
+                        service.resolve('SSLearnEpVersionGet',
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionGet");
                                 service.LOG.debug("objects", object);
@@ -675,7 +752,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     version,
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionGet(
+                        service.resolve('SSLearnEpVersionGet',
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionGet");
                                 service.LOG.debug("objects", object);
@@ -736,7 +813,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
                     function(userUri, versionUri) {
-                        new SSLearnEpVersionSetTimelineState(
+                        service.resolve('SSLearnEpVersionSetTimelineState', 
                                 function(object) {
                                     service.LOG.debug("handle result of LearnEpVersionSetTimelinState");
                                     service.LOG.debug("object", object);
@@ -775,7 +852,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.onUrisReady(
                         this.user,
                         function(userUri) {
-                            new SSLearnEpCreate(
+                            service.resolve('SSLearnEpCreate', 
                                 function(object) {
                                     service.LOG.debug("handle result of LearnEpCreate");
                                     service.LOG.debug("object", object);
@@ -797,7 +874,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri){
-                            new SSEntityUpdate(
+                            service.resolve('SSEntityUpdate', 
                                 function(object) {
                                     service.LOG.debug("handle result of SSLabelSet");
                                     service.LOG.debug("object", object);
@@ -824,7 +901,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     episode,
                     function( userUri, episodeUri) {
-                        new SSLearnEpVersionCreate(
+                        service.resolve('SSLearnEpVersionCreate', 
                                 function(object) {
                                     service.LOG.debug("handle result of LearnEpVersionCreate");
                                     service.LOG.debug("object", object);
@@ -868,7 +945,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 service.user,
                                 version,
                                 function(userUri, versionUri) {
-                                    new SSLearnEpVersionAddCircle(
+                                    service.resolve('SSLearnEpVersionAddCircle', 
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionAddCircle");
                                             service.LOG.debug("object", object);
@@ -897,7 +974,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 service.user,
                                 entity.getSubject(),
                                 function(userUri, uriUri ) {
-                                    new SSLearnEpVersionUpdateCircle(
+                                    service.resolve('SSLearnEpVersionUpdateCircle', 
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionUpdateCircle");
                                             service.LOG.debug("object", object);
@@ -954,7 +1031,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 version,
                                 resourceUri,
                                 function(userUri, versionUri, resourceUri){
-                                    new SSLearnEpVersionAddEntity(
+                                    service.resolve('SSLearnEpVersionAddEntity', 
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionAddEntity");
                                             service.LOG.debug("object", object);
@@ -980,7 +1057,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 entity.getSubject(),
                                 resourceUri,
                                 function(userUri,uriUri,resourceUri){
-                                    new SSLearnEpVersionUpdateEntity(
+                                    service.resolve('SSLearnEpVersionUpdateEntity', 
                                         function(object) {
                                             service.LOG.debug("handle result of LearnEpVersionUpdateEntity");
                                             service.LOG.debug("object", object);
@@ -1010,7 +1087,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         versionUri,
                         function(userUri, versionUri) {
-                            new SSLearnEpVersionCurrentSet(
+                            service.resolve('SSLearnEpVersionCurrentSet', 
                                 function(object) {
                                     service.LOG.debug("handle result of VersionCurrentSet");
                                     service.LOG.debug("object", object);
@@ -1034,7 +1111,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri) {
-                            new SSTagAdd(
+                            service.resolve('SSTagAdd', 
                                 function(object) {
                                     service.LOG.debug('result addTag', object);
                                     savable.resolve(object);
@@ -1055,7 +1132,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.onUrisReady(
                         entity.getSubject(),
                         function(entityUri) {
-                            new SSEntityUpdate(
+                            service.resolve('SSEntityUpdate', 
                                 function(object) {
                                     service.LOG.debug('result entity setLabel', object);
                                     savable.resolve(object);
@@ -1075,7 +1152,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.onUrisReady(
                         entity.getSubject(),
                         function(entityUri) {
-                            new SSFlagsSet(
+                            service.resolve('SSFlagsSet', 
                                 function(object) {
                                     service.LOG.debug('setImportance success', object);
                                     savable.resolve(object);
@@ -1122,7 +1199,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     entity.getSubject(),
                     function(userUri,uriUri){
-                        new SSLearnEpVersionRemoveCircle(
+                        service.resolve('SSLearnEpVersionRemoveCircle', 
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionRemoveCircle");
                                 service.LOG.debug("object", object);
@@ -1143,7 +1220,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     entity.getSubject(),
                     function(userUri,uriUri){
-                        new SSLearnEpVersionRemoveEntity(
+                        service.resolve('SSLearnEpVersionRemoveEntity', 
                             function(object) {
                                 service.LOG.debug("handle result of LearnEpVersionRemoveEntity");
                                 service.LOG.debug("object", object);
@@ -1167,7 +1244,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri) {
-                            new SSTagsRemove(
+                            service.resolve('SSTagsRemove', 
                                 function(object) {
                                     service.LOG.debug('result removeTag', object);
                                     removable.resolve(object);
@@ -1186,6 +1263,28 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 }
             } else {
                 this.LOG.warn("SocialSemanticService remove for " + type.id + " not implemented");
+            }
+
+        },
+        fixEntityDesc: function(object) {
+            // Extract importance from flags
+            // Remove flags from object
+            if ( _.isArray(object['flags']) ) {
+                if ( !_.isEmpty(object['flags']) ) {
+                    var importance;
+                        creationTime = 1;
+                    _.each(object['flags'], function(flag) {
+                        // In case multiple are provided
+                        if ( flag.type === 'importance'  && flag.creationTime > creationTime) {
+                            importance = flag.value;
+                            creationTime = flag.creationTime;
+                        }
+                    });
+                    if ( importance ) {
+                        object['importance'] = importance;
+                    }
+                }
+                delete object['flags'];
             }
 
         },

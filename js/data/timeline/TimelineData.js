@@ -15,9 +15,6 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
         if(model.isof(Voc.TIMELINE)){
             this.checkIntegrity(model, options);
             var user = model.get(Voc.belongsToUser);
-            if( !model.isNew()) {
-                UserData.fetchRange(user, model.get(Voc.start), model.get(Voc.end));
-            }
             // TODO resolve this hack: only fire on start change to avoid double execution
             model.on('change:' + this.vie.namespaces.uri(Voc.start),
                 function(model, value, options){

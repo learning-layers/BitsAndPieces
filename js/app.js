@@ -1,9 +1,9 @@
 define(['vie', 'logger', 'tracker', 'userParams', 'service/SocialSemanticService', 'extender', 
         'data/AppData', 'underscore',
         'view/AppView', 'view/LoginFormView', 'voc',
-        'jquery-cookie'],
+        'text!../schemata/ss.sss.json', 'jquery-cookie'],
 function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
-        AppData, _, AppView, LoginFormView, Voc){
+        AppData, _, AppView, LoginFormView, Voc, schema){
     VIE.Util.useRealUri = true;
     Logger.useDefaults();
     var AppLog = Logger.get('App');
@@ -67,24 +67,22 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
 
     AppData.init(v);
 
-    $.getJSON("schemata/ss.sss.json", {}, function(data) {
-        VIE.Util.loadSchemaOrg(v, data);
-        $(document).ready(function(){
-            var user = new v.Entity;
-            user.set(user.idAttribute, userParams.user);
-            user.set('@type', Voc.USER);
-            v.entities.addOrUpdate(user);
-            user.fetch();
+    VIE.Util.loadSchemaOrg(v, JSON.parse(schema));
+    $(document).ready(function(){
+        var user = new v.Entity;
+        user.set(user.idAttribute, userParams.user);
+        user.set('@type', Voc.USER);
+        v.entities.addOrUpdate(user);
+        user.fetch();
 
-            var view = new AppView({
-                'model' : user,
-                'el' : 'body',
-                'vie' :  v
-            });
-
-            view.render();
-
+        var view = new AppView({
+            'model' : user,
+            'el' : 'body',
+            'vie' :  v
         });
+
+        view.render();
+
     });
 
 

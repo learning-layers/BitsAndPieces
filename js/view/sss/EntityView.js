@@ -65,20 +65,20 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             'sss:evernoteNote' : 'img/sss/evernoteNote.png',
             'sss:evernoteResource' : 'img/sss/thing.png',
 
-            //'sss:evernoteNotebookCreate' : 'img/sss/addCollection.png',
-            //'sss:evernoteNotebookUpdate' : 'img/sss/editCollection.png',
-            //'sss:evernoteNotebookShare' : 'img/sss/shareCollection.png',
-            //'sss:evernoteNotebookFollow' : 'img/sss/subscribeCollection.png',
+            'sss:evernoteNotebookCreate' : 'img/sss/addCollection.png',
+            'sss:evernoteNotebookUpdate' : 'img/sss/editCollection.png',
+            'sss:evernoteNotebookShare' : 'img/sss/shareCollection.png',
+            'sss:evernoteNotebookFollow' : 'img/sss/subscribeCollection.png',
             'sss:evernoteNoteCreate' : 'img/sss/addDocument.png',
             'sss:evernoteNoteUpdate' : 'img/sss/editDocument.png',
             'sss:evernoteNoteDelete' : 'img/sss/deleteDocument.png',
             'sss:evernoteNoteShare' : 'img/sss/shareDocument.png',
             'sss:evernoteNoteFollow' : 'img/sss/subscribeDocument.png',
-            //'sss:evernoteReminderDone' : 'img/sss/reminderDone.png',
-            //'sss:evernoteReminderCreate' : 'img/sss/reminder.png',
-            //'sss:evernoteResourceAdd' : 'img/sss/addCollectionItem.png',
-            //'sss:evernoteResourceFollow' : 'img/sss/subscribeResource.png',
-            //'sss:evernoteResourceShare' : 'img/sss/shareResource.png'
+            'sss:evernoteReminderDone' : 'img/sss/reminderDone.png',
+            'sss:evernoteReminderCreate' : 'img/sss/reminder.png',
+            'sss:evernoteResourceAdd' : 'img/sss/addCollectionItem.png',
+            'sss:evernoteResourceFollow' : 'img/sss/subscribeResource.png',
+            'sss:evernoteResourceShare' : 'img/sss/shareResource.png'
 
         },
         events : {
@@ -143,7 +143,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
               'class' : 'entity',
               'about' : this.model.getSubject()
             });
-            label = this.model.get(Voc.label);
+            label = this.model.get(Voc.label) || "";
             view_class = 'labelable';
 
             if( true === this.model.get(Voc.isUsed) ) {
@@ -153,11 +153,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             if( label && label.isEntity ) label = label.getSubject();
             this.$el.html(//"<div class=\"entity\" about=\""+this.model.getSubject()+"\">"+
                     "<div class=\"" + view_class + "\">"+
-                    "<img class=\"icon\" src=\""+this.getIcon()+"\" "+ 
-                    "alt=\"" + this.model.get('@type').id + "\"/>"+
-                    (label ? 
+                    "<img class=\"icon\" src=\""+this.getIcon()+"\"/>"+ 
                         "<label class=\"withlabel\">" +
-                        "<strong>"+label+"</strong>":"<label class=\"nolabel\">no label")+
+                        "<strong>"+label+"</strong>"+
                         "</label>"+
                     "</div>");
             this.LOG.debug('rendering ', this.model);
@@ -213,6 +211,24 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             if( !type ) type = this.model.get('@type');
             this.LOG.debug('type', type);
             if( !type ) return this.icons['unknown'];
+            if( _.isArray(type)) {
+                // decide which type to use
+                var i, j, push;
+                for( i = 0; i < type.length; i++ ){
+                    push = true;
+                    for( j = 0; j < type.length; j++ ){
+                        if( i != j && type[i].subsumes(type[j])) {
+                            push = false;
+                            break;
+                        }
+                    }
+                    if( push ) {
+                        type = type[i];
+                        break;
+                    }
+                }
+            }
+            if( _.isArray(type)) { type = type[0]; }
             name = this.model.vie.namespaces.curie(type.id);
             this.LOG.debug('name', name);
             if( name === 'user' ) {
