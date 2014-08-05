@@ -8,8 +8,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'keypress .tagSearch input' : 'updateOnEnter',
             'click .deleteTag' : 'deleteTag',
             'click .deadline .clearDatepicker' : 'clearDatepicker',
-            'keypress .bitTitle span' : 'updateOnEnter',
-            'blur .bitTitle span' : 'changeLabel', // XXX Need to change to work with input
+            'keypress input[name="title"]' : 'updateOnEnter',
+            'blur input[name="title"]' : 'changeLabel',
             'click .recommendedTags .tagcloud a' : 'clickRecommendedTag'
         },
         LOG: Logger.get('BitToolbarView'),
@@ -92,10 +92,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {
                 this.LOG.debug('e', e);
-                if ( e.currentTarget.nodeName === 'INPUT' ) {
-                    this.addTag($(e.currentTarget).val());
-                } else if ( e.currentTarget.nodeName === 'SPAN' ) {
+                var currentTarget = $(e.currentTarget);
+                if ( currentTarget.attr('name') === 'title' ) {
                     $(e.currentTarget).blur();
+                } else {
+                    this.addTag($(e.currentTarget).val());
                 }
             }
         },
@@ -123,16 +124,14 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         changeLabel: function(e) {
             var that = this,
             currentTarget = $(e.currentTarget),
-            label = currentTarget.text();
+            label = currentTarget.val();
 
-            label = label.replace(/(<([^>]+)>)/ig,"");
-            currentTarget.html(label);
             if( this.model.get(Voc.label) == label) return;
             this.LOG.debug('changeLabel', label);
             // Make sure to set user_initiated flag
             this.model.set(Voc.label, label, {
                 'error' : function() {
-                    that.$el.find('.bitTitle > span').effect("shake");
+                    that.$el.find('input[name="title"]').effect("shake");
                 },
                 'user_initiated' : true
             });
