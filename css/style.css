@@ -364,7 +364,19 @@ form.loginForm {
 	margin-bottom: 2px;
 }
 
-.selectedUser span {
+.selectedUser {
+	background-color: #48a2c5;
+	color: #c9e3ee;
+	margin-top: 5px;
+	margin-right: 5px;
+}
+
+.selectedUser span.userIcon {
+	font-size: 120%;
+}
+
+.selectedUser span.deleteIcon {
+	font-size: 80%;
 	cursor: pointer;
 }
 
@@ -376,19 +388,24 @@ ul.episodeListing {
     list-style-type: none;
     margin-left: 0;
     padding-left: 0;
+	border: 1px solid rgb(221, 221, 221);
 }
 
 ul.episodeListing li {
     cursor: pointer;
+	margin: 10px 10px 10px 10px;
 }
 
 ul.episodeListing .episodeLabel {
     display: inline-block;
     cursor: pointer;
 	min-height: 46px;
-	vertical-align: text-bottom;
 }
 
 table td.withPadding {
 	padding-left: 5px;
+}
+
+label.notBoldLabel {
+	font-weight: normal;
 }

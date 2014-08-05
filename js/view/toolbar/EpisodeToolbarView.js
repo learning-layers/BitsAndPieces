@@ -9,7 +9,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'keypress textarea[name="description"]' : 'updateOnEnter',
             'blur textarea[name="description"]' : 'changeDescription',
             'change input[name="sharetype"]' : 'shareTypeChanged',
-            'click input[name="share"]' : 'shareEpisode',
+            'click button[name="share"]' : 'shareEpisode',
             'click .selectedUser > span' : 'removeSelectedUser',
             'click input[name="onlyselected"]' : 'clickOnlySelected',
             'keypress input[name="search"]' : 'updateOnEnter'
@@ -192,7 +192,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if ( _.indexOf(this.selectedUsers, ui.item.value) === -1 ) {
                 this.selectedUsers.push(ui.item.value);
                 $(autocomplete).val(ui.item.label);
-                $(autocomplete).parent().append('<div class="selectedUser" data-value="' + ui.item.value+ '">' + ui.item.label + ' <span>x<span></div>');
+                $(autocomplete).parent().append('<div class="badge selectedUser" data-value="' + ui.item.value+ '"><span class="glyphicon glyphicon-user userIcon"></span> ' + ui.item.label + ' <span class="glyphicon glyphicon-remove-circle deleteIcon"><span></div>');
             }
         },
         removeSelectedUser: function(e) {
@@ -222,7 +222,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             var current = this.getCurrentEntitiesAndCircles();
             if ( $(e.currentTarget).is(':checked') ) {
                 // Add and render
-                var select = $('<select name="only" multiple="multiple" class="shareBitsOnly"></select>'),
+                var select = $('<select name="only" multiple="multiple" class="form-control shareBitsOnly"></select>'),
                     circles = $('<optgroup label="Circles"></optgroup>'),
                     entities = $('<optgroup label="Entities"></optgrpup>');
                 _.each(current.circles, function(circle) {
