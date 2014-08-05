@@ -221,18 +221,6 @@ div#myToolbar .toolbar-handle {
 	width: 30px;
 }
 
-div.toolbarShown .toolbar-handle {
-	background-image: url('../img/toolbar-handle-close.png');
-	background-size: 30px 50px;
-	background-repeat: no-repeat;
-}
-
-div.toolbarHidden .toolbar-handle {
-	background-image: url('../img/toolbar-handle-open.png');
-	background-size: 30px 50px;
-	background-repeat: no-repeat;
-}
-
 div.toolbarShown {
 	width: 350px;
 }
@@ -249,6 +237,10 @@ div#tabs {
 
 div#tabs.ui-widget-content {
 	overflow-y: auto;
+}
+
+div#tabs .ui-tabs-panel {
+	padding: 0;
 }
 
 div.tags div.tag {

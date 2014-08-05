@@ -1,5 +1,7 @@
 <div class="toolbarContent toolbarContentBit">
 
+    <h3>Bit</h3>
+
     <div class="toolbarSection">
         <div class="bitTitle">
             <label>Bit Title:</label>
@@ -69,7 +71,7 @@
         </div>
     </div>
 
-    <div class="toolbarSection">
+    <!--div class="toolbarSection">
         <div>
             <label class="subsectionLabel">Associated tasks:</label>
             <input disabled type="button" value="Create new task" />
@@ -86,6 +88,6 @@
             <textarea disabled="disabled"></textarea>
             <input type="button" value="Add new" disabled="disabled" />
         </div>
-    </div>
+    </div-->
 
 </div>

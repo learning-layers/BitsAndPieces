@@ -43,14 +43,17 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.subViews['episode'].render();
         },
         showHide: function(e) {
-            var toolbar = this;
+            var toolbar = this,
+                handle = this.$el.find('.toolbar-handle');
             if (this.isHidden()) {
                 this.$el.switchClass('toolbarHidden', 'toolbarShown', function() {
                     toolbar.is_hidden = false;
+                    handle.find('.glyphicon').switchClass('glyphicon-chevron-left', 'glyphicon-chevron-right');
                 });
             } else {
                 this.$el.switchClass('toolbarShown', 'toolbarHidden', function() {
                     toolbar.is_hidden = true;
+                    handle.find('.glyphicon').switchClass('glyphicon-chevron-right', 'glyphicon-chevron-left');
                 });
             }
         },

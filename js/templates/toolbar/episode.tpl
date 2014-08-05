@@ -1,5 +1,7 @@
 <div class="toolbarContent toolbarContentEpisode">
 
+    <h3>Episode</h3>
+
     <div class="toolbarSection">
         <div>
             <label>Episode Title:</label>

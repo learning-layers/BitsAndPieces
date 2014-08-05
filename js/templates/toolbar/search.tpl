@@ -1,13 +1,19 @@
-<div class="toolbarContent toolbarcontentSearch">
+<div class="panel panel-default toolbarContent toolbarcontentSearch">
 
-    <div class="toolbarSection">
-        <div class="search">
-            <label class="subsectionLabel">Search a Bit:</label>
-            <input type="text" value="" placeholder="Enter tag" />
-        </div>
-
-        <div class="tagcloud"></div>
+    <div class="panel-heading">
+        <h3 class="panel-title">Bit</h3>
     </div>
+
+    <div class="panel-body">
+
+        <div class="input-group">
+            <div class="search">
+                <label class="subsectionLabel">Search a Bit:</label>
+                <input type="text" value="" placeholder="Enter tag" />
+            </div>
+
+            <div class="tagcloud"></div>
+        </div>
 
     <div class="toolbarSection">
         <div class="filter">
@@ -21,5 +27,7 @@
             <div class="resultSet"></div>
         </div>
     </div>
+
+    </div><!-- .panel-body -->
 
 </div>
