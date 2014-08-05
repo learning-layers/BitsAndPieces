@@ -5,7 +5,7 @@ div.timeline-event-content {
     overflow: visible;
 }
 div.timelineFrame {
-    height: 170px;
+    height: 200px;
 }
 div.timelineFrame > .user-container {
     width: 5%;

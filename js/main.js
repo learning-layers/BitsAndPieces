@@ -22,7 +22,7 @@ var require = (function() {
             'svg.foreignobject' : '../lib/svgjs/svg.foreignobject',
             'organize' : '../lib/organize/organize',
             'text' : '../lib/text',
-            'bootstrap': '../lib/bootsrtap/js/bootstrap'
+            'bootstrap': '../lib/bootstrap/js/bootstrap'
         },
         shim: {
             'logger' : { 
@@ -55,7 +55,7 @@ var require = (function() {
             'jquery-ui' : {
                 'deps' : ['jquery']
             },
-            'bootsrtap' : {
+            'bootstrap' : {
                 'deps' : ['jquery']
             }
         },
