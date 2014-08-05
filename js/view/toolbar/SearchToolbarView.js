@@ -32,6 +32,14 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     view.remove();
                 });
                 that.searchResultSet = [];
+
+                // Show or hide results holder
+                if ( !_.isEmpty(results) ) {
+                    that.$el.find('.results').show();
+                } else {
+                    that.$el.find('.results').hide();
+                }
+
                 _.each(results, function(result) {
                     var view = new EntityView({
                         model : result
@@ -50,7 +58,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             var that = this,
                 box = this.$el.find('.tagcloud'),
                 fontMin = 10,
-                fontMax = 30,
+                fontMax = 14,
                 frequMin = 1,
                 frequMax = 1,
                 tmpTags;
@@ -99,7 +107,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 if ( fontSize > fontMax ) {
                     fontSize = fontMax;
                 }
-                box.append(' <a href="#" style="font-size:' + fontSize+ 'pt;" data-tag="' + tag + '">' + tag + '</a>');
+                box.append(' <span class="badge"><a href="#" style="font-size:' + fontSize+ 'px;" data-tag="' + tag + '">' + tag + '</a></span>');
             });
         },
         filterSearchResults: function(e) {
