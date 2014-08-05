@@ -342,7 +342,7 @@ form.loginForm {
 
 .tagcloud a {
 	text-decoration: none;
-	color: #e9f4e7 !important;
+	color: #e9f4e7;
 }
 
 .tagcloud span.badge {
