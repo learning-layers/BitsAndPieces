@@ -334,11 +334,11 @@ div#tabs .thumbnail img {
 
 form.loginForm {
 	position: absolute;
-	margin: auto;
 	left: 0;
 	right: 0;
-	top: 50%;
-	text-align: center;
+	top: 40%;
+	margin: auto;
+	width: 250px;
 }
 
 .tagcloud a {

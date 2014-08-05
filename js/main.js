@@ -21,7 +21,8 @@ var require = (function() {
             'svg.draggable' : '../lib/svgjs/svg.draggable',
             'svg.foreignobject' : '../lib/svgjs/svg.foreignobject',
             'organize' : '../lib/organize/organize',
-            'text' : '../lib/text'
+            'text' : '../lib/text',
+            'bootstrap': '../lib/bootsrtap/js/bootstrap'
         },
         shim: {
             'logger' : { 
@@ -52,6 +53,9 @@ var require = (function() {
                 'deps' : ['jquery']
             },
             'jquery-ui' : {
+                'deps' : ['jquery']
+            },
+            'bootsrtap' : {
                 'deps' : ['jquery']
             }
         },
