@@ -235,6 +235,10 @@ div#tabs {
 	height: 100%;
 }
 
+div#tabs.ui-widget {
+	font-size: 14px;
+}
+
 div#tabs.ui-widget-content {
 	overflow-y: auto;
 }
@@ -260,10 +264,14 @@ div.tags div.tag span.deleteTag {
 	cursor: pointer;
 }
 
+div#tabs .results .resultSet {
+	border: 1px solid rgb(221, 221, 221);
+}
+
 div#tabs .results .resultSet .entity {
 	display: block;
 	height: 50px;
-	margin: 2px;
+	margin: 10px 10px 10px 10px;
 }
 
 div#tabs .results .resultSet .entity .labelable {
@@ -281,7 +289,6 @@ div#tabs .results .resultSet label.withlabel {
 	left: 5px;
 	display: inline-block;
 	min-height: 50px;
-	vertical-align: text-bottom;
 	width: 200px;
 }
 
@@ -335,6 +342,11 @@ form.loginForm {
 
 .tagcloud a {
 	text-decoration: none;
+	color: #e9f4e7 !important;
+}
+
+.tagcloud span.badge {
+	background-color: #2b4d23;
 }
 
 .selectedUser span {
