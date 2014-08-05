@@ -57,7 +57,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         displayTagcloud: function() {
             var that = this,
                 box = this.$el.find('.tagcloud'),
-                fontMin = 8,
+                fontMin = 10,
                 fontMax = 14,
                 frequMin = 1,
                 frequMax = 1,

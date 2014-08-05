@@ -9,7 +9,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'click .deleteTag' : 'deleteTag',
             'click .deadline .clearDatepicker' : 'clearDatepicker',
             'keypress .bitTitle span' : 'updateOnEnter',
-            'blur .bitTitle span' : 'changeLabel',
+            'blur .bitTitle span' : 'changeLabel', // XXX Need to change to work with input
             'click .recommendedTags .tagcloud a' : 'clickRecommendedTag'
         },
         LOG: Logger.get('BitToolbarView'),
@@ -148,13 +148,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         addOrUpdateRecommendedTags: function(tags) {
             var tagcloud = this.$el.find('.recommendedTags .tagcloud'),
                 fontMin = 10,
-                fontMax = 30;
+                fontMax = 14;
             tagcloud.empty();
             if ( !_.isEmpty(tags) ) {
                 _.each(tags, function(tag) {
                     var fontSize = fontMax * tag.likelihood;
                     if ( fontSize < fontMin ) fontSize += fontMin;
-                    tagcloud.append(' <a href="#" data-tag="' + tag.label + '" style="font-size:' + fontSize + 'pt">' + tag.label + '</a>');
+                    tagcloud.append(' <span class="badge"><a href="#" data-tag="' + tag.label + '" style="font-size:' + fontSize + 'px">' + tag.label + '</a></span>');
                 });
             }
         }

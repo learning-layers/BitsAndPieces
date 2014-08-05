@@ -247,23 +247,6 @@ div#tabs .ui-tabs-panel {
 	padding: 0;
 }
 
-div.tags div.tag {
-	display: inline-block;
-	border: 2px solid gray;
-	background-color: lightgray;
-	padding: 5px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-	margin: 2px 0;
-}
-
-div.tags div.tag span.deleteTag {
-	margin-left: 5px;
-	color: gray;
-	cursor: pointer;
-}
-
 div#tabs .results .resultSet {
 	border: 1px solid rgb(221, 221, 221);
 }
@@ -292,6 +275,24 @@ div#tabs .results .resultSet label.withlabel {
 	width: 200px;
 }
 
+div#tabs .importance .ui-slider-horizontal {
+	height: 5px;
+	background: #5ba74a;
+	border: 1px solid #5ba74a;
+}
+
+div#tabs .importance .ui-slider-handle {
+	height: 15px;
+	width: 15px;
+	background: #d79634;
+	border: 1px solid #d79634;
+}
+
+div#tabs .importance .indicators {
+	margin-top: 10px;
+	font-size: 120%;
+}
+
 div#tabs .importance .indicators .importanceLow {
 	position: relative;
 	left: -5px;
@@ -299,21 +300,21 @@ div#tabs .importance .indicators .importanceLow {
 
 div#tabs .importance .indicators .importanceMedium {
 	position: relative;
-	left: 22%;
+	left: 28%;
 }
 
 div#tabs .importance .indicators .importanceHigh {
 	position: relative;
-	left: 46%;
+	left: 55%;
 }
 
 div#tabs .importance .indicators .importanceFavourite {
 	position: relative;
-	left: 70%;
+	left: 82%;
 }
 
-div#tabs .thumbnail label {
-	display: block;
+div#tabs .thumbnail {
+	background: #eee;
 }
 
 div#tabs .thumbnail img {
@@ -322,6 +323,18 @@ div#tabs .thumbnail img {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+div.tags div.tag {
+	font-weight: normal;
+	background-color: #2b4d23;
+	color: #e9f4e7;
+	margin-bottom: 2px;
+}
+
+div.tags div.tag span.deleteTag {
+	cursor: pointer;
+	font-size: 80%;
 }
 
 /* Solution from: http://www.karlhorky.com/2012/06/cross-browser-image-grayscale-with-css.html */
@@ -343,10 +356,12 @@ form.loginForm {
 .tagcloud a {
 	text-decoration: none;
 	color: #e9f4e7;
+	font-weight: normal;
 }
 
 .tagcloud span.badge {
 	background-color: #2b4d23;
+	margin-bottom: 2px;
 }
 
 .selectedUser span {
@@ -372,4 +387,8 @@ ul.episodeListing .episodeLabel {
     cursor: pointer;
 	min-height: 46px;
 	vertical-align: text-bottom;
+}
+
+table td.withPadding {
+	padding-left: 5px;
 }
