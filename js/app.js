@@ -42,7 +42,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
 
     if ( !userParams.isAuthenticated) {
         var loginView = new LoginFormView({
-            'el' : 'body'
+            'el' : 'body .container-fluid'
         });
         loginView.render();
         return null;
@@ -77,7 +77,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
 
         var view = new AppView({
             'model' : user,
-            'el' : 'body',
+            'el' : 'body .container-fluid',
             'vie' :  v
         });
 
