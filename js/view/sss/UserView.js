@@ -18,7 +18,7 @@ define(['view/sss/EntityView', 'logger', 'underscore', 'jquery', 'voc'], functio
             this.$el.html(//"<div class=\"entity user\" about=\""+this.model.getSubject()+"\">"+
                     "<img class=\"icon\" src=\""+this.getIcon()+"\" "+ 
                     "alt=\"User " + this.model.get(Voc.label) + "\"/>"+
-                    "<div class=\"label\">"+this.model.get(Voc.label)+"</div>");
+                    "<div class=\"userLabel\">"+this.model.get(Voc.label)+"</div>");
 
                     //"</div>");
             // Prevent user dragging and dropping
