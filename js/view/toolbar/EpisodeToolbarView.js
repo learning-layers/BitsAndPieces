@@ -41,11 +41,16 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return version.get(Voc.belongsToEpisode);
         },
         render: function() {
-            var that = this;
+            var that = this,
+                version = this.getCurrentVersion();
             this.$el.empty();
-            if( !this.getCurrentVersion() || !this.getCurrentEpisode() ) {
+            if( !version || !this.getCurrentEpisode() ) {
                 // ... empty the toolbar content
                 this.$el.html("No episode");
+                if (version) {
+                    // Wait for the episode to be ready
+                    version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.render, this);
+                }
                 return;
             }
             this.$el.html(_.template(EpisodeTemplate, this.getEpisodeViewData()));
