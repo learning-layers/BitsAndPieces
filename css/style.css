@@ -215,7 +215,7 @@ div#myToolbar {
 	top: 0;
 	right: 0;
 	height: 100%;
-	/*z-index: 999;*/
+	z-index: 999;
 }
 
 div#myToolbar .toolbar-handle {
