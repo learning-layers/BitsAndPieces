@@ -63,7 +63,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             // EVERNOTE STUFF
             'sss:evernoteNotebook' : 'img/sss/collection.png',
             'sss:evernoteNote' : 'img/sss/evernoteNote.png',
-            'sss:evernoteResource' : 'img/sss/thing.png',
+            'sss:evernoteResource' : 'img/sss/evernoteNote.png',
 
             'sss:evernoteNotebookCreate' : 'img/sss/addCollection.png',
             'sss:evernoteNotebookUpdate' : 'img/sss/editCollection.png',
