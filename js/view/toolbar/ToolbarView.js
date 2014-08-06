@@ -1,10 +1,10 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc', 
-        'view/toolbar/BitToolbarView', 'view/toolbar/SearchToolbarView', 'view/toolbar/EpisodeToolbarView',
-        'text!templates/toolbar/toolbar.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitToolbarView, SearchToolbarView, EpisodeToolbarView, ToolbarTemplate){
+        'view/toolbar/BitToolbarView', 'view/toolbar/SearchToolbarView', 'view/toolbar/EpisodeToolbarView', 'view/toolbar/NotificationsToolbarView',
+        'text!templates/toolbar/toolbar.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitToolbarView, SearchToolbarView, EpisodeToolbarView, NotificationsToolbarView, ToolbarTemplate){
     return Backbone.View.extend({
         subViews: {},
         tabMap : {
-            'notification' : 0,
+            'notifications' : 0,
             'search' : 1,
             'bit' : 2,
             'episode' : 3
@@ -25,6 +25,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             var tabs = _.template(ToolbarTemplate, {});
             this.$el.html(tabs);
             this.$el.find('#tabs').tabs();
+
+            this.subViews['notifications'] = new NotificationsToolbarView({
+                el : this.getTabId('notifications')
+            });
+            this.subViews['notifications'].render();
 
             this.subViews['search'] = new SearchToolbarView({
                 el : this.getTabId('search')

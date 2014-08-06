@@ -32,6 +32,7 @@ function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
     Logger.get('SocialSemanticService').setLevel(Logger.OFF);
     Logger.get('Mockup').setLevel(Logger.OFF);
     Logger.get('ToolbarView').setLevel(Logger.OFF);
+    Logger.get('NotificationsToolbarView').setLevel(Logger.OFF);
     Logger.get('SearchToolbarView').setLevel(Logger.OFF);
     Logger.get('BitToolbarView').setLevel(Logger.OFF);
     Logger.get('EntityData').setLevel(Logger.OFF);
