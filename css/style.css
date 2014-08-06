@@ -5,7 +5,7 @@ div.timeline-event-content {
     overflow: visible;
 }
 div.timelineFrame {
-    height: 200px;
+    height: 180px;
 }
 div.timelineFrame > .user-container {
     width: 5%;
@@ -58,8 +58,13 @@ caption {
 }
 fieldset {
     border: 1px solid lightgray;
+	margin: 0 2px;
+	padding: .35em .625em .75em;
 }
 fieldset legend {
+	width: auto;
+	margin-bottom: 0;
+	border-bottom: none;
     font-size: 0.8em;
     color: gray;
 }
