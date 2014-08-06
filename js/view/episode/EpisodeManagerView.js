@@ -19,11 +19,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.$el.html('<img src="css/img/menu_small.png" id="toggleEpisodes"/><h1></h1>' + 
 
                     '<div id="episodes">' +
-                    '<button id="logout">Logout</button>' + 
-                    '<button disabled="disabled" id="dataImportEvernote">Import from Evernote</button>' + 
-                    '<button id="createNewVersion">New Version</button>'+
-                    '<button id="createBlank">Create New Episode</button>'+
-                    '<button id="createFromHere">Create new Episode from here</button>'+
+                    '<div class="btn-group">' +
+                    '<button id="logout" class="btn btn-danger" >Logout</button>' + 
+                    '<button disabled="disabled" id="dataImportEvernote" class="btn btn-primary">Import from Evernote</button>' + 
+                    //'<button id="createNewVersion">New Version</button>'+
+                    '<button id="createBlank" class="btn btn-success">Create New Episode</button>'+
+                    //'<button id="createFromHere">Create new Episode from here</button>'+
+                    '</div>' +
                     '<div class="note">(For a new import from Evernote contact dtheiler@tugraz.at)</div><ul></ul></div>');
 
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), this.episodeVersionChanged, this);
