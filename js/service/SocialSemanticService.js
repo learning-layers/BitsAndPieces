@@ -334,19 +334,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                     }
                 );
-            } else if ( analyzable.options.service == "dataImportEvernote" ) {
-                service.resolve('SSDataImportEvernote', 
-                    function(object) {
-                        service.LOG.debug("dataImportEvernote success", object);
-                        analyzable.resolve();
-                    },
-                    function(object) {
-                        service.LOG.debug("dataImportEvernote failed", object);
-                        analyzable.reject();
-                    },
-                    service.user,
-                    service.userKey
-                );
             } else if ( analyzable.options.service == "categoriesPredefinedGet" ) {
                 service.resolve('SSCategoriesPredefinedGet', 
                     function(result) {

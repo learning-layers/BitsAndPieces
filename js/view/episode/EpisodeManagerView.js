@@ -8,8 +8,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             'click button#createNewVersion' : 'createNewVersion',
             'click #toggleEpisodes' : 'toggleEpisodes',
             'mouseleave #episodes' : 'toggleEpisodes',
-            'click button#logout' : 'logOut',
-            //'click button#dataImportEvernote' : 'dataImportEvernote'
+            'click button#logout' : 'logOut'
         },
         initialize: function() {
             this.views = {};
@@ -21,7 +20,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
                     '<div id="episodes">' +
                     '<div class="btn-group">' +
                     '<button id="logout" class="btn btn-danger" >Logout</button>' + 
-                    '<button disabled="disabled" id="dataImportEvernote" class="btn btn-primary">Import from Evernote</button>' + 
                     //'<button id="createNewVersion">New Version</button>'+
                     '<button id="createBlank" class="btn btn-success">Create New Episode</button>'+
                     //'<button id="createFromHere">Create new Episode from here</button>'+
@@ -153,20 +151,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             if (UserAuth.logout()) {
                 document.location.reload();
             }
-        },
-        dataImportEvernote: function(e) {
-            var el = this.$el.find('button#dataImportEvernote');
-            el.text('importing ...');
-            el.prop('disabled', true);
-            UserData.dataImportEvernote(this.model, {
-                'success' : function(user) {
-                    el.text('Import from Evernote');
-                    el.removeProp('disabled');
-                    alert("Import successful!");
-                },
-                'error' : function() {
-                    alert("Import failed");
-                }});
         }
 
     });

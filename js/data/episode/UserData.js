@@ -17,7 +17,6 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
         if( user.isof(Voc.USER) ) {
             this.LOG.debug('user added', user);
             this.checkIntegrity(user, options);
-            //this.dataImportEvernote(user);
             if( !user.isNew() ) {
                 this.fetchEpisodes(user);
                 this.fetchRange(user);
@@ -59,22 +58,6 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
         });
 
         return defer;
-    };
-    m.dataImportEvernote = function(user, callbacks) {
-        var that = this;
-        this.vie.analyze({
-            'service' : 'dataImportEvernote',
-            'user' : user
-        }).from('sss').execute().success(function(users) {
-            that.fetchRange(user);
-            if( callbacks && callbacks.success ) {
-                callbacks.success(user);
-            }
-        }).fail(function() {
-            if( callbacks && callbacks.error ) {
-                callbacks.error()
-            }
-        });
     };
     m.fetchRange= function( user, start, end, callbacks ) {
         var margin = 600000;
