@@ -20,6 +20,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         setBit: function(entity) {
             this.subViews['bit'].setEntity(entity);
+            this.$el.find('#tabs').tabs("option", "active", this.tabMap['bit']);
+            if ( this.isHidden() ) this.showHide();
         },
         render: function() {
             var tabs = _.template(ToolbarTemplate, {});
