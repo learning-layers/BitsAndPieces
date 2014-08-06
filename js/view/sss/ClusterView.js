@@ -6,8 +6,8 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
             // XXX mouseover/leave don't work in junction with dragndrop of bits from the preview box
             //'mouseover .expandable' : 'expand', 
             //'mouseleave .expanded' : 'close',
-            'click .expanded .close' : 'close',
-            'click .expanded .zoom' : 'zoom'
+            'click .expanded .closeCluster' : 'close',
+            'click .expanded .zoomCluster' : 'zoom'
         },
         initialize: function(options) {
             this.model.on('change:entities', this.render, this);
@@ -27,7 +27,7 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
             this.$el.append(contents);
             if( this.expanded ) {
                 contents.addClass("expanded");
-                contents.append("<div class=\"buttons\"><button class=\"close\">X</button><button class=\"zoom\">&lt;&gt;</button></div>");
+                contents.append("<div class=\"buttons\"><button class=\"closeCluster\">X</button><button class=\"zoomCluster\">&lt;&gt;</button></div>");
                 _.each(entities, function(entity) {
                     contents.append(new EntityView({
                         'model': entity
