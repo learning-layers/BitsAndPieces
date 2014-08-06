@@ -414,10 +414,15 @@ ul.episodeListing li {
 	margin: 10px 10px 10px 10px;
 }
 
+ul.episodeListing img {
+	border: 1px solid rgb(221, 221, 221);
+}
+
 ul.episodeListing .episodeLabel {
     display: inline-block;
     cursor: pointer;
-	min-height: 46px;
+	min-height: 50px;
+	margin-left: 10px;
 }
 
 table td.withPadding {
