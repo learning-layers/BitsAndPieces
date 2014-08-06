@@ -1,3 +1,8 @@
+<div class="loginLogo">
+    <img src="img/logo.png" alt="logo" />
+    <h1>Bits And Pieces</h1>
+</div>
+
 <form fole="form" name="login" class="loginForm">
     <div class="form-group">
         <label for="username">Username</label>
