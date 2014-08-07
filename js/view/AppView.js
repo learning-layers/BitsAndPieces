@@ -6,8 +6,9 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
         'data/episode/VersionData',
         'view/WidgetView',
         'view/episode/EpisodeManagerView',
-        'view/toolbar/ToolbarView'],
-    function(Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView){
+        'view/toolbar/ToolbarView',
+        'text!templates/navbar.tpl'],
+    function(Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, NavbarTemplate){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {
@@ -45,13 +46,15 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                 }
             },
             render: function() {
-                var episodes = $('<div id="myEpisodes1"></div>');
+                var navbar = _.template(NavbarTemplate, {});
+                // Prepend navbar to body
+                this.$el.parent().prepend(navbar);
+
                 this.widgetFrame = $('<div id="myWidgets"></div>');
-                this.$el.append( episodes );
                 this.$el.append( this.widgetFrame );
                 this.episodeMgrView = new EpisodeManagerView({
                     model: this.model,
-                    el: episodes,
+                    el: 'nav',
                     vie : this.vie
                 });
                 this.episodeMgrView.render();

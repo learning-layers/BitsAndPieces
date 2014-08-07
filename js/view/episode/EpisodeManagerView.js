@@ -3,18 +3,19 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
-            'click button#createBlank' : 'createBlank',
-            'click button#createFromHere' : 'createFromHere',
-            'click button#createNewVersion' : 'createNewVersion',
-            'click #toggleEpisodes' : 'toggleEpisodes',
-            'mouseleave #episodes' : 'toggleEpisodes',
-            'click button#logout' : 'logOut'
+            'click a#createBlank' : 'createBlank',
+            //'click button#createFromHere' : 'createFromHere',
+            //'click button#createNewVersion' : 'createNewVersion',
+            //'click #toggleEpisodes' : 'toggleEpisodes',
+            //'mouseleave #episodes' : 'toggleEpisodes',
+            'click a#logout' : 'logOut'
         },
         initialize: function() {
             this.views = {};
             this.LOG.debug('options', this.options);
             this.vie = this.options.vie;
             // TODO "createFromHere" button should only be visible if there are versions and a version is selected
+            /*
             this.$el.html('<img src="css/img/menu_small.png" id="toggleEpisodes"/><h1></h1>' + 
 
                     '<div id="episodes">' +
@@ -25,21 +26,18 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
                     //'<button id="createFromHere">Create new Episode from here</button>'+
                     '</div>' +
                     '<div class="note">(For a new import from Evernote contact dtheiler@tugraz.at)</div><ul></ul></div>');
+                    */
 
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), this.episodeVersionChanged, this);
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEpisode), this.changeEpisodeSet, this);
             var view = this;
         },
         toggleEpisodes: function() {
+            // TODO Consider removing this method
             var episodes = this.$el.find('#episodes');
             if( episodes.css('display') == 'none')
                 tracker.info(tracker.OPENEPISODESDIALOG, tracker.NULL);
             episodes.toggle();
-        },
-        updateOnEnter: function(e) {
-            if (e.keyCode == 13) {
-                this.changeLabel();
-            }
         },
         render: function() {
             this.LOG.debug('EpisodeManager render');
@@ -72,7 +70,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         renderLabel: function(episode, label) {
             this.LOG.debug('renderLabel', label);
-            this.$el.find('h1').html(label);
+            this.$el.find('.currentEpisodeLabel').html(label);
         },
         changeEpisodeSet: function(model, set, options) {
             this.LOG.debug('changeEpisodeSet', set);  
@@ -112,7 +110,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
                 });
             }
             li.append(view.render().$el);
-            this.$el.find('ul').first().append(li);
+            this.$el.find('ul.dropdown-menu').append(li);
             this.views[model.cid] = view;
             if( model === this.currentEpisode ) { view.highlight();}
             return this;
@@ -136,7 +134,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             var newVersion = newEpisode.get(Voc.hasVersion);
             this.model.save(Voc.currentVersion, newVersion.getSubject());
         },
-        createBlank: function() {
+        createBlank: function(e) {
+            e.preventDefault();
             this.LOG.debug('create new episode from scratch');
             tracker.info(tracker.CREATENEWEPISODEFROMSCRATCH, tracker.NULL);
             var newEpisode = EpisodeData.newEpisode(this.model);

@@ -1,20 +1,24 @@
 define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','data/episode/EpisodeData'], function(VIE, Logger, tracker, _, $, Backbone, Voc, EpisodeData){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeView'),
+        tagName: 'a',
         events: {
-            'click li.version' : 'changeCurrentVersion',
-            'click h2' : 'changeCurrentEpisode'
+            //'click li.version' : 'changeCurrentVersion',
+            'click' : 'changeCurrentEpisode'
         },
         initialize: function() {
             this.model.on('change:'+this.model.vie.namespaces.uri(Voc.hasVersion), this.render, this);
             this.model.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
         },
         renderLabel: function(model, value, options) {
-            this.$el.find('h2').html(value);
+            this.$el.find('span.episodeLabel').html(value);
             return this;
         },
         render: function() {
-            this.$el.html('<h2>' + this.model.get(Voc.label) + '</h2><ul rel="'+this.model.vie.namespaces.uri(Voc.hasVersion)+'"></ul>');
+            this.$el.attr('href', '#');
+            //this.$el.html('<h2>' + this.model.get(Voc.label) + '</h2><ul rel="'+this.model.vie.namespaces.uri(Voc.hasVersion)+'"></ul>');
+            this.$el.html('<span class="episodeLabel">' + this.model.get(Voc.label) + '</span>');
+            /*
             var ul = this.$el.find('ul');
             this.LOG.debug("this.model", this.model, this.highlit);
             var view = this;
@@ -36,6 +40,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','d
                 }
                 ul.append(versionElem);
             });
+            */
             return this;
         },
         changeCurrentVersion: function(event) {
@@ -47,6 +52,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','d
             this.model.get(Voc.belongsToUser).save( Voc.currentVersion, id);
         },
         changeCurrentEpisode: function(event) {
+            event.preventDefault();
             if( !event || !event.currentTarget ) return;
             var id = EpisodeData.getFirstVersion(this.model);
             if( !id ) return;

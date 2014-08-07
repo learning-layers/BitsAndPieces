@@ -1,7 +1,8 @@
 define(['vie', 'logger', 'tracker', 'userParams', 'service/SocialSemanticService', 'extender', 
         'data/AppData', 'underscore',
         'view/AppView', 'view/LoginFormView', 'voc',
-        'text!../schemata/ss.sss.json', 'jquery-cookie'],
+        'text!../schemata/ss.sss.json',
+        'jquery-cookie', 'bootstrap'],
 function(VIE, Logger, tracker, userParams, SocialSemanticService, extender,
         AppData, _, AppView, LoginFormView, Voc, schema){
     VIE.Util.useRealUri = true;
