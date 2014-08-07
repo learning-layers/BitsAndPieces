@@ -25,7 +25,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 // As entityDescsGet does not load thumbnails
                 // XXX Need to be reviewed in case the behaviour
                 // changes
-                if ( this.getEntityThumbnail() === null  && !this.model.get(Voc.thumbnailLoaded) ) {
+                if ( ( this.getEntityThumbnail() === null
+                            || this.getEntityThumbnail() === undefined)
+                        && !this.model.get(Voc.thumbnailLoaded)
+                        ) {
                     this.model.set(Voc.thumbnailLoaded, true);
                     this.model.fetch();
                 }
