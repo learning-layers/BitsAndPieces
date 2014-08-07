@@ -18,7 +18,8 @@ define(['view/sss/EntityView', 'logger', 'jquery', 'voc'], function(EntityView, 
         },
         render: function() {
             this.LOG.debug('render', this.$el.attr('href'), this.getIcon());
-            this.$el.attr('href', this.getIcon());
+            this.$el.find('image').attr('href', this.getIcon());
+            this.$el.find('tspan').text(this.resourceView.model.get(Voc.label));
             return this;
         },
         setSvgId: function(id) {
@@ -32,7 +33,8 @@ define(['view/sss/EntityView', 'logger', 'jquery', 'voc'], function(EntityView, 
             return {
                 'x' : this.model.get(Voc.x),
                 'y' : this.model.get(Voc.y),
-                'imageURL' : this.getIcon()
+                'imageURL' : this.getIcon(),
+                'label' : this.resourceView.model.get(Voc.label)
             };
         }
     });

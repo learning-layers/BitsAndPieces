@@ -38,7 +38,11 @@ img.small-icon {
     overflow: hidden;
 }
 
-.labelable label {
+.entity:hover .labelable {
+    overflow: visible;
+}
+
+.labelable label, svg text {
     text-align: left;
     border: 0 none;
     display: block;
