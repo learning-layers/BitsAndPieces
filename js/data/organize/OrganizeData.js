@@ -57,39 +57,24 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
             'type' : this.vie.types.get(type)
         }).from('sss').execute().success(
             function(items) {
-
                 that.LOG.debug('items fetched', items);
                 _.each(items, function(item){
                     item[Voc.belongsToOrganize] = organize.getSubject();
                 });
                 items = that.vie.entities.addOrUpdate(items);
-                /*
-                var current = organize.get(relation) || [];
-                if( !_.isArray(current)) current = [current];
-                var added = _.difference(items, current);
-                _.each(added, function(c){
-                    that.LOG.debug('added', c.getSubject());
-                    if( type == Voc.ORGAENTITY ) {
-                        var resource = c.get(Voc.hasResource);
-                        if( !resource.isEntity ) {
-                            var entity = new that.vie.Entity;
-                            entity.set(entity.idAttribute, resource);
-                            that.LOG.debug('xyz1', _.clone(entity.attributes));
-                            entity.fetch();
-                            that.LOG.debug('xyz3', entity);
-                            resource = entity;
-                            that.vie.entities.addOrUpdate(resource);
-                        }
+                // Loading entities in case type is Organize Entity
+                if ( type == Voc.ORGAENTITY ) {
+                    var entityUris = [];
+                    _.each(items, function(item){
+                        var entity = item.get(Voc.hasResource);
+                        if( entity.isEntity) entity = entity.getSubject();
+                        entityUris.push(entity);
+                    });
+
+                    if ( !_.isEmpty(entityUris) ) {
+                        that.fetchData(entityUris);
                     }
-
-                });
-                current = _.union(current, items).map(function(c){
-                    return c.getSubject();
-                });
-                that.LOG.debug('current', current);
-                organize.set(relation, current);
-                */
-
+                }
             }
         );
     };
@@ -124,6 +109,15 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
             newOrganize.set(rel, newItems);
         });
         return newOrganize;
+    };
+    m.fetchData = function(entityUris) {
+        var that = this;
+        this.vie.analyze({
+            'service' : 'EntityDescsGet',
+            'entities' : entityUris
+        }).from('sss').execute().success(function(entities) {
+            that.vie.entities.addOrUpdate(entities);
+        });
     };
     return m;
 });
