@@ -42,7 +42,7 @@ img.small-icon {
     overflow: visible;
 }
 
-.labelable label, svg text {
+.labelable label, .labelable text {
     text-align: left;
     border: 0 none;
     display: block;
