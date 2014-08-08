@@ -159,18 +159,20 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 episode = this.getCurrentEpisode();
 
             if ( _.isEmpty(notificationText.trim()) ) {
-                alert('Some required fields are empty');
+                alert('Please provide a text for notification!');
                 return false;
             }
 
-            if ( this.selectedUsers.length < 1 ) {
-                alert('No users selected');
+            if ( _.isEmpty(this.selectedUsers) ) {
+                alert('Please select at least one user from suggested list!');
                 return false;
             }
 
             if ( shareType === 'coediting' ) {
                 EpisodeData.shareEpisode(episode, this.selectedUsers, notificationText);
                 this._cleanUpAfterSharing();
+
+                alert('Your episode has been shared successfully.');
             } else if ( shareType === 'separatecopy' ) {
                 // Determine if some bits need to be excluded
                 if ( onlySelected === true ) {
@@ -181,6 +183,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 }
                 EpisodeData.copyEpisode(episode, this.selectedUsers, excluded, notificationText);
                 this._cleanUpAfterSharing();
+
+                alert('Your episode has been shared successfully.');
             } else {
                 this.LOG.debug('Invalid share type');
             }
@@ -196,13 +200,14 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         addSelectedUser: function(event, ui, autocomplete) {
             if ( _.indexOf(this.selectedUsers, ui.item.value) === -1 ) {
                 this.selectedUsers.push(ui.item.value);
-                $(autocomplete).val(ui.item.label);
+                $(autocomplete).val('');
                 $(autocomplete).parent().append('<div class="badge selectedUser" data-value="' + ui.item.value+ '"><span class="glyphicon glyphicon-user userIcon"></span> ' + ui.item.label + ' <span class="glyphicon glyphicon-remove-circle deleteIcon"><span></div>');
             }
         },
         removeSelectedUser: function(e) {
             var removable = $(e.currentTarget).parent();
-            delete this.selectedUsers[_.indexOf(this.selectedUsers, removable.data('value'))];
+            this.selectedUsers = _.without(this.selectedUsers, removable.data('value'));
+
             removable.remove();
         },
         getCurrentEntitiesAndCircles: function() {
