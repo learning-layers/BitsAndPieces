@@ -67,7 +67,7 @@
 <div class="panel panel-default">
 
     <div class="panel-heading">
-        <h3 class="panel-title">Open epidose</h3>
+        <h3 class="panel-title">Open episode</h3>
     </div>
 
     <div class="panel-body">
