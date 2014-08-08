@@ -222,6 +222,11 @@ div#myToolbar {
 	z-index: 999;
 }
 
+/* This is needed so that it would not be covered by toolbar*/
+.ui-front {
+	z-index: 1000;
+}
+
 div#myToolbar .toolbar-handle {
 	position: absolute;
 	top: 50%;
