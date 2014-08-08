@@ -261,6 +261,14 @@ div#tabs .ui-tabs-panel {
 	padding: 0;
 }
 
+#tabs ul.ui-tabs-nav li.ui-state-default {
+	background: #e7e7e7;
+}
+
+#tabs ul.ui-tabs-nav li.ui-tabs-active {
+    background: #ffffff url(../lib/jquery/css/jquery-ui-layers-theme/images/ui-bg_flat_65_ffffff_40x100.png) 50% 50% repeat-x;
+}
+
 div#tabs .results .resultSet {
 	border: 1px solid rgb(221, 221, 221);
 }
