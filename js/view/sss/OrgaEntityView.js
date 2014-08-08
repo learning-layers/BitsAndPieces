@@ -17,9 +17,15 @@ define(['view/sss/EntityView', 'logger', 'jquery', 'voc'], function(EntityView, 
             return this.resourceView.getIcon(); 
         },
         render: function() {
+            // XXX this function is indirectly coupled to createEntity of organize.js
             this.LOG.debug('render', this.$el.attr('href'), this.getIcon());
+            var label = this.resourceView.model.get(Voc.label) || "";
+            this.$el.attr('label', label);
             this.$el.find('image').attr('href', this.getIcon());
-            this.$el.find('tspan').text(this.resourceView.model.get(Voc.label));
+            this.$el.find('tspan').text(
+                    label.length > 15
+                    ? label.substring(0,15) + " ..."
+                    : label);
             return this;
         },
         setSvgId: function(id) {
