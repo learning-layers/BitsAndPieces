@@ -59,7 +59,7 @@ var require = (function() {
                 'deps' : ['jquery']
             }
         },
-        urlArgs: "bust=" + parseInt((new Date()).getTime()/100000)
+        urlArgs: "bust=" + (new Date()).getTime()
     };
 }());
 
