@@ -235,6 +235,11 @@ div#myToolbar .toolbar-handle {
 	width: 30px;
 }
 
+div#myToolbar.toolbarHidden .toolbar-handle span {
+	position: relative;
+	left: -15px;
+}
+
 div.toolbarShown {
 	width: 350px;
 }
