@@ -230,6 +230,38 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                     }
                 );
+            } else if ( analyzable.options.service == 'searchCombined' ) {
+                this.onUrisReady(
+                    this.user,
+                    function(userUri) {
+                        service.resolve('SSSearchCombined',
+                            function(object) {
+                                service.LOG.debug("searchResult", object);
+                                var entities = [];
+                                _.each(object['searchResults'], function(result) {
+                                    entities.push(service.fixForVIE(result, 'entity'));
+                                });
+                                analyzable.resolve(entities);
+                            },
+                            function(object) {
+                                service.LOG.warn("searchResult failed", object);
+                                analyzable.reject(object);
+                            },
+                            userUri,
+                            service.userKey,
+                            analyzable.options.tags,
+                            [],
+                            false,
+                            analyzable.options.types || [],
+                            true,
+                            false,
+                            true,
+                            true,
+                            false
+                        );
+                    }
+                );
+
             } else if ( analyzable.options.service == "entityShare" ) {
                 this.onUrisReady(
                     function() {

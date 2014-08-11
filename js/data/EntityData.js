@@ -70,7 +70,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                 that.LOG.debug('success removeTag', s);
             });
         });
-    },
+    };
     m.setLabel = function(model, label, options) {
         var that = this;
         options = options || {};
@@ -110,7 +110,27 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             });
             callback(entities);
         });
-    }
+    };
+    m.searchCombined = function(tags, callback) {
+        var that = this;
+        this.vie.analyze({
+            'service' : 'searchCombined',
+            'tags' : tags,
+            'types' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
+        }).using('sss').execute().success(function(entities){
+            that.LOG.debug('searchCombined entities', entities);
+            entities = that.vie.entities.addOrUpdate(entities);
+            _.each(entities, function(entity) {
+                // XXX This is quite a bad check, in case the search results will
+                // change in future. Need a better check to determine entity
+                // being fully loaded.
+                if ( !entity.has(Voc.author) ) {
+                    entity.fetch();
+                }
+            });
+            callback(entities);
+        });
+    };
     m.loadRecommTagsBasedOnUserEntityTagTime = function(model) {
         var that = this;
         this.vie.analyze({
@@ -122,7 +142,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             that.LOG.debug('recommTags', result);
             model.set(Voc.hasTagRecommendation, result);
         });
-    }
+    };
     m.loadViewCount = function(model) {
         var that = this;
         this.vie.analyze({
@@ -133,7 +153,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             that.LOG.debug('count', count);
             model.set(Voc.hasViewCount, count);
         });
-    }
+    };
     m.setImportance = function(model, importance, options) {
         var that = this;
         options = options || {};
