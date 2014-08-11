@@ -205,11 +205,10 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
         },
         getIcon: function(type) {
             var name,
-                mimeType;
+                mimeType,
+                file;
             // TODO: make clear use of URIs
-            this.LOG.debug('model', _.clone(this.model.attributes));
             if( !type ) type = this.model.get('@type');
-            this.LOG.debug('type', type);
             if( !type ) return this.icons['unknown'];
             if( _.isArray(type)) {
                 // decide which type to use
@@ -230,13 +229,12 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             }
             if( _.isArray(type)) { type = type[0]; }
             name = this.model.vie.namespaces.curie(type.id);
-            this.LOG.debug('name', name);
             if( name === 'user' ) {
                 name = this.model.vie.namespaces.curie(this.model.getSubject());
                 if( !this.icons[name]) name = 'user';
             }
 
-            if ( 'sss:file' === name ) {
+            if ( 'sss:file' === name || 'sss:evernoteResource' === name ) {
                 mimeType  = this.model.get(Voc.hasMimeType);
                 if ( mimeType ) {
                     switch( mimeType ) {
@@ -250,6 +248,23 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
                         case 'application/msword':
                             name = 'sss:fileDoc';
                             break;
+                    }
+                } else {
+                    file = this.model.get(Voc.file);
+                    if( file.isEntity) file = file.getSubject();
+                    if( file ) {
+                        switch(file.substring(file.length-4) ) {
+                            case '.pdf':
+                                name = 'sss:filePdf';
+                                break;
+                            case '.png':
+                                name = 'sss:filePng';
+                                break;
+                            case 'docx':
+                            case '.doc':
+                                name = 'sss:fileDoc';
+                                break;
+                        }
                     }
                 }
             }

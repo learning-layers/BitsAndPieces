@@ -62,5 +62,7 @@ define([], {
     hasViewCount : 'sss:viewEntity',
     hasTagRecommendation : 'sss:tagRecommendation',
 
-    hasUserEvent : 'sss:hasUserEvent'
+    hasUserEvent : 'sss:hasUserEvent',
+    file : 'sss:file'
+        
 });
