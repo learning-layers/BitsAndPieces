@@ -149,7 +149,14 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             });
         },
         getEntityThumbnail: function() {
-            return this.model.get(Voc.hasThumbnail);
+            var thumbnail = this.model.get(Voc.hasThumbnail);
+            // XXX This is a quick fix for case when entity is loaded
+            // without thumbnail first and then the thumbnail is loaded
+            // For some reason null seems to be become the second parameter of an array.
+            if ( _.isArray(thumbnail) && thumbnail.length >= 1 ) {
+                thumbnail = thumbnail[0];
+            }
+            return thumbnail;
         },
         clickRecommendedTag: function(e) {
             e.preventDefault();
