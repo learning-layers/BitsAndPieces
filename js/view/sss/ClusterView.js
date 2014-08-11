@@ -11,6 +11,7 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
         },
         initialize: function(options) {
             this.model.on('change:entities', this.render, this);
+            this.timeAttr = options.timeAttr;
         },
         contains: function(entity) {
             return _.contains(this.model.get('entities'), entity);
@@ -21,7 +22,9 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
                 'class' : 'cluster labelable'
             });
             // TODO: rendering by template
-            var entities = this.model.get('entities');
+            var entities = _.sortBy(this.model.get('entities'), function(entity) {
+                return entity.get(this.timeAttr);
+            });
             var that = this;
             var contents = $('<div>');
             this.$el.append(contents);

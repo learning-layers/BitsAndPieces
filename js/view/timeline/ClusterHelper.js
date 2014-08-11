@@ -157,7 +157,8 @@ function(_, Backbone, EntitiesHelper){
         },
         addClusterView: function(cluster) {
             var view = new this.ClusterView({
-                'model': cluster
+                'model': cluster,
+                'timeAttr' : this.timeAttr
             });
             this.entityViews.push(view);
             var data = {
