@@ -261,7 +261,45 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         );
                     }
                 );
-
+            } else if ( analyzable.options.service == "search" ) {
+                this.onUrisReady(
+                    this.user,
+                    function(userUri) {
+                        service.resolve('SSSearch',
+                            function(object) {
+                                service.LOG.debug("searchResult", object);
+                                var entities = [];
+                                _.each(object['entities'], function(result) {
+                                    entities.push(service.fixForVIE(result));
+                                });
+                                analyzable.resolve(entities);
+                            },
+                            function(object) {
+                                service.LOG.warn("searchResult failed", object);
+                                analyzable.reject(object);
+                            },
+                            userUri,
+                            service.userKey,
+                            analyzable.options.tags,
+                            false,
+                            null,
+                            true,
+                            null,
+                            false,
+                            null,
+                            true,
+                            null,
+                            true,
+                            null,
+                            analyzable.options.types || [],
+                            false,
+                            null,
+                            false,
+                            false,
+                            false
+                        );
+                    }
+                );
             } else if ( analyzable.options.service == "entityShare" ) {
                 this.onUrisReady(
                     function() {
