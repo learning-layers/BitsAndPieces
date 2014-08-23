@@ -204,26 +204,26 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             if (!correct) {
                 throw new Error("Invalid Analyzable passed");
             }
-            var service = this;
+            var sss = this;
             if( analyzable.options.service == "searchByTags" ) {
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        service.resolve('SSSearchWithTags', 
+                        sss.resolve('SSSearchWithTags', 
                             function(object) {
-                                service.LOG.debug("searchResult", object);
+                                sss.LOG.debug("searchResult", object);
                                 var entities = [];
                                 _.each(object['searchResults'], function(result) {
-                                    entities.push(service.fixForVIE(result, 'entity'));
+                                    entities.push(sss.fixForVIE(result, 'entity'));
                                 });
                                 analyzable.resolve(entities);
                             },
                             function(object) {
-                                service.LOG.warn("searchResult failed", object);
+                                sss.LOG.warn("searchResult failed", object);
                                 analyzable.reject(object);
                             },
                             userUri,
-                            service.userKey,
+                            sss.userKey,
                             analyzable.options.op || "OR",
                             analyzable.options.tags,
                             analyzable.options.max
@@ -234,21 +234,21 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        service.resolve('SSSearchCombined',
+                        sss.resolve('SSSearchCombined',
                             function(object) {
-                                service.LOG.debug("searchResult", object);
+                                sss.LOG.debug("searchResult", object);
                                 var entities = [];
                                 _.each(object['searchResults'], function(result) {
-                                    entities.push(service.fixForVIE(result, 'entity'));
+                                    entities.push(sss.fixForVIE(result, 'entity'));
                                 });
                                 analyzable.resolve(entities);
                             },
                             function(object) {
-                                service.LOG.warn("searchResult failed", object);
+                                sss.LOG.warn("searchResult failed", object);
                                 analyzable.reject(object);
                             },
                             userUri,
-                            service.userKey,
+                            sss.userKey,
                             analyzable.options.tags,
                             [],
                             false,
@@ -265,21 +265,21 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        service.resolve('SSSearch',
+                        sss.resolve('SSSearch',
                             function(object) {
-                                service.LOG.debug("searchResult", object);
+                                sss.LOG.debug("searchResult", object);
                                 var entities = [];
                                 _.each(object['entities'], function(result) {
-                                    entities.push(service.fixForVIE(result));
+                                    entities.push(sss.fixForVIE(result));
                                 });
                                 analyzable.resolve(entities);
                             },
                             function(object) {
-                                service.LOG.warn("searchResult failed", object);
+                                sss.LOG.warn("searchResult failed", object);
                                 analyzable.reject(object);
                             },
                             userUri,
-                            service.userKey,
+                            sss.userKey,
                             analyzable.options.tags,
                             false,
                             null,
@@ -303,15 +303,15 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if ( analyzable.options.service == "entityShare" ) {
                 this.onUrisReady(
                     function() {
-                        service.resolve('SSEntityShare', 
+                        sss.resolve('SSEntityShare', 
                             function(object) {
-                                service.LOG.debug("entityShare success", object);
+                                sss.LOG.debug("entityShare success", object);
                             },
                             function(object) {
-                                service.LOG.debug("entityShare failed", object);
+                                sss.LOG.debug("entityShare failed", object);
                             },
-                            service.user,
-                            service.userKey,
+                            sss.user,
+                            sss.userKey,
                             analyzable.options.entity,
                             analyzable.options.users,
                             analyzable.options.comment || ''
@@ -321,15 +321,15 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if ( analyzable.options.service == "entityCopy" ) {
                 this.onUrisReady(
                     function() {
-                        service.resolve('SSEntityCopy', 
+                        sss.resolve('SSEntityCopy', 
                             function(object) {
-                                service.LOG.debug("entityCopy success", object);
+                                sss.LOG.debug("entityCopy success", object);
                             },
                             function(object) {
-                                service.LOG.debug("entityCopy failed", object);
+                                sss.LOG.debug("entityCopy failed", object);
                             },
-                            service.user,
-                            service.userKey,
+                            sss.user,
+                            sss.userKey,
                             analyzable.options.entity,
                             analyzable.options.users,
                             analyzable.options.exclude || [],
@@ -340,42 +340,42 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if ( analyzable.options.service == "userAll" ) {
                 this.onUrisReady(
                     function() {
-                        service.resolve('SSUserAll', 
+                        sss.resolve('SSUserAll', 
                             function(object) {
-                                service.LOG.debug("userAll success", object);
+                                sss.LOG.debug("userAll success", object);
                                 var users = [];
                                 _.each(object['users'], function(result) {
                                     // Required parameter type is missing
                                     //result['type'] = 'user';
-                                    //users.push(service.fixForVIE(result, 'id'));
+                                    //users.push(sss.fixForVIE(result, 'id'));
                                     users.push(result);
                                 });
                                 analyzable.resolve(users);
 
                             },
                             function(object) {
-                                service.LOG.debug("userAll failed", object);
+                                sss.LOG.debug("userAll failed", object);
                                 analyzable.reject(object);
                             },
-                            service.user,
-                            service.userKey
+                            sss.user,
+                            sss.userKey
                         );
                     }
                 );
             } else if ( analyzable.options.service == "recommTagsBasedOnUserEntityTagTime" ) {
                 this.onUrisReady(
                     function() {
-                        service.resolve('SSScaffRecommTagsBasedOnUserEntityTagTime', 
+                        sss.resolve('SSScaffRecommTagsBasedOnUserEntityTagTime', 
                             function(object) {
-                                service.LOG.debug("recommTagsBasedOnUserEntityTagTime success", object);
+                                sss.LOG.debug("recommTagsBasedOnUserEntityTagTime success", object);
                                 analyzable.resolve(object.tags || []);
                             },
                             function(object) {
-                                service.LOG.debug("recommTagsBasedOnUserEntityTagTime failed", object);
+                                sss.LOG.debug("recommTagsBasedOnUserEntityTagTime failed", object);
                                 analyzable.reject(object);
                             },
-                            service.user,
-                            service.userKey,
+                            sss.user,
+                            sss.userKey,
                             analyzable.options.forUser || null,
                             analyzable.options.entity || null,
                             analyzable.options.maxTags || 20
@@ -385,17 +385,17 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             } else if ( analyzable.options.service == "ueCountGet" ) {
                 this.onUrisReady(
                     function() {
-                        service.resolve('SSUECountGet', 
+                        sss.resolve('SSUECountGet', 
                             function(object) {
-                                service.LOG.debug("ueCountGet success", object);
+                                sss.LOG.debug("ueCountGet success", object);
                                 analyzable.resolve(object.count || 0);
                             },
                             function(object) {
-                                service.LOG.debug("ueCountGet failed", object);
+                                sss.LOG.debug("ueCountGet failed", object);
                                 analyzable.reject(object);
                             },
-                            service.user,
-                            service.userKey,
+                            sss.user,
+                            sss.userKey,
                             analyzable.options.forUser || null,
                             analyzable.options.entity || null,
                             analyzable.options.startTime || null,
@@ -405,35 +405,35 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     }
                 );
             } else if ( analyzable.options.service == "categoriesPredefinedGet" ) {
-                service.resolve('SSCategoriesPredefinedGet', 
+                sss.resolve('SSCategoriesPredefinedGet', 
                     function(result) {
-                        service.LOG.debug("categoriesPredefinedGet success", result);
+                        sss.LOG.debug("categoriesPredefinedGet success", result);
                         analyzable.resolve(result.categories);
                     },
                     function(result) {
-                        service.LOG.error("categoriesPredefinedGet error", result);
+                        sss.LOG.error("categoriesPredefinedGet error", result);
                         analyzable.reject(result);
                     },
-                    service.user,
-                    service.userKey
+                    sss.user,
+                    sss.userKey
                 );
             } else if ( analyzable.options.service == "EntityDescsGet" ) {
-                service.resolve('SSEntityDescsGet', 
+                sss.resolve('SSEntityDescsGet', 
                     function(result) {
                         var entities = [];
                         _.each(result['descs'], function(object) {
-                            service.fixEntityDesc(object);
-                            var entity = service.fixForVIE(object, 'entity', 'type');
+                            sss.fixEntityDesc(object);
+                            var entity = sss.fixForVIE(object, 'entity', 'type');
                             entities.push(entity);
                         });
                         analyzable.resolve(entities);
                     },
                     function(result) {
-                        service.LOG.error("EntityDescsGet", result);
+                        sss.LOG.error("EntityDescsGet", result);
                         analyzable.reject(result);
                     },
-                    service.user,
-                    service.userKey,
+                    sss.user,
+                    sss.userKey,
                     analyzable.options.entities,
                     analyzable.options.types,
                     true,   //getTags
@@ -474,63 +474,63 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             this.LOG.debug("ResourceGet");
             var entity = this.vie.entities.get(loadable.options.resource);
             this.LOG.debug("entity", entity, ' is of ', entity.get("@type"));
-            var service = this;
+            var sss = this;
             if ( entity.isof('owl:Thing')){
                 this.onUrisReady(
                     this.user,
                     loadable.options.resource,
                     function(userUri, resourceUri) {
-                        service.resolve('SSEntityDescGet', 
+                        sss.resolve('SSEntityDescGet', 
                             function(object) {
-                                service.LOG.debug("handle result of EntityDescGet");
-                                service.LOG.debug("object", object);
+                                sss.LOG.debug("handle result of EntityDescGet");
+                                sss.LOG.debug("object", object);
                                 if( _.isEmpty(object['desc'] ) )  {
                                     loadable.reject(entity);
-                                    service.LOG.error("error:",resourceUri, " is empty");
+                                    sss.LOG.error("error:",resourceUri, " is empty");
                                     return;
                                 }
 
-                                service.fixEntityDesc(object['desc']);
+                                sss.fixEntityDesc(object['desc']);
 
-                                var entity = service.fixForVIE(object['desc'], 'entity', 'type');
+                                var entity = sss.fixForVIE(object['desc'], 'entity', 'type');
                                 var entityUri = object['desc']['entity'];
-                                //var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
+                                //var vieEntity = new sss.vie.Entity(entity);//SSS.Entity(entity);
                                 var type = object['desc']['type'];
-                                service.LOG.debug('desc.type', type);
-                                if( type && type == service.types.USER )  {
-                                    service.resolve('SSLearnEpVersionCurrentGet',
+                                sss.LOG.debug('desc.type', type);
+                                if( type && type == sss.types.USER )  {
+                                    sss.resolve('SSLearnEpVersionCurrentGet',
                                         function(object2) {
-                                            service.LOG.debug("handle result of VersionCurrentGet");
-                                            service.LOG.debug("object", object2);
+                                            sss.LOG.debug("handle result of VersionCurrentGet");
+                                            sss.LOG.debug("object", object2);
                                             entity[Voc.currentVersion] = object2['learnEpVersion']['id'];
                                             loadable.resolve(entity);
                                         },
                                         function(object2) {
-                                            service.LOG.warn("error:", object2);
+                                            sss.LOG.warn("error:", object2);
                                             loadable.resolve(entity);
                                         },
                                         entityUri,
-                                        service.userKey 
+                                        sss.userKey 
                                         );
-                                } else if( type && type == service.types.USEREVENT )  {
-                                    service.resolve('SSUserEventGet', 
+                                } else if( type && type == sss.types.USEREVENT )  {
+                                    sss.resolve('SSUserEventGet', 
                                         function(object2) {
-                                            service.LOG.debug("handle result of UserEventTypeGet");
-                                            service.LOG.debug("object", object2);
+                                            sss.LOG.debug("handle result of UserEventTypeGet");
+                                            sss.LOG.debug("object", object2);
 
                                             if(!object2['uE']['timestamp'])
                                                 delete object2['uE']['timestamp'];
                                             // XXX Possibly need to change uri to something else
-                                            var entity = service.fixForVIE(object2['uE'], 'uri');
-                                            //var vieEntity = new service.vie.Entity(entity);//SSS.Entity(entity);
+                                            var entity = sss.fixForVIE(object2['uE'], 'uri');
+                                            //var vieEntity = new sss.vie.Entity(entity);//SSS.Entity(entity);
                                             loadable.resolve(entity);
                                         },
                                         function(object2) {
-                                            service.LOG.warn("error:", object2);
+                                            sss.LOG.warn("error:", object2);
                                             loadable.resolve(entity);
                                         },
-                                        service.vie.namespaces.uri(service.user),
-                                        service.userKey ,
+                                        sss.vie.namespaces.uri(sss.user),
+                                        sss.userKey ,
                                         entity.getSubject()
                                         );
                                 } else
@@ -538,10 +538,10 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                             },
                             function(object) {
                                 loadable.reject(entity);
-                                service.LOG.warn("error:",object);
+                                sss.LOG.warn("error:",object);
                             },
                             userUri,
-                            service.userKey,
+                            sss.userKey,
                             resourceUri,
                             true, // tags
                             false, // rating
@@ -560,7 +560,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
         TypeGet : function(loadable) {
             var type = loadable.options.type;
 
-            var service = this;
+            var sss = this;
             if( type.isof(Voc.USEREVENT)) {
                 this.LOG.debug("SSUserEventsGet");
                 this.onUrisReady(
@@ -568,29 +568,29 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     loadable.options.forUser,
                     loadable.options.resource,
                     function(userUri, forUserUri, resourceUri) {
-                        service.resolve('SSUserEventsGet', 
+                        sss.resolve('SSUserEventsGet', 
                             function(objects) {
-                                service.LOG.debug("handle result of userEventsOfUser");
-                                service.LOG.debug("objects", objects);
+                                sss.LOG.debug("handle result of userEventsOfUser");
+                                sss.LOG.debug("objects", objects);
                                 var entityInstances = [];
                                 _.each(objects['uEs'], function(object) {
-                                    var entity = service.fixForVIE(object);
-                                    service.LOG.debug('entity', _.clone(entity));
+                                    var entity = sss.fixForVIE(object);
+                                    sss.LOG.debug('entity', _.clone(entity));
                                     if(!_.contains( _.keys(EntityView.prototype.icons), entity['@type'])) {
-                                            service.LOG.debug(entity['@type'], 'filtered');
+                                            sss.LOG.debug(entity['@type'], 'filtered');
                                             return;
                                             }
-                                    //var vieEntity = new service.vie.Entity(entity);
+                                    //var vieEntity = new sss.vie.Entity(entity);
                                     entityInstances.push(entity);
                                 });
                                 loadable.resolve(entityInstances);
                             },
                             function(object) {
-                                service.LOG.warn("error:");
-                                service.LOG.warn(object);
+                                sss.LOG.warn("error:");
+                                sss.LOG.warn(object);
                             },
                             userUri,
-                            service.userKey,
+                            sss.userKey,
                             forUserUri,
                             resourceUri ? resourceUri : null,
                             loadable.options.start,
@@ -602,28 +602,28 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        service.resolve('SSLearnEpsGet', 
+                        sss.resolve('SSLearnEpsGet', 
                             function(objects) {
-                                service.LOG.debug("handle result of epsGet");
-                                service.LOG.debug("objects", objects);
+                                sss.LOG.debug("handle result of epsGet");
+                                sss.LOG.debug("objects", objects);
                                 var entityInstances = [];
                                 _.each(objects['learnEps'], function(object) {
                                     object[Voc.belongsToUser] = object['user'];
                                     delete object['user'];
-                                    var entity = service.fixForVIE(object, 'id');
-                                    //var vieEntity = new service.vie.Entity(entity);
+                                    var entity = sss.fixForVIE(object, 'id');
+                                    //var vieEntity = new sss.vie.Entity(entity);
                                     entity['@type'] = Voc.EPISODE;
                                     entityInstances.push(entity);
                                 });
                                 loadable.resolve(entityInstances);
                             },
                             function(object) {
-                                service.LOG.warn("error on SSLearnEpsGet (perhaps just empty):");
-                                service.LOG.warn(object);
+                                sss.LOG.warn("error on SSLearnEpsGet (perhaps just empty):");
+                                sss.LOG.warn(object);
                                 loadable.resolve([]);
                             },
                             userUri,
-                            service.userKey
+                            sss.userKey
                         );
                 });
 
@@ -633,18 +633,18 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     loadable.options.episode,
                     function(userUri, episodeUri) {
-                        service.resolve('SSLearnEpVersionsGet', 
+                        sss.resolve('SSLearnEpVersionsGet', 
                             function(objects) {
-                                service.LOG.debug("handle result of epVersionsGet");
-                                service.LOG.debug("objects", objects);
+                                sss.LOG.debug("handle result of epVersionsGet");
+                                sss.LOG.debug("objects", objects);
                                 var entityInstances = [];
                                 _.each(objects['learnEpVersions'], function(object) {
                                     object[Voc.belongsToEpisode] = object['learnEp'];
                                     delete object['learnEp'];
                                     delete object['circles'];
                                     delete object['entities'];
-                                    var entity = service.fixForVIE(object, 'id');
-                                    //var vieEntity = new service.vie.Entity(entity);
+                                    var entity = sss.fixForVIE(object, 'id');
+                                    //var vieEntity = new sss.vie.Entity(entity);
                                     entity['@type'] = Voc.VERSION;
                                     entityInstances.push(entity);
                                     // each version has a organize component
@@ -654,11 +654,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                 loadable.resolve(entityInstances);
                             },
                             function(object) {
-                                service.LOG.warn("error:");
-                                service.LOG.warn(object);
+                                sss.LOG.warn("error:");
+                                sss.LOG.warn(object);
                             },
                             userUri,
-                            service.userKey,
+                            sss.userKey,
                             episodeUri
                         );
                 });
@@ -674,7 +674,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 var resolve = function(finished, entity) {
                     if( _.contains(finishedCalls, finished)) return;
                     finishedCalls.push(finished);
-                    service.LOG.debug('resolved', entity);
+                    sss.LOG.debug('resolved', entity);
                     if( entity ) entities.push(entity);
                     if( _.contains(finishedCalls, 'versionget') &&  
                         _.contains(finishedCalls, 'timelineget') ) {
@@ -690,16 +690,16 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     
                 if( !organize ) {
                     organize = {
-                        'uri' : service.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget'),
+                        'uri' : sss.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget'),
                         'type' : Voc.ORGANIZE,
                         'circleType' : Voc.CIRCLE,
                         'orgaEntityType' : Voc.ORGAENTITY,
                         'belongsToVersion' : loadable.options.version 
                     };
-                    service.LOG.debug('buffer organize', organize);
+                    sss.LOG.debug('buffer organize', organize);
                     // we buffer that object for explicit retrieval of organize
                     // and store it in memory as it would come from the server
-                    service.buffer[organize.uri] = organize;
+                    sss.buffer[organize.uri] = organize;
                 }
                 resolve('versionget',this.fixForVIE(organize, 'uri'));
 
@@ -708,15 +708,15 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     loadable.options.version,
                     function(userUri, versionUri) {
-                        service.resolve('SSLearnEpVersionGetTimelineState', 
+                        sss.resolve('SSLearnEpVersionGetTimelineState', 
                             function(object) {
-                                service.LOG.debug("handle result of LearnEpGetTimelineState");
-                                service.LOG.debug("object", object);
+                                sss.LOG.debug("handle result of LearnEpGetTimelineState");
+                                sss.LOG.debug("object", object);
 
                                 var entity = {};
                                 entity[VIE.prototype.Entity.prototype.idAttribute] = object.id;
                                 entity['@type'] = Voc.TIMELINE;
-                                entity[Voc.belongsToUser] = service.user;
+                                entity[Voc.belongsToUser] = sss.user;
                                 entity[Voc.timeAttr]= Voc.creationTime;
                                 entity[Voc.predicate] = Voc.USEREVENT;
                                 entity[Voc.belongsToVersion] = loadable.options.version;
@@ -728,23 +728,23 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
 
                                 } else {
                                     object = object['learnEpTimelineState'];
-                                    //var vieEntity = new service.vie.Entity(service.fixForVIE({
+                                    //var vieEntity = new sss.vie.Entity(sss.fixForVIE({
                                     entity[Voc.start] = object.startTime;                            
                                     entity[Voc.end] = object.endTime
                                 }
 
-                                //entity = service.fixForVIE(entity);
+                                //entity = sss.fixForVIE(entity);
 
-                                //service.buffer[vieEntity.getSubject()] = object;
+                                //sss.buffer[vieEntity.getSubject()] = object;
                                 //loadable.resolve(vieEntity);
                                 resolve('timelineget', entity);
                             },
                             function(object) {
-                                service.LOG.warn("error:", object);
+                                sss.LOG.warn("error:", object);
                                 resolve('timelineget');
                             },
                             userUri,
-                            service.userKey,
+                            sss.userKey,
                             versionUri
                         );
                 });
@@ -765,10 +765,10 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     version,
                     function(userUri, versionUri) {
-                        service.resolve('SSLearnEpVersionGet',
+                        sss.resolve('SSLearnEpVersionGet',
                             function(object) {
-                                service.LOG.debug("handle result of LearnEpVersionGet");
-                                service.LOG.debug("objects", object);
+                                sss.LOG.debug("handle result of LearnEpVersionGet");
+                                sss.LOG.debug("objects", object);
                                 var key, idAttr;
                                 _.each(object['learnEpVersion']['circles'], function(item){
                                     var fixEntity = {};
@@ -780,19 +780,19 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     fixEntity.cx = item['xC'];
                                     fixEntity.cy = item['yC'];
                                     fixEntity.id = item['id'];
-                                    fixEntity = service.fixForVIE(fixEntity, 'id');
+                                    fixEntity = sss.fixForVIE(fixEntity, 'id');
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
-                                    //var vieEntity = new service.vie.Entity(fixEntity);
+                                    //var vieEntity = new sss.vie.Entity(fixEntity);
                                     fixEntity['@type'] = Voc.CIRCLE;
                                     entities.push(fixEntity);
                                 });
                                 loadable.resolve(entities);
                             },
                             function(object) {
-                                service.LOG.warn("error:", object);
+                                sss.LOG.warn("error:", object);
                             },
                             userUri,
-                            service.userKey,
+                            sss.userKey,
                             versionUri
                         );
                 });
@@ -809,27 +809,27 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     version,
                     function(userUri, versionUri) {
-                        service.resolve('SSLearnEpVersionGet',
+                        sss.resolve('SSLearnEpVersionGet',
                             function(object) {
-                                service.LOG.debug("handle result of LearnEpVersionGet");
-                                service.LOG.debug("objects", object);
+                                sss.LOG.debug("handle result of LearnEpVersionGet");
+                                sss.LOG.debug("objects", object);
                                 var key, idAttr;
                                 _.each(object['learnEpVersion']['entities'], function(item){
                                     var fixEntity = {};
-                                    fixEntity = service.fixForVIE(item, 'id');
+                                    fixEntity = sss.fixForVIE(item, 'id');
                                     fixEntity[Voc.hasResource] = item['entity'];
                                     fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
-                                    //var vieEntity = new service.vie.Entity(fixEntity);
+                                    //var vieEntity = new sss.vie.Entity(fixEntity);
                                     fixEntity['@type'] = Voc.ORGAENTITY;
                                     entities.push(fixEntity);
                                 });
                                 loadable.resolve(entities);
                             },
                             function(object) {
-                                service.LOG.warn("error:", object);
+                                sss.LOG.warn("error:", object);
                             },
                             userUri,
-                            service.userKey,
+                            sss.userKey,
                             versionUri
                         );
                 });
@@ -856,7 +856,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
 
             this.LOG.debug("entity", entity, " is of ", entity.get("@type"));
 
-            var service = this;
+            var sss = this;
 
             if( entity.isof(Voc.TIMELINE) ) {
                 this.LOG.debug("saving timeline");
@@ -870,20 +870,20 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
                     function(userUri, versionUri) {
-                        service.resolve('SSLearnEpVersionSetTimelineState', 
+                        sss.resolve('SSLearnEpVersionSetTimelineState', 
                                 function(object) {
-                                    service.LOG.debug("handle result of LearnEpVersionSetTimelinState");
-                                    service.LOG.debug("object", object);
+                                    sss.LOG.debug("handle result of LearnEpVersionSetTimelinState");
+                                    sss.LOG.debug("object", object);
                                     if( entity.isNew() )
                                         savable.resolve({'uri':obj.uri}); //timeline was created
                                     else 
                                         savable.resolve(true); //timeline was updated
                                 },
                                 function(object) {
-                                    service.LOG.warn("error:", object);
+                                    sss.LOG.warn("error:", object);
                                 },
                                 userUri,
-                                service.userKey,
+                                sss.userKey,
                                 versionUri,
                                 _.isDate(start) ? (start - 0) : start,
                                 _.isDate(end) ? (end - 0) : end
@@ -897,7 +897,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 this.onUrisReady(
                     obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
                     function() {
-                        service.buffer[obj.uri] = obj;
+                        sss.buffer[obj.uri] = obj;
                         if( entity.isNew() )
                             savable.resolve({'uri':obj.uri}); // organize was created
                         else
@@ -909,19 +909,19 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.onUrisReady(
                         this.user,
                         function(userUri) {
-                            service.resolve('SSLearnEpCreate', 
+                            sss.resolve('SSLearnEpCreate', 
                                 function(object) {
-                                    service.LOG.debug("handle result of LearnEpCreate");
-                                    service.LOG.debug("object", object);
+                                    sss.LOG.debug("handle result of LearnEpCreate");
+                                    sss.LOG.debug("object", object);
                                     savable.resolve({'uri':object['learnEp']});
                                 },
                                 function(object) {
-                                    service.LOG.warn("error:");
-                                    service.LOG.warn("object", object);
+                                    sss.LOG.warn("error:");
+                                    sss.LOG.warn("object", object);
                                     savable.reject(entity);
                                 },
                                 userUri,
-                                service.userKey,
+                                sss.userKey,
                                 entity.get(Voc.label),
                                 'privateSpace'
                             );
@@ -931,19 +931,19 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri){
-                            service.resolve('SSEntityUpdate', 
+                            sss.resolve('SSEntityUpdate', 
                                 function(object) {
-                                    service.LOG.debug("handle result of SSLabelSet");
-                                    service.LOG.debug("object", object);
+                                    sss.LOG.debug("handle result of SSLabelSet");
+                                    sss.LOG.debug("object", object);
                                     savable.resolve(object);
                                 },
                                 function(object) {
-                                    service.LOG.warn("error:");
-                                    service.LOG.warn("object", object);
+                                    sss.LOG.warn("error:");
+                                    sss.LOG.warn("object", object);
                                     savable.reject(entity);
                                 },
                                 userUri,
-                                service.userKey,
+                                sss.userKey,
                                 entityUri,
                                 savable.options.label || null,
                                 savable.options.description || null
@@ -958,19 +958,19 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     episode,
                     function( userUri, episodeUri) {
-                        service.resolve('SSLearnEpVersionCreate', 
+                        sss.resolve('SSLearnEpVersionCreate', 
                                 function(object) {
-                                    service.LOG.debug("handle result of LearnEpVersionCreate");
-                                    service.LOG.debug("object", object);
+                                    sss.LOG.debug("handle result of LearnEpVersionCreate");
+                                    sss.LOG.debug("object", object);
                                     savable.resolve({'uri':object['learnEpVersion']});
                                 },
                                 function(object) {
-                                    service.LOG.warn("error:");
-                                    service.LOG.warn("object", object);
+                                    sss.LOG.warn("error:");
+                                    sss.LOG.warn("object", object);
                                     savable.reject(entity);
                                 },
                                 userUri,
-                                service.userKey,
+                                sss.userKey,
                                 episodeUri
                             );
                 });
@@ -983,38 +983,38 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     organize,
                     function(organizeUri) {
                         // map internal organize model to its version
-                        if( !service.buffer[organizeUri]) {
-                            service.LOG.warn("circle can't be saved because no organize exists");
+                        if( !sss.buffer[organizeUri]) {
+                            sss.LOG.warn("circle can't be saved because no organize exists");
                             savable.reject(entity);
                             return;
                         }
 
-                        var version = service.buffer[organizeUri]['belongsToVersion'];
+                        var version = sss.buffer[organizeUri]['belongsToVersion'];
                         // Newly created episode case
                         // Namespace URI is used instead
                         if (version === undefined) {
-                            version = service.buffer[organizeUri][service.vie.namespaces.uri(Voc.belongsToVersion)];
+                            version = sss.buffer[organizeUri][sss.vie.namespaces.uri(Voc.belongsToVersion)];
                         }
                         // end map
 
                         if( entity.isNew() )
-                            service.onUrisReady(
-                                service.user,
+                            sss.onUrisReady(
+                                sss.user,
                                 version,
                                 function(userUri, versionUri) {
-                                    service.resolve('SSLearnEpVersionAddCircle', 
+                                    sss.resolve('SSLearnEpVersionAddCircle', 
                                         function(object) {
-                                            service.LOG.debug("handle result of LearnEpVersionAddCircle");
-                                            service.LOG.debug("object", object);
+                                            sss.LOG.debug("handle result of LearnEpVersionAddCircle");
+                                            sss.LOG.debug("object", object);
                                             savable.resolve({'uri': object['learnEpCircle']});
                                         },
                                         function(object) {
-                                            service.LOG.warn("error:");
-                                            service.LOG.warn("object", object);
+                                            sss.LOG.warn("error:");
+                                            sss.LOG.warn("object", object);
                                             savable.reject(entity);
                                         },
                                         userUri,
-                                        service.userKey,
+                                        sss.userKey,
                                         versionUri,
                                         entity.get(Voc.Label),
                                         entity.get(Voc.LabelX),
@@ -1027,23 +1027,23 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     );
                             });
                         else
-                            service.onUrisReady(
-                                service.user,
+                            sss.onUrisReady(
+                                sss.user,
                                 entity.getSubject(),
                                 function(userUri, uriUri ) {
-                                    service.resolve('SSLearnEpVersionUpdateCircle', 
+                                    sss.resolve('SSLearnEpVersionUpdateCircle', 
                                         function(object) {
-                                            service.LOG.debug("handle result of LearnEpVersionUpdateCircle");
-                                            service.LOG.debug("object", object);
+                                            sss.LOG.debug("handle result of LearnEpVersionUpdateCircle");
+                                            sss.LOG.debug("object", object);
                                             savable.resolve(object);
                                         },
                                         function(object) {
-                                            service.LOG.warn("error:");
-                                            service.LOG.warn("object", object);
+                                            sss.LOG.warn("error:");
+                                            sss.LOG.warn("object", object);
                                             savable.reject(entity);
                                         },
                                         userUri,
-                                        service.userKey,
+                                        sss.userKey,
                                         uriUri,
                                         entity.get(Voc.Label),
                                         entity.get(Voc.LabelX),
@@ -1066,16 +1066,16 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     organize,
                     function(organizeUri) {
                         // map internal organize model to its version
-                        if( !service.buffer[organizeUri]) {
-                            service.LOG.warn("orgaentity can't be saved because no organize exists");
+                        if( !sss.buffer[organizeUri]) {
+                            sss.LOG.warn("orgaentity can't be saved because no organize exists");
                             savable.reject(entity);
                             return;
                         }
-                        var version = service.buffer[organizeUri]['belongsToVersion'];
+                        var version = sss.buffer[organizeUri]['belongsToVersion'];
                         // This deals with case of newly added version
                         // For some reason NAMESPACE URI is used instead of PARAMETER
                         if (version === undefined) {
-                            version = service.buffer[organizeUri][service.vie.namespaces.uri(Voc.belongsToVersion)];
+                            version = sss.buffer[organizeUri][sss.vie.namespaces.uri(Voc.belongsToVersion)];
                         }
                         // end map
                         //
@@ -1083,24 +1083,24 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         if( resourceUri.isEntity ) resourceUri = resourceUri.getSubject();
 
                         if(entity.isNew() )
-                            service.onUrisReady(
-                                service.user,
+                            sss.onUrisReady(
+                                sss.user,
                                 version,
                                 resourceUri,
                                 function(userUri, versionUri, resourceUri){
-                                    service.resolve('SSLearnEpVersionAddEntity', 
+                                    sss.resolve('SSLearnEpVersionAddEntity', 
                                         function(object) {
-                                            service.LOG.debug("handle result of LearnEpVersionAddEntity");
-                                            service.LOG.debug("object", object);
+                                            sss.LOG.debug("handle result of LearnEpVersionAddEntity");
+                                            sss.LOG.debug("object", object);
                                             savable.resolve({'uri': object['learnEpEntity']});
                                         },
                                         function(object) {
-                                            service.LOG.warn("error:");
-                                            service.LOG.warn("object", object);
+                                            sss.LOG.warn("error:");
+                                            sss.LOG.warn("object", object);
                                             savable.reject(entity);
                                         },
                                         userUri,
-                                        service.userKey,
+                                        sss.userKey,
                                         versionUri,
                                         resourceUri,
                                         entity.get(Voc.x),
@@ -1109,24 +1109,24 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                                     );
                             });
                         else
-                            service.onUrisReady(
-                                service.user,
+                            sss.onUrisReady(
+                                sss.user,
                                 entity.getSubject(),
                                 resourceUri,
                                 function(userUri,uriUri,resourceUri){
-                                    service.resolve('SSLearnEpVersionUpdateEntity', 
+                                    sss.resolve('SSLearnEpVersionUpdateEntity', 
                                         function(object) {
-                                            service.LOG.debug("handle result of LearnEpVersionUpdateEntity");
-                                            service.LOG.debug("object", object);
+                                            sss.LOG.debug("handle result of LearnEpVersionUpdateEntity");
+                                            sss.LOG.debug("object", object);
                                             savable.resolve(object);
                                         },
                                         function(object) {
-                                            service.LOG.warn("error:");
-                                            service.LOG.warn("object", object);
+                                            sss.LOG.warn("error:");
+                                            sss.LOG.warn("object", object);
                                             savable.reject(entity);
                                         },
                                         userUri,
-                                        service.userKey,
+                                        sss.userKey,
                                         uriUri,
                                         resourceUri,
                                         entity.get(Voc.x),
@@ -1144,17 +1144,17 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         versionUri,
                         function(userUri, versionUri) {
-                            service.resolve('SSLearnEpVersionCurrentSet', 
+                            sss.resolve('SSLearnEpVersionCurrentSet', 
                                 function(object) {
-                                    service.LOG.debug("handle result of VersionCurrentSet");
-                                    service.LOG.debug("object", object);
+                                    sss.LOG.debug("handle result of VersionCurrentSet");
+                                    sss.LOG.debug("object", object);
                                     savable.resolve(true);
                                 },
                                 function(object) {
-                                    service.LOG.warn("error:", object);
+                                    sss.LOG.warn("error:", object);
                                 },
                                 userUri,
-                                service.userKey,
+                                sss.userKey,
                                 versionUri
                             );
                     });
@@ -1168,17 +1168,17 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri) {
-                            service.resolve('SSTagAdd', 
+                            sss.resolve('SSTagAdd', 
                                 function(object) {
-                                    service.LOG.debug('result addTag', object);
+                                    sss.LOG.debug('result addTag', object);
                                     savable.resolve(object);
                                 },
                                 function(object) {
-                                    service.LOG.warn('failed addTag', object);
+                                    sss.LOG.warn('failed addTag', object);
                                     savable.reject(object);
                                 },
                                 userUri,
-                                service.userKey,
+                                sss.userKey,
                                 entityUri,
                                 savable.options.tag,
                                 'privateSpace' // XXX need to determine space!
@@ -1189,17 +1189,17 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.onUrisReady(
                         entity.getSubject(),
                         function(entityUri) {
-                            service.resolve('SSEntityUpdate', 
+                            sss.resolve('SSEntityUpdate', 
                                 function(object) {
-                                    service.LOG.debug('result entity setLabel', object);
+                                    sss.LOG.debug('result entity setLabel', object);
                                     savable.resolve(object);
                                 },
                                 function(object) {
-                                    service.LOG.debug('railed entity setLabel', object);
+                                    sss.LOG.debug('railed entity setLabel', object);
                                     savable.reject(entity);
                                 },
-                                service.user,
-                                service.userKey,
+                                sss.user,
+                                sss.userKey,
                                 entityUri,
                                 savable.options.label
                             );
@@ -1209,17 +1209,17 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.onUrisReady(
                         entity.getSubject(),
                         function(entityUri) {
-                            service.resolve('SSFlagsSet', 
+                            sss.resolve('SSFlagsSet', 
                                 function(object) {
-                                    service.LOG.debug('setImportance success', object);
+                                    sss.LOG.debug('setImportance success', object);
                                     savable.resolve(object);
                                 },
                                 function(object) {
-                                    service.LOG.debug('setImportance fail', object);
+                                    sss.LOG.debug('setImportance fail', object);
                                     savable.reject(entity);
                                 },
-                                service.user,
-                                service.userKey,
+                                sss.user,
+                                sss.userKey,
                                 [entityUri],
                                 ['importance'],
                                 null,
@@ -1249,26 +1249,26 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
 
             this.LOG.debug("entity", entity, " is of ", entity.get("@type"));
 
-            var service = this;
+            var sss = this;
 
             if( entity.isof(Voc.CIRCLE )) {
                 this.onUrisReady(
                     this.user,
                     entity.getSubject(),
                     function(userUri,uriUri){
-                        service.resolve('SSLearnEpVersionRemoveCircle', 
+                        sss.resolve('SSLearnEpVersionRemoveCircle', 
                             function(object) {
-                                service.LOG.debug("handle result of LearnEpVersionRemoveCircle");
-                                service.LOG.debug("object", object);
+                                sss.LOG.debug("handle result of LearnEpVersionRemoveCircle");
+                                sss.LOG.debug("object", object);
                                 removable.resolve(object);
                             },
                             function(object) {
-                                service.LOG.warn("error:");
-                                service.LOG.warn("object", object);
+                                sss.LOG.warn("error:");
+                                sss.LOG.warn("object", object);
                                 removable.reject(entity);
                             },
                             userUri,
-                            service.userKey,
+                            sss.userKey,
                             uriUri
                         );
                 });
@@ -1277,19 +1277,19 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     this.user,
                     entity.getSubject(),
                     function(userUri,uriUri){
-                        service.resolve('SSLearnEpVersionRemoveEntity', 
+                        sss.resolve('SSLearnEpVersionRemoveEntity', 
                             function(object) {
-                                service.LOG.debug("handle result of LearnEpVersionRemoveEntity");
-                                service.LOG.debug("object", object);
+                                sss.LOG.debug("handle result of LearnEpVersionRemoveEntity");
+                                sss.LOG.debug("object", object);
                                 removable.resolve(object);
                             },
                             function(object) {
-                                service.LOG.warn("error:");
-                                service.LOG.warn("object", object);
+                                sss.LOG.warn("error:");
+                                sss.LOG.warn("object", object);
                                 removable.reject(entity);
                             },
                             userUri,
-                            service.userKey,
+                            sss.userKey,
                             uriUri
                         );
                 });
@@ -1301,17 +1301,17 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri) {
-                            service.resolve('SSTagsRemove', 
+                            sss.resolve('SSTagsRemove', 
                                 function(object) {
-                                    service.LOG.debug('result removeTag', object);
+                                    sss.LOG.debug('result removeTag', object);
                                     removable.resolve(object);
                                 },
                                 function(object) {
-                                    service.LOG.warn('failed removeTag', object);
+                                    sss.LOG.warn('failed removeTag', object);
                                     removable.reject(object);
                                 },
                                 userUri,
-                                service.userKey,
+                                sss.userKey,
                                 entityUri,
                                 removable.options.tag
                             );
