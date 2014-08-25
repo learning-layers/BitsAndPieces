@@ -7,6 +7,9 @@ var require = (function() {
         config: {
             'app' : {
                 'sssHostREST' : sssHostREST
+            },
+            'tracker' : {
+                'sssHostREST' : sssHostREST
             }
         },
         baseUrl: 'js',

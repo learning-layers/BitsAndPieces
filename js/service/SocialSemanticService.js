@@ -1,4 +1,4 @@
-// The SocialSemanticService wraps the SSS Client API.
+// The SocialSemanticService wraps the SSS REST API branch 'bpfortesting'
 
 define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
         'sss.conns'], function(Logger, VIE, _, Voc, EntityView, $) {
@@ -142,62 +142,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                 }
             });
         },
-        resolve: function() {
-            this.LOG.debug('resolve', this);
-            var i = 0;
-            var serviceCall;
-            var resultHandler;
-            var errorHandler;
-            var params = [];
-            for( var prop in arguments ) {
-                if( i == 0 ) { serviceCall = arguments[i]; }
-                if( i == 1 ) { resultHandler = arguments[i]; }
-                if( i == 2 ) { errorHandler = arguments[i]; }
-                if( i > 2 ) {
-                    params.push(arguments[i]);
-                }
-                i++;
-            }
-            var that = this;
-            var found;
-            this.LOG.debug('resolve', serviceCall, params);
-            if( this.pendingCalls[serviceCall] ) {
-                if( found = this.findPendingCall(serviceCall, params)) {
-                    this.LOG.debug('resolve params found');
-                    found.resultHandlers.push(resultHandler);
-                    found.errorHandlers.push(errorHandler);
-                    return;
-                }
-            } else {
-                this.pendingCalls[serviceCall] = {};
-            }
-            var p = {
-                'params' : params, 
-                'resultHandlers' : [resultHandler],
-                'errorHandlers' : [errorHandler]
-            };
-            var pos = this.pendingCallsCount++;
-            this.pendingCalls[serviceCall][pos] = p;
-            this.LOG.debug('resolve pos', pos);
-            var newParams = [
-                    function(result) {
-                        delete that.pendingCalls[serviceCall][pos];
-                        that.LOG.debug("resolve resultHandlers", p);
-                        _.each(p.resultHandlers, function(f) {
-                            f(result);
-                        });
-                    },
-                    function(result) {
-                        delete that.pendingCalls[serviceCall][pos];
-                        _.each(p.errorHandlers, function(f) {
-                            f(result);
-                        });
-                    }]
-                .concat(params);
-            this.LOG.debug('resolve newParams', newParams);
-            window[serviceCall].apply(window, newParams);
-        },
-        resolveNew: function(serviceCall, resultHandler, errorHandler, params) {
+        resolve: function(serviceCall, resultHandler, errorHandler, params) {
             this.LOG.debug('resolve', this);
             var i = 0;
             var that = this;
@@ -265,7 +210,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                         return;
                     }
 
-                    var result = $.parseJson(jqXHR.responseText); 
+                    var result = $.parseJSON(jqXHR.responseText); 
 
                     if( result.error ) {
                         if( error ) error(result);
@@ -286,7 +231,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        sss.resolve('SSSearchWithTags', 
+                        sss.resolve('searchTags', 
                             function(object) {
                                 sss.LOG.debug("searchResult", object);
                                 var entities = [];
@@ -299,11 +244,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 sss.LOG.warn("searchResult failed", object);
                                 analyzable.reject(object);
                             },
-                            userUri,
-                            sss.userKey,
-                            analyzable.options.op || "OR",
-                            analyzable.options.tags,
-                            analyzable.options.max
+                            {
+                                'searchOp' : analyzable.options.op || "OR",
+                                'tags' : analyzable.options.tags.join(','),
+                                'maxResultsPerTag' : analyzable.options.max
+                            }
                         );
                     }
                 );
@@ -311,7 +256,19 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        sss.resolve('SSSearchCombined',
+                        var params = {
+                            'keywords' : analyzable.options.tags.join(','),
+                            'onlySubEntities' : false,
+                            'includeTags' : true,
+                            'includeTextualContent' : false,
+                            'includeLabel' : true,
+                            'includeDescription' : true,
+                            'includeMIs' : false
+                        };
+                        if( analyzable.options.types ) {
+                            params['types'] = analyzable.options.types.join(',');
+                        }
+                        sss.resolve('searchCombined',
                             function(object) {
                                 sss.LOG.debug("searchResult", object);
                                 var entities = [];
@@ -324,17 +281,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 sss.LOG.warn("searchResult failed", object);
                                 analyzable.reject(object);
                             },
-                            userUri,
-                            sss.userKey,
-                            analyzable.options.tags,
-                            [],
-                            false,
-                            analyzable.options.types || [],
-                            true,
-                            false,
-                            true,
-                            true,
-                            false
+                            params
                         );
                     }
                 );
@@ -342,7 +289,23 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        sss.resolve('SSSearch',
+                        var params = {
+                            'keywordsToSearchFor' : analyzable.options.tags.join(','),
+                            'includeTextualContent' : false,
+                            'includeTags' : true,
+                            'includeMIs' : false,
+                            'includeLabel' : true,
+                            'includeDescription' : true,
+                            'includeOnlySubEntities' : false,
+                            'extendToParents' : false,
+                            'includeRecommendedResults' : false,
+                            'provideEntries' : false
+                        };
+
+                        if( analyzable.options.types ) {
+                            params['typesToSearchOnlyFor'] = analyzable.options.types.join(',');
+                        }
+                        sss.resolve('search',
                             function(object) {
                                 sss.LOG.debug("searchResult", object);
                                 var entities = [];
@@ -355,69 +318,59 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 sss.LOG.warn("searchResult failed", object);
                                 analyzable.reject(object);
                             },
-                            userUri,
-                            sss.userKey,
-                            analyzable.options.tags,
-                            false,
-                            null,
-                            true,
-                            null,
-                            false,
-                            null,
-                            true,
-                            null,
-                            true,
-                            null,
-                            analyzable.options.types || [],
-                            false,
-                            null,
-                            false,
-                            false,
-                            false
+                            params
                         );
                     }
                 );
             } else if ( analyzable.options.service == "entityShare" ) {
                 this.onUrisReady(
                     function() {
-                        sss.resolve('SSEntityShare', 
+                        var params = {
+                            'entity' : analyzable.options.entity,
+                            'users' : analyzable.options.users.join(',')
+                        };
+                        if( analyzable.options.comment ) {
+                            params['comment'] = analyzable.options.comment;
+                        }
+                        sss.resolve('entityShare', 
                             function(object) {
                                 sss.LOG.debug("entityShare success", object);
                             },
                             function(object) {
                                 sss.LOG.debug("entityShare failed", object);
                             },
-                            sss.user,
-                            sss.userKey,
-                            analyzable.options.entity,
-                            analyzable.options.users,
-                            analyzable.options.comment || ''
+                            params
                         );
                     }
                 );
             } else if ( analyzable.options.service == "entityCopy" ) {
                 this.onUrisReady(
                     function() {
-                        sss.resolve('SSEntityCopy', 
+                        var params = {
+                            'entity' : analyzable.options.entity,
+                            'users' : analyzable.options.users.join(',')
+                        };
+                        if( analyzable.options.exclude ) {
+                            params['entitiesToExclude'] = analyzable.options.exclude.join(',');
+                        }
+                        if( analyzable.options.comment ) {
+                            params['comment'] = analyzable.options.comment;
+                        }
+                        sss.resolve('entityCopy', 
                             function(object) {
                                 sss.LOG.debug("entityCopy success", object);
                             },
                             function(object) {
                                 sss.LOG.debug("entityCopy failed", object);
                             },
-                            sss.user,
-                            sss.userKey,
-                            analyzable.options.entity,
-                            analyzable.options.users,
-                            analyzable.options.exclude || [],
-                            analyzable.options.comment || ''
+                            params
                         );
                     }
                 );
             } else if ( analyzable.options.service == "userAll" ) {
                 this.onUrisReady(
                     function() {
-                        sss.resolve('SSUserAll', 
+                        sss.resolve('userAll', 
                             function(object) {
                                 sss.LOG.debug("userAll success", object);
                                 var users = [];
@@ -433,16 +386,22 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                             function(object) {
                                 sss.LOG.debug("userAll failed", object);
                                 analyzable.reject(object);
-                            },
-                            sss.user,
-                            sss.userKey
+                            }
                         );
                     }
                 );
             } else if ( analyzable.options.service == "recommTagsBasedOnUserEntityTagTime" ) {
                 this.onUrisReady(
                     function() {
-                        sss.resolve('SSScaffRecommTagsBasedOnUserEntityTagTime', 
+                        var params = {};
+                        if( analyzable.options.forUser ) {
+                            params['forUser'] = analyzable.options.forUser;
+                        }
+                        if( analyzable.options.entity ) {
+                            params['entity'] = analyzable.options.entity; 
+                        }
+                        params['maxTags'] = analyzable.options.maxTags || 20;
+                        sss.resolve('scaffRecommTagsBasedOnUserEntityTagTime', 
                             function(object) {
                                 sss.LOG.debug("recommTagsBasedOnUserEntityTagTime success", object);
                                 analyzable.resolve(object.tags || []);
@@ -451,18 +410,29 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 sss.LOG.debug("recommTagsBasedOnUserEntityTagTime failed", object);
                                 analyzable.reject(object);
                             },
-                            sss.user,
-                            sss.userKey,
-                            analyzable.options.forUser || null,
-                            analyzable.options.entity || null,
-                            analyzable.options.maxTags || 20
+                            params
                         );
                     }
                 );
             } else if ( analyzable.options.service == "ueCountGet" ) {
                 this.onUrisReady(
                     function() {
-                        sss.resolve('SSUECountGet', 
+                        if( analyzable.options.forUser ) {
+                            params['forUser'] = analyzable.options.forUser;
+                        }
+                        if( analyzable.options.entity ) {
+                            params['entity'] = analyzable.options.entity;
+                        }
+                        if( analyzable.options.startTime ) {
+                            params['startTime'] = analyzable.options.startTime;
+                        }
+                        if( analyzable.options.endTime ) {
+                            params['endTime'] = analyzable.options.endTime;
+                        }
+                        if( analyzable.options.type ) {
+                            params['type'] = analyzable.options.type;
+                        }
+                        sss.resolve('uECountGet', 
                             function(object) {
                                 sss.LOG.debug("ueCountGet success", object);
                                 analyzable.resolve(object.count || 0);
@@ -471,18 +441,12 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 sss.LOG.debug("ueCountGet failed", object);
                                 analyzable.reject(object);
                             },
-                            sss.user,
-                            sss.userKey,
-                            analyzable.options.forUser || null,
-                            analyzable.options.entity || null,
-                            analyzable.options.startTime || null,
-                            analyzable.options.endTime || null,
-                            analyzable.options.type || null
+                            params
                         );
                     }
                 );
             } else if ( analyzable.options.service == "categoriesPredefinedGet" ) {
-                sss.resolveNew('categoriesPredefinedGet', 
+                sss.resolve('categoriesPredefinedGet', 
                     function(result) {
                         sss.LOG.debug("categoriesPredefinedGet success", result);
                         analyzable.resolve(result.categories);
@@ -493,7 +457,20 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                     }
                 );
             } else if ( analyzable.options.service == "EntityDescsGet" ) {
-                sss.resolve('SSEntityDescsGet', 
+                var params = {};
+                if( analyzable.options.entities ) {
+                    params['entities'] = analyzable.options.entities.join(',');
+                }
+                if( analyzable.options.types ) {
+                    params['types'] = analyzable.options.types.join(',');
+                }
+                params['getTags'] = true;   
+                params['getOverallRating'] = false;  
+                params['getDiscs'] = false;
+                params['getUEs'] = false; 
+                params['getThumb'] = true; 
+                params['getFlags'] = true;  
+                sss.resolve('entityDescsGet', 
                     function(result) {
                         var entities = [];
                         _.each(result['descs'], function(object) {
@@ -507,16 +484,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                         sss.LOG.error("EntityDescsGet", result);
                         analyzable.reject(result);
                     },
-                    sss.user,
-                    sss.userKey,
-                    analyzable.options.entities,
-                    analyzable.options.types,
-                    true,   //getTags
-                    false,  //getOverallRating
-                    false,   //getDiscs
-                    false,  //getUEs
-                    true,   //getThumb
-                    true    //getFlags
+                    params
                 );
             }
 
@@ -555,7 +523,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                     this.user,
                     loadable.options.resource,
                     function(userUri, resourceUri) {
-                        sss.resolve('SSEntityDescGet', 
+                        sss.resolve('entityDescGet', 
                             function(object) {
                                 sss.LOG.debug("handle result of EntityDescGet");
                                 sss.LOG.debug("object", object);
@@ -573,7 +541,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 var type = object['desc']['type'];
                                 sss.LOG.debug('desc.type', type);
                                 if( type && type == sss.types.USER )  {
-                                    sss.resolve('SSLearnEpVersionCurrentGet',
+                                    sss.resolve('learnEpVersionCurrentGet',
                                         function(object2) {
                                             sss.LOG.debug("handle result of VersionCurrentGet");
                                             sss.LOG.debug("object", object2);
@@ -583,12 +551,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                         function(object2) {
                                             sss.LOG.warn("error:", object2);
                                             loadable.resolve(entity);
-                                        },
-                                        entityUri,
-                                        sss.userKey 
+                                        }
                                         );
                                 } else if( type && type == sss.types.USEREVENT )  {
-                                    sss.resolve('SSUserEventGet', 
+                                    // TODO probably replace by EntityGet
+                                    sss.resolve('userEventGet', 
                                         function(object2) {
                                             sss.LOG.debug("handle result of UserEventTypeGet");
                                             sss.LOG.debug("object", object2);
@@ -604,9 +571,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                             sss.LOG.warn("error:", object2);
                                             loadable.resolve(entity);
                                         },
-                                        sss.vie.namespaces.uri(sss.user),
-                                        sss.userKey ,
-                                        entity.getSubject()
+                                        { 'entity' : entity.getSubject()}
                                         );
                                 } else
                                     loadable.resolve(entity);
@@ -615,15 +580,15 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 loadable.reject(entity);
                                 sss.LOG.warn("error:",object);
                             },
-                            userUri,
-                            sss.userKey,
-                            resourceUri,
-                            true, // tags
-                            false, // rating
-                            false, // discussions
-                            false, // events
-                            true, // thumbnail
-                            true // flags
+                            { 
+                                'entity' : resourceUri,
+                                'getTags' : true, 
+                                'getOverallRating' : false, 
+                                'getDiscs' : false, 
+                                'getUEs' : false, 
+                                'getThumb' : true, 
+                                'getFlags' : true 
+                            }
                         );
                 });
             } else {
@@ -637,13 +602,21 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
 
             var sss = this;
             if( type.isof(Voc.USEREVENT)) {
-                this.LOG.debug("SSUserEventsGet");
+                this.LOG.debug("userEventsGet");
                 this.onUrisReady(
                     this.user,
                     loadable.options.forUser,
                     loadable.options.resource,
                     function(userUri, forUserUri, resourceUri) {
-                        sss.resolve('SSUserEventsGet', 
+                        var params = {
+                            'forUser' : forUserUri,
+                            'startTime' : loadable.options.start,
+                            'endTime' : loadable.options.end
+                        };
+                        if( resourceUri ) {
+                            params['entity'] = resourceUri;
+                        }
+                        sss.resolve('uEsGet', 
                             function(objects) {
                                 sss.LOG.debug("handle result of userEventsOfUser");
                                 sss.LOG.debug("objects", objects);
@@ -664,20 +637,15 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 sss.LOG.warn("error:");
                                 sss.LOG.warn(object);
                             },
-                            userUri,
-                            sss.userKey,
-                            forUserUri,
-                            resourceUri ? resourceUri : null,
-                            loadable.options.start,
-                            loadable.options.end
+                            params
                         );
                 });
             } else if( type.isof(Voc.EPISODE )) {
-                this.LOG.debug("SSLearnEpsGet");
+                this.LOG.debug("learnEpsGet");
                 this.onUrisReady(
                     this.user,
                     function(userUri) {
-                        sss.resolve('SSLearnEpsGet', 
+                        sss.resolve('learnEpsGet', 
                             function(objects) {
                                 sss.LOG.debug("handle result of epsGet");
                                 sss.LOG.debug("objects", objects);
@@ -693,22 +661,20 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 loadable.resolve(entityInstances);
                             },
                             function(object) {
-                                sss.LOG.warn("error on SSLearnEpsGet (perhaps just empty):");
+                                sss.LOG.warn("error on learnEpsGet (perhaps just empty):");
                                 sss.LOG.warn(object);
                                 loadable.resolve([]);
-                            },
-                            userUri,
-                            sss.userKey
+                            }
                         );
                 });
 
             } else if( type.isof(Voc.VERSION )) {
-                this.LOG.debug("SSLearnEpVersionsGet");
+                this.LOG.debug("learnEpVersionsGet");
                 this.onUrisReady(
                     this.user,
                     loadable.options.episode,
                     function(userUri, episodeUri) {
-                        sss.resolve('SSLearnEpVersionsGet', 
+                        sss.resolve('learnEpVersionsGet', 
                             function(objects) {
                                 sss.LOG.debug("handle result of epVersionsGet");
                                 sss.LOG.debug("objects", objects);
@@ -732,9 +698,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 sss.LOG.warn("error:");
                                 sss.LOG.warn(object);
                             },
-                            userUri,
-                            sss.userKey,
-                            episodeUri
+                            {'learnEp':episodeUri}
                         );
                 });
 
@@ -778,12 +742,12 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                 }
                 resolve('versionget',this.fixForVIE(organize, 'uri'));
 
-                this.LOG.log("SSLearnEPGetTimelineState");
+                this.LOG.log("learnEPGetTimelineState");
                 this.onUrisReady(
                     this.user,
                     loadable.options.version,
                     function(userUri, versionUri) {
-                        sss.resolve('SSLearnEpVersionGetTimelineState', 
+                        sss.resolve('learnEpVersionGetTimelineState', 
                             function(object) {
                                 sss.LOG.debug("handle result of LearnEpGetTimelineState");
                                 sss.LOG.debug("object", object);
@@ -818,9 +782,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 sss.LOG.warn("error:", object);
                                 resolve('timelineget');
                             },
-                            userUri,
-                            sss.userKey,
-                            versionUri
+                            {'learnEpVersion':versionUri}
                         );
                 });
 
@@ -840,7 +802,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                     this.user,
                     version,
                     function(userUri, versionUri) {
-                        sss.resolve('SSLearnEpVersionGet',
+                        sss.resolve('learnEpVersionGet',
                             function(object) {
                                 sss.LOG.debug("handle result of LearnEpVersionGet");
                                 sss.LOG.debug("objects", object);
@@ -866,9 +828,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                             function(object) {
                                 sss.LOG.warn("error:", object);
                             },
-                            userUri,
-                            sss.userKey,
-                            versionUri
+                            {'learnEpVersion':versionUri}
                         );
                 });
             } else if (type.isof(Voc.ORGAENTITY)){
@@ -884,7 +844,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                     this.user,
                     version,
                     function(userUri, versionUri) {
-                        sss.resolve('SSLearnEpVersionGet',
+                        sss.resolve('learnEpVersionGet',
                             function(object) {
                                 sss.LOG.debug("handle result of LearnEpVersionGet");
                                 sss.LOG.debug("objects", object);
@@ -903,9 +863,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                             function(object) {
                                 sss.LOG.warn("error:", object);
                             },
-                            userUri,
-                            sss.userKey,
-                            versionUri
+                            {'learnEpVersion':versionUri}
                         );
                 });
 
@@ -945,7 +903,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                     this.user,
                     obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
                     function(userUri, versionUri) {
-                        sss.resolve('SSLearnEpVersionSetTimelineState', 
+                        sss.resolve('learnEpVersionSetTimelineState', 
                                 function(object) {
                                     sss.LOG.debug("handle result of LearnEpVersionSetTimelinState");
                                     sss.LOG.debug("object", object);
@@ -957,11 +915,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 function(object) {
                                     sss.LOG.warn("error:", object);
                                 },
-                                userUri,
-                                sss.userKey,
-                                versionUri,
-                                _.isDate(start) ? (start - 0) : start,
-                                _.isDate(end) ? (end - 0) : end
+                                {
+                                    'learnEpVersion' : versionUri,
+                                    'startTime' : _.isDate(start) ? (start - 0) : start,
+                                    'endTime' : _.isDate(end) ? (end - 0) : end
+                                }
                             );
                 });
             } else if( entity.isof(Voc.ORGANIZE )) {
@@ -984,7 +942,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                     this.onUrisReady(
                         this.user,
                         function(userUri) {
-                            sss.resolve('SSLearnEpCreate', 
+                            sss.resolve('learnEpCreate', 
                                 function(object) {
                                     sss.LOG.debug("handle result of LearnEpCreate");
                                     sss.LOG.debug("object", object);
@@ -995,10 +953,10 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                     sss.LOG.warn("object", object);
                                     savable.reject(entity);
                                 },
-                                userUri,
-                                sss.userKey,
-                                entity.get(Voc.label),
-                                'privateSpace'
+                                {
+                                    'label':entity.get(Voc.label),
+                                    'description' : 'privateSpace'
+                                }
                             );
                     });
                 } else {
@@ -1006,9 +964,18 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri){
-                            sss.resolve('SSEntityUpdate', 
+                            var params = {
+                                'entity' : entityUri,
+                            };
+                            if( savable.options.label ) {
+                                params['label'] = savable.options.label;
+                            }
+                            if( savable.options.description ) {
+                                params['description'] = savable.options.description;
+                            }
+                            sss.resolve('entityUpdate', 
                                 function(object) {
-                                    sss.LOG.debug("handle result of SSLabelSet");
+                                    sss.LOG.debug("handle result of labelSet");
                                     sss.LOG.debug("object", object);
                                     savable.resolve(object);
                                 },
@@ -1017,11 +984,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                     sss.LOG.warn("object", object);
                                     savable.reject(entity);
                                 },
-                                userUri,
-                                sss.userKey,
-                                entityUri,
-                                savable.options.label || null,
-                                savable.options.description || null
+                                params
                             );
                     });
                 }
@@ -1033,7 +996,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                     this.user,
                     episode,
                     function( userUri, episodeUri) {
-                        sss.resolve('SSLearnEpVersionCreate', 
+                        sss.resolve('learnEpVersionCreate', 
                                 function(object) {
                                     sss.LOG.debug("handle result of LearnEpVersionCreate");
                                     sss.LOG.debug("object", object);
@@ -1044,9 +1007,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                     sss.LOG.warn("object", object);
                                     savable.reject(entity);
                                 },
-                                userUri,
-                                sss.userKey,
-                                episodeUri
+                                {'learnEp':episodeUri}
                             );
                 });
             } else if( entity.isof(Voc.CIRCLE )) {
@@ -1077,7 +1038,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 sss.user,
                                 version,
                                 function(userUri, versionUri) {
-                                    sss.resolve('SSLearnEpVersionAddCircle', 
+                                    sss.resolve('learnEpVersionAddCircle', 
                                         function(object) {
                                             sss.LOG.debug("handle result of LearnEpVersionAddCircle");
                                             sss.LOG.debug("object", object);
@@ -1088,17 +1049,16 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                             sss.LOG.warn("object", object);
                                             savable.reject(entity);
                                         },
-                                        userUri,
-                                        sss.userKey,
-                                        versionUri,
-                                        entity.get(Voc.Label),
-                                        entity.get(Voc.LabelX),
-                                        entity.get(Voc.LabelY),
-                                        entity.get(Voc.rx),
-                                        entity.get(Voc.ry),
-                                        entity.get(Voc.cx),
-                                        entity.get(Voc.cy)
-
+                                        {
+                                            'learnEpVersion' : versionUri,
+                                            'label' : entity.get(Voc.Label),
+                                            'xLabel' : entity.get(Voc.LabelX),
+                                            'yLabel' : entity.get(Voc.LabelY),
+                                            'xR' : entity.get(Voc.rx),
+                                            'yR' : entity.get(Voc.ry),
+                                            'xC' : entity.get(Voc.cx),
+                                            'yC' : entity.get(Voc.cy)
+                                        }
                                     );
                             });
                         else
@@ -1106,7 +1066,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 sss.user,
                                 entity.getSubject(),
                                 function(userUri, uriUri ) {
-                                    sss.resolve('SSLearnEpVersionUpdateCircle', 
+                                    sss.resolve('learnEpVersionUpdateCircle', 
                                         function(object) {
                                             sss.LOG.debug("handle result of LearnEpVersionUpdateCircle");
                                             sss.LOG.debug("object", object);
@@ -1117,17 +1077,16 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                             sss.LOG.warn("object", object);
                                             savable.reject(entity);
                                         },
-                                        userUri,
-                                        sss.userKey,
-                                        uriUri,
-                                        entity.get(Voc.Label),
-                                        entity.get(Voc.LabelX),
-                                        entity.get(Voc.LabelY),
-                                        entity.get(Voc.rx),
-                                        entity.get(Voc.ry),
-                                        entity.get(Voc.cx),
-                                        entity.get(Voc.cy)
-
+                                        {
+                                            'learnEpCircle' : uriUri,
+                                            'label' : entity.get(Voc.Label),
+                                            'xLabel' : entity.get(Voc.LabelX),
+                                            'yLabel' : entity.get(Voc.LabelY),
+                                            'xR' : entity.get(Voc.rx),
+                                            'yR' : entity.get(Voc.ry),
+                                            'xC' : entity.get(Voc.cx),
+                                            'yC' : entity.get(Voc.cy)
+                                        }
                                     );
                             });
                 });
@@ -1163,7 +1122,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 version,
                                 resourceUri,
                                 function(userUri, versionUri, resourceUri){
-                                    sss.resolve('SSLearnEpVersionAddEntity', 
+                                    sss.resolve('learnEpVersionAddEntity', 
                                         function(object) {
                                             sss.LOG.debug("handle result of LearnEpVersionAddEntity");
                                             sss.LOG.debug("object", object);
@@ -1174,13 +1133,12 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                             sss.LOG.warn("object", object);
                                             savable.reject(entity);
                                         },
-                                        userUri,
-                                        sss.userKey,
-                                        versionUri,
-                                        resourceUri,
-                                        entity.get(Voc.x),
-                                        entity.get(Voc.y)
-
+                                        {
+                                            'learnEpVersion' : versionUri,
+                                            'entity' : resourceUri,
+                                            'x' : entity.get(Voc.x),
+                                            'y' : entity.get(Voc.y)
+                                        }
                                     );
                             });
                         else
@@ -1189,7 +1147,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 entity.getSubject(),
                                 resourceUri,
                                 function(userUri,uriUri,resourceUri){
-                                    sss.resolve('SSLearnEpVersionUpdateEntity', 
+                                    sss.resolve('learnEpVersionUpdateEntity', 
                                         function(object) {
                                             sss.LOG.debug("handle result of LearnEpVersionUpdateEntity");
                                             sss.LOG.debug("object", object);
@@ -1200,13 +1158,12 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                             sss.LOG.warn("object", object);
                                             savable.reject(entity);
                                         },
-                                        userUri,
-                                        sss.userKey,
-                                        uriUri,
-                                        resourceUri,
-                                        entity.get(Voc.x),
-                                        entity.get(Voc.y)
-
+                                        {
+                                            'learnEpEntity' : uriUri,
+                                            'entity' : resourceUri,
+                                            'x' : entity.get(Voc.x),
+                                            'y' : entity.get(Voc.y)
+                                        }
                                     );
                             });
                 });
@@ -1219,7 +1176,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                         this.user,
                         versionUri,
                         function(userUri, versionUri) {
-                            sss.resolve('SSLearnEpVersionCurrentSet', 
+                            sss.resolve('learnEpVersionCurrentSet', 
                                 function(object) {
                                     sss.LOG.debug("handle result of VersionCurrentSet");
                                     sss.LOG.debug("object", object);
@@ -1228,9 +1185,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 function(object) {
                                     sss.LOG.warn("error:", object);
                                 },
-                                userUri,
-                                sss.userKey,
-                                versionUri
+                                {'learnEpVersion' : versionUri}
                             );
                     });
                 } else
@@ -1243,7 +1198,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri) {
-                            sss.resolve('SSTagAdd', 
+                            sss.resolve('tagAdd', 
                                 function(object) {
                                     sss.LOG.debug('result addTag', object);
                                     savable.resolve(object);
@@ -1252,11 +1207,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                     sss.LOG.warn('failed addTag', object);
                                     savable.reject(object);
                                 },
-                                userUri,
-                                sss.userKey,
-                                entityUri,
-                                savable.options.tag,
-                                'privateSpace' // XXX need to determine space!
+                                {
+                                    'entity' : entityUri,
+                                    'label' : savable.options.tag,
+                                    'space' : 'privateSpace' // XXX need to determine space!
+                                }
                             );
                         }
                     );
@@ -1264,7 +1219,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                     this.onUrisReady(
                         entity.getSubject(),
                         function(entityUri) {
-                            sss.resolve('SSEntityUpdate', 
+                            sss.resolve('entityUpdate', 
                                 function(object) {
                                     sss.LOG.debug('result entity setLabel', object);
                                     savable.resolve(object);
@@ -1273,10 +1228,10 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                     sss.LOG.debug('railed entity setLabel', object);
                                     savable.reject(entity);
                                 },
-                                sss.user,
-                                sss.userKey,
-                                entityUri,
-                                savable.options.label
+                                {
+                                    'entity' : entityUri,
+                                    'label' : savable.options.label
+                                }
                             );
                         }
                     );
@@ -1284,7 +1239,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                     this.onUrisReady(
                         entity.getSubject(),
                         function(entityUri) {
-                            sss.resolve('SSFlagsSet', 
+                            sss.resolve('flagsSet', 
                                 function(object) {
                                     sss.LOG.debug('setImportance success', object);
                                     savable.resolve(object);
@@ -1293,12 +1248,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                     sss.LOG.debug('setImportance fail', object);
                                     savable.reject(entity);
                                 },
-                                sss.user,
-                                sss.userKey,
-                                [entityUri],
-                                ['importance'],
-                                null,
-                                savable.options.importance
+                                {
+                                    'entities' : entityUri,
+                                    'types' : 'importance',
+                                    'value' : savable.options.importance
+                                }
                             );
                         }
                     );
@@ -1331,7 +1285,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                     this.user,
                     entity.getSubject(),
                     function(userUri,uriUri){
-                        sss.resolve('SSLearnEpVersionRemoveCircle', 
+                        sss.resolve('learnEpVersionRemoveCircle', 
                             function(object) {
                                 sss.LOG.debug("handle result of LearnEpVersionRemoveCircle");
                                 sss.LOG.debug("object", object);
@@ -1342,9 +1296,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 sss.LOG.warn("object", object);
                                 removable.reject(entity);
                             },
-                            userUri,
-                            sss.userKey,
-                            uriUri
+                            {'learnEpCircle' : uriUri}
                         );
                 });
             } else if( entity.isof(Voc.ORGAENTITY )) {
@@ -1352,7 +1304,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                     this.user,
                     entity.getSubject(),
                     function(userUri,uriUri){
-                        sss.resolve('SSLearnEpVersionRemoveEntity', 
+                        sss.resolve('learnEpVersionRemoveEntity', 
                             function(object) {
                                 sss.LOG.debug("handle result of LearnEpVersionRemoveEntity");
                                 sss.LOG.debug("object", object);
@@ -1363,9 +1315,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                 sss.LOG.warn("object", object);
                                 removable.reject(entity);
                             },
-                            userUri,
-                            sss.userKey,
-                            uriUri
+                            {'learnEpEntity' : uriUri}
                         );
                 });
             } else if ( entity.isof(Voc.ENTITY) || entity.isof(Voc.FILE)
@@ -1376,7 +1326,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri) {
-                            sss.resolve('SSTagsRemove', 
+                            sss.resolve('tagsRemove', 
                                 function(object) {
                                     sss.LOG.debug('result removeTag', object);
                                     removable.resolve(object);
@@ -1385,10 +1335,10 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
                                     sss.LOG.warn('failed removeTag', object);
                                     removable.reject(object);
                                 },
-                                userUri,
-                                sss.userKey,
-                                entityUri,
-                                removable.options.tag
+                                {
+                                    'entity' : entityUri,
+                                    'label' : removable.options.tag
+                                }
                             );
                         }
                     );
