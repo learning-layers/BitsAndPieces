@@ -1,7 +1,7 @@
 // The SocialSemanticService wraps the SSS Client API.
 
-define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
-        'sss.conns'], function(Logger, VIE, _, Voc, EntityView) {
+define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
+        'sss.conns'], function(Logger, VIE, _, Voc, EntityView, $) {
 
 // ## VIE.SocialSemanticService(options)
 // This is the constructor to instantiate a new service.
@@ -56,6 +56,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
 //
 //     var ssService = new vie.SocialSemanticService({<some-configuration>});
 //     ssService.init();
+//
         types: {
             THING : "owl:Thing",
             TIMELINE : "Timeline",
@@ -75,6 +76,10 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             for (var key in this.options.namespaces) {
                 var val = this.options.namespaces[key];
                 this.vie.namespaces.add(key, val);
+            }
+            this.hostREST = this.options.hostREST;
+            if( !this.hostREST) {
+                throw new Error("no REST endpoint for SocialSemanticService defined");
             }
         },
         /**
@@ -192,6 +197,46 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
             this.LOG.debug('resolve newParams', newParams);
             window[serviceCall].apply(window, newParams);
         },
+        resolveNew: function(serviceCall, resultHandler, errorHandler, params) {
+            this.LOG.debug('resolve', this);
+            var i = 0;
+            var that = this;
+            var found;
+            this.LOG.debug('resolve', serviceCall, params);
+            if( this.pendingCalls[serviceCall] ) {
+                if( found = this.findPendingCall(serviceCall, params)) {
+                    this.LOG.debug('resolve params found');
+                    found.resultHandlers.push(resultHandler);
+                    found.errorHandlers.push(errorHandler);
+                    return;
+                }
+            } else {
+                this.pendingCalls[serviceCall] = {};
+            }
+            var p = {
+                'params' : params, 
+                'resultHandlers' : [resultHandler],
+                'errorHandlers' : [errorHandler]
+            };
+            var pos = this.pendingCallsCount++;
+            this.pendingCalls[serviceCall][pos] = p;
+            this.LOG.debug('resolve pos', pos);
+            this.send(serviceCall, params || {},
+                    function(result) {
+                        delete that.pendingCalls[serviceCall][pos];
+                        that.LOG.debug("resolve resultHandlers", p);
+                        _.each(p.resultHandlers, function(f) {
+                            f(result);
+                        });
+                    },
+                    function(result) {
+                        delete that.pendingCalls[serviceCall][pos];
+                        _.each(p.errorHandlers, function(f) {
+                            f(result);
+                        });
+                    });
+                    
+        },
         findPendingCall: function(serviceCall, params) {
             for( var fp in this.pendingCalls[serviceCall] ) {
                 if( _.isEqual(this.pendingCalls[serviceCall][fp].params, params) ) {
@@ -199,6 +244,38 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                 }
             }
         },
+        /* AJAX request wrapper */
+        send : function(op, par, success, error ){
+            this.LOG.debug('par', par);
+            $.ajax({
+                'url' : this.hostREST + op + "/",
+                'type': "POST",
+                'data' : JSON.stringify(_.extend(par, {
+                    'op': op,
+                    'user' : this.user || "mailto:dummyUser",
+                    'key' : this.userKey || "someKey"
+                })),
+                'contentType' : "application/json",
+                'async' : true,
+                'dataType': "application/json",
+                'complete' : function(jqXHR, textStatus) {
+
+                    if( jqXHR.readyState !== 4 || jqXHR.status !== 200){
+                        sss.LOG.error("sss json request failed");
+                        return;
+                    }
+
+                    var result = $.parseJson(jqXHR.responseText); 
+
+                    if( result.error ) {
+                        if( error ) error(result);
+                        return;
+                    }
+                    success(result[op]);
+                }
+            });
+        },
+
         analyze: function(analyzable) {
             var correct = analyzable instanceof this.vie.Analyzable 
             if (!correct) {
@@ -405,7 +482,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     }
                 );
             } else if ( analyzable.options.service == "categoriesPredefinedGet" ) {
-                sss.resolve('SSCategoriesPredefinedGet', 
+                sss.resolveNew('categoriesPredefinedGet', 
                     function(result) {
                         sss.LOG.debug("categoriesPredefinedGet success", result);
                         analyzable.resolve(result.categories);
@@ -413,9 +490,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView',
                     function(result) {
                         sss.LOG.error("categoriesPredefinedGet error", result);
                         analyzable.reject(result);
-                    },
-                    sss.user,
-                    sss.userKey
+                    }
                 );
             } else if ( analyzable.options.service == "EntityDescsGet" ) {
                 sss.resolve('SSEntityDescsGet', 
