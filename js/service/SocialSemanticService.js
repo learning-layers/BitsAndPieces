@@ -1,7 +1,7 @@
 // The SocialSemanticService wraps the SSS REST API branch 'bpfortesting'
 
-define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
-        'sss.conns'], function(Logger, VIE, _, Voc, EntityView, $) {
+define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery'], 
+        function(Logger, VIE, _, Voc, EntityView, $) {
 
 // ## VIE.SocialSemanticService(options)
 // This is the constructor to instantiate a new service.
@@ -762,8 +762,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery',
 
                                 if( !object['learnEpTimelineState']) {
                                     // init time range
-                                    //entity[Voc.start] = jSGlobals.getTime() - jSGlobals.dayInMilliSeconds;
-                                    //entity[Voc.end] = jSGlobals.getTime() + 3600000;
 
                                 } else {
                                     object = object['learnEpTimelineState'];

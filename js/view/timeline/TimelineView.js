@@ -169,12 +169,22 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.$el.append(this.timelineDOM);
             this.timeline = new Timeline(this.timelineDOM);
             this.LOG.debug("draw timeline", this.model.get(Voc.start), this.model.get(Voc.end));
+            var start = this.model.get(Voc.start);
+            var end = this.model.get(Voc.end);
+            if( !start ) {
+                start = new Date();
+                start.setDate(start.getDate() -1 );
+            }
+            if( !end ) {
+                end = new Date();
+                end.setDate(end.getDate() +1);
+            }
             this.timeline.draw( [{
                     'start' : new Date(), // add a dummy event to force rendering
                     'content' : "x"
                 }], _.extend(this.options.timeline, {
-                'start' : this.model.get(Voc.start) || new Date(jSGlobals.getTime() - jSGlobals.dayInMilliSeconds),
-                'end' : this.model.get(Voc.end) || new Date(jSGlobals.getTime() + 3600000),
+                'start' : start,
+                'end' : end,
                 'min' : new Date('2013-01-01'),
                 'max' : new Date('2015-01-01'),
                 'zoomMin' : 300000, // 5 minute

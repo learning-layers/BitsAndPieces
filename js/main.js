@@ -1,7 +1,4 @@
 var require = (function() {
-    //var sss_url = 'http://kedemo.know-center.tugraz.at:8080/SocialSemanticServerClientSide_Rella/';
-    //var sss_url = 'http://localhost/sm/lib/SocialSemanticServer/SSSClientSide/';
-    var sss_url = 'http://localhost:8080/SocialSemanticServerClientSide/';
     var sssHostREST = "http://localhost:8080/ss-adapter-rest/rest/SSAdapterRest/";
     return {
         config: {
@@ -10,14 +7,13 @@ var require = (function() {
             },
             'tracker' : {
                 'sssHostREST' : sssHostREST
+            },
+            'UserAuth' : {
+                'sssHostREST' : sssHostREST
             }
         },
         baseUrl: 'js',
         paths: {
-            'sss.jsutils' : sss_url + "JSUtilities/JSGlobals",
-            'sss.globals' : sss_url + "SSSClientInterfaceGlobals/globals/SSGlobals",
-            'sss.varu' : sss_url + "SSSClientInterfaceGlobals/globals/SSVarU",
-            'sss.conns' : sss_url + "SSSClientInterfaceREST/SSConns",
             'vie' : '../lib/VIE/vie',
             'backbone' : '../lib/backbone/backbone-min',
             'underscore' : '../lib/underscore/underscore-min',
@@ -37,7 +33,6 @@ var require = (function() {
             'logger' : { 
                 'exports' : 'Logger'
             },
-            'sss.conns' : [ 'sss.jsutils', 'sss.globals', 'sss.varu', 'logger'],
             'vie' : {
                 'deps' : ['backbone', 'jquery', 'underscore'],
                 'exports' : 'VIE'
