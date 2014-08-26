@@ -82,66 +82,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 throw new Error("no REST endpoint for SocialSemanticService defined");
             }
         },
-        /**
-         * Waits for the given blank node references in arguments to turn into URIs.
-         * Then executes the last argument as a callback with the adapted arguments as parameter.
-         */
-        onUrisReady: function() {
-            this.LOG.debug('onUrisReady', _.clone(arguments));
-            var that = this,
-                wait = false,
-                args = _.initial(arguments),
-                callback = _.last(arguments),
-                entity;
-            _.each(args, function(arg) {
-                if( wait || !arg ) return;
-                wait = VIE.Util.isBlankNode(arg);
-            });
-            if( !wait ) {
-                this.LOG.debug('callback immediately, args = ', args);
-                callback.apply(this, args);
-                return;
-            }
-
-            // there is some blank node reference:
-            var j, waitFor = 0;
-            _.each(args, function(arg) {
-                that.LOG.debug('parsing arg', arg);
-                if( !arg ) return;
-
-                if( VIE.Util.isBlankNode(arg) ) {
-                    entity = that.vie.entities.get(arg);
-                    if( !entity ) return;
-
-                    that.LOG.debug('change listener for', entity );
-                    
-                    var func = function(ent, value) {
-                        that.LOG.debug('changed from ', arg, 'to', value);
-                        // replace argument by new URI
-                        for( j = 0; j < args.length; j++ ) {
-                            if( args[j] === arg ) {
-                                args[j] = that.vie.namespaces.uri(value);
-                            }
-                        };
-                        that.LOG.debug('args = ', _.clone(args));
-                        that.LOG.debug('waitFor = ', waitFor);
-                        if( --waitFor == 0 ) {
-                            callback.apply(that, args);
-                        }
-                        // turn off listener
-                        entity.off('change:'+entity.idAttribute, func);
-                    };
-                    // add listener
-                    entity.on('change:' + entity.idAttribute, func);
-                    waitFor++;
-                    that.LOG.debug('waitFor = ', waitFor);
-                    if( !VIE.Util.isBlankNode(entity.getSubject()) )  {
-                        that.LOG.debug('URI changed meanwhile, so go on immediately');
-                        func(entity, entity.getSubject());
-                    }
-                }
-            });
-        },
         resolve: function(serviceCall, resultHandler, errorHandler, params) {
             this.LOG.debug('resolve', this);
             var i = 0;
@@ -232,7 +172,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             }
             var sss = this;
             if( analyzable.options.service == "searchByTags" ) {
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     this.user,
                     function(userUri) {
                         sss.resolve('searchTags', 
@@ -257,7 +197,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     }
                 );
             } else if ( analyzable.options.service == 'searchCombined' ) {
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     this.user,
                     function(userUri) {
                         var params = {
@@ -290,7 +230,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     }
                 );
             } else if ( analyzable.options.service == "search" ) {
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     this.user,
                     function(userUri) {
                         var params = {
@@ -327,7 +267,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     }
                 );
             } else if ( analyzable.options.service == "entityShare" ) {
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     function() {
                         var params = {
                             'entity' : analyzable.options.entity,
@@ -348,7 +288,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     }
                 );
             } else if ( analyzable.options.service == "entityCopy" ) {
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     function() {
                         var params = {
                             'entity' : analyzable.options.entity,
@@ -372,7 +312,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     }
                 );
             } else if ( analyzable.options.service == "userAll" ) {
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     function() {
                         sss.resolve('userAll', 
                             function(object) {
@@ -395,7 +335,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     }
                 );
             } else if ( analyzable.options.service == "recommTagsBasedOnUserEntityTagTime" ) {
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     function() {
                         var params = {};
                         if( analyzable.options.forUser ) {
@@ -419,7 +359,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     }
                 );
             } else if ( analyzable.options.service == "ueCountGet" ) {
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     function() {
                         if( analyzable.options.forUser ) {
                             params['forUser'] = analyzable.options.forUser;
@@ -497,9 +437,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             var serviceName = loadable.options.service;
             var sss = this;
             try {
-                if( serviceName === 'categoriesPredefinedGet' 
-                    || serviceName === 'entityGet' ) {
-                    var service = this.getService(serviceName);
+                var service = this.getService(serviceName);
+                if( service ) {
                     this.LOG.debug("service", service);
                     this.resolve(serviceName,
                         function(result) {
@@ -536,7 +475,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             this.LOG.debug("entity", entity, ' is of ', entity.get("@type"));
             var sss = this;
             if ( entity.isof('owl:Thing')){
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     this.user,
                     loadable.options.resource,
                     function(userUri, resourceUri) {
@@ -620,7 +559,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             var sss = this;
             if( type.isof(Voc.USEREVENT)) {
                 this.LOG.debug("userEventsGet");
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     this.user,
                     loadable.options.forUser,
                     loadable.options.resource,
@@ -659,7 +598,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 });
             } else if( type.isof(Voc.EPISODE )) {
                 this.LOG.debug("learnEpsGet");
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     this.user,
                     function(userUri) {
                         sss.resolve('learnEpsGet', 
@@ -687,7 +626,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
 
             } else if( type.isof(Voc.VERSION )) {
                 this.LOG.debug("learnEpVersionsGet");
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     this.user,
                     loadable.options.episode,
                     function(userUri, episodeUri) {
@@ -760,7 +699,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 resolve('versionget',this.fixForVIE(organize, 'uri'));
 
                 this.LOG.log("learnEPGetTimelineState");
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     this.user,
                     loadable.options.version,
                     function(userUri, versionUri) {
@@ -813,7 +752,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 var version = this.buffer[loadable.options.organize]['belongsToVersion']; 
                 this.LOG.debug('version found', version);
                 var entities = [];
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     this.user,
                     version,
                     function(userUri, versionUri) {
@@ -855,7 +794,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 //map organize id to version id
                 var version = this.buffer[loadable.options.organize]['belongsToVersion']; 
                 var entities = [];
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     this.user,
                     version,
                     function(userUri, versionUri) {
@@ -914,7 +853,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 this.buffer[obj.uri] = obj;
                 var start = obj[this.vie.namespaces.uri(Voc.start)];
                 var end = obj[this.vie.namespaces.uri(Voc.end)];
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     this.user,
                     obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
                     function(userUri, versionUri) {
@@ -942,7 +881,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 var obj = _.clone(entity.attributes);
                 obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget')
                                          : obj.uri;
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
                     function() {
                         sss.buffer[obj.uri] = obj;
@@ -954,7 +893,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             } else if( entity.isof(Voc.EPISODE )) {
                 this.LOG.debug("saving episode");
                 if( entity.isNew() ) {
-                    this.onUrisReady(
+                    this.vie.onUrisReady(
                         this.user,
                         function(userUri) {
                             sss.resolve('learnEpCreate', 
@@ -975,7 +914,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                             );
                     });
                 } else {
-                    this.onUrisReady(
+                    this.vie.onUrisReady(
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri){
@@ -1007,7 +946,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 this.LOG.debug("saving version");
                 var episode = entity.get(Voc.belongsToEpisode);
                 if( episode.isEntity ) episode = episode.getSubject();
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     this.user,
                     episode,
                     function( userUri, episodeUri) {
@@ -1030,7 +969,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 var organize = entity.get(Voc.belongsToOrganize);
                 if( organize.isEntity ) organize = organize.getSubject();
 
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     organize,
                     function(organizeUri) {
                         // map internal organize model to its version
@@ -1049,7 +988,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                         // end map
 
                         if( entity.isNew() )
-                            sss.onUrisReady(
+                            sss.vie.onUrisReady(
                                 sss.user,
                                 version,
                                 function(userUri, versionUri) {
@@ -1077,7 +1016,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                                     );
                             });
                         else
-                            sss.onUrisReady(
+                            sss.vie.onUrisReady(
                                 sss.user,
                                 entity.getSubject(),
                                 function(userUri, uriUri ) {
@@ -1111,7 +1050,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 var organize = entity.get(Voc.belongsToOrganize);
                 if( organize.isEntity ) organize = organize.getSubject();
 
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     organize,
                     function(organizeUri) {
                         // map internal organize model to its version
@@ -1132,7 +1071,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                         if( resourceUri.isEntity ) resourceUri = resourceUri.getSubject();
 
                         if(entity.isNew() )
-                            sss.onUrisReady(
+                            sss.vie.onUrisReady(
                                 sss.user,
                                 version,
                                 resourceUri,
@@ -1157,7 +1096,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                                     );
                             });
                         else
-                            sss.onUrisReady(
+                            sss.vie.onUrisReady(
                                 sss.user,
                                 entity.getSubject(),
                                 resourceUri,
@@ -1187,7 +1126,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 var versionUri = entity.get(Voc.currentVersion);
                 if( versionUri.isEntity ) versionUri = versionUri.getSubject();
                 if( versionUri ) {
-                    this.onUrisReady(
+                    this.vie.onUrisReady(
                         this.user,
                         versionUri,
                         function(userUri, versionUri) {
@@ -1209,7 +1148,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     || entity.isof(Voc.EVERNOTE_RESOURCE) || entity.isof(Voc.EVERNOTE_NOTE)
                     || entity.isof(Voc.EVERNOTE_NOTEBOOK) ) {
                 if( savable.options.tag ) {
-                    this.onUrisReady(
+                    this.vie.onUrisReady(
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri) {
@@ -1231,7 +1170,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                         }
                     );
                 } else if ( savable.options.label ) {
-                    this.onUrisReady(
+                    this.vie.onUrisReady(
                         entity.getSubject(),
                         function(entityUri) {
                             sss.resolve('entityUpdate', 
@@ -1251,7 +1190,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                         }
                     );
                 } else if ( savable.options.importance ) {
-                    this.onUrisReady(
+                    this.vie.onUrisReady(
                         entity.getSubject(),
                         function(entityUri) {
                             sss.resolve('flagsSet', 
@@ -1296,7 +1235,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             var sss = this;
 
             if( entity.isof(Voc.CIRCLE )) {
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     this.user,
                     entity.getSubject(),
                     function(userUri,uriUri){
@@ -1315,7 +1254,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                         );
                 });
             } else if( entity.isof(Voc.ORGAENTITY )) {
-                this.onUrisReady(
+                this.vie.onUrisReady(
                     this.user,
                     entity.getSubject(),
                     function(userUri,uriUri){
@@ -1337,7 +1276,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     || entity.isof(Voc.EVERNOTE_RESOURCE) || entity.isof(Voc.EVERNOTE_NOTE)
                     || entity.isof(Voc.EVERNOTE_NOTEBOOK) ) {
                 if( removable.options.tag ) {
-                    this.onUrisReady(
+                    this.vie.onUrisReady(
                         this.user,
                         entity.getSubject(),
                         function(userUri, entityUri) {
@@ -1439,4 +1378,5 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
     return VIE.prototype.SocialSemanticService;
 
 });
+
 
