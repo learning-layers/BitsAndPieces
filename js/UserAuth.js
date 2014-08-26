@@ -18,7 +18,7 @@ function (module, Logger, $) {
         },
         isAuthenticated: function() {
             var cookie = this.getAuthCookie();
-            if ( cookie['label'] && cookie['user'] && cookie['key'] ) {
+            if ( cookie && cookie['label'] && cookie['user'] && cookie['key'] ) {
                 return true;
             }
             return false;

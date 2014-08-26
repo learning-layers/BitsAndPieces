@@ -1,5 +1,6 @@
-define([], function() {
+define(['underscore', 'logger'], function(_, Logger) {
     // to be called with a deferred object as context (eg. loadable)
+    var LOG = Logger.get('SSSModel');
     var checkEmpty = function(object) {
         if( _.isEmpty(object) )  {
             loadable.reject(this.options);
@@ -54,25 +55,41 @@ define([], function() {
         }
     };
 
-    var decorations = {
-        'single_1' : [checkEmpty, fixEntityDesc, fixForVIE]
+    var multipleFixForVIE = function(objects, idAttr, typeAttr) {
+        LOG.debug('multipleFixForVIE', objects);
+        _.each(objects, function(object) {
+            fixForVIE(object, idAttr, typeAttr);
+        });
     };
 
-    return {
+    var decorations = {
+        'single_desc_entity' : [checkEmpty, fixEntityDesc, fixForVIE],
+        'single_entity' : [checkEmpty, fixForVIE],
+        'multiple_entities' : [multipleFixForVIE]
+    };
+
+    var m = {
         'entityGet' : {
             'resultKey' : 'entity',
-            '@id' : 'id',
-            '@type' : 'type',
-            'decoration' : decorations['single_1']
+            'decoration' : decorations['single_entity']
         },
         'entityDescGet' : {
             'resultKey' : 'desc',
             '@id' : 'entity',
-            '@type' : 'type',
-            'decoration' : decorations['single_1']
+            'decoration' : decorations['single_desc_entity']
         },
         'categoriesPredefinedGet' : {
             'resultKey' : 'categories'
+        },
+        'search' : {
+            'resultKey' : 'entities',
+            'decoration' : decorations['multiple_entities']
         }
     };
+    m['searchByTags'] = m['searchCombined'] = 
+        _.extend({}, m['search'], {
+            'resultKey' : 'searchResults',
+            '@id' : 'entity'
+        });
+    return m;
 });

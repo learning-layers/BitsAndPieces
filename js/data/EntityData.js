@@ -93,10 +93,12 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
     };
     m.searchByTags = function(tags, callback) {
         var that = this;
-        this.vie.analyze({
+        this.vie.load({
             'service' : 'searchByTags',
-            'tags' : tags,
-            'max' : 20
+            'data' : {
+                'tags' : tags,
+                'maxResultsPerTag' : 20
+            }
         }).using('sss').execute().success(function(entities){
             that.LOG.debug('searchByTags entities', entities);
             entities = that.vie.entities.addOrUpdate(entities);
@@ -113,10 +115,12 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
     };
     m.searchCombined = function(tags, callback) {
         var that = this;
-        this.vie.analyze({
+        this.vie.load({
             'service' : 'searchCombined',
-            'tags' : tags,
-            'types' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
+            'data' : {
+                'tags' : tags,
+                'types' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
+            }
         }).using('sss').execute().success(function(entities){
             that.LOG.debug('searchCombined entities', entities);
             entities = that.vie.entities.addOrUpdate(entities);
@@ -133,10 +137,12 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
     };
     m.search = function(tags, callback) {
         var that = this;
-        this.vie.analyze({
+        this.vie.load({
             'service' : 'search',
-            'tags' : tags,
-            'types' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
+            'data' : {
+                'tags' : tags,
+                'types' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
+            }
         }).using('sss').execute().success(function(entities){
             that.LOG.debug('search entities', entities);
             entities = that.vie.entities.addOrUpdate(entities);

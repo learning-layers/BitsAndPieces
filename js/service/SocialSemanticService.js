@@ -1,4 +1,4 @@
-// The SocialSemanticService wraps the SSS REST API branch 'bpfortesting'
+// The SocialSemanticService wraps the SSS REST API v3.4.0
 
 define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceModel', 'view/sss/EntityView', 'jquery'], 
         function(Logger, VIE, _, Voc, SSSModel, EntityView, $) {
@@ -177,87 +177,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 throw new Error("Invalid Analyzable passed");
             }
             var sss = this;
-            if( analyzable.options.service == "searchByTags" ) {
-                sss.resolve('searchTags', 
-                    function(object) {
-                        sss.LOG.debug("searchResult", object);
-                        var entities = [];
-                        _.each(object['searchResults'], function(result) {
-                            entities.push(sss.fixForVIE(result, 'entity'));
-                        });
-                        analyzable.resolve(entities);
-                    },
-                    function(object) {
-                        sss.LOG.warn("searchResult failed", object);
-                        analyzable.reject(object);
-                    },
-                    {
-                        'searchOp' : analyzable.options.op || "OR",
-                        'tags' : analyzable.options.tags.join(','),
-                        'maxResultsPerTag' : analyzable.options.max
-                    }
-                );
-            } else if ( analyzable.options.service == 'searchCombined' ) {
-                var params = {
-                    'keywords' : analyzable.options.tags.join(','),
-                    'onlySubEntities' : false,
-                    'includeTags' : true,
-                    'includeTextualContent' : false,
-                    'includeLabel' : true,
-                    'includeDescription' : true,
-                    'includeMIs' : false
-                };
-                if( analyzable.options.types ) {
-                    params['types'] = analyzable.options.types.join(',');
-                }
-                sss.resolve('searchCombined',
-                    function(object) {
-                        sss.LOG.debug("searchResult", object);
-                        var entities = [];
-                        _.each(object['searchResults'], function(result) {
-                            entities.push(sss.fixForVIE(result, 'entity'));
-                        });
-                        analyzable.resolve(entities);
-                    },
-                    function(object) {
-                        sss.LOG.warn("searchResult failed", object);
-                        analyzable.reject(object);
-                    },
-                    params
-                );
-            } else if ( analyzable.options.service == "search" ) {
-                var params = {
-                    'keywordsToSearchFor' : analyzable.options.tags.join(','),
-                    'includeTextualContent' : false,
-                    'includeTags' : true,
-                    'includeMIs' : false,
-                    'includeLabel' : true,
-                    'includeDescription' : true,
-                    'includeOnlySubEntities' : false,
-                    'extendToParents' : false,
-                    'includeRecommendedResults' : false,
-                    'provideEntries' : false
-                };
-
-                if( analyzable.options.types ) {
-                    params['typesToSearchOnlyFor'] = analyzable.options.types.join(',');
-                }
-                sss.resolve('search',
-                    function(object) {
-                        sss.LOG.debug("searchResult", object);
-                        var entities = [];
-                        _.each(object['entities'], function(result) {
-                            entities.push(sss.fixForVIE(result));
-                        });
-                        analyzable.resolve(entities);
-                    },
-                    function(object) {
-                        sss.LOG.warn("searchResult failed", object);
-                        analyzable.reject(object);
-                    },
-                    params
-                );
-            } else if ( analyzable.options.service == "entityShare" ) {
+            if ( analyzable.options.service == "entityShare" ) {
                 var params = {
                     'entity' : analyzable.options.entity,
                     'users' : analyzable.options.users.join(',')
@@ -334,6 +254,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     params
                 );
             } else if ( analyzable.options.service == "ueCountGet" ) {
+                var params = {};
                 if( analyzable.options.forUser ) {
                     params['forUser'] = analyzable.options.forUser;
                 }
