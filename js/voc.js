@@ -17,7 +17,7 @@ define([], {
     BROWSING_WIDGET: "sss:BrowsingWidget",
     ORGANIZING_WIDGET: "sss:OrganizingWidget",
     currentVersion: 'sss:currentVersion',
-    belongsToEpisode: 'sss:belongsToEpisode',
+    belongsToEpisode: 'sss:learnEp',
     belongsToVersion: 'sss:belongsToVersion',
     belongsToTimeline: 'sss:belongsToTimeline',
     belongsToOrganize: 'sss:belongsToOrganize',
@@ -32,7 +32,7 @@ define([], {
     timeAttr : 'sss:timeAttr',
     circleType: 'sss:circleType', 
     orgaEntityType: 'sss:orgaEntityType',
-    belongsToUser: 'sss:belongsToUser',
+    belongsToUser: 'sss:user',
     start: 'sss:start',
     end: 'sss:end',
 

@@ -24,6 +24,13 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
         }
     };
 
+    m.fetchCurrentVersion = function(user) {
+        this.vie.load({
+            'service' : 'learnEpVersionCurrentGet'
+        }).from('sss').execute().success(function(version) {
+            user.set(Voc.currentVersion, version.id);
+        });
+    };
     /**
      * Fetch the episodes belonging to the user.
      * @params VIE.Entity user
@@ -33,19 +40,22 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
         var v = this.vie;
         var that = this;
         this.vie.load({
-            'user': user.getSubject(),
-            'type' : this.vie.types.get(Voc.EPISODE)
+            'service': 'learnEpsGet'
         }).from('sss').execute().success(
             function(episodes) {
                 that.LOG.debug("success fetchEpisodes");
                 that.LOG.debug("episodes", episodes);
-                v.entities.addOrUpdate(episodes);
                 if( _.isEmpty(episodes) ) {
                     user.set(Voc.hasEpisode, false);
+                    return;
                 }
+                _.each(episodes, function(episode) {
+                    episode['@type'] = Voc.EPISODE;
+                });
+                v.entities.addOrUpdate(episodes);
             }
         );
-    }
+    };
     m.fetchAllUsers = function() {
         var that = this,
             defer = $.Deferred();
@@ -111,6 +121,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
     };
     m.fetchData = function(user, entityUris) {
         var that = this;
+        this.LOG.debug("UserData", this);
         this.vie.load({
             'service' : 'entityDescsGet',
             'data' : {

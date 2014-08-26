@@ -1,9 +1,9 @@
-define(['module', 'vie', 'logger', 'tracker', 'userParams', 'service/SocialSemanticService', 'extender', 
+define(['module', 'vie', 'logger', 'tracker', 'userParams', 'data/episode/UserData', 'service/SocialSemanticService', 'extender', 
         'data/AppData', 'underscore',
         'view/AppView', 'view/LoginFormView', 'voc',
         'text!../schemata/ss.sss.json',
         'jquery-cookie', 'bootstrap'],
-function(module, VIE, Logger, tracker, userParams, SocialSemanticService, extender,
+function(module, VIE, Logger, tracker, userParams, UserData, SocialSemanticService, extender,
         AppData, _, AppView, LoginFormView, Voc, schema){
     VIE.Util.useRealUri = true;
     Logger.useDefaults();
@@ -77,7 +77,9 @@ function(module, VIE, Logger, tracker, userParams, SocialSemanticService, extend
         user.set(user.idAttribute, userParams.user);
         user.set('@type', Voc.USER);
         v.entities.addOrUpdate(user);
-        user.fetch();
+        user.fetch({'success' : function(model){
+            UserData.fetchCurrentVersion(model);
+        }});
 
         var view = new AppView({
             'model' : user,

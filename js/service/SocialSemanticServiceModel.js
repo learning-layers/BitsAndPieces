@@ -137,6 +137,13 @@ define(['underscore', 'logger'], function(_, Logger) {
             },
             'preparation' : preparations['scrubParams'],
             'decoration' : decorations['multiple_desc_entities']
+        },
+        learnEpVersionCurrentGet : {
+            resultKey : 'learnEpVersion',
+        },
+        learnEpsGet : {
+            resultKey : 'learnEps',
+            decoration: decorations['multiple_entities']
         }
     };
     return m;

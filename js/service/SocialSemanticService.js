@@ -308,96 +308,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     );
                     return;
                 }
-                if ( loadable.options.resource ) {
-                    this.ResourceGet(loadable);
-                } else if ( loadable.options.type ) {
+                if ( loadable.options.type ) {
                     this.TypeGet(loadable);
                 }
             } catch(e) {
                 this.LOG.error(e);
-            }
-        },
-
-        // Gets resource of given uri
-        ResourceGet : function(loadable) {
-            this.LOG.debug("ResourceGet");
-            var entity = this.vie.entities.get(loadable.options.resource);
-            this.LOG.debug("entity", entity, ' is of ', entity.get("@type"));
-            var sss = this;
-            if ( entity.isof('owl:Thing')){
-                this.vie.onUrisReady(
-                    loadable.options.resource,
-                    function(resourceUri) {
-                        sss.resolve('entityDescGet', 
-                            function(object) {
-                                sss.LOG.debug("handle result of EntityDescGet");
-                                sss.LOG.debug("object", object);
-                                if( _.isEmpty(object['desc'] ) )  {
-                                    loadable.reject(entity);
-                                    sss.LOG.error("error:",resourceUri, " is empty");
-                                    return;
-                                }
-
-                                sss.fixEntityDesc(object['desc']);
-
-                                var entity = sss.fixForVIE(object['desc'], 'entity', 'type');
-                                var entityUri = object['desc']['entity'];
-                                //var vieEntity = new sss.vie.Entity(entity);//SSS.Entity(entity);
-                                var type = object['desc']['type'];
-                                sss.LOG.debug('desc.type', type);
-                                if( type && type == sss.types.USER )  {
-                                    sss.resolve('learnEpVersionCurrentGet',
-                                        function(object2) {
-                                            sss.LOG.debug("handle result of VersionCurrentGet");
-                                            sss.LOG.debug("object", object2);
-                                            entity[Voc.currentVersion] = object2['learnEpVersion']['id'];
-                                            loadable.resolve(entity);
-                                        },
-                                        function(object2) {
-                                            sss.LOG.warn("error:", object2);
-                                            loadable.resolve(entity);
-                                        }
-                                        );
-                                } else if( type && type == sss.types.USEREVENT )  {
-                                    // TODO probably replace by EntityGet
-                                    sss.resolve('userEventGet', 
-                                        function(object2) {
-                                            sss.LOG.debug("handle result of UserEventTypeGet");
-                                            sss.LOG.debug("object", object2);
-
-                                            if(!object2['uE']['timestamp'])
-                                                delete object2['uE']['timestamp'];
-                                            // XXX Possibly need to change uri to something else
-                                            var entity = sss.fixForVIE(object2['uE'], 'uri');
-                                            //var vieEntity = new sss.vie.Entity(entity);//SSS.Entity(entity);
-                                            loadable.resolve(entity);
-                                        },
-                                        function(object2) {
-                                            sss.LOG.warn("error:", object2);
-                                            loadable.resolve(entity);
-                                        },
-                                        { 'entity' : entity.getSubject()}
-                                        );
-                                } else
-                                    loadable.resolve(entity);
-                            },
-                            function(object) {
-                                loadable.reject(entity);
-                                sss.LOG.warn("error:",object);
-                            },
-                            { 
-                                'entity' : resourceUri,
-                                'getTags' : true, 
-                                'getOverallRating' : false, 
-                                'getDiscs' : false, 
-                                'getUEs' : false, 
-                                'getThumb' : true, 
-                                'getFlags' : true 
-                            }
-                        );
-                });
-            } else {
-                this.LOG.warn("SocialSemanticService load for " + type.id + " not implemented");
             }
         },
 
@@ -444,30 +359,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                             params
                         );
                 });
-            } else if( type.isof(Voc.EPISODE )) {
-                this.LOG.debug("learnEpsGet");
-                sss.resolve('learnEpsGet', 
-                    function(objects) {
-                        sss.LOG.debug("handle result of epsGet");
-                        sss.LOG.debug("objects", objects);
-                        var entityInstances = [];
-                        _.each(objects['learnEps'], function(object) {
-                            object[Voc.belongsToUser] = object['user'];
-                            delete object['user'];
-                            var entity = sss.fixForVIE(object, 'id');
-                            //var vieEntity = new sss.vie.Entity(entity);
-                            entity['@type'] = Voc.EPISODE;
-                            entityInstances.push(entity);
-                        });
-                        loadable.resolve(entityInstances);
-                    },
-                    function(object) {
-                        sss.LOG.warn("error on learnEpsGet (perhaps just empty):");
-                        sss.LOG.warn(object);
-                        loadable.resolve([]);
-                    }
-                );
-
             } else if( type.isof(Voc.VERSION )) {
                 this.LOG.debug("learnEpVersionsGet");
                 this.vie.onUrisReady(
