@@ -96,7 +96,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         this.vie.load({
             'service' : 'searchByTags',
             'data' : {
-                'tags' : tags,
+                'tags' : tags.join(','),
                 'maxResultsPerTag' : 20
             }
         }).using('sss').execute().success(function(entities){
@@ -118,8 +118,8 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         this.vie.load({
             'service' : 'searchCombined',
             'data' : {
-                'tags' : tags,
-                'types' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
+                'tags' : tags.join(','),
+                'types' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook'].join(',')
             }
         }).using('sss').execute().success(function(entities){
             that.LOG.debug('searchCombined entities', entities);
@@ -140,8 +140,8 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         this.vie.load({
             'service' : 'search',
             'data' : {
-                'tags' : tags,
-                'types' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
+                'tags' : tags.join(','),
+                'types' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook'].join(',')
             }
         }).using('sss').execute().success(function(entities){
             that.LOG.debug('search entities', entities);
