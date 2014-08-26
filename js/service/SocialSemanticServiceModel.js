@@ -84,6 +84,9 @@ define(['underscore', 'logger'], function(_, Logger) {
         'search' : {
             'resultKey' : 'entities',
             'decoration' : decorations['multiple_entities']
+        },
+        'userAll' : {
+            'resultKey' : 'users',
         }
     };
     m['searchByTags'] = m['searchCombined'] = 

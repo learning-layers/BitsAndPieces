@@ -214,25 +214,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     },
                     params
                 );
-            } else if ( analyzable.options.service == "userAll" ) {
-                sss.resolve('userAll', 
-                    function(object) {
-                        sss.LOG.debug("userAll success", object);
-                        var users = [];
-                        _.each(object['users'], function(result) {
-                            // Required parameter type is missing
-                            //result['type'] = 'user';
-                            //users.push(sss.fixForVIE(result, 'id'));
-                            users.push(result);
-                        });
-                        analyzable.resolve(users);
-
-                    },
-                    function(object) {
-                        sss.LOG.debug("userAll failed", object);
-                        analyzable.reject(object);
-                    }
-                );
             } else if ( analyzable.options.service == "recommTagsBasedOnUserEntityTagTime" ) {
                 var params = {};
                 if( analyzable.options.forUser ) {
