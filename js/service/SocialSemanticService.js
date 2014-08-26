@@ -413,13 +413,14 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     this.LOG.debug("service", service);
                     this.resolve(serviceName,
                         function(result) {
+                            sss.LOG.debug('result', result);
                             if( service['decoration']) {
                                 _.each(service['decoration'], function(decorator) {
                                     // invoke decorator with loadable as context on result and result meta data
                                     decorator.call(loadable, result[service['resultKey']], service['@id'], service['@type'] );
                                 });
                             }
-                            loadable.resolve(result);
+                            loadable.resolve(result[service['resultKey']]);
                         },
                         function(result) {
                             loadable.reject(loadable.options);
