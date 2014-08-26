@@ -11,7 +11,7 @@ define(['logger', 'voc', 'underscore'], function(Logger, Voc, _){
         },
         fetchPredefinedCategories: function() {
             var that = this;
-            this.vie.analyze({
+            this.vie.load({
                 'service' : 'categoriesPredefinedGet'
             }).using('sss').execute().success(function(categories) {
                 that.predefinedCategories = categories;
