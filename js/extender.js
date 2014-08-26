@@ -22,8 +22,10 @@ define(['logger', 'underscore'], function(Logger, _){
                         break;
                     case 'read':
                         this.vie.load({
-                            'resource' : model.getSubject(),
-                            'data' : options.data
+                            'service' : 'entityGet',
+                            'data' : _.extend(options.data || {}, {
+                                'entity' : model.getSubject()
+                            })
                         }).from('sss').execute().success(function(readEntity){
                             AppLog.debug("entity was read");
                             AppLog.debug("readEntity", readEntity);

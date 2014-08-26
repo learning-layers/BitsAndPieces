@@ -1,7 +1,7 @@
 // The SocialSemanticService wraps the SSS REST API branch 'bpfortesting'
 
-define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery'], 
-        function(Logger, VIE, _, Voc, EntityView, $) {
+define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceModel', 'view/sss/EntityView', 'jquery'], 
+        function(Logger, VIE, _, Voc, SSSModel, EntityView, $) {
 
 // ## VIE.SocialSemanticService(options)
 // This is the constructor to instantiate a new service.
@@ -221,80 +221,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery'],
             });
         },
 
-        decorators : {
-            // to be called with a deferred object as context (eg. loadable)
-            checkEmpty : function(object) {
-                if( _.isEmpty(object) )  {
-                    loadable.reject(this.options);
-                    sss.LOG.error("error: call for ",this.options, " returns empty result");
-                    return false;
-                }
-                return true;
-            },
-            fixEntityDesc :  function(object) {
-                // Extract importance from flags
-                // Remove flags from object
-                if ( _.isArray(object['flags']) ) {
-                    if ( !_.isEmpty(object['flags']) ) {
-                        var importance;
-                            creationTime = 1;
-                        _.each(object['flags'], function(flag) {
-                            // In case multiple are provided
-                            if ( flag.type === 'importance'  && flag.creationTime > creationTime) {
-                                importance = flag.value;
-                                creationTime = flag.creationTime;
-                            }
-                        });
-                        if ( importance ) {
-                            object['importance'] = importance;
-                        }
-                    }
-                    delete object['flags'];
-                }
-            },
-            /**
-             * Workaround for VIE's non-standard json-ld values and parsing behaviour.
-             * @param {type} object
-             * @return {undefined}
-             */
-            fixForVIE: function(object, idAttr, typeAttr) {
-                if( !idAttr) idAttr = 'id';
-                if( !typeAttr) typeAttr = 'type';
-                object[VIE.prototype.Entity.prototype.idAttribute] = object[idAttr];
-                delete object[idAttr];
-                if (object[typeAttr]) {
-                    object['@type'] = object[typeAttr].indexOf('sss:') === 0 ? object[typeAttr] : "sss:"+object[typeAttr];
-                    delete object[typeAttr];
-                }
-
-                for( var prop in object ) {
-                    if( prop.indexOf('@') === 0 ) continue;
-                    if( prop.indexOf('sss:') === 0 ) continue;
-                    if( prop.indexOf('http:') === 0 ) continue;
-                    object['sss:'+prop] = object[prop];
-                    delete object[prop];
-                }
-            },
-        },
-
-        decorations: {
-            'single_1' : ['checkEmpty', 'fixEntityDesc', 'fixForVIE']
-        },
-
-        services: {
-            'entityDescGet' : {
-                'resultKey' : 'desc',
-                '@id' : 'entity',
-                '@type' : 'type',
-                'decoration' : 'single_1'
-            },
-            'categoriesPredefinedGet' : {
-                'resultKey' : 'categories'
-            }
-        },
         getService: function(serviceName) {
-            var service = _.clone(this.services[serviceName]);
-            return service;
+            return SSSModel[serviceName];
         },
 
         analyze: function(analyzable) {
@@ -567,14 +495,16 @@ define(['logger', 'vie', 'underscore', 'voc', 'view/sss/EntityView', 'jquery'],
             loadable.options.data = loadable.options.data || {};
 
             var serviceName = loadable.options.service;
+            var sss = this;
             try {
-                if( serviceName === 'categoriesPredefinedGet' ) {
+                if( serviceName === 'categoriesPredefinedGet' 
+                    || serviceName === 'entityGet' ) {
                     var service = this.getService(serviceName);
                     this.LOG.debug("service", service);
                     this.resolve(serviceName,
                         function(result) {
                             if( service['decoration']) {
-                                _.each(sss.decorations[service['decoration']], function(decorator) {
+                                _.each(service['decoration'], function(decorator) {
                                     // invoke decorator with loadable as context on result and result meta data
                                     decorator.call(loadable, result[service['resultKey']], service['@id'], service['@type'] );
                                 });
