@@ -24,17 +24,46 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
     m.fetchVersions= function(episode) {
         var em = this;
         this.vie.load({
-            'episode' : episode.getSubject(),
-            'type' : this.vie.types.get(Voc.VERSION)
+            'service' : 'learnEpVersionsGet',
+            'data' : {
+                'learnEp' : episode.getSubject(),
+            }
         }).from('sss').execute().success(
             function(versions) {
                 em.LOG.debug("success fetchVersions");
                 em.LOG.debug("versions", versions);
-                em.vie.entities.addOrUpdate(versions);
                 if( _.isEmpty(versions) ) {
                     em.LOG.debug("versions empty");
                     episode.set(Voc.hasVersion, VersionData.newVersion(episode).getSubject());
+                    return;
                 }
+                // put uris of circles/entities into version
+                // and create circle/entity entities 
+                _.each(versions, function(version) {
+                    version['@type'] = Voc.VERSION;
+                    var circleUris = [];
+                    var circles = version[Voc.hasCircle];
+                    _.each(version[Voc.hasCircle], function(circle) {
+                        circleUris.push(circle[em.vie.Entity.prototype.idAttribute]);
+                        circle[Voc.belongsToVersion] = version[em.vie.Entity.prototype.idAttribute];
+                        circle['@type'] = Voc.CIRCLE;
+                    });
+                    version[Voc.hasCircle] = circleUris;
+                    em.vie.entities.addOrUpdate(circles);
+
+                    var entityUris = [];
+                    var entities = version[Voc.hasEntity];
+                    _.each(version[Voc.hasEntity], function(entity) {
+                        entityUris.push(entity[em.vie.Entity.prototype.idAttribute]);
+                        entity[Voc.belongsToVersion] = version[em.vie.Entity.prototype.idAttribute];
+                        entity['@type'] = Voc.ORGAENTITY;
+                    });
+                    version[Voc.hasEntity] = entityUris;
+                    version[Voc.hasWidget] = false;
+                    em.vie.entities.addOrUpdate(entities);
+                });
+                em.vie.entities.addOrUpdate(versions);
+
             }
         );
 

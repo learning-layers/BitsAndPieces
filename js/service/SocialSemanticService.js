@@ -128,8 +128,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     return this.pendingCalls[serviceCall][fp];
                 }
             }
-        },
-        /* AJAX request wrapper */
+        }, /* AJAX request wrapper */
         send : function(op, par, success, error ){
             this.LOG.debug('par', par);
             var sss = this;
@@ -169,6 +168,35 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
 
         getService: function(serviceName) {
             return SSSModel[serviceName];
+        },
+
+        decorateResult: function(able, result, service) {
+            var sss = this,
+                resultSet;
+            this.LOG.debug('decorateResult', result, service);
+            if( !_.isArray(result[service['resultKey']] )) {
+                resultSet = [result[service['resultKey']]];
+            } else {
+                resultSet = result[service['resultKey']];
+            }
+
+            this.LOG.debug('resultSet', resultSet);
+
+            _.each(resultSet, function(item) {
+                sss.LOG.debug('item', item);
+                // recursion
+                if( service['subResults'] ) {
+                    _.each(service['subResults'], function(subService) {
+                        sss.decorateResult(able, item, subService);
+                    });
+                }
+                if( service['decoration']) {
+                    _.each(service['decoration'], function(decorator) {
+                        // invoke decorator with loadable as context on result and result meta data
+                        decorator.call(able, item, service['@id'], service['@type'] );
+                    });
+                }
+            });
         },
 
         analyze: function(analyzable) {
@@ -292,12 +320,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     this.resolve(serviceName,
                         function(result) {
                             sss.LOG.debug('result', result);
-                            if( service['decoration']) {
-                                _.each(service['decoration'], function(decorator) {
-                                    // invoke decorator with loadable as context on result and result meta data
-                                    decorator.call(loadable, result[service['resultKey']], service['@id'], service['@type'] );
-                                });
-                            }
+                            // TODO change to call in context of service, not able
+                            sss.decorateResult(loadable, result, service);
                             loadable.resolve(result[service['resultKey']]);
                         },
                         function(result) {
@@ -359,39 +383,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                             params
                         );
                 });
-            } else if( type.isof(Voc.VERSION )) {
-                this.LOG.debug("learnEpVersionsGet");
-                this.vie.onUrisReady(
-                    loadable.options.episode,
-                    function(episodeUri) {
-                        sss.resolve('learnEpVersionsGet', 
-                            function(objects) {
-                                sss.LOG.debug("handle result of epVersionsGet");
-                                sss.LOG.debug("objects", objects);
-                                var entityInstances = [];
-                                _.each(objects['learnEpVersions'], function(object) {
-                                    object[Voc.belongsToEpisode] = object['learnEp'];
-                                    delete object['learnEp'];
-                                    delete object['circles'];
-                                    delete object['entities'];
-                                    var entity = sss.fixForVIE(object, 'id');
-                                    //var vieEntity = new sss.vie.Entity(entity);
-                                    entity['@type'] = Voc.VERSION;
-                                    entityInstances.push(entity);
-                                    // each version has a organize component
-                                    // that would look like as if this object already exists on the server
-
-                                });
-                                loadable.resolve(entityInstances);
-                            },
-                            function(object) {
-                                sss.LOG.warn("error:");
-                                sss.LOG.warn(object);
-                            },
-                            {'learnEp':episodeUri}
-                        );
-                });
-
             } else if (type.isof(Voc.WIDGET )){
                 // fetches Organize and Timeline stuff manually
                 // and buffers the data for later fetch 
@@ -473,84 +464,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                         );
                 });
 
-            } else if (type.isof(Voc.CIRCLE)){
-                if (!loadable.options.organize) {
-                    this.LOG.warn("no organize reference");
-                    loadable.reject();
-                    return;
-                }
-                //map organize id to version id
-                this.LOG.debug('buffer', JSON.stringify(this.buffer));
-                this.LOG.debug('organize to find', loadable.options.organize);
-                var version = this.buffer[loadable.options.organize]['belongsToVersion']; 
-                this.LOG.debug('version found', version);
-                var entities = [];
-                this.vie.onUrisReady(
-                    version,
-                    function(versionUri) {
-                        sss.resolve('learnEpVersionGet',
-                            function(object) {
-                                sss.LOG.debug("handle result of LearnEpVersionGet");
-                                sss.LOG.debug("objects", object);
-                                var key, idAttr;
-                                _.each(object['learnEpVersion']['circles'], function(item){
-                                    var fixEntity = {};
-                                    fixEntity.Label = item['label'];
-                                    fixEntity.LabelX = item['xLabel'];
-                                    fixEntity.LabelY = item['yLabel'];
-                                    fixEntity.rx = item['xR'];
-                                    fixEntity.ry = item['yR'];
-                                    fixEntity.cx = item['xC'];
-                                    fixEntity.cy = item['yC'];
-                                    fixEntity.id = item['id'];
-                                    fixEntity = sss.fixForVIE(fixEntity, 'id');
-                                    fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
-                                    //var vieEntity = new sss.vie.Entity(fixEntity);
-                                    fixEntity['@type'] = Voc.CIRCLE;
-                                    entities.push(fixEntity);
-                                });
-                                loadable.resolve(entities);
-                            },
-                            function(object) {
-                                sss.LOG.warn("error:", object);
-                            },
-                            {'learnEpVersion':versionUri}
-                        );
-                });
-            } else if (type.isof(Voc.ORGAENTITY)){
-                if (!loadable.options.organize) {
-                    this.LOG.warn("no organize reference");
-                    loadable.reject();
-                    return;
-                }
-                //map organize id to version id
-                var version = this.buffer[loadable.options.organize]['belongsToVersion']; 
-                var entities = [];
-                this.vie.onUrisReady(
-                    version,
-                    function(versionUri) {
-                        sss.resolve('learnEpVersionGet',
-                            function(object) {
-                                sss.LOG.debug("handle result of LearnEpVersionGet");
-                                sss.LOG.debug("objects", object);
-                                var key, idAttr;
-                                _.each(object['learnEpVersion']['entities'], function(item){
-                                    var fixEntity = {};
-                                    fixEntity = sss.fixForVIE(item, 'id');
-                                    fixEntity[Voc.hasResource] = item['entity'];
-                                    fixEntity[Voc.belongsToOrganize] = loadable.options.organize;
-                                    //var vieEntity = new sss.vie.Entity(fixEntity);
-                                    fixEntity['@type'] = Voc.ORGAENTITY;
-                                    entities.push(fixEntity);
-                                });
-                                loadable.resolve(entities);
-                            },
-                            function(object) {
-                                sss.LOG.warn("error:", object);
-                            },
-                            {'learnEpVersion':versionUri}
-                        );
-                });
 
 
             } else {
@@ -728,13 +641,13 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                                         },
                                         {
                                             'learnEpVersion' : versionUri,
-                                            'label' : entity.get(Voc.Label),
-                                            'xLabel' : entity.get(Voc.LabelX),
-                                            'yLabel' : entity.get(Voc.LabelY),
-                                            'xR' : entity.get(Voc.rx),
-                                            'yR' : entity.get(Voc.ry),
-                                            'xC' : entity.get(Voc.cx),
-                                            'yC' : entity.get(Voc.cy)
+                                            'label' : entity.get(Voc.label),
+                                            'xLabel' : entity.get(Voc.xLabel),
+                                            'yLabel' : entity.get(Voc.yLabel),
+                                            'xR' : entity.get(Voc.xR),
+                                            'yR' : entity.get(Voc.yR),
+                                            'xC' : entity.get(Voc.xC),
+                                            'yC' : entity.get(Voc.yC)
                                         }
                                     );
                             });

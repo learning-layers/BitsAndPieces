@@ -3,9 +3,10 @@ define(['underscore', 'logger'], function(_, Logger) {
     // to be called with a deferred object as context (eg. loadable)
     var LOG = Logger.get('SSSModel');
     var checkEmpty = function(object) {
+        LOG.debug('checkEmpty', object);
         if( _.isEmpty(object) )  {
-            loadable.reject(this.options);
-            sss.LOG.error("error: call for ",this.options, " returns empty result");
+            this.reject(this.options);
+            LOG.error("error: call for ",this.options, " returns empty result");
             return false;
         }
         return true;
@@ -56,21 +57,6 @@ define(['underscore', 'logger'], function(_, Logger) {
         }
     };
 
-    var multipleFixForVIE = function(objects, idAttr, typeAttr) {
-        LOG.debug('multipleFixForVIE', objects);
-        _.each(objects, function(object) {
-            fixForVIE(object, idAttr, typeAttr);
-        });
-    };
-
-    var multipleFixDescForVIE = function(objects, idAttr, typeAttr) {
-        LOG.debug('multipleFixForVIE', objects);
-        _.each(objects, function(object) {
-            fixEntityDesc(object);
-            fixForVIE(object, idAttr, typeAttr);
-        });
-    };
-
     var scrubParams = function(params, scrub) {
         for( var key in scrub ) {
             LOG.debug('key', key, scrub[key]['default']);
@@ -88,9 +74,7 @@ define(['underscore', 'logger'], function(_, Logger) {
 
     var decorations = {
         'single_desc_entity' : [checkEmpty, fixEntityDesc, fixForVIE],
-        'single_entity' : [checkEmpty, fixForVIE],
-        'multiple_entities' : [multipleFixForVIE],
-        'multiple_desc_entities' : [multipleFixDescForVIE]
+        'single_entity' : [checkEmpty, fixForVIE]
     };
 
     var preparations = {
@@ -123,7 +107,7 @@ define(['underscore', 'logger'], function(_, Logger) {
                 entitiesToSearchWithin : {type : 'array'}
             },
             'preparation' : preparations['scrubParams'],
-            'decoration' : decorations['multiple_entities']
+            'decoration' : decorations['single_entity']
         },
         'userAll' : {
             'resultKey' : 'users',
@@ -136,14 +120,28 @@ define(['underscore', 'logger'], function(_, Logger) {
                 'types' : { 'type' : 'array' },
             },
             'preparation' : preparations['scrubParams'],
-            'decoration' : decorations['multiple_desc_entities']
+            'decoration' : decorations['single_desc_entity']
         },
         learnEpVersionCurrentGet : {
             resultKey : 'learnEpVersion',
         },
         learnEpsGet : {
             resultKey : 'learnEps',
-            decoration: decorations['multiple_entities']
+            decoration: decorations['single_entity']
+        },
+        learnEpVersionsGet : {
+            resultKey : 'learnEpVersions',
+            decoration: decorations['single_entity'],
+            subResults : [
+                {
+                    resultKey : 'circles',
+                    decoration: decorations['single_entity']
+                },
+                {
+                    resultKey: 'entities',
+                    decoration: decorations['single_entity']
+                }
+            ]
         }
     };
     return m;

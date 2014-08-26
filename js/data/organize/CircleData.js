@@ -4,7 +4,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         this.LOG.debug("initialize OrgaEntityData");
         this.vie = vie;
         this.vie.entities.on('add', this.filter, this);
-        this.setIntegrityCheck(Voc.belongsToOrganize, Voc.ORGANIZE, Voc.hasCircle);
+        this.setIntegrityCheck(Voc.belongsToVersion, Voc.VERSION, Voc.hasCircle);
     };
     m.LOG = Logger.get('CircleData');
     /** 

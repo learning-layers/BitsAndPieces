@@ -12,32 +12,7 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
     m.filter= function(model, collection, options ) {
         if( model.isof(Voc.VERSION) ) {
             this.checkIntegrity(model, options);
-            if(!model.isNew()) {
-                this.fetchWidgets(model);
-            } 
         }
-    };
-    /**
-     * Fetches widget entities from server.
-     * If no such entities exist, default Timeline and/or Organize are created.
-     */
-    m.fetchWidgets= function(version) {
-        this.LOG.debug('fetchWidgets');
-        var vie = this.vie;
-        var that = this;
-        this.vie.load({
-            'version' : version.getSubject(),
-            'type' : this.vie.types.get(Voc.WIDGET)
-        }).from('sss').execute().success(
-            function(widgets) {
-                that.LOG.debug('success fetchWidgets', _.clone(widgets));
-                that.vie.entities.addOrUpdate(widgets);
-                //var ws = _.map(widgets, function(w){
-                    //return w.getSubject();
-                //});
-                //version.set(Voc.hasWidget, ws);
-            }
-        );
     };
     m.newVersion= function(episode, fromVersion) {
         var newVersion,
