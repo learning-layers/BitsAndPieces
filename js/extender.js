@@ -8,6 +8,7 @@ define(['logger', 'underscore'], function(Logger, _){
                 if( !options) options = {};
                 AppLog.debug("options", options);
                 AppLog.debug("model", model);
+                var that = this;
                 switch(method) {
                     case 'create':
                         this.vie.save({
@@ -21,18 +22,24 @@ define(['logger', 'underscore'], function(Logger, _){
                         });
                         break;
                     case 'read':
-                        this.vie.load({
-                            'service' : 'entityGet',
-                            'data' : _.extend(options.data || {}, {
-                                'entity' : model.getSubject()
-                            })
-                        }).from('sss').execute().success(function(readEntity){
-                            AppLog.debug("entity was read");
-                            AppLog.debug("readEntity", readEntity);
-                            model.set(readEntity)
-                            if(options.success) 
-                                options.success(readEntity);
-                        })
+                        this.vie.onUrisReady(
+                            model.getSubject(),
+                            function(entityUri) {
+                                that.vie.load({
+                                    'service' : 'entityGet',
+                                    'data' : _.extend(options.data || {}, {
+                                        'entity' : entityUri
+                                    })
+                                }).from('sss').execute().success(function(readEntity){
+                                    AppLog.debug("entity was read");
+                                    AppLog.debug("readEntity", readEntity);
+                                    model.set(readEntity)
+                                    if(options.success) 
+                                        options.success(readEntity);
+                                });
+                            }
+                        );
+
                         break;
                     case 'update':
                         this.vie.save({

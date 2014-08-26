@@ -132,33 +132,39 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
         /* AJAX request wrapper */
         send : function(op, par, success, error ){
             this.LOG.debug('par', par);
-            $.ajax({
-                'url' : this.hostREST + op + "/",
-                'type': "POST",
-                'data' : JSON.stringify(_.extend(par, {
-                    'op': op,
-                    'user' : this.user || "mailto:dummyUser",
-                    'key' : this.userKey || "someKey"
-                })),
-                'contentType' : "application/json",
-                'async' : true,
-                'dataType': "application/json",
-                'complete' : function(jqXHR, textStatus) {
+            var sss = this;
+            this.vie.onUrisReady(
+                this.user, 
+                function(userUri) {
+                    $.ajax({
+                        'url' : sss.hostREST + op + "/",
+                        'type': "POST",
+                        'data' : JSON.stringify(_.extend(par, {
+                            'op': op,
+                            'user' : userUri || "mailto:dummyUser",
+                            'key' : sss.userKey || "someKey"
+                        })),
+                        'contentType' : "application/json",
+                        'async' : true,
+                        'dataType': "application/json",
+                        'complete' : function(jqXHR, textStatus) {
 
-                    if( jqXHR.readyState !== 4 || jqXHR.status !== 200){
-                        sss.LOG.error("sss json request failed");
-                        return;
-                    }
+                            if( jqXHR.readyState !== 4 || jqXHR.status !== 200){
+                                sss.LOG.error("sss json request failed");
+                                return;
+                            }
 
-                    var result = $.parseJSON(jqXHR.responseText); 
+                            var result = $.parseJSON(jqXHR.responseText); 
 
-                    if( result.error ) {
-                        if( error ) error(result);
-                        return;
-                    }
-                    success(result[op]);
+                            if( result.error ) {
+                                if( error ) error(result);
+                                return;
+                            }
+                            success(result[op]);
+                        }
+                    });
                 }
-            });
+            );
         },
 
         getService: function(serviceName) {
@@ -172,222 +178,187 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             }
             var sss = this;
             if( analyzable.options.service == "searchByTags" ) {
-                this.vie.onUrisReady(
-                    this.user,
-                    function(userUri) {
-                        sss.resolve('searchTags', 
-                            function(object) {
-                                sss.LOG.debug("searchResult", object);
-                                var entities = [];
-                                _.each(object['searchResults'], function(result) {
-                                    entities.push(sss.fixForVIE(result, 'entity'));
-                                });
-                                analyzable.resolve(entities);
-                            },
-                            function(object) {
-                                sss.LOG.warn("searchResult failed", object);
-                                analyzable.reject(object);
-                            },
-                            {
-                                'searchOp' : analyzable.options.op || "OR",
-                                'tags' : analyzable.options.tags.join(','),
-                                'maxResultsPerTag' : analyzable.options.max
-                            }
-                        );
+                sss.resolve('searchTags', 
+                    function(object) {
+                        sss.LOG.debug("searchResult", object);
+                        var entities = [];
+                        _.each(object['searchResults'], function(result) {
+                            entities.push(sss.fixForVIE(result, 'entity'));
+                        });
+                        analyzable.resolve(entities);
+                    },
+                    function(object) {
+                        sss.LOG.warn("searchResult failed", object);
+                        analyzable.reject(object);
+                    },
+                    {
+                        'searchOp' : analyzable.options.op || "OR",
+                        'tags' : analyzable.options.tags.join(','),
+                        'maxResultsPerTag' : analyzable.options.max
                     }
                 );
             } else if ( analyzable.options.service == 'searchCombined' ) {
-                this.vie.onUrisReady(
-                    this.user,
-                    function(userUri) {
-                        var params = {
-                            'keywords' : analyzable.options.tags.join(','),
-                            'onlySubEntities' : false,
-                            'includeTags' : true,
-                            'includeTextualContent' : false,
-                            'includeLabel' : true,
-                            'includeDescription' : true,
-                            'includeMIs' : false
-                        };
-                        if( analyzable.options.types ) {
-                            params['types'] = analyzable.options.types.join(',');
-                        }
-                        sss.resolve('searchCombined',
-                            function(object) {
-                                sss.LOG.debug("searchResult", object);
-                                var entities = [];
-                                _.each(object['searchResults'], function(result) {
-                                    entities.push(sss.fixForVIE(result, 'entity'));
-                                });
-                                analyzable.resolve(entities);
-                            },
-                            function(object) {
-                                sss.LOG.warn("searchResult failed", object);
-                                analyzable.reject(object);
-                            },
-                            params
-                        );
-                    }
+                var params = {
+                    'keywords' : analyzable.options.tags.join(','),
+                    'onlySubEntities' : false,
+                    'includeTags' : true,
+                    'includeTextualContent' : false,
+                    'includeLabel' : true,
+                    'includeDescription' : true,
+                    'includeMIs' : false
+                };
+                if( analyzable.options.types ) {
+                    params['types'] = analyzable.options.types.join(',');
+                }
+                sss.resolve('searchCombined',
+                    function(object) {
+                        sss.LOG.debug("searchResult", object);
+                        var entities = [];
+                        _.each(object['searchResults'], function(result) {
+                            entities.push(sss.fixForVIE(result, 'entity'));
+                        });
+                        analyzable.resolve(entities);
+                    },
+                    function(object) {
+                        sss.LOG.warn("searchResult failed", object);
+                        analyzable.reject(object);
+                    },
+                    params
                 );
             } else if ( analyzable.options.service == "search" ) {
-                this.vie.onUrisReady(
-                    this.user,
-                    function(userUri) {
-                        var params = {
-                            'keywordsToSearchFor' : analyzable.options.tags.join(','),
-                            'includeTextualContent' : false,
-                            'includeTags' : true,
-                            'includeMIs' : false,
-                            'includeLabel' : true,
-                            'includeDescription' : true,
-                            'includeOnlySubEntities' : false,
-                            'extendToParents' : false,
-                            'includeRecommendedResults' : false,
-                            'provideEntries' : false
-                        };
+                var params = {
+                    'keywordsToSearchFor' : analyzable.options.tags.join(','),
+                    'includeTextualContent' : false,
+                    'includeTags' : true,
+                    'includeMIs' : false,
+                    'includeLabel' : true,
+                    'includeDescription' : true,
+                    'includeOnlySubEntities' : false,
+                    'extendToParents' : false,
+                    'includeRecommendedResults' : false,
+                    'provideEntries' : false
+                };
 
-                        if( analyzable.options.types ) {
-                            params['typesToSearchOnlyFor'] = analyzable.options.types.join(',');
-                        }
-                        sss.resolve('search',
-                            function(object) {
-                                sss.LOG.debug("searchResult", object);
-                                var entities = [];
-                                _.each(object['entities'], function(result) {
-                                    entities.push(sss.fixForVIE(result));
-                                });
-                                analyzable.resolve(entities);
-                            },
-                            function(object) {
-                                sss.LOG.warn("searchResult failed", object);
-                                analyzable.reject(object);
-                            },
-                            params
-                        );
-                    }
+                if( analyzable.options.types ) {
+                    params['typesToSearchOnlyFor'] = analyzable.options.types.join(',');
+                }
+                sss.resolve('search',
+                    function(object) {
+                        sss.LOG.debug("searchResult", object);
+                        var entities = [];
+                        _.each(object['entities'], function(result) {
+                            entities.push(sss.fixForVIE(result));
+                        });
+                        analyzable.resolve(entities);
+                    },
+                    function(object) {
+                        sss.LOG.warn("searchResult failed", object);
+                        analyzable.reject(object);
+                    },
+                    params
                 );
             } else if ( analyzable.options.service == "entityShare" ) {
-                this.vie.onUrisReady(
-                    function() {
-                        var params = {
-                            'entity' : analyzable.options.entity,
-                            'users' : analyzable.options.users.join(',')
-                        };
-                        if( analyzable.options.comment ) {
-                            params['comment'] = analyzable.options.comment;
-                        }
-                        sss.resolve('entityShare', 
-                            function(object) {
-                                sss.LOG.debug("entityShare success", object);
-                            },
-                            function(object) {
-                                sss.LOG.debug("entityShare failed", object);
-                            },
-                            params
-                        );
-                    }
+                var params = {
+                    'entity' : analyzable.options.entity,
+                    'users' : analyzable.options.users.join(',')
+                };
+                if( analyzable.options.comment ) {
+                    params['comment'] = analyzable.options.comment;
+                }
+                sss.resolve('entityShare', 
+                    function(object) {
+                        sss.LOG.debug("entityShare success", object);
+                    },
+                    function(object) {
+                        sss.LOG.debug("entityShare failed", object);
+                    },
+                    params
                 );
             } else if ( analyzable.options.service == "entityCopy" ) {
-                this.vie.onUrisReady(
-                    function() {
-                        var params = {
-                            'entity' : analyzable.options.entity,
-                            'users' : analyzable.options.users.join(',')
-                        };
-                        if( analyzable.options.exclude ) {
-                            params['entitiesToExclude'] = analyzable.options.exclude.join(',');
-                        }
-                        if( analyzable.options.comment ) {
-                            params['comment'] = analyzable.options.comment;
-                        }
-                        sss.resolve('entityCopy', 
-                            function(object) {
-                                sss.LOG.debug("entityCopy success", object);
-                            },
-                            function(object) {
-                                sss.LOG.debug("entityCopy failed", object);
-                            },
-                            params
-                        );
-                    }
+                var params = {
+                    'entity' : analyzable.options.entity,
+                    'users' : analyzable.options.users.join(',')
+                };
+                if( analyzable.options.exclude ) {
+                    params['entitiesToExclude'] = analyzable.options.exclude.join(',');
+                }
+                if( analyzable.options.comment ) {
+                    params['comment'] = analyzable.options.comment;
+                }
+                sss.resolve('entityCopy', 
+                    function(object) {
+                        sss.LOG.debug("entityCopy success", object);
+                    },
+                    function(object) {
+                        sss.LOG.debug("entityCopy failed", object);
+                    },
+                    params
                 );
             } else if ( analyzable.options.service == "userAll" ) {
-                this.vie.onUrisReady(
-                    function() {
-                        sss.resolve('userAll', 
-                            function(object) {
-                                sss.LOG.debug("userAll success", object);
-                                var users = [];
-                                _.each(object['users'], function(result) {
-                                    // Required parameter type is missing
-                                    //result['type'] = 'user';
-                                    //users.push(sss.fixForVIE(result, 'id'));
-                                    users.push(result);
-                                });
-                                analyzable.resolve(users);
+                sss.resolve('userAll', 
+                    function(object) {
+                        sss.LOG.debug("userAll success", object);
+                        var users = [];
+                        _.each(object['users'], function(result) {
+                            // Required parameter type is missing
+                            //result['type'] = 'user';
+                            //users.push(sss.fixForVIE(result, 'id'));
+                            users.push(result);
+                        });
+                        analyzable.resolve(users);
 
-                            },
-                            function(object) {
-                                sss.LOG.debug("userAll failed", object);
-                                analyzable.reject(object);
-                            }
-                        );
+                    },
+                    function(object) {
+                        sss.LOG.debug("userAll failed", object);
+                        analyzable.reject(object);
                     }
                 );
             } else if ( analyzable.options.service == "recommTagsBasedOnUserEntityTagTime" ) {
-                this.vie.onUrisReady(
-                    function() {
-                        var params = {};
-                        if( analyzable.options.forUser ) {
-                            params['forUser'] = analyzable.options.forUser;
-                        }
-                        if( analyzable.options.entity ) {
-                            params['entity'] = analyzable.options.entity; 
-                        }
-                        params['maxTags'] = analyzable.options.maxTags || 20;
-                        sss.resolve('scaffRecommTagsBasedOnUserEntityTagTime', 
-                            function(object) {
-                                sss.LOG.debug("recommTagsBasedOnUserEntityTagTime success", object);
-                                analyzable.resolve(object.tags || []);
-                            },
-                            function(object) {
-                                sss.LOG.debug("recommTagsBasedOnUserEntityTagTime failed", object);
-                                analyzable.reject(object);
-                            },
-                            params
-                        );
-                    }
+                var params = {};
+                if( analyzable.options.forUser ) {
+                    params['forUser'] = analyzable.options.forUser;
+                }
+                if( analyzable.options.entity ) {
+                    params['entity'] = analyzable.options.entity; 
+                }
+                params['maxTags'] = analyzable.options.maxTags || 20;
+                sss.resolve('scaffRecommTagsBasedOnUserEntityTagTime', 
+                    function(object) {
+                        sss.LOG.debug("recommTagsBasedOnUserEntityTagTime success", object);
+                        analyzable.resolve(object.tags || []);
+                    },
+                    function(object) {
+                        sss.LOG.debug("recommTagsBasedOnUserEntityTagTime failed", object);
+                        analyzable.reject(object);
+                    },
+                    params
                 );
             } else if ( analyzable.options.service == "ueCountGet" ) {
-                this.vie.onUrisReady(
-                    function() {
-                        if( analyzable.options.forUser ) {
-                            params['forUser'] = analyzable.options.forUser;
-                        }
-                        if( analyzable.options.entity ) {
-                            params['entity'] = analyzable.options.entity;
-                        }
-                        if( analyzable.options.startTime ) {
-                            params['startTime'] = analyzable.options.startTime;
-                        }
-                        if( analyzable.options.endTime ) {
-                            params['endTime'] = analyzable.options.endTime;
-                        }
-                        if( analyzable.options.type ) {
-                            params['type'] = analyzable.options.type;
-                        }
-                        sss.resolve('uECountGet', 
-                            function(object) {
-                                sss.LOG.debug("ueCountGet success", object);
-                                analyzable.resolve(object.count || 0);
-                            },
-                            function(object) {
-                                sss.LOG.debug("ueCountGet failed", object);
-                                analyzable.reject(object);
-                            },
-                            params
-                        );
-                    }
+                if( analyzable.options.forUser ) {
+                    params['forUser'] = analyzable.options.forUser;
+                }
+                if( analyzable.options.entity ) {
+                    params['entity'] = analyzable.options.entity;
+                }
+                if( analyzable.options.startTime ) {
+                    params['startTime'] = analyzable.options.startTime;
+                }
+                if( analyzable.options.endTime ) {
+                    params['endTime'] = analyzable.options.endTime;
+                }
+                if( analyzable.options.type ) {
+                    params['type'] = analyzable.options.type;
+                }
+                sss.resolve('uECountGet', 
+                    function(object) {
+                        sss.LOG.debug("ueCountGet success", object);
+                        analyzable.resolve(object.count || 0);
+                    },
+                    function(object) {
+                        sss.LOG.debug("ueCountGet failed", object);
+                        analyzable.reject(object);
+                    },
+                    params
                 );
             } else if ( analyzable.options.service == "EntityDescsGet" ) {
                 var params = {};
@@ -476,9 +447,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             var sss = this;
             if ( entity.isof('owl:Thing')){
                 this.vie.onUrisReady(
-                    this.user,
                     loadable.options.resource,
-                    function(userUri, resourceUri) {
+                    function(resourceUri) {
                         sss.resolve('entityDescGet', 
                             function(object) {
                                 sss.LOG.debug("handle result of EntityDescGet");
@@ -560,10 +530,9 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             if( type.isof(Voc.USEREVENT)) {
                 this.LOG.debug("userEventsGet");
                 this.vie.onUrisReady(
-                    this.user,
                     loadable.options.forUser,
                     loadable.options.resource,
-                    function(userUri, forUserUri, resourceUri) {
+                    function(forUserUri, resourceUri) {
                         var params = {
                             'forUser' : forUserUri,
                             'startTime' : loadable.options.start,
@@ -598,38 +567,33 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 });
             } else if( type.isof(Voc.EPISODE )) {
                 this.LOG.debug("learnEpsGet");
-                this.vie.onUrisReady(
-                    this.user,
-                    function(userUri) {
-                        sss.resolve('learnEpsGet', 
-                            function(objects) {
-                                sss.LOG.debug("handle result of epsGet");
-                                sss.LOG.debug("objects", objects);
-                                var entityInstances = [];
-                                _.each(objects['learnEps'], function(object) {
-                                    object[Voc.belongsToUser] = object['user'];
-                                    delete object['user'];
-                                    var entity = sss.fixForVIE(object, 'id');
-                                    //var vieEntity = new sss.vie.Entity(entity);
-                                    entity['@type'] = Voc.EPISODE;
-                                    entityInstances.push(entity);
-                                });
-                                loadable.resolve(entityInstances);
-                            },
-                            function(object) {
-                                sss.LOG.warn("error on learnEpsGet (perhaps just empty):");
-                                sss.LOG.warn(object);
-                                loadable.resolve([]);
-                            }
-                        );
-                });
+                sss.resolve('learnEpsGet', 
+                    function(objects) {
+                        sss.LOG.debug("handle result of epsGet");
+                        sss.LOG.debug("objects", objects);
+                        var entityInstances = [];
+                        _.each(objects['learnEps'], function(object) {
+                            object[Voc.belongsToUser] = object['user'];
+                            delete object['user'];
+                            var entity = sss.fixForVIE(object, 'id');
+                            //var vieEntity = new sss.vie.Entity(entity);
+                            entity['@type'] = Voc.EPISODE;
+                            entityInstances.push(entity);
+                        });
+                        loadable.resolve(entityInstances);
+                    },
+                    function(object) {
+                        sss.LOG.warn("error on learnEpsGet (perhaps just empty):");
+                        sss.LOG.warn(object);
+                        loadable.resolve([]);
+                    }
+                );
 
             } else if( type.isof(Voc.VERSION )) {
                 this.LOG.debug("learnEpVersionsGet");
                 this.vie.onUrisReady(
-                    this.user,
                     loadable.options.episode,
-                    function(userUri, episodeUri) {
+                    function(episodeUri) {
                         sss.resolve('learnEpVersionsGet', 
                             function(objects) {
                                 sss.LOG.debug("handle result of epVersionsGet");
@@ -700,9 +664,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
 
                 this.LOG.log("learnEPGetTimelineState");
                 this.vie.onUrisReady(
-                    this.user,
                     loadable.options.version,
-                    function(userUri, versionUri) {
+                    function(versionUri) {
                         sss.resolve('learnEpVersionGetTimelineState', 
                             function(object) {
                                 sss.LOG.debug("handle result of LearnEpGetTimelineState");
@@ -753,9 +716,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 this.LOG.debug('version found', version);
                 var entities = [];
                 this.vie.onUrisReady(
-                    this.user,
                     version,
-                    function(userUri, versionUri) {
+                    function(versionUri) {
                         sss.resolve('learnEpVersionGet',
                             function(object) {
                                 sss.LOG.debug("handle result of LearnEpVersionGet");
@@ -795,9 +757,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 var version = this.buffer[loadable.options.organize]['belongsToVersion']; 
                 var entities = [];
                 this.vie.onUrisReady(
-                    this.user,
                     version,
-                    function(userUri, versionUri) {
+                    function(versionUri) {
                         sss.resolve('learnEpVersionGet',
                             function(object) {
                                 sss.LOG.debug("handle result of LearnEpVersionGet");
@@ -854,9 +815,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 var start = obj[this.vie.namespaces.uri(Voc.start)];
                 var end = obj[this.vie.namespaces.uri(Voc.end)];
                 this.vie.onUrisReady(
-                    this.user,
                     obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
-                    function(userUri, versionUri) {
+                    function(versionUri) {
                         sss.resolve('learnEpVersionSetTimelineState', 
                                 function(object) {
                                     sss.LOG.debug("handle result of LearnEpVersionSetTimelinState");
@@ -893,31 +853,26 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             } else if( entity.isof(Voc.EPISODE )) {
                 this.LOG.debug("saving episode");
                 if( entity.isNew() ) {
-                    this.vie.onUrisReady(
-                        this.user,
-                        function(userUri) {
-                            sss.resolve('learnEpCreate', 
-                                function(object) {
-                                    sss.LOG.debug("handle result of LearnEpCreate");
-                                    sss.LOG.debug("object", object);
-                                    savable.resolve({'uri':object['learnEp']});
-                                },
-                                function(object) {
-                                    sss.LOG.warn("error:");
-                                    sss.LOG.warn("object", object);
-                                    savable.reject(entity);
-                                },
-                                {
-                                    'label':entity.get(Voc.label),
-                                    'description' : 'privateSpace'
-                                }
-                            );
-                    });
+                    sss.resolve('learnEpCreate', 
+                        function(object) {
+                            sss.LOG.debug("handle result of LearnEpCreate");
+                            sss.LOG.debug("object", object);
+                            savable.resolve({'uri':object['learnEp']});
+                        },
+                        function(object) {
+                            sss.LOG.warn("error:");
+                            sss.LOG.warn("object", object);
+                            savable.reject(entity);
+                        },
+                        {
+                            'label':entity.get(Voc.label),
+                            'description' : 'privateSpace'
+                        }
+                    );
                 } else {
                     this.vie.onUrisReady(
-                        this.user,
                         entity.getSubject(),
-                        function(userUri, entityUri){
+                        function(entityUri){
                             var params = {
                                 'entity' : entityUri,
                             };
@@ -947,9 +902,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 var episode = entity.get(Voc.belongsToEpisode);
                 if( episode.isEntity ) episode = episode.getSubject();
                 this.vie.onUrisReady(
-                    this.user,
                     episode,
-                    function( userUri, episodeUri) {
+                    function(episodeUri) {
                         sss.resolve('learnEpVersionCreate', 
                                 function(object) {
                                     sss.LOG.debug("handle result of LearnEpVersionCreate");
@@ -989,9 +943,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
 
                         if( entity.isNew() )
                             sss.vie.onUrisReady(
-                                sss.user,
                                 version,
-                                function(userUri, versionUri) {
+                                function(versionUri) {
                                     sss.resolve('learnEpVersionAddCircle', 
                                         function(object) {
                                             sss.LOG.debug("handle result of LearnEpVersionAddCircle");
@@ -1017,9 +970,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                             });
                         else
                             sss.vie.onUrisReady(
-                                sss.user,
                                 entity.getSubject(),
-                                function(userUri, uriUri ) {
+                                function(uriUri ) {
                                     sss.resolve('learnEpVersionUpdateCircle', 
                                         function(object) {
                                             sss.LOG.debug("handle result of LearnEpVersionUpdateCircle");
@@ -1072,10 +1024,9 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
 
                         if(entity.isNew() )
                             sss.vie.onUrisReady(
-                                sss.user,
                                 version,
                                 resourceUri,
-                                function(userUri, versionUri, resourceUri){
+                                function(versionUri, resourceUri){
                                     sss.resolve('learnEpVersionAddEntity', 
                                         function(object) {
                                             sss.LOG.debug("handle result of LearnEpVersionAddEntity");
@@ -1097,10 +1048,9 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                             });
                         else
                             sss.vie.onUrisReady(
-                                sss.user,
                                 entity.getSubject(),
                                 resourceUri,
-                                function(userUri,uriUri,resourceUri){
+                                function(uriUri,resourceUri){
                                     sss.resolve('learnEpVersionUpdateEntity', 
                                         function(object) {
                                             sss.LOG.debug("handle result of LearnEpVersionUpdateEntity");
@@ -1127,9 +1077,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 if( versionUri.isEntity ) versionUri = versionUri.getSubject();
                 if( versionUri ) {
                     this.vie.onUrisReady(
-                        this.user,
                         versionUri,
-                        function(userUri, versionUri) {
+                        function(versionUri) {
                             sss.resolve('learnEpVersionCurrentSet', 
                                 function(object) {
                                     sss.LOG.debug("handle result of VersionCurrentSet");
@@ -1149,9 +1098,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     || entity.isof(Voc.EVERNOTE_NOTEBOOK) ) {
                 if( savable.options.tag ) {
                     this.vie.onUrisReady(
-                        this.user,
                         entity.getSubject(),
-                        function(userUri, entityUri) {
+                        function(entityUri) {
                             sss.resolve('tagAdd', 
                                 function(object) {
                                     sss.LOG.debug('result addTag', object);
@@ -1236,9 +1184,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
 
             if( entity.isof(Voc.CIRCLE )) {
                 this.vie.onUrisReady(
-                    this.user,
                     entity.getSubject(),
-                    function(userUri,uriUri){
+                    function(uriUri){
                         sss.resolve('learnEpVersionRemoveCircle', 
                             function(object) {
                                 sss.LOG.debug("handle result of LearnEpVersionRemoveCircle");
@@ -1255,9 +1202,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 });
             } else if( entity.isof(Voc.ORGAENTITY )) {
                 this.vie.onUrisReady(
-                    this.user,
                     entity.getSubject(),
-                    function(userUri,uriUri){
+                    function(uriUri){
                         sss.resolve('learnEpVersionRemoveEntity', 
                             function(object) {
                                 sss.LOG.debug("handle result of LearnEpVersionRemoveEntity");
@@ -1277,9 +1223,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     || entity.isof(Voc.EVERNOTE_NOTEBOOK) ) {
                 if( removable.options.tag ) {
                     this.vie.onUrisReady(
-                        this.user,
                         entity.getSubject(),
-                        function(userUri, entityUri) {
+                        function(entityUri) {
                             sss.resolve('tagsRemove', 
                                 function(object) {
                                     sss.LOG.debug('result removeTag', object);
