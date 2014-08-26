@@ -1,3 +1,4 @@
+// works with SSS Rest API 4.1.0
 define(['underscore', 'logger'], function(_, Logger) {
     // to be called with a deferred object as context (eg. loadable)
     var LOG = Logger.get('SSSModel');
@@ -111,6 +112,17 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'search' : {
             'resultKey' : 'entities',
+            'params' : {
+                keywordsToSearchFor : {type : 'array'},
+                wordsToSearchFor : {type : 'array'},
+                tagsToSearchFor : {type : 'array'},
+                misToSearchFor : {type : 'array'},
+                labelsToSearchFor : {type : 'array'},
+                descriptionsToSearchFor : {type : 'array'},
+                typesToSearchOnlyFor : {type : 'array'},
+                entitiesToSearchWithin : {type : 'array'}
+            },
+            'preparation' : preparations['scrubParams'],
             'decoration' : decorations['multiple_entities']
         },
         'userAll' : {
@@ -127,10 +139,5 @@ define(['underscore', 'logger'], function(_, Logger) {
             'decoration' : decorations['multiple_desc_entities']
         }
     };
-    m['searchByTags'] = m['searchCombined'] = 
-        _.extend({}, m['search'], {
-            'resultKey' : 'searchResults',
-            '@id' : 'entity'
-        });
     return m;
 });

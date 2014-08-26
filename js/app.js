@@ -31,6 +31,7 @@ function(module, VIE, Logger, tracker, userParams, SocialSemanticService, extend
     Logger.get('AppData').setLevel(Logger.OFF);
     Logger.get('Add').setLevel(Logger.OFF);
     Logger.get('SocialSemanticService').setLevel(Logger.OFF);
+    Logger.get('SSSModel').setLevel(Logger.OFF);
     Logger.get('Mockup').setLevel(Logger.OFF);
     Logger.get('ToolbarView').setLevel(Logger.OFF);
     Logger.get('NotificationsToolbarView').setLevel(Logger.OFF);

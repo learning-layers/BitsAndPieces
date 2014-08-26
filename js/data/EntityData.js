@@ -91,57 +91,13 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             }
         });
     };
-    m.searchByTags = function(tags, callback) {
-        var that = this;
-        this.vie.load({
-            'service' : 'searchByTags',
-            'data' : {
-                'tags' : tags.join(','),
-                'maxResultsPerTag' : 20
-            }
-        }).using('sss').execute().success(function(entities){
-            that.LOG.debug('searchByTags entities', entities);
-            entities = that.vie.entities.addOrUpdate(entities);
-            _.each(entities, function(entity) {
-                // XXX This is quite a bad check, in case the search results will
-                // change in future. Need a better check to determine entity
-                // being fully loaded.
-                if ( !entity.has(Voc.author) ) {
-                    entity.fetch();
-                }
-            });
-            callback(entities);
-        });
-    };
-    m.searchCombined = function(tags, callback) {
-        var that = this;
-        this.vie.load({
-            'service' : 'searchCombined',
-            'data' : {
-                'tags' : tags.join(','),
-                'types' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook'].join(',')
-            }
-        }).using('sss').execute().success(function(entities){
-            that.LOG.debug('searchCombined entities', entities);
-            entities = that.vie.entities.addOrUpdate(entities);
-            _.each(entities, function(entity) {
-                // XXX This is quite a bad check, in case the search results will
-                // change in future. Need a better check to determine entity
-                // being fully loaded.
-                if ( !entity.has(Voc.author) ) {
-                    entity.fetch();
-                }
-            });
-            callback(entities);
-        });
-    };
     m.search = function(tags, callback) {
         var that = this;
         this.vie.load({
             'service' : 'search',
             'data' : {
-                'tags' : tags.join(','),
-                'types' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook'].join(',')
+                'keywordsToSearchFor' : tags,
+                'typesToSearchOnlyFor' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
             }
         }).using('sss').execute().success(function(entities){
             that.LOG.debug('search entities', entities);
