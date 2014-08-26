@@ -62,10 +62,38 @@ define(['underscore', 'logger'], function(_, Logger) {
         });
     };
 
+    var multipleFixDescForVIE = function(objects, idAttr, typeAttr) {
+        LOG.debug('multipleFixForVIE', objects);
+        _.each(objects, function(object) {
+            fixEntityDesc(object);
+            fixForVIE(object, idAttr, typeAttr);
+        });
+    };
+
+    var scrubParams = function(params, scrub) {
+        for( var key in scrub ) {
+            LOG.debug('key', key, scrub[key]['default']);
+            if( !params[key] ) {
+                if( scrub[key]['default'] !== undefined) {
+                    params[key] = scrub[key]['default'];
+                }
+                continue;
+            }
+            if( scrub[key]['type'] === 'array' ) {
+                params[key] = params[key].join(',');
+            }
+        }
+    }
+
     var decorations = {
         'single_desc_entity' : [checkEmpty, fixEntityDesc, fixForVIE],
         'single_entity' : [checkEmpty, fixForVIE],
-        'multiple_entities' : [multipleFixForVIE]
+        'multiple_entities' : [multipleFixForVIE],
+        'multiple_desc_entities' : [multipleFixDescForVIE]
+    };
+
+    var preparations = {
+        'scrubParams' : [scrubParams]
     };
 
     var m = {
@@ -87,6 +115,16 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'userAll' : {
             'resultKey' : 'users',
+        },
+        'entityDescsGet' : {
+            'resultKey' : 'descs', 
+            '@id' : 'entity',
+            'params' : {
+                'entities' : { 'type' : 'array' },
+                'types' : { 'type' : 'array' },
+            },
+            'preparation' : preparations['scrubParams'],
+            'decoration' : decorations['multiple_desc_entities']
         }
     };
     m['searchByTags'] = m['searchCombined'] = 

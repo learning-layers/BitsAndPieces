@@ -111,9 +111,14 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
     };
     m.fetchData = function(user, entityUris) {
         var that = this;
-        this.vie.analyze({
-            'service' : 'EntityDescsGet',
-            'entities' : entityUris
+        this.vie.load({
+            'service' : 'entityDescsGet',
+            'data' : {
+                'entities' : entityUris,
+                'getTags' : true,
+                'getThumb' : true, 
+                'getFlags' : true  
+            }
         }).from('sss').execute().success(function(entities) {
             that.vie.entities.addOrUpdate(entities);
         });

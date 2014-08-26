@@ -262,36 +262,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     },
                     params
                 );
-            } else if ( analyzable.options.service == "EntityDescsGet" ) {
-                var params = {};
-                if( analyzable.options.entities ) {
-                    params['entities'] = analyzable.options.entities.join(',');
-                }
-                if( analyzable.options.types ) {
-                    params['types'] = analyzable.options.types.join(',');
-                }
-                params['getTags'] = true;   
-                params['getOverallRating'] = false;  
-                params['getDiscs'] = false;
-                params['getUEs'] = false; 
-                params['getThumb'] = true; 
-                params['getFlags'] = true;  
-                sss.resolve('entityDescsGet', 
-                    function(result) {
-                        var entities = [];
-                        _.each(result['descs'], function(object) {
-                            sss.fixEntityDesc(object);
-                            var entity = sss.fixForVIE(object, 'entity', 'type');
-                            entities.push(entity);
-                        });
-                        analyzable.resolve(entities);
-                    },
-                    function(result) {
-                        sss.LOG.error("EntityDescsGet", result);
-                        analyzable.reject(result);
-                    },
-                    params
-                );
             }
 
         },
@@ -305,7 +275,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             this.LOG.debug("SocialSemanticService load");
             this.LOG.debug("loadable",loadable.options);
 
-            loadable.options.data = loadable.options.data || {};
+            var params = loadable.options.data || {};
 
             var serviceName = loadable.options.service;
             var sss = this;
@@ -313,6 +283,12 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 var service = this.getService(serviceName);
                 if( service ) {
                     this.LOG.debug("service", service);
+                    if( service['preparation'] ) {
+                        _.each(service['preparation'], function(preparator) {
+                            preparator.call(loadable, params, service['params']);
+                        });
+                    }
+                    this.LOG.debug('params', params);
                     this.resolve(serviceName,
                         function(result) {
                             sss.LOG.debug('result', result);
@@ -328,7 +304,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                             loadable.reject(loadable.options);
                             sss.LOG.error('error:', result);
                         },
-                        loadable.options.data
+                        params
                     );
                     return;
                 }
