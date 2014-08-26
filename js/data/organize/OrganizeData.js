@@ -112,9 +112,11 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
     };
     m.fetchData = function(entityUris) {
         var that = this;
-        this.vie.analyze({
-            'service' : 'EntityDescsGet',
-            'entities' : entityUris
+        this.vie.load({
+            'service' : 'entityDescsGet',
+            'data' : {
+                'entities' : entityUris
+            }
         }).from('sss').execute().success(function(entities) {
             that.vie.entities.addOrUpdate(entities);
         });
