@@ -21,9 +21,47 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
                 this.fetchEpisodes(user);
                 this.fetchRange(user);
             } 
+            user.sync = this.sync;
         }
     };
+    m.sync= function(method, model, options) {
+        m.LOG.debug("sync entity " + model.getSubject() + " by " + method);
+        if( !options ) options = {};
 
+        if( method === 'update' ) {
+            var changed = model.changedAttributes();
+            m.LOG.debug('changed', changed, _.keys(changed).length );
+            var currentVersionKey = this.vie.namespaces.uri(Voc.currentVersion);
+            if( changed[currentVersionKey] ) {
+                m.saveCurrentVersion(model, options);
+            }
+            if( _.keys(changed).length > 1 ) {
+                // handle rest of changed attributes by generic sync
+                this.vie.Entity.prototype.sync(method, model, options);
+            }
+        } else {
+            this.vie.Entity.prototype.sync(method, model, options);
+        }
+    },
+    m.saveCurrentVersion = function(model, options) {
+        var currentVersion = model.get(Voc.currentVersion);
+        var that = this;
+        this.vie.onUrisReady(
+            version.getSubject(),
+            function(versionUri) {
+                that.vie.save({
+                    service : 'learnEpVersionCurrentSet',
+                    data : {
+                        'learnEpVersion' : versionUri
+                    }
+                }).to('sss').execute().success(function(result) {
+                    if( options.success) {
+                        options.success(result);
+                    }
+                });
+            }
+        );
+    },
     m.fetchCurrentVersion = function(user) {
         this.vie.load({
             'service' : 'learnEpVersionCurrentGet'

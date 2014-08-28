@@ -114,7 +114,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if( episode.get(Voc.label) == label) return;
             this.LOG.debug('changeLabel', label);
             // Make sure to set user_initiated flag
-            episode.set(Voc.label, label, {
+            episode.save(Voc.label, label, {
                 'error' : function() {
                     that.$el.find('input[name="label"]').effect("shake");
                 },
@@ -130,7 +130,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if( episode.get(Voc.description) == description) return;
             this.LOG.debug('changeDescription', description);
             // Make sure to set user_initiated flag
-            episode.set(Voc.description, description, {
+            episode.save(Voc.description, description, {
                 'error' : function() {
                     that.$el.find('textarea[name="description"]').effect("shake");
                 },

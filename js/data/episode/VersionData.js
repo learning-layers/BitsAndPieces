@@ -12,8 +12,39 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
     m.filter= function(model, collection, options ) {
         if( model.isof(Voc.VERSION) ) {
             this.checkIntegrity(model, options);
+            model.sync = this.sync;
         }
     };
+    m.sync= function(method, model, options) {
+        m.LOG.debug("sync entity " + model.getSubject() + " by " + method);
+        if( !options ) options = {};
+
+        if( method === 'create' ) {
+            m.createVersion(model, options);
+        } else {
+            this.vie.Entity.prototype.sync(method, model, options);
+        }
+    },
+    m.createVersion= function(model, options) {
+        var episode = model.get(Voc.belongsToEpisode);
+        var that = this;
+        this.vie.onUrisReady(
+            episode.getSubject(),
+            function(episodeUri) {
+                that.vie.save({
+                    service : 'learnEpVersionCreate',
+                    data : {
+                        'learnEp' : episodeUri
+                    }
+                }).to('sss').execute().success(function(savedEntityUri) {
+                    model.set(model.idAttribute, savedEntityUri, options);
+                    if(options.success) {
+                        options.success(savedEntityUri);
+                    }
+                });
+            }
+        );
+    },
     m.newVersion= function(episode, fromVersion) {
         var newVersion,
             attr = {};
@@ -21,9 +52,7 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
             attr = _.clone(fromVersion.attributes);
             delete attr[fromVersion.idAttribute];
             delete attr[this.vie.namespaces.uri(Voc.hasWidget)];
-        } else {
-            attr[this.vie.namespaces.uri(Voc.hasWidget)] = false;
-        }
+        } 
         newVersion = new this.vie.Entity(attr);
 
         this.LOG.debug("newVersion", newVersion, fromVersion);
@@ -48,20 +77,8 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
                 overrideAttributes[vm.vie.namespaces.uri(Voc.belongsToVersion)] 
                     = newVersion.getSubject();
                 var newWidget = CopyMachine.copy(widget, overrideAttributes);
-                //newWidgets.push(newWidget);
-                //newWidgetUris.push(newWidget.getSubject());
             });
-            //newVersion.set(Voc.hasWidget, newWidgetUris);
         }
-        // save widgets after version is added
-        //_.each(newWidgets, function(widget){widget.save()});
-        // add Version to episode
-        //var versions = Backbone.Data.prototype.get.call(episode,
-            //this.vie.namespaces.uri(Voc.hasVersion)) || [];
-        //if(!_.isArray(versions)) versions = [versions];
-        //else versions = _.clone(versions);
-        //versions.push(newVersion.getSubject());
-        //episode.set(Voc.hasVersion, versions);
         
         return newVersion;
     };

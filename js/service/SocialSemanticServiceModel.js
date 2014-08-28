@@ -163,6 +163,64 @@ define(['underscore', 'logger'], function(_, Logger) {
             'preparation' : preparations['scrubParams'],
             'decoration' : decorations['single_desc_entity']
         },
+        learnEpVersionCurrentGet : {
+            resultKey : 'learnEpVersion'
+        },
+        learnEpVersionCurrentSet : {
+            resultKey : 'learnEpVersion'
+        },
+        learnEpsGet : {
+            resultKey : 'learnEps',
+            decoration: decorations['single_entity']
+        },
+        learnEpVersionsGet : {
+            resultKey : 'learnEpVersions',
+            decoration: decorations['single_entity'],
+            subResults : [
+                {
+                    resultKey : 'circles',
+                    decoration: decorations['single_entity']
+                },
+                {
+                    resultKey: 'entities',
+                    decoration: decorations['single_entity']
+                }
+            ]
+        },
+        learnEpVersionGetTimelineState : {
+            resultKey : 'learnEpTimelineState',
+            decoration: decorations['single_entity']
+        },
+        uEsGet: {
+            resultKey: 'uEs',
+            decoration: decorations['fixForVIE_only']
+        },
+        learnEpVersionSetTimelineState : {
+            resultKey: 'learnEpTimelineState', 
+            params : {
+                startTime : { type : 'number' },
+                endTime : { type : 'number' }
+            },
+            preparation: preparations['scrubParams']
+        },
+        learnEpVersionAddCircle : {
+            resultKey : 'learnEpCircle'
+        },
+        learnEpVersionAddEntity : {
+            resultKey : 'learnEpEntity'
+        },
+        learnEpVersionUpdateCircle : {
+            resultKey : 'worked'
+        },
+        learnEpVersionUpdateEntity : {
+            resultKey : 'worked'
+        },
+        learnEpCreate : {
+            resultKey : 'learnEp'
+        },
+        learnEpVersionCreate : {
+            resultKey : 'learnEpVersion'
+        },
     };
     return m;
 });
