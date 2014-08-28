@@ -1,7 +1,7 @@
 // The SocialSemanticService wraps the SSS REST API v3.4.0
 
-define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceModel', 'view/sss/EntityView', 'jquery'], 
-        function(Logger, VIE, _, Voc, SSSModel, EntityView, $) {
+define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceModel', 'jquery'], 
+        function(Logger, VIE, _, Voc, SSSModel, $) {
 
 // ## VIE.SocialSemanticService(options)
 // This is the constructor to instantiate a new service.
@@ -345,45 +345,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             var type = loadable.options.type;
 
             var sss = this;
-            if( type.isof(Voc.USEREVENT)) {
-                this.LOG.debug("userEventsGet");
-                this.vie.onUrisReady(
-                    loadable.options.forUser,
-                    loadable.options.resource,
-                    function(forUserUri, resourceUri) {
-                        var params = {
-                            'forUser' : forUserUri,
-                            'startTime' : loadable.options.start,
-                            'endTime' : loadable.options.end
-                        };
-                        if( resourceUri ) {
-                            params['entity'] = resourceUri;
-                        }
-                        sss.resolve('uEsGet', 
-                            function(objects) {
-                                sss.LOG.debug("handle result of userEventsOfUser");
-                                sss.LOG.debug("objects", objects);
-                                var entityInstances = [];
-                                _.each(objects['uEs'], function(object) {
-                                    var entity = sss.fixForVIE(object);
-                                    sss.LOG.debug('entity', _.clone(entity));
-                                    if(!_.contains( _.keys(EntityView.prototype.icons), entity['@type'])) {
-                                            sss.LOG.debug(entity['@type'], 'filtered');
-                                            return;
-                                            }
-                                    //var vieEntity = new sss.vie.Entity(entity);
-                                    entityInstances.push(entity);
-                                });
-                                loadable.resolve(entityInstances);
-                            },
-                            function(object) {
-                                sss.LOG.warn("error:");
-                                sss.LOG.warn(object);
-                            },
-                            params
-                        );
-                });
-            } else if (type.isof(Voc.WIDGET )){
+            if (type.isof(Voc.WIDGET )){
                 // fetches Organize and Timeline stuff manually
                 // and buffers the data for later fetch 
 

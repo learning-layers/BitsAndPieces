@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'], function(Logger, Voc, _, Data, EpisodeData){
+define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 'view/sss/EntityView'], function(Logger, Voc, _, Data, EpisodeData, EntityView){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize UserData");
@@ -90,17 +90,25 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
         var forUser = user.getSubject();
         var that = this;
         this.vie.load({
-            'type' : this.vie.types.get(Voc.USEREVENT),
-            'start' : start.getTime(),
-            'end' : end.getTime(),
-            'forUser' : forUser
+            'service' : 'uEsGet',
+            'data' : {
+                'startTime' : start.getTime(),
+                'endTime' : end.getTime(),
+                'forUser' : forUser
+            }
         }).from('sss').execute().success(
             function(entities) {
                 // store the timestamps of this fetch
                 if ( lastStart === undefined || start < lastStart ) user.set(Voc.start, start);
                 if ( lastEnd === undefined || end > lastEnd ) user.set(Voc.end, end);
                 that.LOG.debug('success fetchRange: ', _.clone(entities), 'user: ', user);
+                var keys = _.keys(EntityView.prototype.icons);
+                entities = _.filter(entities, function(entity) {
+                    return _.contains( keys, entity['@type'] );
+                });
+                that.LOG.debug('filtered entities', entities);
                 entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
+
                 var currentEvents = user.get(Voc.hasUserEvent) || [];
                 if( !_.isArray(currentEvents)) currentEvents = [currentEvents];
                 currentEvents = _.union(currentEvents, entities);

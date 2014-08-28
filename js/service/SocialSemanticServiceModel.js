@@ -74,7 +74,8 @@ define(['underscore', 'logger'], function(_, Logger) {
 
     var decorations = {
         'single_desc_entity' : [checkEmpty, fixEntityDesc, fixForVIE],
-        'single_entity' : [checkEmpty, fixForVIE]
+        'single_entity' : [checkEmpty, fixForVIE],
+        'fixForVIE_only' : [fixForVIE]
     };
 
     var preparations = {
@@ -142,6 +143,10 @@ define(['underscore', 'logger'], function(_, Logger) {
                     decoration: decorations['single_entity']
                 }
             ]
+        },
+        uEsGet: {
+            resultKey: 'uEs',
+            decoration: decorations['fixForVIE_only']
         }
     };
     return m;
