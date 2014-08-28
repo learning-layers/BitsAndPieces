@@ -167,6 +167,9 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
         },
 
         getService: function(serviceName) {
+            if( !SSSModel[serviceName] ) {
+                throw new Error(serviceName + ' not found');
+            }
             return SSSModel[serviceName];
         },
 
@@ -309,130 +312,31 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             var sss = this;
             try {
                 var service = this.getService(serviceName);
-                if( service ) {
-                    this.LOG.debug("service", service);
-                    if( service['preparation'] ) {
-                        _.each(service['preparation'], function(preparator) {
-                            preparator.call(loadable, params, service['params']);
-                        });
-                    }
-                    this.LOG.debug('params', params);
-                    this.resolve(serviceName,
-                        function(result) {
-                            sss.LOG.debug('result', result);
-                            // TODO change to call in context of service, not able
-                            sss.decorateResult(loadable, result, service);
-                            loadable.resolve(result[service['resultKey']]);
-                        },
-                        function(result) {
-                            loadable.reject(loadable.options);
-                            sss.LOG.error('error:', result);
-                        },
-                        params
-                    );
-                    return;
+                this.LOG.debug("service", service);
+                if( service['preparation'] ) {
+                    _.each(service['preparation'], function(preparator) {
+                        preparator.call(loadable, params, service['params']);
+                    });
                 }
-                if ( loadable.options.type ) {
-                    this.TypeGet(loadable);
-                }
+                this.LOG.debug('params', params);
+                this.resolve(serviceName,
+                    function(result) {
+                        sss.LOG.debug('result', result);
+                        // TODO change to call in context of service, not able
+                        sss.decorateResult(loadable, result, service);
+                        loadable.resolve(result[service['resultKey']]);
+                    },
+                    function(result) {
+                        loadable.reject(loadable.options);
+                        sss.LOG.error('error:', result);
+                    },
+                    params
+                );
             } catch(e) {
                 this.LOG.error(e);
             }
         },
 
-        // Gets entities of a specific type
-        TypeGet : function(loadable) {
-            var type = loadable.options.type;
-
-            var sss = this;
-            if (type.isof(Voc.WIDGET )){
-                // fetches Organize and Timeline stuff manually
-                // and buffers the data for later fetch 
-
-                this.LOG.debug('load timeline and organize');
-
-                var entities = [];
-                var finishedCalls = [];
-                var resolve = function(finished, entity) {
-                    if( _.contains(finishedCalls, finished)) return;
-                    finishedCalls.push(finished);
-                    sss.LOG.debug('resolved', entity);
-                    if( entity ) entities.push(entity);
-                    if( _.contains(finishedCalls, 'versionget') &&  
-                        _.contains(finishedCalls, 'timelineget') ) {
-                        loadable.resolve(entities);
-                        }
-                };
-                var organize;
-                for( var organizeId in this.buffer )
-                    if( this.buffer[organizeId]['belongsToVersion'] == loadable.options.version) {
-                        organize = this.buffer[organizeId];
-                        break;
-                    }
-                    
-                if( !organize ) {
-                    organize = {
-                        'uri' : sss.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget'),
-                        'type' : Voc.ORGANIZE,
-                        'circleType' : Voc.CIRCLE,
-                        'orgaEntityType' : Voc.ORGAENTITY,
-                        'belongsToVersion' : loadable.options.version 
-                    };
-                    sss.LOG.debug('buffer organize', organize);
-                    // we buffer that object for explicit retrieval of organize
-                    // and store it in memory as it would come from the server
-                    sss.buffer[organize.uri] = organize;
-                }
-                resolve('versionget',this.fixForVIE(organize, 'uri'));
-
-                this.LOG.log("learnEPGetTimelineState");
-                this.vie.onUrisReady(
-                    loadable.options.version,
-                    function(versionUri) {
-                        sss.resolve('learnEpVersionGetTimelineState', 
-                            function(object) {
-                                sss.LOG.debug("handle result of LearnEpGetTimelineState");
-                                sss.LOG.debug("object", object);
-
-                                var entity = {};
-                                entity[VIE.prototype.Entity.prototype.idAttribute] = object.id;
-                                entity['@type'] = Voc.TIMELINE;
-                                entity[Voc.belongsToUser] = sss.user;
-                                entity[Voc.timeAttr]= Voc.creationTime;
-                                entity[Voc.predicate] = Voc.USEREVENT;
-                                entity[Voc.belongsToVersion] = loadable.options.version;
-
-                                if( !object['learnEpTimelineState']) {
-                                    // init time range
-
-                                } else {
-                                    object = object['learnEpTimelineState'];
-                                    //var vieEntity = new sss.vie.Entity(sss.fixForVIE({
-                                    entity[Voc.start] = object.startTime;                            
-                                    entity[Voc.end] = object.endTime
-                                }
-
-                                //entity = sss.fixForVIE(entity);
-
-                                //sss.buffer[vieEntity.getSubject()] = object;
-                                //loadable.resolve(vieEntity);
-                                resolve('timelineget', entity);
-                            },
-                            function(object) {
-                                sss.LOG.warn("error:", object);
-                                resolve('timelineget');
-                            },
-                            {'learnEpVersion':versionUri}
-                        );
-                });
-
-
-
-            } else {
-                this.LOG.warn("SocialSemanticService load for " + type.id + " not implemented");
-            }
-
-        },
         save: function(savable) {
             var correct = savable instanceof this.vie.Savable;
             if (!correct) {

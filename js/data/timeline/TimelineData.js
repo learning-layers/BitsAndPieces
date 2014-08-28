@@ -14,6 +14,8 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
     m.filter= function(model, collection, options) {
         if(model.isof(Voc.TIMELINE)){
             this.checkIntegrity(model, options);
+            this.fetchTimelineState(model);
+
             var user = model.get(Voc.belongsToUser);
             // TODO resolve this hack: only fire on start change to avoid double execution
             model.on('change:' + this.vie.namespaces.uri(Voc.start),
@@ -23,6 +25,23 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
             );
         }
     };
+    m.fetchTimelineState= function(model) {
+        var version = model.get(Voc.belongsToVersion);
+        var that = this;
+        this.vie.onUrisReady(
+            version.getSubject(),
+            function(versionUri) {
+                that.vie.load({
+                    'service' : 'learnEpVersionGetTimelineState',
+                    'data' : {
+                        'learnEpVersion' : versionUri
+                    }
+                }).from('sss').execute().success(function(state) {
+                    model.set(state);
+                });
+            }
+        );
+    },
     m.copy= function(timeline, overrideAttributes) {
         var newAttr = _.clone(timeline.attributes);
         delete newAttr[timeline.idAttribute];

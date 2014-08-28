@@ -144,6 +144,10 @@ define(['underscore', 'logger'], function(_, Logger) {
                 }
             ]
         },
+        learnEpVersionGetTimelineState : {
+            resultKey : 'learnEpTimelineState',
+            decoration: decorations['single_entity']
+        },
         uEsGet: {
             resultKey: 'uEs',
             decoration: decorations['fixForVIE_only']
