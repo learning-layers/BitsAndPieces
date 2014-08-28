@@ -19,7 +19,6 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             } 
             model.on('change:'+this.vie.namespaces.uri(Voc.author), this.initUser, this); 
             model.on('change:'+this.vie.namespaces.uri(Voc.hasTag), this.changedTags, this);
-            model.on('change:'+this.vie.namespaces.uri(Voc.label), this.setLabel, this);
             model.on('change:'+this.vie.namespaces.uri(Voc.importance), this.setImportance, this);
             this.loadViewCount(model);
             this.loadRecommTagsBasedOnUserEntityTagTime(model);
@@ -43,21 +42,30 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         var that = this;
         var added = _.difference(set, previous);
         this.LOG.debug('added', added);
-        _.each(added, function(tag){
-            that.vie.save({
-                'entity' : model,
-                'tag' : tag
-            }).to('sss').execute().success(function(s){
-                that.LOG.debug('success addTag', s);
-                that.loadRecommTagsBasedOnUserEntityTagTime(model);
-            }).fail(function(f){
-                var tags = model.get(Voc.hasTag) || [];
-                if( !_.isArray(tags)) tags = [tags];
-                model.set(Voc.hasTag, _.without(tags, tag));
-                that.LOG.debug('options', options);
-                options.error();
-            });
-        });
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                _.each(added, function(tag){
+                    that.vie.save({
+                        'service' : 'tagAdd',
+                        'data' : {
+                            'entity' : modelUri,
+                            'label' : tag,
+                            'space' : 'privateSpace'
+                        }
+                    }).to('sss').execute().success(function(s){
+                        that.LOG.debug('success addTag', s);
+                        that.loadRecommTagsBasedOnUserEntityTagTime(model);
+                    }).fail(function(f){
+                        var tags = model.get(Voc.hasTag) || [];
+                        if( !_.isArray(tags)) tags = [tags];
+                        model.set(Voc.hasTag, _.without(tags, tag));
+                        that.LOG.debug('options', options);
+                        options.error();
+                    });
+                });
+            }
+        );
 
         var deleted = _.difference(previous, set);
         this.LOG.debug('deleted', deleted);
@@ -77,17 +85,20 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         // Only change if user_initiated flag is set to true
         if ( options.user_initiated !== true ) return;
         if ( model.previous(Voc.label) === label ) return;
-        this.vie.save({
-            'entity' : model,
-            'label' : label
-        }).to('sss').execute().success(function(s) {
-            // TODO check whether tag recomms can change due to label change
-            that.loadRecommTagsBasedOnUserEntityTagTime(model);
-            that.LOG.debug('success setLabel', s);
-        }).fail(function(f) {
-            that.LOG.debug('fail setLabel', f);
-            if ( options.error ) {
-                options.error();
+        model.save(Voc.label, label, {
+            'success' : function(result) {
+                that.LOG.debug('success setLabel', result);
+                // TODO check whether tag recomms can change due to label change
+                that.loadRecommTagsBasedOnUserEntityTagTime(model);
+                if(options.success) {
+                    options.success(result);
+                }
+            },
+            'error' : function(result) {
+                that.LOG.debug('fail setLabel', result);
+                if( options.error ) {
+                    options.error(result);
+                }
             }
         });
     };
@@ -142,14 +153,29 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         // Only change if user_initiated flag is set to true
         if ( options.user_initiated !== true ) return;
         if ( model.previous(Voc.importance) === importance ) return;
-        this.vie.save({
-            'entity' : model,
-            'importance' : importance
-        }).to('sss').execute().success(function(s) {
-            that.LOG.debug('success setImportance', s);
-        }).fail(function(f) {
-            that.LOG.debug('fail setImportance', f);
-        });
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.save({
+                    'service' : 'flagsSet',
+                    'data' : {
+                        'entities' : [modelUri],
+                        'types' : ['importance'],
+                        'value' : importance
+                    }
+                }).to('sss').execute().success(function(s) {
+                    that.LOG.debug('success setImportance', s);
+                    if(options.success) {
+                        options.success(result);
+                    }
+                }).fail(function(f) {
+                    that.LOG.debug('fail setImportance', f);
+                    if(options.error) {
+                        options.error(result);
+                    }
+                });
+            }
+        );
     };
 
     return m;

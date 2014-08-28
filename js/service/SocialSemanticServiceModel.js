@@ -221,6 +221,17 @@ define(['underscore', 'logger'], function(_, Logger) {
         learnEpVersionCreate : {
             resultKey : 'learnEpVersion'
         },
+        tagAdd : {
+            resultKey : 'tag'
+        },
+        flagsSet : {
+            resultKey : 'worked',
+            params : {
+                entities : { type : 'array' },
+                types : { type : 'array' }
+            },
+            preparation: preparations['scrubParams']
+        }
     };
     return m;
 });
