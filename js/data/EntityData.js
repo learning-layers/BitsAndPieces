@@ -69,15 +69,23 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
 
         var deleted = _.difference(previous, set);
         this.LOG.debug('deleted', deleted);
-        _.each(deleted, function(tag){
-            that.vie.remove({
-                'entity' : model,
-                'tag' : tag
-            }).from('sss').execute().success(function(s){
-                that.loadRecommTagsBasedOnUserEntityTagTime(model);
-                that.LOG.debug('success removeTag', s);
-            });
-        });
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                _.each(deleted, function(tag){
+                    that.vie.remove({
+                        'service' : 'tagsRemove',
+                        'data' : {
+                            'entity' : modelUri,
+                            'label' : tag
+                        }
+                    }).from('sss').execute().success(function(s){
+                        that.loadRecommTagsBasedOnUserEntityTagTime(model);
+                        that.LOG.debug('success removeTag', s);
+                    });
+                });
+            }
+        );
     };
     m.setLabel = function(model, label, options) {
         var that = this;

@@ -294,39 +294,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             }catch(e) {
                 this.LOG.error(e);
             }
-            var sss = this;
-
-            if ( entity.isof(Voc.ENTITY) || entity.isof(Voc.FILE)
-                    || entity.isof(Voc.EVERNOTE_RESOURCE) || entity.isof(Voc.EVERNOTE_NOTE)
-                    || entity.isof(Voc.EVERNOTE_NOTEBOOK) ) {
-                if( removable.options.tag ) {
-                    this.vie.onUrisReady(
-                        entity.getSubject(),
-                        function(entityUri) {
-                            sss.resolve('tagsRemove', 
-                                function(object) {
-                                    sss.LOG.debug('result removeTag', object);
-                                    removable.resolve(object);
-                                },
-                                function(object) {
-                                    sss.LOG.warn('failed removeTag', object);
-                                    removable.reject(object);
-                                },
-                                {
-                                    'entity' : entityUri,
-                                    'label' : removable.options.tag
-                                }
-                            );
-                        }
-                    );
-                }
-            } else {
-                this.LOG.warn("SocialSemanticService remove for " + type.id + " not implemented");
-            }
-
-        },
-
-
+        }
     };
 
     return VIE.prototype.SocialSemanticService;

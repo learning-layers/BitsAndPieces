@@ -263,7 +263,7 @@ define(['underscore', 'logger'], function(_, Logger) {
         learnEpVersionRemoveEntity : {
             resultKey : 'worked'
         },
-        tagRemove : {
+        tagsRemove : {
             resultKey : 'worked'
         }
 
