@@ -256,7 +256,17 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         uECountGet : {
             resultKey : 'count'
+        },
+        learnEpVersionRemoveCircle : {
+            resultKey : 'worked'
+        },
+        learnEpVersionRemoveEntity : {
+            resultKey : 'worked'
+        },
+        tagRemove : {
+            resultKey : 'worked'
         }
+
     };
     return m;
 });

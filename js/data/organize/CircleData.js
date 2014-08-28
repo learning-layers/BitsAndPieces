@@ -24,6 +24,8 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             m.createCircle(model, options);
         } else if( method === 'update' ) {
             m.updateCircle(model, options);
+        } else if( method === 'delete' ) {
+            m.removeCircle(model, options);
         } else {
             this.vie.Entity.prototype.sync(method, model, options);
         }
@@ -76,6 +78,25 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             }
         );
     };
+    m.removeCircle = function(model, options) {
+        options = options || {};
+        var that = this;
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.remove({
+                    'service' : 'learnEpVersionRemoveCircle',
+                    'data' : {
+                        'learnEpCircle' : modelUri
+                    }
+                }).using('sss').execute().success(function(result) {
+                    if(options.success) {
+                        options.success(result);
+                    }
+                });
+            }
+        );
+    }
     return m;
 
 });

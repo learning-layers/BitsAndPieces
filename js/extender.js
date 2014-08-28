@@ -11,15 +11,7 @@ define(['logger', 'underscore', 'voc'], function(Logger, _, Voc){
                 var that = this;
                 switch(method) {
                     case 'create':
-                        this.vie.save({
-                            'entity': model
-                        }).to('sss').execute().success(function(savedEntity){
-                            AppLog.debug("entity created");
-                            AppLog.debug("savedEntity", savedEntity);
-                            model.set('@subject', savedEntity['uri'], {'silent':false});
-                            if(options.success) 
-                                options.success(model);
-                        });
+                        // ???
                         break;
                     case 'read':
                         this.vie.onUrisReady(
@@ -64,13 +56,7 @@ define(['logger', 'underscore', 'voc'], function(Logger, _, Voc){
                         );
                         break;
                     case 'delete':
-                        this.vie.remove({
-                            'entity': model
-                        }).from('sss').execute().success(function(savedEntity){
-                            AppLog.debug("entity removed");
-                            if(options.success) 
-                                options.success(savedEntity);
-                        });
+                        // ???
                         break;
                 }
             };

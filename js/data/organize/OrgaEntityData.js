@@ -25,6 +25,8 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             m.createEntity(model, options);
         } else if( method === 'update' ) {
             m.updateEntity(model, options);
+        } else if( method === 'delete' ) {
+            m.removeEntity(model, options);
         } else {
             this.vie.Entity.prototype.sync(method, model, options);
         }
@@ -75,6 +77,25 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                         entity : resourceUri
                     }),
                 }).to('sss').execute().success(function(result) {
+                    if(options.success) {
+                        options.success(result);
+                    }
+                });
+            }
+        );
+    };
+    m.removeEntity = function(model, options) {
+        options = options || {};
+        var that = this;
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.remove({
+                    'service' : 'learnEpVersionRemoveEntity',
+                    'data' : {
+                        'learnEpEntity' : modelUri
+                    }
+                }).using('sss').execute().success(function(result) {
                     if(options.success) {
                         options.success(result);
                     }

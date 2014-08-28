@@ -284,55 +284,19 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             if (!correct) {
                 throw "Invalid Removable passed";
             }
-            if ( !removable.options.entity ) 
-                throw "Unable to write to server, no entity given";
 
-            this.LOG.debug("SocialSemanticService save");
+            this.LOG.debug("SocialSemanticService remove");
             this.LOG.debug("removable.options", removable.options);
 
-            var entity = removable.options.entity;
-
-            this.LOG.debug("entity", entity, " is of ", entity.get("@type"));
-
+            try{
+                this.invoke(removable);
+                return;
+            }catch(e) {
+                this.LOG.error(e);
+            }
             var sss = this;
 
-            if( entity.isof(Voc.CIRCLE )) {
-                this.vie.onUrisReady(
-                    entity.getSubject(),
-                    function(uriUri){
-                        sss.resolve('learnEpVersionRemoveCircle', 
-                            function(object) {
-                                sss.LOG.debug("handle result of LearnEpVersionRemoveCircle");
-                                sss.LOG.debug("object", object);
-                                removable.resolve(object);
-                            },
-                            function(object) {
-                                sss.LOG.warn("error:");
-                                sss.LOG.warn("object", object);
-                                removable.reject(entity);
-                            },
-                            {'learnEpCircle' : uriUri}
-                        );
-                });
-            } else if( entity.isof(Voc.ORGAENTITY )) {
-                this.vie.onUrisReady(
-                    entity.getSubject(),
-                    function(uriUri){
-                        sss.resolve('learnEpVersionRemoveEntity', 
-                            function(object) {
-                                sss.LOG.debug("handle result of LearnEpVersionRemoveEntity");
-                                sss.LOG.debug("object", object);
-                                removable.resolve(object);
-                            },
-                            function(object) {
-                                sss.LOG.warn("error:");
-                                sss.LOG.warn("object", object);
-                                removable.reject(entity);
-                            },
-                            {'learnEpEntity' : uriUri}
-                        );
-                });
-            } else if ( entity.isof(Voc.ENTITY) || entity.isof(Voc.FILE)
+            if ( entity.isof(Voc.ENTITY) || entity.isof(Voc.FILE)
                     || entity.isof(Voc.EVERNOTE_RESOURCE) || entity.isof(Voc.EVERNOTE_NOTE)
                     || entity.isof(Voc.EVERNOTE_NOTEBOOK) ) {
                 if( removable.options.tag ) {
