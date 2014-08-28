@@ -32,6 +32,7 @@ define(['underscore', 'logger'], function(_, Logger) {
             }
             delete object['flags'];
         }
+        return true;
     };
     /**
      * Workaround for VIE's non-standard json-ld values and parsing behaviour.
@@ -55,6 +56,7 @@ define(['underscore', 'logger'], function(_, Logger) {
             object['sss:'+prop] = object[prop];
             delete object[prop];
         }
+        return true;
     };
 
     var scrubParams = function(params, scrub) {
@@ -76,6 +78,7 @@ define(['underscore', 'logger'], function(_, Logger) {
                     break;
             }
         }
+        return true;
     }
 
     var decorations = {
@@ -165,7 +168,19 @@ define(['underscore', 'logger'], function(_, Logger) {
                 endTime : { type : 'number' }
             },
             preparation: preparations['scrubParams']
-        }
+        },
+        learnEpVersionAddCircle : {
+            resultKey : 'learnEpCircle'
+        },
+        learnEpVersionAddEntity : {
+            resultKey : 'learnEpEntity'
+        },
+        learnEpVersionUpdateCircle : {
+            resultKey : 'worked'
+        },
+        learnEpVersionUpdateEntity : {
+            resultKey : 'worked'
+        },
     };
     return m;
 });

@@ -194,10 +194,14 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     });
                 }
                 if( service['decoration']) {
-                    _.each(service['decoration'], function(decorator) {
+                    var i = 0, decorator;
+                    for ( ; i < service['decoration'].length; i++) {
+                        decorator = service['decoration'][i];
                         // invoke decorator with loadable as context on result and result meta data
-                        decorator.call(able, item, service['@id'], service['@type'] );
-                    });
+                        if( !decorator.call(able, item, service['@id'], service['@type'] ) ) {
+                            return;
+                        }
+                    }
                 }
             });
         },
@@ -362,21 +366,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
 
             var sss = this;
 
-            if( entity.isof(Voc.ORGANIZE )) {
-                this.LOG.debug("saving organize", entity);
-                var obj = _.clone(entity.attributes);
-                obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget')
-                                         : obj.uri;
-                this.vie.onUrisReady(
-                    obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
-                    function() {
-                        sss.buffer[obj.uri] = obj;
-                        if( entity.isNew() )
-                            savable.resolve({'uri':obj.uri}); // organize was created
-                        else
-                            savable.resolve(true); // organize was updated
-                });
-            } else if( entity.isof(Voc.EPISODE )) {
+            if( entity.isof(Voc.EPISODE )) {
                 this.LOG.debug("saving episode");
                 if( entity.isNew() ) {
                     sss.resolve('learnEpCreate', 
@@ -444,160 +434,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                                 {'learnEp':episodeUri}
                             );
                 });
-            } else if( entity.isof(Voc.CIRCLE )) {
-                this.LOG.debug("saving circle");
-                var organize = entity.get(Voc.belongsToOrganize);
-                if( organize.isEntity ) organize = organize.getSubject();
-
-                this.vie.onUrisReady(
-                    organize,
-                    function(organizeUri) {
-                        // map internal organize model to its version
-                        if( !sss.buffer[organizeUri]) {
-                            sss.LOG.warn("circle can't be saved because no organize exists");
-                            savable.reject(entity);
-                            return;
-                        }
-
-                        var version = sss.buffer[organizeUri]['belongsToVersion'];
-                        // Newly created episode case
-                        // Namespace URI is used instead
-                        if (version === undefined) {
-                            version = sss.buffer[organizeUri][sss.vie.namespaces.uri(Voc.belongsToVersion)];
-                        }
-                        // end map
-
-                        if( entity.isNew() )
-                            sss.vie.onUrisReady(
-                                version,
-                                function(versionUri) {
-                                    sss.resolve('learnEpVersionAddCircle', 
-                                        function(object) {
-                                            sss.LOG.debug("handle result of LearnEpVersionAddCircle");
-                                            sss.LOG.debug("object", object);
-                                            savable.resolve({'uri': object['learnEpCircle']});
-                                        },
-                                        function(object) {
-                                            sss.LOG.warn("error:");
-                                            sss.LOG.warn("object", object);
-                                            savable.reject(entity);
-                                        },
-                                        {
-                                            'learnEpVersion' : versionUri,
-                                            'label' : entity.get(Voc.label),
-                                            'xLabel' : entity.get(Voc.xLabel),
-                                            'yLabel' : entity.get(Voc.yLabel),
-                                            'xR' : entity.get(Voc.xR),
-                                            'yR' : entity.get(Voc.yR),
-                                            'xC' : entity.get(Voc.xC),
-                                            'yC' : entity.get(Voc.yC)
-                                        }
-                                    );
-                            });
-                        else
-                            sss.vie.onUrisReady(
-                                entity.getSubject(),
-                                function(uriUri ) {
-                                    sss.resolve('learnEpVersionUpdateCircle', 
-                                        function(object) {
-                                            sss.LOG.debug("handle result of LearnEpVersionUpdateCircle");
-                                            sss.LOG.debug("object", object);
-                                            savable.resolve(object);
-                                        },
-                                        function(object) {
-                                            sss.LOG.warn("error:");
-                                            sss.LOG.warn("object", object);
-                                            savable.reject(entity);
-                                        },
-                                        {
-                                            'learnEpCircle' : uriUri,
-                                            'label' : entity.get(Voc.Label),
-                                            'xLabel' : entity.get(Voc.LabelX),
-                                            'yLabel' : entity.get(Voc.LabelY),
-                                            'xR' : entity.get(Voc.rx),
-                                            'yR' : entity.get(Voc.ry),
-                                            'xC' : entity.get(Voc.cx),
-                                            'yC' : entity.get(Voc.cy)
-                                        }
-                                    );
-                            });
-                });
-
-            } else if( entity.isof(Voc.ORGAENTITY )) {
-                this.LOG.debug("saving orgaentity");
-                var organize = entity.get(Voc.belongsToOrganize);
-                if( organize.isEntity ) organize = organize.getSubject();
-
-                this.vie.onUrisReady(
-                    organize,
-                    function(organizeUri) {
-                        // map internal organize model to its version
-                        if( !sss.buffer[organizeUri]) {
-                            sss.LOG.warn("orgaentity can't be saved because no organize exists");
-                            savable.reject(entity);
-                            return;
-                        }
-                        var version = sss.buffer[organizeUri]['belongsToVersion'];
-                        // This deals with case of newly added version
-                        // For some reason NAMESPACE URI is used instead of PARAMETER
-                        if (version === undefined) {
-                            version = sss.buffer[organizeUri][sss.vie.namespaces.uri(Voc.belongsToVersion)];
-                        }
-                        // end map
-                        //
-                        var resourceUri = entity.get(Voc.hasResource);
-                        if( resourceUri.isEntity ) resourceUri = resourceUri.getSubject();
-
-                        if(entity.isNew() )
-                            sss.vie.onUrisReady(
-                                version,
-                                resourceUri,
-                                function(versionUri, resourceUri){
-                                    sss.resolve('learnEpVersionAddEntity', 
-                                        function(object) {
-                                            sss.LOG.debug("handle result of LearnEpVersionAddEntity");
-                                            sss.LOG.debug("object", object);
-                                            savable.resolve({'uri': object['learnEpEntity']});
-                                        },
-                                        function(object) {
-                                            sss.LOG.warn("error:");
-                                            sss.LOG.warn("object", object);
-                                            savable.reject(entity);
-                                        },
-                                        {
-                                            'learnEpVersion' : versionUri,
-                                            'entity' : resourceUri,
-                                            'x' : entity.get(Voc.x),
-                                            'y' : entity.get(Voc.y)
-                                        }
-                                    );
-                            });
-                        else
-                            sss.vie.onUrisReady(
-                                entity.getSubject(),
-                                resourceUri,
-                                function(uriUri,resourceUri){
-                                    sss.resolve('learnEpVersionUpdateEntity', 
-                                        function(object) {
-                                            sss.LOG.debug("handle result of LearnEpVersionUpdateEntity");
-                                            sss.LOG.debug("object", object);
-                                            savable.resolve(object);
-                                        },
-                                        function(object) {
-                                            sss.LOG.warn("error:");
-                                            sss.LOG.warn("object", object);
-                                            savable.reject(entity);
-                                        },
-                                        {
-                                            'learnEpEntity' : uriUri,
-                                            'entity' : resourceUri,
-                                            'x' : entity.get(Voc.x),
-                                            'y' : entity.get(Voc.y)
-                                        }
-                                    );
-                            });
-                });
-
             } else if ( entity.isof(Voc.USER )) {
                 var versionUri = entity.get(Voc.currentVersion);
                 if( versionUri.isEntity ) versionUri = versionUri.getSubject();

@@ -13,7 +13,62 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
     m.filter= function(model, collection, options) {
         if(model.isof(Voc.CIRCLE)){
             this.checkIntegrity(model, options);
+            model.sync = this.sync;
         }
+    };
+    m.sync= function(method, model, options) {
+        m.LOG.debug("sync entity " + model.getSubject() + " by " + method);
+        if( !options ) options = {};
+
+        if( method === 'create' ) {
+            m.createCircle(model, options);
+        } else if( method === 'update' ) {
+            m.updateCircle(model, options);
+        }
+        if(options.success) {
+            options.success(model);
+        }
+    };
+    m.mapAttributes = function(model) {
+        return  {
+            'label' : model.get(Voc.label),
+            'xLabel' : model.get(Voc.xLabel),
+            'yLabel' : model.get(Voc.yLabel),
+            'xR' : model.get(Voc.xR),
+            'yR' : model.get(Voc.yR),
+            'xC' : model.get(Voc.xC),
+            'yC' : model.get(Voc.yC)
+        };
+    };
+    m.createCircle = function(model, options) {
+        var version = model.get(Voc.belongsToVersion);
+        var that = this;
+        var data = this.mapAttributes(model);
+        this.vie.onUrisReady(
+            version.getSubject(),
+            function(versionUri) {
+                that.vie.save({
+                    'service' : 'learnEpVersionAddCircle',
+                    'data' : _.extend( data, {learnEpVersion : versionUri}),
+                }).to('sss').execute().success(function(savedEntityUri) {
+                    model.set(model.idAttribute, savedEntityUri, options);
+                });
+            }
+        );
+    };
+    m.updateCircle = function(model, options) {
+        var version = model.get(Voc.belongsToVersion);
+        var that = this;
+        var data = this.mapAttributes(model);
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.save({
+                    'service' : 'learnEpVersionUpdateCircle',
+                    'data' : _.extend( data, {learnEpCircle : modelUri}),
+                }).to('sss').execute();
+            }
+        );
     };
     return m;
 

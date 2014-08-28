@@ -22,15 +22,10 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
         item.set({
             '@type': type,
         }, options);
-        item.set(Voc.belongsToOrganize, organize.getSubject(), options);
+        var version = organize.get(Voc.belongsToVersion);
+        item.set(Voc.belongsToVersion, version.getSubject(), options);
 
         this.vie.entities.addOrUpdate(item, {'addOptions' : options});
-        //var items = Backbone.Data.prototype.get.call(
-            //organize, this.vie.namespaces.uri(relation)) || [];
-        //if(!_.isArray(items)) items = [items];
-        //else items = _.clone(items);
-        //items.push(item.getSubject());
-        //organize.set(relation, items, options);
         item.save();
         return item;
     };
