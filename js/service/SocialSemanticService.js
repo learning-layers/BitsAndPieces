@@ -99,7 +99,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 this.pendingCalls[serviceCall] = {};
             }
             var p = {
-                'params' : params, 
+                'params' : _.clone(params), 
                 'resultHandlers' : [resultHandler],
                 'errorHandlers' : [errorHandler]
             };
