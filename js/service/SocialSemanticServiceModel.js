@@ -253,6 +253,9 @@ define(['underscore', 'logger'], function(_, Logger) {
                 maxTags : { default : 20 }
             },
             preparation: preparations['scrubParams']
+        },
+        uECountGet : {
+            resultKey : 'count'
         }
     };
     return m;

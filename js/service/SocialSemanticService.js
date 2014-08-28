@@ -240,51 +240,20 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 throw new Error("Invalid Analyzable passed");
             }
 
+            this.LOG.debug("SocialSemanticService analyze");
+            this.LOG.debug("analyzable",analyzable.options);
             try{
-                this.invoke(savable);
-                return;
+                this.invoke(analyzable);
             }catch(e) {
                 this.LOG.error(e);
             }
-            var sss = this;
-            if ( analyzable.options.service == "ueCountGet" ) {
-                var params = {};
-                if( analyzable.options.forUser ) {
-                    params['forUser'] = analyzable.options.forUser;
-                }
-                if( analyzable.options.entity ) {
-                    params['entity'] = analyzable.options.entity;
-                }
-                if( analyzable.options.startTime ) {
-                    params['startTime'] = analyzable.options.startTime;
-                }
-                if( analyzable.options.endTime ) {
-                    params['endTime'] = analyzable.options.endTime;
-                }
-                if( analyzable.options.type ) {
-                    params['type'] = analyzable.options.type;
-                }
-                sss.resolve('uECountGet', 
-                    function(object) {
-                        sss.LOG.debug("ueCountGet success", object);
-                        analyzable.resolve(object.count || 0);
-                    },
-                    function(object) {
-                        sss.LOG.debug("ueCountGet failed", object);
-                        analyzable.reject(object);
-                    },
-                    params
-                );
-            }
-
         },
         load: function(loadable) {
             var correct = loadable instanceof this.vie.Loadable || loadable instanceof this.vie.Analyzable;
             if (!correct) {
                 throw new Error("Invalid Loadable passed");
             }
-            //if( !loadable.options.connector )
-                //throw new Error("No connector given");
+
             this.LOG.debug("SocialSemanticService load");
             this.LOG.debug("loadable",loadable.options);
             try{
@@ -305,7 +274,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
 
             try{
                 this.invoke(savable);
-                return;
             }catch(e) {
                 this.LOG.error(e);
             }

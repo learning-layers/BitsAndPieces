@@ -145,14 +145,21 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
     };
     m.loadViewCount = function(model) {
         var that = this;
-        this.vie.analyze({
-            'service' : 'ueCountGet',
-            'entity' : model.attributes['@subject'],
-            'type' : 'viewEntity'
-        }).using('sss').execute().success(function(count){
-            that.LOG.debug('count', count);
-            model.set(Voc.hasViewCount, count);
-        });
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.analyze({
+                    'service' : 'uECountGet',
+                    'data' : {
+                        'entity' : modelUri,
+                        'type' : 'viewEntity'
+                    }
+                }).using('sss').execute().success(function(count){
+                    that.LOG.debug('count', count);
+                    model.set(Voc.hasViewCount, count || 0 );
+                });
+            }
+        );
     };
     m.setImportance = function(model, importance, options) {
         var that = this;
