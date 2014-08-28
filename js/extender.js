@@ -1,4 +1,4 @@
-define(['logger', 'underscore'], function(Logger, _){
+define(['logger', 'underscore', 'voc'], function(Logger, _, Voc){
     AppLog = Logger.get('App');
     AddLog = Logger.get('Add');
     return {
@@ -24,11 +24,11 @@ define(['logger', 'underscore'], function(Logger, _){
                     case 'read':
                         this.vie.onUrisReady(
                             model.getSubject(),
-                            function(entityUri) {
+                            function(modelUri) {
                                 that.vie.load({
                                     'service' : 'entityGet',
                                     'data' : _.extend(options.data || {}, {
-                                        'entity' : entityUri
+                                        'entity' : modelUri
                                     })
                                 }).from('sss').execute().success(function(readEntity){
                                     AppLog.debug("entity was read");
@@ -42,13 +42,26 @@ define(['logger', 'underscore'], function(Logger, _){
 
                         break;
                     case 'update':
-                        this.vie.save({
-                            'entity': model
-                        }).to('sss').execute().success(function(savedEntity){
-                            AppLog.debug("entity updated");
-                            if(options.success) 
-                                options.success(savedEntity);
-                        });
+                        this.vie.onUrisReady(
+                            model.getSubject(),
+                            function(modelUri) {
+                                that.vie.save({
+                                    'service': 'entityUpdate',
+                                    'data' : _.extend(options.data || {}, {
+                                        'entity' : modelUri,
+                                        'label' : model.get(Voc.label),
+                                        'description' : model.get(Voc.description)
+                                    })
+                                }).to('sss').execute().success(function(result){
+                                    AppLog.debug("entity updated");
+                                    if(options.success) 
+                                        options.success(result);
+                                }).fail(function(result) {
+                                    if(options.error)
+                                        options.error(result);
+                                });
+                            }
+                        );
                         break;
                     case 'delete':
                         this.vie.remove({

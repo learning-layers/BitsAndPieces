@@ -24,9 +24,8 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             m.createCircle(model, options);
         } else if( method === 'update' ) {
             m.updateCircle(model, options);
-        }
-        if(options.success) {
-            options.success(model);
+        } else {
+            this.vie.Entity.prototype.sync(method, model, options);
         }
     };
     m.mapAttributes = function(model) {
@@ -52,6 +51,9 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                     'data' : _.extend( data, {learnEpVersion : versionUri}),
                 }).to('sss').execute().success(function(savedEntityUri) {
                     model.set(model.idAttribute, savedEntityUri, options);
+                    if(options.success) {
+                        options.success(savedEntityUri);
+                    }
                 });
             }
         );
@@ -66,7 +68,11 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                 that.vie.save({
                     'service' : 'learnEpVersionUpdateCircle',
                     'data' : _.extend( data, {learnEpCircle : modelUri}),
-                }).to('sss').execute();
+                }).to('sss').execute().success(function(result) {
+                    if(options.success) {
+                        options.success(result);
+                    }
+                });
             }
         );
     };

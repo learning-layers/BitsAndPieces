@@ -215,7 +215,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             this.LOG.debug("service", service);
             if( service['preparation'] ) {
                 _.each(service['preparation'], function(preparator) {
-                    preparator.call(able, params, service['params']);
+                    preparator.call(sss, params, service);
                 });
             }
             this.LOG.debug('params', params);
@@ -609,75 +609,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             }
 
         },
-        fixEntityDesc: function(object) {
-            // Extract importance from flags
-            // Remove flags from object
-            if ( _.isArray(object['flags']) ) {
-                if ( !_.isEmpty(object['flags']) ) {
-                    var importance;
-                        creationTime = 1;
-                    _.each(object['flags'], function(flag) {
-                        // In case multiple are provided
-                        if ( flag.type === 'importance'  && flag.creationTime > creationTime) {
-                            importance = flag.value;
-                            creationTime = flag.creationTime;
-                        }
-                    });
-                    if ( importance ) {
-                        object['importance'] = importance;
-                    }
-                }
-                delete object['flags'];
-            }
-
-        },
-        /**
-         * Workaround for VIE's non-standard json-ld values and parsing behaviour.
-         * @param {type} object
-         * @return {undefined}
-         */
-        fixForVIE: function(object, idAttr, typeAttr) {
-            var entity = _.clone(object);
-            if( !idAttr) idAttr = 'id';
-            if( !typeAttr) typeAttr = 'type';
-            entity[VIE.prototype.Entity.prototype.idAttribute] = object[idAttr];
-            if (object[typeAttr]) {
-                entity['@type'] = object[typeAttr].indexOf('sss:') === 0 ? object[typeAttr] : "sss:"+object[typeAttr];
-                delete entity[typeAttr];
-            }
-            delete entity[idAttr];
-
-            for( var prop in entity ) {
-                if( prop.indexOf('@') === 0 ) continue;
-                if( prop.indexOf('sss:') === 0 ) continue;
-                if( prop.indexOf('http:') === 0 ) continue;
-                entity['sss:'+prop] = entity[prop];
-                delete entity[prop];
-            }
-
-            return entity;
-        },
-
-        /**
-         * Workaround for VIE's non-standard json-ld values and parsing behaviour.
-         * @param {type} object
-         * @return {undefined}
-         */
-        fixFromVIE: function(entity) {
-            var object = _.clone(entity.attributes);
-            this.LOG.debug('fixFromVIE', JSON.stringify(object));
-            for( var prop in object ) {
-                var curie = this.vie.namespaces.curie(prop);
-                if( curie.indexOf('sss:') === 0 ) curie = curie.substring(4);
-                object[curie] = object[prop];
-                delete object[prop];
-            }
-            object['type'] = entity.get('@type').id;
-            object['id'] = entity.getSubject();
-            delete object['@type'];
-            delete object[VIE.prototype.Entity.prototype.idAttribute];
-            return object;
-        }
 
 
     };

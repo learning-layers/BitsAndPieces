@@ -25,9 +25,8 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             m.createEntity(model, options);
         } else if( method === 'update' ) {
             m.updateEntity(model, options);
-        }
-        if(options.success) {
-            options.success(model);
+        } else {
+            this.vie.Entity.prototype.sync(method, model, options);
         }
     };
     m.mapAttributes = function(model) {
@@ -53,6 +52,9 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                     }),
                 }).to('sss').execute().success(function(savedEntityUri) {
                     model.set(model.idAttribute, savedEntityUri, options);
+                    if(options.success) {
+                        options.success(savedEntityUri);
+                    }
                 });
             }
         );
@@ -72,7 +74,11 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                         learnEpEntity : modelUri,
                         entity : resourceUri
                     }),
-                }).to('sss').execute();
+                }).to('sss').execute().success(function(result) {
+                    if(options.success) {
+                        options.success(result);
+                    }
+                });
             }
         );
     };

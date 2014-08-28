@@ -59,7 +59,34 @@ define(['underscore', 'logger'], function(_, Logger) {
         return true;
     };
 
-    var scrubParams = function(params, scrub) {
+    /**
+     * Workaround for VIE's non-standard json-ld values and parsing behaviour.
+     * To be called in the context of the service.
+     * @param {type} object
+     * @return {undefined}
+     */
+    var fixFromVIE= function(object, service) {
+        var idAttr = service['@id'],
+            typeAttr = service['@type'];
+        
+        if( !idAttr) idAttr = 'id';
+        if( !typeAttr) typeAttr = 'type';
+        this.LOG.debug('fixFromVIE', JSON.stringify(object));
+        for( var prop in object ) {
+            if( prop.indexOf('@') === 0 ) continue;
+            var curie = this.vie.namespaces.curie(prop);
+            if( curie.indexOf('sss:') === 0 ) curie = curie.substring(4);
+            object[curie] = object[prop];
+            delete object[prop];
+        }
+        object[typeAttr] = object['@type'];
+        object[idAttr] = object[VIE.prototype.Entity.prototype.idAttribute];
+        delete object['@type'];
+        delete object[VIE.prototype.Entity.prototype.idAttribute];
+    };
+
+    var scrubParams = function(params, service) {
+        var scrub = service['params'];
         for( var key in scrub ) {
             LOG.debug('key', key, scrub[key]['default']);
             if( !params[key] ) {
@@ -88,13 +115,17 @@ define(['underscore', 'logger'], function(_, Logger) {
     };
 
     var preparations = {
-        'scrubParams' : [scrubParams]
+        'scrubParams' : [scrubParams],
+        'fixFromVIE' : [fixFromVIE]
     };
 
     var m = {
         'entityGet' : {
             'resultKey' : 'entity',
             'decoration' : decorations['single_entity']
+        },
+        entityUpdate : {
+            resultKey : 'entity'
         },
         'entityDescGet' : {
             'resultKey' : 'desc',
@@ -131,55 +162,6 @@ define(['underscore', 'logger'], function(_, Logger) {
             },
             'preparation' : preparations['scrubParams'],
             'decoration' : decorations['single_desc_entity']
-        },
-        learnEpVersionCurrentGet : {
-            resultKey : 'learnEpVersion',
-        },
-        learnEpsGet : {
-            resultKey : 'learnEps',
-            decoration: decorations['single_entity']
-        },
-        learnEpVersionsGet : {
-            resultKey : 'learnEpVersions',
-            decoration: decorations['single_entity'],
-            subResults : [
-                {
-                    resultKey : 'circles',
-                    decoration: decorations['single_entity']
-                },
-                {
-                    resultKey: 'entities',
-                    decoration: decorations['single_entity']
-                }
-            ]
-        },
-        learnEpVersionGetTimelineState : {
-            resultKey : 'learnEpTimelineState',
-            decoration: decorations['single_entity']
-        },
-        uEsGet: {
-            resultKey: 'uEs',
-            decoration: decorations['fixForVIE_only']
-        },
-        learnEpVersionSetTimelineState : {
-            resultKey: 'learnEpTimelineState', 
-            params : {
-                startTime : { type : 'number' },
-                endTime : { type : 'number' }
-            },
-            preparation: preparations['scrubParams']
-        },
-        learnEpVersionAddCircle : {
-            resultKey : 'learnEpCircle'
-        },
-        learnEpVersionAddEntity : {
-            resultKey : 'learnEpEntity'
-        },
-        learnEpVersionUpdateCircle : {
-            resultKey : 'worked'
-        },
-        learnEpVersionUpdateEntity : {
-            resultKey : 'worked'
         },
     };
     return m;
