@@ -66,8 +66,14 @@ define(['underscore', 'logger'], function(_, Logger) {
                 }
                 continue;
             }
-            if( scrub[key]['type'] === 'array' ) {
-                params[key] = params[key].join(',');
+            switch( scrub[key]['type'] ) {
+                case 'array':
+                    params[key] = params[key].join(',');
+                    break;
+                case 'number':
+                    // force cast to number
+                    params[key] = params[key] - 0;
+                    break;
             }
         }
     }
@@ -151,6 +157,14 @@ define(['underscore', 'logger'], function(_, Logger) {
         uEsGet: {
             resultKey: 'uEs',
             decoration: decorations['fixForVIE_only']
+        },
+        learnEpVersionSetTimelineState : {
+            resultKey: 'learnEpTimelineState', 
+            params : {
+                startTime : { type : 'number' },
+                endTime : { type : 'number' }
+            },
+            preparation: preparations['scrubParams']
         }
     };
     return m;

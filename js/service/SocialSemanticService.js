@@ -207,31 +207,27 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
 
             var serviceName = able.options.service;
             var sss = this;
-            try {
-                var service = this.getService(serviceName);
-                this.LOG.debug("service", service);
-                if( service['preparation'] ) {
-                    _.each(service['preparation'], function(preparator) {
-                        preparator.call(able, params, service['params']);
-                    });
-                }
-                this.LOG.debug('params', params);
-                this.resolve(serviceName,
-                    function(result) {
-                        sss.LOG.debug('result', result);
-                        // TODO change to call in context of service, not able
-                        sss.decorateResult(able, result, service);
-                        able.resolve(result[service['resultKey']]);
-                    },
-                    function(result) {
-                        able.reject(able.options);
-                        sss.LOG.error('error:', result);
-                    },
-                    params
-                );
-            } catch(e) {
-                this.LOG.error(e);
+            var service = this.getService(serviceName);
+            this.LOG.debug("service", service);
+            if( service['preparation'] ) {
+                _.each(service['preparation'], function(preparator) {
+                    preparator.call(able, params, service['params']);
+                });
             }
+            this.LOG.debug('params', params);
+            this.resolve(serviceName,
+                function(result) {
+                    sss.LOG.debug('result', result);
+                    // TODO change to call in context of service, not able
+                    sss.decorateResult(able, result, service);
+                    able.resolve(result[service['resultKey']]);
+                },
+                function(result) {
+                    able.reject(able.options);
+                    sss.LOG.error('error:', result);
+                },
+                params
+            );
         },
 
         analyze: function(analyzable) {
@@ -337,7 +333,11 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 //throw new Error("No connector given");
             this.LOG.debug("SocialSemanticService load");
             this.LOG.debug("loadable",loadable.options);
-            this.invoke(loadable);
+            try{
+                this.invoke(loadable);
+            } catch(e) {
+                this.LOG.error(e);
+            }
         },
 
         save: function(savable) {
@@ -346,11 +346,15 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 throw "Invalid Savable passed";
             }
 
-            if ( !savable.options.entity ) 
-                throw "Unable to write to server, no entity given";
-
             this.LOG.debug("SocialSemanticService save");
             this.LOG.debug("savable.options", savable.options);
+
+            try{
+                this.invoke(savable);
+                return;
+            }catch(e) {
+                this.LOG.error(e);
+            }
 
             var entity = savable.options.entity;
 
@@ -358,37 +362,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
 
             var sss = this;
 
-            if( entity.isof(Voc.TIMELINE) ) {
-                this.LOG.debug("saving timeline");
-                var obj = _.clone(entity.attributes);
-                obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('TimelineWidget')
-                                         : obj.uri;
-                this.buffer[obj.uri] = obj;
-                var start = obj[this.vie.namespaces.uri(Voc.start)];
-                var end = obj[this.vie.namespaces.uri(Voc.end)];
-                this.vie.onUrisReady(
-                    obj[this.vie.namespaces.uri(Voc.belongsToVersion)],
-                    function(versionUri) {
-                        sss.resolve('learnEpVersionSetTimelineState', 
-                                function(object) {
-                                    sss.LOG.debug("handle result of LearnEpVersionSetTimelinState");
-                                    sss.LOG.debug("object", object);
-                                    if( entity.isNew() )
-                                        savable.resolve({'uri':obj.uri}); //timeline was created
-                                    else 
-                                        savable.resolve(true); //timeline was updated
-                                },
-                                function(object) {
-                                    sss.LOG.warn("error:", object);
-                                },
-                                {
-                                    'learnEpVersion' : versionUri,
-                                    'startTime' : _.isDate(start) ? (start - 0) : start,
-                                    'endTime' : _.isDate(end) ? (end - 0) : end
-                                }
-                            );
-                });
-            } else if( entity.isof(Voc.ORGANIZE )) {
+            if( entity.isof(Voc.ORGANIZE )) {
                 this.LOG.debug("saving organize", entity);
                 var obj = _.clone(entity.attributes);
                 obj.uri = entity.isNew() ? this.vie.namespaces.get('sss') + _.uniqueId('OrganizeWidget')
