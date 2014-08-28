@@ -202,6 +202,38 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             });
         },
 
+        invoke: function(able) {
+            var params = able.options.data || {};
+
+            var serviceName = able.options.service;
+            var sss = this;
+            try {
+                var service = this.getService(serviceName);
+                this.LOG.debug("service", service);
+                if( service['preparation'] ) {
+                    _.each(service['preparation'], function(preparator) {
+                        preparator.call(able, params, service['params']);
+                    });
+                }
+                this.LOG.debug('params', params);
+                this.resolve(serviceName,
+                    function(result) {
+                        sss.LOG.debug('result', result);
+                        // TODO change to call in context of service, not able
+                        sss.decorateResult(able, result, service);
+                        able.resolve(result[service['resultKey']]);
+                    },
+                    function(result) {
+                        able.reject(able.options);
+                        sss.LOG.error('error:', result);
+                    },
+                    params
+                );
+            } catch(e) {
+                this.LOG.error(e);
+            }
+        },
+
         analyze: function(analyzable) {
             var correct = analyzable instanceof this.vie.Analyzable 
             if (!correct) {
@@ -305,36 +337,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 //throw new Error("No connector given");
             this.LOG.debug("SocialSemanticService load");
             this.LOG.debug("loadable",loadable.options);
-
-            var params = loadable.options.data || {};
-
-            var serviceName = loadable.options.service;
-            var sss = this;
-            try {
-                var service = this.getService(serviceName);
-                this.LOG.debug("service", service);
-                if( service['preparation'] ) {
-                    _.each(service['preparation'], function(preparator) {
-                        preparator.call(loadable, params, service['params']);
-                    });
-                }
-                this.LOG.debug('params', params);
-                this.resolve(serviceName,
-                    function(result) {
-                        sss.LOG.debug('result', result);
-                        // TODO change to call in context of service, not able
-                        sss.decorateResult(loadable, result, service);
-                        loadable.resolve(result[service['resultKey']]);
-                    },
-                    function(result) {
-                        loadable.reject(loadable.options);
-                        sss.LOG.error('error:', result);
-                    },
-                    params
-                );
-            } catch(e) {
-                this.LOG.error(e);
-            }
+            this.invoke(loadable);
         },
 
         save: function(savable) {
