@@ -117,27 +117,42 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
     };
     m.shareEpisode = function(model, users, comment) {
         var that = this;
-        this.vie.analyze({
-            'service' : 'entityShare',
-            'entity' : model.attributes['@subject'],
-            'users' : users,
-            'comment' : comment
-        }).using('sss').execute().success(function(){
-            that.LOG.debug('success entityShare');
-        });
+        this.vie.onUrisReady(
+            model.getSubject(),
+            // XXX assuming that users uris are ready
+            function(modelUri) {
+                that.vie.save({
+                    'service' : 'entityShare',
+                    'data' : {
+                        'entity' : modelUri,
+                        'users' : users,
+                        'comment' : comment
+                    }
+                }).using('sss').execute().success(function(){
+                    that.LOG.debug('success entityShare');
+                });
+            }
+        );
     };
     m.copyEpisode = function(model, users, exclude, comment) {
         var that = this;
-        this.vie.analyze({
-            'service' : 'entityCopy',
-            'entity' : model.attributes['@subject'],
-            'users' : users,
-            'exclude' : exclude,
-            'comment' : comment
-        }).using('sss').execute().success(function(){
-            that.LOG.debug('success entityCopy');
-        });
-
+        this.vie.onUrisReady(
+            model.getSubject(),
+            // XXX assuming that users uris are ready
+            function(modelUri) {
+                that.vie.save({
+                    'service' : 'entityCopy',
+                    'data' : {
+                        'entity' : modelUri,
+                        'users' : users,
+                        'entitiesToExclude' : exclude,
+                        'comment' : comment
+                    }
+                }).using('sss').execute().success(function(){
+                    that.LOG.debug('success entityCopy');
+                });
+            }
+        );
     };
     return m;
 });

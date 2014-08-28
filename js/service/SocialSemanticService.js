@@ -240,44 +240,7 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                 throw new Error("Invalid Analyzable passed");
             }
             var sss = this;
-            if ( analyzable.options.service == "entityShare" ) {
-                var params = {
-                    'entity' : analyzable.options.entity,
-                    'users' : analyzable.options.users.join(',')
-                };
-                if( analyzable.options.comment ) {
-                    params['comment'] = analyzable.options.comment;
-                }
-                sss.resolve('entityShare', 
-                    function(object) {
-                        sss.LOG.debug("entityShare success", object);
-                    },
-                    function(object) {
-                        sss.LOG.debug("entityShare failed", object);
-                    },
-                    params
-                );
-            } else if ( analyzable.options.service == "entityCopy" ) {
-                var params = {
-                    'entity' : analyzable.options.entity,
-                    'users' : analyzable.options.users.join(',')
-                };
-                if( analyzable.options.exclude ) {
-                    params['entitiesToExclude'] = analyzable.options.exclude.join(',');
-                }
-                if( analyzable.options.comment ) {
-                    params['comment'] = analyzable.options.comment;
-                }
-                sss.resolve('entityCopy', 
-                    function(object) {
-                        sss.LOG.debug("entityCopy success", object);
-                    },
-                    function(object) {
-                        sss.LOG.debug("entityCopy failed", object);
-                    },
-                    params
-                );
-            } else if ( analyzable.options.service == "recommTagsBasedOnUserEntityTagTime" ) {
+            if ( analyzable.options.service == "recommTagsBasedOnUserEntityTagTime" ) {
                 var params = {};
                 if( analyzable.options.forUser ) {
                     params['forUser'] = analyzable.options.forUser;

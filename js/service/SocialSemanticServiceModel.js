@@ -231,6 +231,21 @@ define(['underscore', 'logger'], function(_, Logger) {
                 types : { type : 'array' }
             },
             preparation: preparations['scrubParams']
+        },
+        entityShare : {
+            resultKey : 'worked',
+            params : {
+                users : { type : 'array' },
+            },
+            preparation: preparations['scrubParams']
+        },
+        entityCopy : {
+            resultKey : 'worked',
+            params : {
+                users : { type : 'array' },
+                entitiesToExclude : { type : 'array' },
+            },
+            preparation: preparations['scrubParams']
         }
     };
     return m;
