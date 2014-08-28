@@ -126,15 +126,22 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
     };
     m.loadRecommTagsBasedOnUserEntityTagTime = function(model) {
         var that = this;
-        this.vie.analyze({
-            'service' : 'recommTagsBasedOnUserEntityTagTime',
-            'forUser' : null,
-            'entity' : model.attributes['@subject'],
-            'maxTags' : 20
-        }).using('sss').execute().success(function(result){
-            that.LOG.debug('recommTags', result);
-            model.set(Voc.hasTagRecommendation, result);
-        });
+
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.analyze({
+                    'service' : 'recommTagsBasedOnUserEntityTagTime',
+                    'data' : {
+                        'entity' : modelUri,
+                        'maxTags' : 20
+                    }
+                }).using('sss').execute().success(function(result){
+                    that.LOG.debug('recommTags', result);
+                    model.set(Voc.hasTagRecommendation, result || []);
+                });
+            }
+        );
     };
     m.loadViewCount = function(model) {
         var that = this;

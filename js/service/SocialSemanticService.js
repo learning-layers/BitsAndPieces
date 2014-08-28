@@ -239,28 +239,15 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
             if (!correct) {
                 throw new Error("Invalid Analyzable passed");
             }
+
+            try{
+                this.invoke(savable);
+                return;
+            }catch(e) {
+                this.LOG.error(e);
+            }
             var sss = this;
-            if ( analyzable.options.service == "recommTagsBasedOnUserEntityTagTime" ) {
-                var params = {};
-                if( analyzable.options.forUser ) {
-                    params['forUser'] = analyzable.options.forUser;
-                }
-                if( analyzable.options.entity ) {
-                    params['entity'] = analyzable.options.entity; 
-                }
-                params['maxTags'] = analyzable.options.maxTags || 20;
-                sss.resolve('scaffRecommTagsBasedOnUserEntityTagTime', 
-                    function(object) {
-                        sss.LOG.debug("recommTagsBasedOnUserEntityTagTime success", object);
-                        analyzable.resolve(object.tags || []);
-                    },
-                    function(object) {
-                        sss.LOG.debug("recommTagsBasedOnUserEntityTagTime failed", object);
-                        analyzable.reject(object);
-                    },
-                    params
-                );
-            } else if ( analyzable.options.service == "ueCountGet" ) {
+            if ( analyzable.options.service == "ueCountGet" ) {
                 var params = {};
                 if( analyzable.options.forUser ) {
                     params['forUser'] = analyzable.options.forUser;

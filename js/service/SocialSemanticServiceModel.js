@@ -246,6 +246,13 @@ define(['underscore', 'logger'], function(_, Logger) {
                 entitiesToExclude : { type : 'array' },
             },
             preparation: preparations['scrubParams']
+        },
+        recommTagsBasedOnUserEntityTagTime : {
+            resultKey : 'tags',
+            params : {
+                maxTags : { default : 20 }
+            },
+            preparation: preparations['scrubParams']
         }
     };
     return m;
