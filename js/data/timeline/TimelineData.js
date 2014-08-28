@@ -33,12 +33,16 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
             case 'create':
             case 'update':
                 m.saveTimelineState(model, options);
-                if(options.success) {
-                    options.success(model);
-                }
+                break;
+            case 'read':
+                m.fetchTimelineState(model, options);
+                break;
+            default:
+                this.vie.Entity.prototype.sync(method, model, options);
         }
     },
     m.saveTimelineState= function(model,options) {
+        options = options || {};
         var version = model.get(Voc.belongsToVersion);
         var that = this;
         this.vie.onUrisReady(
@@ -53,11 +57,15 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
                     }
                 }).to('sss').execute().success(function(savedEntityUri) {
                     model.set(model.idAttribute, savedEntityUri, options);
+                    if(options.success) {
+                        options.success(model);
+                    }
                 });
             }
         );
     },
-    m.fetchTimelineState= function(model) {
+    m.fetchTimelineState= function(model, options) {
+        options = options || {};
         var version = model.get(Voc.belongsToVersion);
         var that = this;
         this.vie.onUrisReady(
@@ -70,6 +78,9 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
                     }
                 }).from('sss').execute().success(function(state) {
                     model.set(state);
+                    if(options.success) {
+                        options.success(state);
+                    }
                 });
             }
         );
