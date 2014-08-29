@@ -77,9 +77,7 @@ function(module, VIE, Logger, tracker, userParams, UserData, SocialSemanticServi
         user.set(user.idAttribute, userParams.user);
         user.set('@type', Voc.USER);
         v.entities.addOrUpdate(user);
-        user.fetch({'success' : function(model){
-            UserData.fetchCurrentVersion(model);
-        }});
+        user.fetch();
 
         var view = new AppView({
             'model' : user,

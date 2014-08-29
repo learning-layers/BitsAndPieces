@@ -19,6 +19,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
             this.checkIntegrity(user, options);
             if( !user.isNew() ) {
                 this.fetchEpisodes(user);
+                this.fetchCurrentVersion(user);
                 this.fetchRange(user);
             } 
             user.sync = this.sync;

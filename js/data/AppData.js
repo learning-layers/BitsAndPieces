@@ -61,28 +61,28 @@ function(Logger, Voc, _, userParams,
             var that = this;
             this.LOG.debug('initWidgets');
 
-            var newWidget, newWidgets = [];
-
+            this.vie.entities.addOrUpdate(this.createOrganize(version));
+            this.vie.entities.addOrUpdate(this.createTimeline(version));
+        },
+        createOrganize : function(version) {
             AppLog.debug("creating default organize widget");
-            newWidget = new this.vie.Entity;
+            var newWidget = new this.vie.Entity;
             newWidget.set('@type', Voc.ORGANIZE);
             newWidget.set(Voc.circleType, Voc.CIRCLE);
             newWidget.set(Voc.orgaEntityType, Voc.ORGAENTITY);
 
             newWidget.set(Voc.belongsToVersion, version.getSubject());
-
-            newWidgets.push(newWidget);
-
+            return newWidget;
+        },
+        createTimeline : function(version) {
             AppLog.debug("creating default timeline widget");
-            newWidget = new this.vie.Entity;
+            var newWidget = new this.vie.Entity;
             newWidget.set('@type', Voc.TIMELINE);
             newWidget.set(Voc.belongsToUser, userParams.user);
             newWidget.set(Voc.timeAttr, Voc.creationTime);
             newWidget.set(Voc.predicate, Voc.USEREVENT);
             newWidget.set(Voc.belongsToVersion, version.getSubject());
-            newWidgets.push(newWidget);
-        
-            this.vie.entities.addOrUpdate(newWidgets);
+            return newWidget;
         }
 
     };
