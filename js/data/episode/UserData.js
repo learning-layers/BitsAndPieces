@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'], function(Logger, Voc, _, Data, EpisodeData){
+define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 'view/sss/EntityView'], function(Logger, Voc, _, Data, EpisodeData, EntityView){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize UserData");
@@ -21,9 +21,54 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
                 this.fetchEpisodes(user);
                 this.fetchRange(user);
             } 
+            user.sync = this.sync;
         }
     };
+    m.sync= function(method, model, options) {
+        m.LOG.debug("sync entity " + model.getSubject() + " by " + method);
+        if( !options ) options = {};
 
+        if( method === 'update' ) {
+            var changed = model.changedAttributes();
+            m.LOG.debug('changed', changed, _.keys(changed).length );
+            var currentVersionKey = this.vie.namespaces.uri(Voc.currentVersion);
+            if( changed[currentVersionKey] ) {
+                m.saveCurrentVersion(model, options);
+            }
+            if( _.keys(changed).length > 1 ) {
+                // handle rest of changed attributes by generic sync
+                this.vie.Entity.prototype.sync(method, model, options);
+            }
+        } else {
+            this.vie.Entity.prototype.sync(method, model, options);
+        }
+    },
+    m.saveCurrentVersion = function(model, options) {
+        var currentVersion = model.get(Voc.currentVersion);
+        var that = this;
+        this.vie.onUrisReady(
+            version.getSubject(),
+            function(versionUri) {
+                that.vie.save({
+                    service : 'learnEpVersionCurrentSet',
+                    data : {
+                        'learnEpVersion' : versionUri
+                    }
+                }).to('sss').execute().success(function(result) {
+                    if( options.success) {
+                        options.success(result);
+                    }
+                });
+            }
+        );
+    },
+    m.fetchCurrentVersion = function(user) {
+        this.vie.load({
+            'service' : 'learnEpVersionCurrentGet'
+        }).from('sss').execute().success(function(version) {
+            user.set(Voc.currentVersion, version.id);
+        });
+    };
     /**
      * Fetch the episodes belonging to the user.
      * @params VIE.Entity user
@@ -33,23 +78,26 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
         var v = this.vie;
         var that = this;
         this.vie.load({
-            'user': user.getSubject(),
-            'type' : this.vie.types.get(Voc.EPISODE)
+            'service': 'learnEpsGet'
         }).from('sss').execute().success(
             function(episodes) {
                 that.LOG.debug("success fetchEpisodes");
                 that.LOG.debug("episodes", episodes);
-                v.entities.addOrUpdate(episodes);
                 if( _.isEmpty(episodes) ) {
                     user.set(Voc.hasEpisode, false);
+                    return;
                 }
+                _.each(episodes, function(episode) {
+                    episode['@type'] = Voc.EPISODE;
+                });
+                v.entities.addOrUpdate(episodes);
             }
         );
-    }
+    };
     m.fetchAllUsers = function() {
         var that = this,
             defer = $.Deferred();
-        this.vie.analyze({
+        this.vie.load({
             'service' : 'userAll',
         }).using('sss').execute().success(function(users){
             that.LOG.debug('user entities', users);
@@ -80,17 +128,25 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
         var forUser = user.getSubject();
         var that = this;
         this.vie.load({
-            'type' : this.vie.types.get(Voc.USEREVENT),
-            'start' : start.getTime(),
-            'end' : end.getTime(),
-            'forUser' : forUser
+            'service' : 'uEsGet',
+            'data' : {
+                'startTime' : start.getTime(),
+                'endTime' : end.getTime(),
+                'forUser' : forUser
+            }
         }).from('sss').execute().success(
             function(entities) {
                 // store the timestamps of this fetch
                 if ( lastStart === undefined || start < lastStart ) user.set(Voc.start, start);
                 if ( lastEnd === undefined || end > lastEnd ) user.set(Voc.end, end);
                 that.LOG.debug('success fetchRange: ', _.clone(entities), 'user: ', user);
+                var keys = _.keys(EntityView.prototype.icons);
+                entities = _.filter(entities, function(entity) {
+                    return _.contains( keys, entity['@type'] );
+                });
+                that.LOG.debug('filtered entities', entities);
                 entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
+
                 var currentEvents = user.get(Voc.hasUserEvent) || [];
                 if( !_.isArray(currentEvents)) currentEvents = [currentEvents];
                 currentEvents = _.union(currentEvents, entities);
@@ -111,9 +167,15 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData'],
     };
     m.fetchData = function(user, entityUris) {
         var that = this;
-        this.vie.analyze({
-            'service' : 'EntityDescsGet',
-            'entities' : entityUris
+        this.LOG.debug("UserData", this);
+        this.vie.load({
+            'service' : 'entityDescsGet',
+            'data' : {
+                'entities' : entityUris,
+                'getTags' : true,
+                'getThumb' : true, 
+                'getFlags' : true  
+            }
         }).from('sss').execute().success(function(entities) {
             that.vie.entities.addOrUpdate(entities);
         });

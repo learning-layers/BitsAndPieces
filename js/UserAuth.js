@@ -1,5 +1,5 @@
-define(['logger','jquery', 'jquery-cookie'],
-function (Logger, $) {
+define(['module', 'logger','jquery', 'jquery-cookie'],
+function (module, Logger, $) {
     $.cookie.json = true;
     return {
         LOG: Logger.get('UserAuth'),
@@ -17,7 +17,8 @@ function (Logger, $) {
             return '';
         },
         isAuthenticated: function() {
-            if ( this.getAuthCookie() ) {
+            var cookie = this.getAuthCookie();
+            if ( cookie && cookie['label'] && cookie['user'] && cookie['key'] ) {
                 return true;
             }
             return false;
@@ -31,24 +32,46 @@ function (Logger, $) {
         authenticate: function(username, password) {
             var that = this,
                 defer = $.Deferred();
-            new SSAuthCheckCred(
-                function(response) {
-                    that.LOG.debug('Auth Success', response);
+                op = "authCheckCred";
+                params = {
+                    'op': op,
+                    'user' : "mailto:dummyUser",
+                    'key' : "someKey",
+                    'label' : username, 
+                    'password' : password
+                };
+            $.ajax({
+                'url' : module.config().sssHostREST + op + "/",
+                'type': "POST",
+                'data' : JSON.stringify(params),
+                'contentType' : "application/json",
+                'async' : true,
+                'dataType': "application/json",
+                'complete' : function(jqXHR, textStatus) {
+
+                    if( jqXHR.readyState !== 4 || jqXHR.status !== 200){
+                        AppLog.error("sss json request failed");
+                        return;
+                    }
+
+                    var result = $.parseJSON(jqXHR.responseText)[op]; 
+                    that.LOG.debug('result', result);
+
+                    if( result.error ) {
+                        that.LOG.debug('Auth Error', result);
+                        defer.reject(false);
+                        return;
+                    }
+                    that.LOG.debug('Auth Success', result);
                     var authData = {
                         label: username,
-                        key: response.key,
-                        user: response.user,
+                        key: result.key,
+                        user: result.user,
                     };
                     that.setAuthCookie(authData);
                     defer.resolve(true);
-                },
-                function(response) {
-                    that.LOG.debug('Auth Error', response);
-                    defer.reject(false);
-                },
-                username,
-                password
-            );
+                }
+            });
             return defer;
         },
         logout: function() {

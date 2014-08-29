@@ -15,7 +15,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
         initialize: function() {
 
             this.EntityView = this.options.EntityView;
-            this.listenTo(this.model, 'change', this.changeStuff);
+            var version = this.model.get(Voc.belongsToVersion);
+            this.listenTo(version, 'change', this.changeStuff);
             this.views = {};
 
             this.$el = $(this.el);
@@ -34,27 +35,27 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             var OrganizeView = this;
             for( var key in changed ) {
                 this.LOG.debug('key : ' + key );
-                if( key === this.model.vie.namespaces.uri(Voc.hasCircle)) {
+                if( key === model.vie.namespaces.uri(Voc.hasCircle)) {
                     kind = 'Circle';
-                } else if( key === this.model.vie.namespaces.uri(Voc.hasEntity)){
+                } else if( key === model.vie.namespaces.uri(Voc.hasEntity)){
                     kind = 'Entity';
                 } else continue;;
 
-                var previous = this.model.previous(Voc['has'+kind]) || [];
+                var previous = model.previous(Voc['has'+kind]) || [];
                 if( !_.isArray(previous)) previous = [previous];
                 this.LOG.debug('previous', JSON.stringify(previous));
 
-                var current = this.model.get(Voc['has'+kind]) || [];
+                var current = model.get(Voc['has'+kind]) || [];
                 if( !_.isArray(current)) current = [current];
                 this.LOG.debug('current', JSON.stringify(current));
 
                 var added = _.difference(current, previous);
                 this.LOG.debug('added', JSON.stringify(added));
                 _.each(added, function(a){
-                    a = OrganizeView.model.vie.entities.get(a);
+                    a = model.vie.entities.get(a);
                     //OrganizeView.listenTo(a, 'change', OrganizeView['change'+kind]);
                     //OrganizeView.listenTo(a, 'destroy', OrganizeView.['remove' + kind]);
-                    OrganizeView['add'+ kind](a, OrganizeView.model.vie.entities, options);
+                    OrganizeView['add'+ kind](a, model.vie.entities, options);
                 });
             }
         },
@@ -63,13 +64,14 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.organize.loadOrganizeCanvas(this.el);
             // Make the view aware of existing entities in collection
             var view = this;
-            var entities = this.model.get(Voc.hasEntity) || [];
+            var version = this.model.get(Voc.belongsToVersion);
+            var entities = version.get(Voc.hasEntity) || [];
             if( !_.isArray(entities)) entities = [entities];
             _.each(entities, function(entity) {
                 view.addEntity(entity);
             }, this);
 
-            var circles = this.model.get(Voc.hasCircle) || [];
+            var circles = version.get(Voc.hasCircle) || [];
             if( !_.isArray(circles)) circles = [circles];
             _.each(circles, function(circle) {
                 view.addCircle(circle);
@@ -84,6 +86,35 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             Backbone.View.prototype.remove.call(this);
         },
         mapAttributes : function(item) {
+            if( item.cx ) {
+                item.xC = item.cx;
+                delete item.cx;
+            }
+            if( item.cy ) {
+                item.yC = item.cy;
+                delete item.cy;
+            }
+            if( item.rx ) {
+                item.xR = item.rx;
+                delete item.rx;
+            }
+            if( item.ry ) {
+                item.yR = item.ry;
+                delete item.ry;
+            }
+            if( item.Label ) {
+                item.label = item.Label;
+                delete item.Label;
+            }
+            if( item.LabelX ) {
+                item.xLabel = item.LabelX;
+                delete item.LabelX;
+            }
+            if( item.LabelY ) {
+                item.yLabel = item.LabelY;
+                delete item.LabelY;
+            }
+
             for( var prop in item ) {
                 item['sss:'+prop] = item[prop];
                 delete item[prop];
@@ -213,13 +244,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             if( options.by && options.by === this ) return;
             this.LOG.debug("addCircle", options);
             var data = {
-                'cx' : entity.get(Voc.cx),
-                'cy' : entity.get(Voc.cy),
-                'rx' : entity.get(Voc.rx),
-                'ry' : entity.get(Voc.ry),
-                'Label' : entity.get(Voc.Label),
-                'LabelX' : entity.get(Voc.LabelX),
-                'LabelY' : entity.get(Voc.LabelY)
+                'cx' : entity.get(Voc.xC),
+                'cy' : entity.get(Voc.yC),
+                'rx' : entity.get(Voc.xR),
+                'ry' : entity.get(Voc.yR),
+                'Label' : entity.get(Voc.label),
+                'LabelX' : entity.get(Voc.xLabel),
+                'LabelY' : entity.get(Voc.yLabel)
             };
             this.LOG.debug("data", data);
             var id = this.organize.drawCircle(null, data);

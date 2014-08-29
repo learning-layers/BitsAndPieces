@@ -1,21 +1,42 @@
-define(['userParams', 'logger', 'sss.conns'],
-    function(userParams, Logger) {
+define(['module', 'jquery', 'userParams', 'logger'],
+    function(module, $, userParams, Logger) {
         tracker = Logger.get('Tracker');
         tracker.setLevel(Logger.INFO);
         tracker.setHandler(function(messages, context){
-            new SSUserEventAdd(
-                    function(object){
-                        AppLog.info('USEREVENT ADDED', object);
-                    },
-                    function(object){
-                        AppLog.error('USEREVENT NOT ADDED', object);
-                    },
-                    userParams.user,
-                    userParams.userKey,
-                    messages[0],
-                    messages[1] || null,
-                    (new Date()).getTime()+(messages[2] ? ";"+JSON.stringify(messages[2]): "")
-            );
+            var op = "uEAdd";
+            var params = {
+                    'op': op,
+                    'user' : userParams.user,
+                    'key' : userParams.userKey,
+                    'type' : messages[0],
+                    'content' : (new Date()).getTime()+(messages[2] ? ";"+JSON.stringify(messages[2]): "")
+                };
+            if( messages[1] ) {
+                params['entity'] = messages[1];
+            }
+            $.ajax({
+                'url' : module.config().sssHostREST + op + "/",
+                'type': "POST",
+                'data' : JSON.stringify(params),
+                'contentType' : "application/json",
+                'async' : true,
+                'dataType': "application/json",
+                'complete' : function(jqXHR, textStatus) {
+
+                    if( jqXHR.readyState !== 4 || jqXHR.status !== 200){
+                        AppLog.error("sss json request failed");
+                        return;
+                    }
+
+                    var result = $.parseJSON(jqXHR.responseText); 
+
+                    if( result.error ) {
+                        if( error ) AppLog.error('USEREVENT NOT ADDED', result);
+                        return;
+                    }
+                    AppLog.info('USEREVENT ADDED', result);
+                }
+            });
         });
          
 

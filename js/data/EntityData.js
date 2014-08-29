@@ -19,7 +19,6 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             } 
             model.on('change:'+this.vie.namespaces.uri(Voc.author), this.initUser, this); 
             model.on('change:'+this.vie.namespaces.uri(Voc.hasTag), this.changedTags, this);
-            model.on('change:'+this.vie.namespaces.uri(Voc.label), this.setLabel, this);
             model.on('change:'+this.vie.namespaces.uri(Voc.importance), this.setImportance, this);
             this.loadViewCount(model);
             this.loadRecommTagsBasedOnUserEntityTagTime(model);
@@ -43,33 +42,50 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         var that = this;
         var added = _.difference(set, previous);
         this.LOG.debug('added', added);
-        _.each(added, function(tag){
-            that.vie.save({
-                'entity' : model,
-                'tag' : tag
-            }).to('sss').execute().success(function(s){
-                that.LOG.debug('success addTag', s);
-                that.loadRecommTagsBasedOnUserEntityTagTime(model);
-            }).fail(function(f){
-                var tags = model.get(Voc.hasTag) || [];
-                if( !_.isArray(tags)) tags = [tags];
-                model.set(Voc.hasTag, _.without(tags, tag));
-                that.LOG.debug('options', options);
-                options.error();
-            });
-        });
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                _.each(added, function(tag){
+                    that.vie.save({
+                        'service' : 'tagAdd',
+                        'data' : {
+                            'entity' : modelUri,
+                            'label' : tag,
+                            'space' : 'privateSpace'
+                        }
+                    }).to('sss').execute().success(function(s){
+                        that.LOG.debug('success addTag', s);
+                        that.loadRecommTagsBasedOnUserEntityTagTime(model);
+                    }).fail(function(f){
+                        var tags = model.get(Voc.hasTag) || [];
+                        if( !_.isArray(tags)) tags = [tags];
+                        model.set(Voc.hasTag, _.without(tags, tag));
+                        that.LOG.debug('options', options);
+                        options.error();
+                    });
+                });
+            }
+        );
 
         var deleted = _.difference(previous, set);
         this.LOG.debug('deleted', deleted);
-        _.each(deleted, function(tag){
-            that.vie.remove({
-                'entity' : model,
-                'tag' : tag
-            }).from('sss').execute().success(function(s){
-                that.loadRecommTagsBasedOnUserEntityTagTime(model);
-                that.LOG.debug('success removeTag', s);
-            });
-        });
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                _.each(deleted, function(tag){
+                    that.vie.remove({
+                        'service' : 'tagsRemove',
+                        'data' : {
+                            'entity' : modelUri,
+                            'label' : tag
+                        }
+                    }).from('sss').execute().success(function(s){
+                        that.loadRecommTagsBasedOnUserEntityTagTime(model);
+                        that.LOG.debug('success removeTag', s);
+                    });
+                });
+            }
+        );
     };
     m.setLabel = function(model, label, options) {
         var that = this;
@@ -77,66 +93,31 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         // Only change if user_initiated flag is set to true
         if ( options.user_initiated !== true ) return;
         if ( model.previous(Voc.label) === label ) return;
-        this.vie.save({
-            'entity' : model,
-            'label' : label
-        }).to('sss').execute().success(function(s) {
-            // TODO check whether tag recomms can change due to label change
-            that.loadRecommTagsBasedOnUserEntityTagTime(model);
-            that.LOG.debug('success setLabel', s);
-        }).fail(function(f) {
-            that.LOG.debug('fail setLabel', f);
-            if ( options.error ) {
-                options.error();
+        model.save(Voc.label, label, {
+            'success' : function(result) {
+                that.LOG.debug('success setLabel', result);
+                // TODO check whether tag recomms can change due to label change
+                that.loadRecommTagsBasedOnUserEntityTagTime(model);
+                if(options.success) {
+                    options.success(result);
+                }
+            },
+            'error' : function(result) {
+                that.LOG.debug('fail setLabel', result);
+                if( options.error ) {
+                    options.error(result);
+                }
             }
-        });
-    };
-    m.searchByTags = function(tags, callback) {
-        var that = this;
-        this.vie.analyze({
-            'service' : 'searchByTags',
-            'tags' : tags,
-            'max' : 20
-        }).using('sss').execute().success(function(entities){
-            that.LOG.debug('searchByTags entities', entities);
-            entities = that.vie.entities.addOrUpdate(entities);
-            _.each(entities, function(entity) {
-                // XXX This is quite a bad check, in case the search results will
-                // change in future. Need a better check to determine entity
-                // being fully loaded.
-                if ( !entity.has(Voc.author) ) {
-                    entity.fetch();
-                }
-            });
-            callback(entities);
-        });
-    };
-    m.searchCombined = function(tags, callback) {
-        var that = this;
-        this.vie.analyze({
-            'service' : 'searchCombined',
-            'tags' : tags,
-            'types' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
-        }).using('sss').execute().success(function(entities){
-            that.LOG.debug('searchCombined entities', entities);
-            entities = that.vie.entities.addOrUpdate(entities);
-            _.each(entities, function(entity) {
-                // XXX This is quite a bad check, in case the search results will
-                // change in future. Need a better check to determine entity
-                // being fully loaded.
-                if ( !entity.has(Voc.author) ) {
-                    entity.fetch();
-                }
-            });
-            callback(entities);
         });
     };
     m.search = function(tags, callback) {
         var that = this;
-        this.vie.analyze({
+        this.vie.load({
             'service' : 'search',
-            'tags' : tags,
-            'types' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
+            'data' : {
+                'keywordsToSearchFor' : tags,
+                'typesToSearchOnlyFor' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
+            }
         }).using('sss').execute().success(function(entities){
             that.LOG.debug('search entities', entities);
             entities = that.vie.entities.addOrUpdate(entities);
@@ -153,26 +134,40 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
     };
     m.loadRecommTagsBasedOnUserEntityTagTime = function(model) {
         var that = this;
-        this.vie.analyze({
-            'service' : 'recommTagsBasedOnUserEntityTagTime',
-            'forUser' : null,
-            'entity' : model.attributes['@subject'],
-            'maxTags' : 20
-        }).using('sss').execute().success(function(result){
-            that.LOG.debug('recommTags', result);
-            model.set(Voc.hasTagRecommendation, result);
-        });
+
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.analyze({
+                    'service' : 'recommTagsBasedOnUserEntityTagTime',
+                    'data' : {
+                        'entity' : modelUri,
+                        'maxTags' : 20
+                    }
+                }).using('sss').execute().success(function(result){
+                    that.LOG.debug('recommTags', result);
+                    model.set(Voc.hasTagRecommendation, result || []);
+                });
+            }
+        );
     };
     m.loadViewCount = function(model) {
         var that = this;
-        this.vie.analyze({
-            'service' : 'ueCountGet',
-            'entity' : model.attributes['@subject'],
-            'type' : 'viewEntity'
-        }).using('sss').execute().success(function(count){
-            that.LOG.debug('count', count);
-            model.set(Voc.hasViewCount, count);
-        });
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.analyze({
+                    'service' : 'uECountGet',
+                    'data' : {
+                        'entity' : modelUri,
+                        'type' : 'viewEntity'
+                    }
+                }).using('sss').execute().success(function(count){
+                    that.LOG.debug('count', count);
+                    model.set(Voc.hasViewCount, count || 0 );
+                });
+            }
+        );
     };
     m.setImportance = function(model, importance, options) {
         var that = this;
@@ -180,14 +175,29 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         // Only change if user_initiated flag is set to true
         if ( options.user_initiated !== true ) return;
         if ( model.previous(Voc.importance) === importance ) return;
-        this.vie.save({
-            'entity' : model,
-            'importance' : importance
-        }).to('sss').execute().success(function(s) {
-            that.LOG.debug('success setImportance', s);
-        }).fail(function(f) {
-            that.LOG.debug('fail setImportance', f);
-        });
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.save({
+                    'service' : 'flagsSet',
+                    'data' : {
+                        'entities' : [modelUri],
+                        'types' : ['importance'],
+                        'value' : importance
+                    }
+                }).to('sss').execute().success(function(s) {
+                    that.LOG.debug('success setImportance', s);
+                    if(options.success) {
+                        options.success(result);
+                    }
+                }).fail(function(f) {
+                    that.LOG.debug('fail setImportance', f);
+                    if(options.error) {
+                        options.error(result);
+                    }
+                });
+            }
+        );
     };
 
     return m;

@@ -17,24 +17,75 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
             if( !model.isNew() ) {
                 this.fetchVersions(model);
             }
-            model.on('change:'+this.vie.namespaces.uri(Voc.label), this.setLabel, this);
-            model.on('change:'+this.vie.namespaces.uri(Voc.description), this.setDescription, this);
+            model.sync = this.sync;
         }
     };
+    m.sync= function(method, model, options) {
+        m.LOG.debug("sync entity " + model.getSubject() + " by " + method);
+        if( !options ) options = {};
+
+        if( method === 'create' ) {
+            m.createEpisode(model, options);
+        } else {
+            this.vie.Entity.prototype.sync(method, model, options);
+        }
+    },
+    m.createEpisode= function(model, options) {
+        this.vie.save({
+            service : 'learnEpCreate',
+            data : {
+                'label' : model.get(Voc.label),
+                'description' : 'privateSpace'
+            }
+        }).to('sss').execute().success(function(savedEntityUri) {
+            model.set(model.idAttribute, savedEntityUri, options);
+            if(options.success) {
+                options.success(savedEntityUri);
+            }
+        });
+    },
     m.fetchVersions= function(episode) {
         var em = this;
         this.vie.load({
-            'episode' : episode.getSubject(),
-            'type' : this.vie.types.get(Voc.VERSION)
+            'service' : 'learnEpVersionsGet',
+            'data' : {
+                'learnEp' : episode.getSubject(),
+            }
         }).from('sss').execute().success(
             function(versions) {
                 em.LOG.debug("success fetchVersions");
                 em.LOG.debug("versions", versions);
-                em.vie.entities.addOrUpdate(versions);
                 if( _.isEmpty(versions) ) {
                     em.LOG.debug("versions empty");
                     episode.set(Voc.hasVersion, VersionData.newVersion(episode).getSubject());
+                    return;
                 }
+                // put uris of circles/entities into version
+                // and create circle/entity entities 
+                _.each(versions, function(version) {
+                    version['@type'] = Voc.VERSION;
+                    var circleUris = [];
+                    var circles = version[Voc.hasCircle];
+                    _.each(version[Voc.hasCircle], function(circle) {
+                        circleUris.push(circle[em.vie.Entity.prototype.idAttribute]);
+                        circle[Voc.belongsToVersion] = version[em.vie.Entity.prototype.idAttribute];
+                        circle['@type'] = Voc.CIRCLE;
+                    });
+                    version[Voc.hasCircle] = circleUris;
+                    em.vie.entities.addOrUpdate(circles);
+
+                    var entityUris = [];
+                    var entities = version[Voc.hasEntity];
+                    _.each(version[Voc.hasEntity], function(entity) {
+                        entityUris.push(entity[em.vie.Entity.prototype.idAttribute]);
+                        entity[Voc.belongsToVersion] = version[em.vie.Entity.prototype.idAttribute];
+                        entity['@type'] = Voc.ORGAENTITY;
+                    });
+                    version[Voc.hasEntity] = entityUris;
+                    em.vie.entities.addOrUpdate(entities);
+                });
+                em.vie.entities.addOrUpdate(versions);
+
             }
         );
 
@@ -64,63 +115,44 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
         coll.add(episode.get(Voc.hasVersion));
         return coll;
     };
-    m.setLabel = function(model, label, options) {
-        var that = this;
-        options = options || {};
-        // Only change if user_initiated flag is set to true
-        if ( options.user_initiated !== true ) return;
-        if ( model.previous(Voc.label) === label ) return;
-        this.vie.save({
-            'entity' : model,
-            'label' : label
-        }).to('sss').execute().success(function(s) {
-            that.LOG.debug('success setLabel', s);
-        }).fail(function(f) {
-            if ( options.error ) {
-                options.error();
-            }
-        });
-    };
-    m.setDescription = function(model, description, options) {
-        var that = this;
-        options = options || {};
-        // Only change if user_initiated flag is set to true
-        if ( options.user_initiated !== true ) return;
-        if ( model.previous(Voc.description) === description ) return;
-        this.vie.save({
-            'entity' : model,
-            'description' : description
-        }).to('sss').execute().success(function(s) {
-            that.LOG.debug('success setDescription', s);
-        }).fail(function(f) {
-            if ( options.error ) {
-                options.error();
-            }
-        });
-    };
     m.shareEpisode = function(model, users, comment) {
         var that = this;
-        this.vie.analyze({
-            'service' : 'entityShare',
-            'entity' : model.attributes['@subject'],
-            'users' : users,
-            'comment' : comment
-        }).using('sss').execute().success(function(){
-            that.LOG.debug('success entityShare');
-        });
+        this.vie.onUrisReady(
+            model.getSubject(),
+            // XXX assuming that users uris are ready
+            function(modelUri) {
+                that.vie.save({
+                    'service' : 'entityShare',
+                    'data' : {
+                        'entity' : modelUri,
+                        'users' : users,
+                        'comment' : comment
+                    }
+                }).using('sss').execute().success(function(){
+                    that.LOG.debug('success entityShare');
+                });
+            }
+        );
     };
     m.copyEpisode = function(model, users, exclude, comment) {
         var that = this;
-        this.vie.analyze({
-            'service' : 'entityCopy',
-            'entity' : model.attributes['@subject'],
-            'users' : users,
-            'exclude' : exclude,
-            'comment' : comment
-        }).using('sss').execute().success(function(){
-            that.LOG.debug('success entityCopy');
-        });
-
+        this.vie.onUrisReady(
+            model.getSubject(),
+            // XXX assuming that users uris are ready
+            function(modelUri) {
+                that.vie.save({
+                    'service' : 'entityCopy',
+                    'data' : {
+                        'entity' : modelUri,
+                        'users' : users,
+                        'entitiesToExclude' : exclude,
+                        'comment' : comment
+                    }
+                }).using('sss').execute().success(function(){
+                    that.LOG.debug('success entityCopy');
+                });
+            }
+        );
     };
     return m;
 });

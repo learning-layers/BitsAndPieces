@@ -5,8 +5,6 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
         this.vie = vie;
         this.vie.entities.on('add', this.filter, this);
         this.setIntegrityCheck(Voc.belongsToVersion, Voc.VERSION, Voc.hasWidget);
-        this.setIntegrityCheck(Voc.hasCircle, Voc.CIRCLE);
-        this.setIntegrityCheck(Voc.hasEntity, Voc.ORGAENTITY);
     };
     m.LOG = Logger.get('OrganizeData');
     /** 
@@ -15,10 +13,6 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
     m.filter= function(model, collection, options) {
         if(model.isof(Voc.ORGANIZE)){
             this.checkIntegrity(model, options);
-            if( !model.isNew()) {
-                this.fetchCircles(model);
-                this.fetchEntities(model);
-            }
         }
     };
     m.createItem= function(organize, item, options, type, relation) {
@@ -28,15 +22,10 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
         item.set({
             '@type': type,
         }, options);
-        item.set(Voc.belongsToOrganize, organize.getSubject(), options);
+        var version = organize.get(Voc.belongsToVersion);
+        item.set(Voc.belongsToVersion, version.getSubject(), options);
 
         this.vie.entities.addOrUpdate(item, {'addOptions' : options});
-        //var items = Backbone.Data.prototype.get.call(
-            //organize, this.vie.namespaces.uri(relation)) || [];
-        //if(!_.isArray(items)) items = [items];
-        //else items = _.clone(items);
-        //items.push(item.getSubject());
-        //organize.set(relation, items, options);
         item.save();
         return item;
     };
@@ -49,40 +38,6 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
         var type = organize.get(Voc.orgaEntityType);
         if( type.isEntity ) type = type.getSubject();
         return this.createItem(organize, entity, options, type, Voc.hasEntity);
-    };
-    m.fetchStuff= function(organize, type, relation) {
-        var that = this;
-        this.vie.load({
-            'organize' : organize.getSubject(),
-            'type' : this.vie.types.get(type)
-        }).from('sss').execute().success(
-            function(items) {
-                that.LOG.debug('items fetched', items);
-                _.each(items, function(item){
-                    item[Voc.belongsToOrganize] = organize.getSubject();
-                });
-                items = that.vie.entities.addOrUpdate(items);
-                // Loading entities in case type is Organize Entity
-                if ( type == Voc.ORGAENTITY ) {
-                    var entityUris = [];
-                    _.each(items, function(item){
-                        var entity = item.get(Voc.hasResource);
-                        if( entity.isEntity) entity = entity.getSubject();
-                        entityUris.push(entity);
-                    });
-
-                    if ( !_.isEmpty(entityUris) ) {
-                        that.fetchData(entityUris);
-                    }
-                }
-            }
-        );
-    };
-    m.fetchCircles= function(organize) {
-        this.fetchStuff(organize, Voc.CIRCLE, Voc.hasCircle);
-    };
-    m.fetchEntities= function(organize) {
-        this.fetchStuff(organize, Voc.ORGAENTITY, Voc.hasEntity);
     };
     m.copy= function(organize, overrideAttributes) {
         var newAttr = _.clone(organize.attributes);
@@ -112,9 +67,11 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
     };
     m.fetchData = function(entityUris) {
         var that = this;
-        this.vie.analyze({
-            'service' : 'EntityDescsGet',
-            'entities' : entityUris
+        this.vie.load({
+            'service' : 'entityDescsGet',
+            'data' : {
+                'entities' : entityUris
+            }
         }).from('sss').execute().success(function(entities) {
             that.vie.entities.addOrUpdate(entities);
         });

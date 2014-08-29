@@ -141,7 +141,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if( this.model.get(Voc.label) == label) return;
             this.LOG.debug('changeLabel', label);
             // Make sure to set user_initiated flag
-            this.model.set(Voc.label, label, {
+            EntityData.setLabel(this.model, label, {
                 'error' : function() {
                     that.$el.find('input[name="title"]').effect("shake");
                 },
