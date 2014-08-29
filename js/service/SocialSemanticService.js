@@ -1,7 +1,7 @@
 // The SocialSemanticService wraps the SSS REST API v3.4.0
 
 define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceModel', 'jquery'], 
-        function(Logger, VIE, _, Voc, SSSModel, $) {
+function(Logger, VIE, _, Voc, SSSModel, $) {
 
 // ## VIE.SocialSemanticService(options)
 // This is the constructor to instantiate a new service.
@@ -24,9 +24,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
         /* the options are merged with the default options */
         this.options = jQuery.extend(true, defaults, options ? options : {});
 
-        this.views = [];
-        this.templates = {};
-
         this.vie = null; /* will be set via VIE.use(); */
         /* overwrite options.name if you want to set another name */
         this.name = this.options.name;
@@ -34,8 +31,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
         this.user = this.options.user;
         this.userKey = this.options.userKey;
 
-        this.buffer = {};
-        
         if ( !this.user || !this.userKey )
             throw Error("No user/userKey given for SocialSemanicService");
     };
@@ -57,19 +52,6 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
 //     var ssService = new vie.SocialSemanticService({<some-configuration>});
 //     ssService.init();
 //
-        types: {
-            THING : "owl:Thing",
-            TIMELINE : "Timeline",
-            ORGANIZE : "Organize",
-            USEREVENT : "userEvent",
-            EPISODE: "Episode",
-            VERSION: "Version",
-            USER: "user",
-            ORGAENTITY: "OrgaEntity",
-            CIRCLE: "Circle",
-            WIDGET: "Widget",
-            DOCUMENT: "Document"
-        },
         pendingCalls: {},
         pendingCallsCount : 0,
         init: function() {
@@ -128,7 +110,8 @@ define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceMode
                     return this.pendingCalls[serviceCall][fp];
                 }
             }
-        }, /* AJAX request wrapper */
+        }, 
+        /* AJAX request wrapper */
         send : function(op, par, success, error ){
             this.LOG.debug('par', par);
             var sss = this;

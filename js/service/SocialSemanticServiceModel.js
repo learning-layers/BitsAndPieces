@@ -124,8 +124,8 @@ define(['underscore', 'logger'], function(_, Logger) {
             'resultKey' : 'entity',
             'decoration' : decorations['single_entity']
         },
-        entityUpdate : {
-            resultKey : 'entity'
+        'entityUpdate' : {
+            'resultKey' : 'entity'
         },
         'entityDescGet' : {
             'resultKey' : 'desc',
@@ -138,14 +138,14 @@ define(['underscore', 'logger'], function(_, Logger) {
         'search' : {
             'resultKey' : 'entities',
             'params' : {
-                keywordsToSearchFor : {type : 'array'},
-                wordsToSearchFor : {type : 'array'},
-                tagsToSearchFor : {type : 'array'},
-                misToSearchFor : {type : 'array'},
-                labelsToSearchFor : {type : 'array'},
-                descriptionsToSearchFor : {type : 'array'},
-                typesToSearchOnlyFor : {type : 'array'},
-                entitiesToSearchWithin : {type : 'array'}
+                'keywordsToSearchFor' : {'type' : 'array'},
+                'wordsToSearchFor' : {'type' : 'array'},
+                'tagsToSearchFor' : {'type' : 'array'},
+                'misToSearchFor' : {'type' : 'array'},
+                'labelsToSearchFor' : {'type' : 'array'},
+                'descriptionsToSearchFor' : {'type' : 'array'},
+                'typesToSearchOnlyFor' : {'type' : 'array'},
+                'entitiesToSearchWithin' : {'type' : 'array'}
             },
             'preparation' : preparations['scrubParams'],
             'decoration' : decorations['single_entity']
@@ -163,108 +163,108 @@ define(['underscore', 'logger'], function(_, Logger) {
             'preparation' : preparations['scrubParams'],
             'decoration' : decorations['single_desc_entity']
         },
-        learnEpVersionCurrentGet : {
-            resultKey : 'learnEpVersion'
+        'learnEpVersionCurrentGet' : {
+            'resultKey' : 'learnEpVersion'
         },
-        learnEpVersionCurrentSet : {
-            resultKey : 'learnEpVersion'
+        'learnEpVersionCurrentSet' : {
+            'resultKey' : 'learnEpVersion'
         },
-        learnEpsGet : {
-            resultKey : 'learnEps',
-            decoration: decorations['single_entity']
+        'learnEpsGet' : {
+            'resultKey' : 'learnEps',
+            'decoration' : decorations['single_entity']
         },
-        learnEpVersionsGet : {
-            resultKey : 'learnEpVersions',
-            decoration: decorations['single_entity'],
-            subResults : [
+        'learnEpVersionsGet' : {
+            'resultKey' : 'learnEpVersions',
+            'decoration' : decorations['single_entity'],
+            'subResults' : [
                 {
-                    resultKey : 'circles',
-                    decoration: decorations['single_entity']
+                    'resultKey' : 'circles',
+                    'decoration' : decorations['single_entity']
                 },
                 {
-                    resultKey: 'entities',
-                    decoration: decorations['single_entity']
+                    'resultKey' : 'entities',
+                    'decoration' : decorations['single_entity']
                 }
             ]
         },
-        learnEpVersionGetTimelineState : {
-            resultKey : 'learnEpTimelineState',
-            decoration: decorations['single_entity']
+        'learnEpVersionGetTimelineState' : {
+            'resultKey' : 'learnEpTimelineState',
+            'decoration' : decorations['single_entity']
         },
-        uEsGet: {
-            resultKey: 'uEs',
-            decoration: decorations['fixForVIE_only']
+        'uEsGet' : {
+            'resultKey' : 'uEs',
+            'decoration' : decorations['fixForVIE_only']
         },
-        learnEpVersionSetTimelineState : {
-            resultKey: 'learnEpTimelineState', 
-            params : {
-                startTime : { type : 'number' },
-                endTime : { type : 'number' }
+        'learnEpVersionSetTimelineState' : {
+            'resultKey' : 'learnEpTimelineState', 
+            'params' : {
+                'startTime' : { 'type' : 'number' },
+                'endTime' : { 'type' : 'number' }
             },
-            preparation: preparations['scrubParams']
+            'preparation' : preparations['scrubParams']
         },
-        learnEpVersionAddCircle : {
-            resultKey : 'learnEpCircle'
+        'learnEpVersionAddCircle' : {
+            'resultKey' : 'learnEpCircle'
         },
-        learnEpVersionAddEntity : {
-            resultKey : 'learnEpEntity'
+        'learnEpVersionAddEntity' : {
+            'resultKey' : 'learnEpEntity'
         },
-        learnEpVersionUpdateCircle : {
-            resultKey : 'worked'
+        'learnEpVersionUpdateCircle' : {
+            'resultKey' : 'worked'
         },
-        learnEpVersionUpdateEntity : {
-            resultKey : 'worked'
+        'learnEpVersionUpdateEntity' : {
+            'resultKey' : 'worked'
         },
-        learnEpCreate : {
-            resultKey : 'learnEp'
+        'learnEpCreate' : {
+            'resultKey' : 'learnEp'
         },
-        learnEpVersionCreate : {
-            resultKey : 'learnEpVersion'
+        'learnEpVersionCreate' : {
+            'resultKey' : 'learnEpVersion'
         },
-        tagAdd : {
-            resultKey : 'tag'
+        'tagAdd' : {
+            'resultKey' : 'tag'
         },
-        flagsSet : {
-            resultKey : 'worked',
-            params : {
-                entities : { type : 'array' },
-                types : { type : 'array' }
+        'flagsSet' : {
+            'resultKey' : 'worked',
+            'params' : {
+                'entities' : { 'type' : 'array' },
+                'types' : { 'type' : 'array' }
             },
-            preparation: preparations['scrubParams']
+            'preparation' : preparations['scrubParams']
         },
-        entityShare : {
-            resultKey : 'worked',
-            params : {
-                users : { type : 'array' },
+        'entityShare' : {
+            'resultKey' : 'worked',
+            'params' : {
+                'users' : { 'type' : 'array' },
             },
-            preparation: preparations['scrubParams']
+            'preparation' : preparations['scrubParams']
         },
-        entityCopy : {
-            resultKey : 'worked',
-            params : {
-                users : { type : 'array' },
-                entitiesToExclude : { type : 'array' },
+        'entityCopy' : {
+            'resultKey' : 'worked',
+            'params' : {
+                'users' : { 'type' : 'array' },
+                'entitiesToExclude' : { 'type' : 'array' },
             },
-            preparation: preparations['scrubParams']
+            'preparation' : preparations['scrubParams']
         },
-        recommTagsBasedOnUserEntityTagTime : {
-            resultKey : 'tags',
-            params : {
-                maxTags : { default : 20 }
+        'recommTagsBasedOnUserEntityTagTime' : {
+            'resultKey' : 'tags',
+            'params' : {
+                'maxTags' : { 'default' : 20 }
             },
-            preparation: preparations['scrubParams']
+            'preparation' : preparations['scrubParams']
         },
-        uECountGet : {
-            resultKey : 'count'
+        'uECountGet' : {
+            'resultKey' : 'count'
         },
-        learnEpVersionRemoveCircle : {
-            resultKey : 'worked'
+        'learnEpVersionRemoveCircle' : {
+            'resultKey' : 'worked'
         },
-        learnEpVersionRemoveEntity : {
-            resultKey : 'worked'
+        'learnEpVersionRemoveEntity' : {
+            'resultKey' : 'worked'
         },
-        tagsRemove : {
-            resultKey : 'worked'
+        'tagsRemove' : {
+            'resultKey' : 'worked'
         }
 
     };
