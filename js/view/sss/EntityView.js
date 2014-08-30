@@ -105,7 +105,12 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
             {
                 this.alreadyclicked=false; // reset
                 clearTimeout(this.alreadyclickedTimeout); // prevent this from happening
-                this.defer();
+                this.handleDblClick();
+                var ev = $.Event("bnp:dblclickEntity", {
+                    originalEvent : e,
+                    entity : this.model
+                });
+                this.$el.trigger(ev);
             }
             else
             {
@@ -115,14 +120,17 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
                 this.alreadyclickedTimeout=setTimeout(function(){
                     view.alreadyclicked=false; // reset when it happens
                     view.LOG.debug('_click timeOut');
+                    var ev = $.Event("bnp:clickEntity", {
+                        originalEvent : e,
+                        entity : view.model
+                    });
+                    view.$el.trigger(ev);
                 },400); // <-- dblclick tolerance here
             }
-            var ev = $.Event('bnp:clickEntity', {
-                originalEvent : e,
-                entity : this.model
-            });
-            this.$el.trigger(ev);
             return false;
+        },
+        handleDblClick : function() {
+            this.defer();
         },
         defer: function() {
             this.LOG.debug('defer');
