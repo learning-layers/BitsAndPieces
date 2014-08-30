@@ -2,9 +2,10 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
         'view/sss/EntityView', 
         'view/sss/ClusterView', 
         'view/timeline/TimelineView', 
+        'view/sss/CollectionBrowserView', 
         'view/organize/OrganizeView',
         'data/organize/OrganizeData'],
-    function(Logger, Backbone, $, Voc, tracker, _, $, EntityView, ClusterView, TimelineView, OrganizeView, OrganizeData) {
+    function(Logger, Backbone, $, Voc, tracker, _, $, EntityView, ClusterView, TimelineView, CollectionBrowserView, OrganizeView, OrganizeData) {
         return Backbone.View.extend({
             LOG: Logger.get("WidgetView"),
             initialize: function() {
@@ -19,11 +20,17 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
             render: function() {
                 this.LOG.debug('render widgetView', this);
                 var body;
-                if( this.model.isof( Voc.TIMELINE )) {
+                if( this.isBrowse() ) {
                     this.$el.append('<legend>Browse</legend>');
-                    body = $('<div class="timelineFrame"></div>');
-                    this.$el.append(body);
-                    this.view = this.createTimeline(body);
+                    if( this.model.isof( Voc.TIMELINE )) {
+                        body = $('<div class="timelineFrame"></div>');
+                        this.$el.append(body);
+                        this.view = this.createTimeline(body);
+                    } else if( this.model.isof( Voc.CollectionBrowser ) ) {
+                        body = $('<div class="collBrowserFrame"></div>');
+                        this.$el.append(body);
+                        this.view = this.createCollectionBrowser(body);
+                    }
                 } else if (this.model.isof( Voc.ORGANIZE )) {
                     this.$el.append('<legend>Organize</legend>');
                     body = $('<div tabindex="1" style="width:100%; height:400px"></div>');                     
@@ -94,6 +101,13 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
                 });
                 return organizeView;
             },
+            createCollectionBrowser : function(collBrowserBody) {
+                var collBrowserView = new CollectionBrowserView({
+                    model: this.model,
+                    el: collBrowserBody
+                });
+                collBrowserView.render();
+            }
         });
 });
 

@@ -455,3 +455,7 @@ table td.withPadding {
 label.notBoldLabel {
 	font-weight: normal;
 }
+
+.collBrowserFrame {
+    min-height: 80px;
+}
