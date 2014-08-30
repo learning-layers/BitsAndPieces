@@ -42,6 +42,9 @@ function(module, VIE, Logger, tracker, userParams, UserData, SocialSemanticServi
     Logger.get('UserAuth').setLevel(Logger.OFF);
     Logger.get('EpisodeToolbarView').setLevel(Logger.OFF);
     Logger.get('EntitiesHelper').setLevel(Logger.OFF);
+    Logger.get('CollectionData').setLevel(Logger.DEBUG);
+    Logger.get('CollectionView').setLevel(Logger.DEBUG);
+    Logger.get('CollectionBrowser').setLevel(Logger.DEBUG);
 
     if ( !userParams.isAuthenticated) {
         var loginView = new LoginFormView({
