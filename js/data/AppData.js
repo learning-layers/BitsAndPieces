@@ -8,7 +8,9 @@ define(['logger', 'voc', 'underscore', 'userParams',
         'data/EntityData',
         'data/organize/OrgaEntityData',
         'data/organize/CircleData',
-        'data/organize/OrganizeData' ], 
+        'data/organize/OrganizeData',
+        'data/sss/CollectionData', 
+        'data/sss/CollectionBrowserData' ], 
 function(Logger, Voc, _, userParams,
     UserData, 
     CategoryData, 
@@ -19,7 +21,9 @@ function(Logger, Voc, _, userParams,
     EntityData, 
     OrgaEntityData, 
     CircleData, 
-    OrganizeData ){
+    OrganizeData,
+    CollectionData,
+    CollectionBrowserData ){
     return {
         LOG : Logger.get('AppData'),
         init : function(vie) {
@@ -34,6 +38,8 @@ function(Logger, Voc, _, userParams,
             EntityData.init(this.vie);
             OrgaEntityData.init(this.vie);
             CircleData.init(this.vie);
+            CollectionData.init(this.vie);
+            CollectionBrowserData.init(this.vie);
             this.LOG.debug("initialize AppData");
             this.vie.entities.on('add', this.filter, this );
         },
@@ -62,7 +68,8 @@ function(Logger, Voc, _, userParams,
             this.LOG.debug('initWidgets');
 
             this.vie.entities.addOrUpdate(this.createOrganize(version));
-            this.vie.entities.addOrUpdate(this.createTimeline(version));
+            //this.vie.entities.addOrUpdate(this.createTimeline(version));
+            this.vie.entities.addOrUpdate(this.createCollectionBrowser(version));
         },
         createOrganize : function(version) {
             AppLog.debug("creating default organize widget");
@@ -83,8 +90,15 @@ function(Logger, Voc, _, userParams,
             newWidget.set(Voc.predicate, Voc.USEREVENT);
             newWidget.set(Voc.belongsToVersion, version.getSubject());
             return newWidget;
+        },
+        createCollectionBrowser : function(version) {
+            AppLog.debug("creating collection browser widget");
+            var newWidget = new this.vie.Entity;
+            newWidget.set('@type', Voc.CollectionBrowser);
+            newWidget.set(Voc.belongsToUser, userParams.user);
+            newWidget.set(Voc.belongsToVersion, version.getSubject());
+            return newWidget;
         }
-
     };
 });
 

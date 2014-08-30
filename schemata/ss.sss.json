@@ -217,6 +217,23 @@
                 "http://eval.bp/BrowsingWidget" 
             ] 
         },
+        "http://eval.bp/CollectionBrowser":{
+            "ancestors": [
+                "http://eval.bp/BrowsingWidget" 
+            ], 
+            "comment": "", 
+            "comment_plain": "", 
+            "id": "http://eval.bp/CollectionBrowser", 
+            "label": "CollectionBrowser", 
+            "properties": [
+            ], 
+            "specific_properties": [
+            ], 
+            "subtypes": [], 
+            "supertypes": [
+                "http://eval.bp/BrowsingWidget" 
+            ] 
+        },
         "http://eval.bp/Organize":{
             "ancestors": [
                 "http://eval.bp/OrganizingWidget" 

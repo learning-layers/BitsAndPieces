@@ -265,8 +265,16 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'tagsRemove' : {
             'resultKey' : 'worked'
+        },
+        'collRootGet' : {
+            'resultKey' : 'coll',
+            'decoration' : decorations['single_entity'],
+            'subResults' : [{
+                'resultKey' : 'entries',
+                'decoration' : decorations['single_entity']
+            }]
         }
-
     };
+    m['collWithEntries'] = m['collRootGet'];
     return m;
 });

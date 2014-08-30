@@ -2,6 +2,7 @@ define([], {
     THING : "owl:Thing",
     TIMELINE : "sss:Timeline",
     ORGANIZE : "sss:Organize",
+    CollectionBrowser : "sss:CollectionBrowser",
     USEREVENT : "sss:userEvent",
     EPISODE: "sss:learnEp",
     VERSION: "sss:learnEpVersion",
@@ -16,6 +17,7 @@ define([], {
     WIDGET: "sss:Widget",
     BROWSING_WIDGET: "sss:BrowsingWidget",
     ORGANIZING_WIDGET: "sss:OrganizingWidget",
+    COLLECTION : "sss:coll",
     currentVersion: 'sss:currentVersion',
     belongsToEpisode: 'sss:learnEp',
     belongsToVersion: 'sss:learnEpVersion',
@@ -62,6 +64,10 @@ define([], {
     hasTagRecommendation : 'sss:tagRecommendation',
 
     hasUserEvent : 'sss:hasUserEvent',
-    file : 'sss:file'
+    file : 'sss:file',
+
+    hasEntry : 'sss:entries',
+    belongsToCollection : 'sss:coll',
+    hasRootCollection : 'sss:hasRootCollection'
         
 });

@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 'view/sss/EntityView'], function(Logger, Voc, _, Data, EpisodeData, EntityView){
+define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 'data/sss/CollectionData', 'view/sss/EntityView'], function(Logger, Voc, _, Data, EpisodeData, CollectionData, EntityView){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize UserData");
@@ -8,6 +8,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
         this.vie.entities.on('add', this.filter, this);
         this.setIntegrityCheck(Voc.hasEpisode, Voc.EPISODE, Voc.belongsToUser);
         this.setIntegrityCheck(Voc.currentVersion, Voc.VERSION);
+        this.setIntegrityCheck(Voc.hasRootCollection, Voc.COLLECTION);
     };
     m.LOG = Logger.get('UserData');
     /** 
@@ -18,6 +19,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
             this.LOG.debug('user added', user);
             this.checkIntegrity(user, options);
             if( !user.isNew() ) {
+                this.fetchRootCollection(user);
                 this.fetchEpisodes(user);
                 this.fetchCurrentVersion(user);
                 this.fetchRange(user);
@@ -179,6 +181,15 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
             }
         }).from('sss').execute().success(function(entities) {
             that.vie.entities.addOrUpdate(entities);
+        });
+    };
+    m.fetchRootCollection = function(user) {
+        var that = this;
+        this.vie.load({
+            'service' : 'collRootGet'
+        }).from('sss').execute().success(function(collectionWithEntries) {
+            user.set(Voc.hasRootCollection, collectionWithEntries['@subject']);
+            CollectionData.addCollectionWithEntries(collectionWithEntries);
         });
     };
     return m;
