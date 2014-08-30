@@ -25,6 +25,9 @@ define(['logger', 'underscore', 'voc'], function(Logger, _, Voc){
                                 }).from('sss').execute().success(function(readEntity){
                                     AppLog.debug("entity was read");
                                     AppLog.debug("readEntity", readEntity);
+                                    // XXX remove that property because it is overwrites the existing and already filled one in entities of type collection
+                                    // that's a server side issue. It must not serve such wrong information.
+                                    delete readEntity[Voc.hasEntry];
                                     model.set(readEntity)
                                     if(options.success) 
                                         options.success(readEntity);
