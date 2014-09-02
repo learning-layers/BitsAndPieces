@@ -59,8 +59,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 box = this.$el.find('.tagcloud'),
                 fontMin = 10,
                 fontMax = 14,
-                frequMin = 1,
-                frequMax = 1,
+                frequMin = null,
+                frequMax = null,
                 tmpTags;
 
             that.tagCloud = {};
@@ -91,8 +91,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 }
 
             });
+            var index = 0;
             _.each(_.values(that.tagCloud), function(key, frequ) {
-                if (0 === key) {
+                if (0 === index) {
                     frequMin = frequ;
                     frequMax = frequ;
                 }
@@ -101,12 +102,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 } else if (frequ < frequMin) {
                     frequMin = frequ;
                 }
+                index += 1;
             });
             _.each(that.tagCloud, function(frequ, tag) {
-                var fontSize = (frequ == frequMin) ? fontMin : (frequ / frequMax) * (fontMax - fontMin) + fontMin;
-                if ( fontSize > fontMax ) {
-                    fontSize = fontMax;
-                }
+                var fontSize = (frequ === frequMin) ? fontMin : (frequ / frequMax) * (fontMax - fontMin) + fontMin;
                 box.append(' <span class="badge"><a href="#" style="font-size:' + fontSize+ 'px;" data-tag="' + tag + '">' + tag + '</a></span>');
             });
         },
