@@ -24,6 +24,7 @@
         </li>
       </ul>
       <p class="navbar-text currentEpisodeLabel"></p>
+      <p class="navbar-text navbar-right currentUserLabel"><span class="glyphicon glyphicon-user"></span> <span class="userLabel"><%= userLabel %></span></p>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>

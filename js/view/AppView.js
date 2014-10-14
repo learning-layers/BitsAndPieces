@@ -26,6 +26,11 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                         version = model.get(Voc.currentVersion);
                         if( version.isEntity) that.show(version);
                     }, this);
+                this.model.on('change:'
+                    + this.vie.namespaces.uri(Voc.label),
+                    function(model, value, options) {
+                        that.$el.parent().find('.currentUserLabel > .userLabel').html(model.get(Voc.label));
+                    },this);
             },
             filter: function(model, collection, options) {
                 if(model.isof(Voc.VERSION)){
@@ -46,7 +51,9 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                 }
             },
             render: function() {
-                var navbar = _.template(NavbarTemplate, {});
+                var navbar = _.template(NavbarTemplate, {
+                    userLabel: this.model.get(Voc.label)
+                });
                 // Prepend navbar to body
                 this.$el.parent().prepend(navbar);
 
