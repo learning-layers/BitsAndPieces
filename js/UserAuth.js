@@ -54,7 +54,7 @@ function (module, Logger, $) {
                         return;
                     }
 
-                    var result = $.parseJSON(jqXHR.responseText)[op]; 
+                    var result = $.parseJSON(jqXHR.responseText);
                     that.LOG.debug('result', result);
 
                     if( result.error ) {
@@ -65,8 +65,8 @@ function (module, Logger, $) {
                     that.LOG.debug('Auth Success', result);
                     var authData = {
                         label: username,
-                        key: result.key,
-                        user: result.user,
+                        key: result[op].key,
+                        user: result[op].user,
                     };
                     that.setAuthCookie(authData);
                     defer.resolve(true);
