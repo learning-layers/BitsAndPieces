@@ -7,8 +7,9 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
         'view/WidgetView',
         'view/episode/EpisodeManagerView',
         'view/toolbar/ToolbarView',
+        'utils/SystemMessages',
         'text!templates/navbar.tpl'],
-    function(Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, NavbarTemplate){
+    function(Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, SystemMessages, NavbarTemplate){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {
@@ -31,6 +32,14 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                     function(model, value, options) {
                         that.$el.parent().find('.currentUserLabel > .userLabel').html(model.get(Voc.label));
                     },this);
+                this.model.on('change:'
+                    + this.vie.namespaces.uri(Voc.hasEpisode),
+                    function(model, value, options) {
+                        if ( false === value ) {
+                            SystemMessages.addWarningMessage('You have no episodes. Please open the <strong>Menu</strong> and choose <strong>Create New Episode</strong>!');
+                        }
+                    },this);
+
             },
             filter: function(model, collection, options) {
                 if(model.isof(Voc.VERSION)){

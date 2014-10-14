@@ -455,3 +455,12 @@ table td.withPadding {
 label.notBoldLabel {
 	font-weight: normal;
 }
+
+#systemMessages {
+	position: fixed;
+	top: 50px;
+	left: 0px;
+	width: 100%;
+	padding-left: 5px;
+	padding-right: 5px;
+}
