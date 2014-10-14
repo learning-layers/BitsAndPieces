@@ -159,7 +159,9 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
                     return userEvent.getSubject();
                 });
                 user.set(Voc.hasUserEvent, uris);
-                that.fetchData(user, entityUris);
+                if ( entityUris.length > 0 ) {
+                    that.fetchData(user, entityUris);
+                }
                 if( callbacks && _.isFunction(callbacks.success) ) {
                     callbacks.success(entities);
                 }
