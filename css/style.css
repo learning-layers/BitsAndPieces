@@ -273,6 +273,7 @@ div#tabs .ui-tabs-panel {
 
 #tabs ul.ui-tabs-nav li a {
 	width: 73px;
+	text-align: center;
 }
 
 #tabs ul.ui-tabs-nav li.ui-state-default {
