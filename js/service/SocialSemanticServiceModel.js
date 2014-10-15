@@ -97,7 +97,8 @@ define(['underscore', 'logger'], function(_, Logger) {
             }
             switch( scrub[key]['type'] ) {
                 case 'array':
-                    params[key] = params[key].join(',');
+                    // XXX SSS Expects ARRAYS not CSV
+                    //params[key] = params[key].join(',');
                     break;
                 case 'number':
                     // force cast to number
@@ -178,11 +179,11 @@ define(['underscore', 'logger'], function(_, Logger) {
             'decoration' : decorations['single_entity'],
             'subResults' : [
                 {
-                    'resultKey' : 'circles',
+                    'resultKey' : 'learnEpCircles',
                     'decoration' : decorations['single_entity']
                 },
                 {
-                    'resultKey' : 'entities',
+                    'resultKey' : 'learnEpEntities',
                     'decoration' : decorations['single_entity']
                 }
             ]
