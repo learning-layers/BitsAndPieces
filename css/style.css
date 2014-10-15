@@ -266,6 +266,15 @@ div#tabs .ui-tabs-panel {
 	padding: 0;
 }
 
+#tabs ul.ui-tabs-nav li:first-child {
+	margin-left: 3px;
+	color: red;
+}
+
+#tabs ul.ui-tabs-nav li a {
+	width: 73px;
+}
+
 #tabs ul.ui-tabs-nav li.ui-state-default {
 	background: #e7e7e7;
 }
