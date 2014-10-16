@@ -259,7 +259,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
                     }
                 } else {
                     file = this.model.get(Voc.file);
-                    if( file.isEntity) file = file.getSubject();
+                    if( file && file.isEntity ) file = file.getSubject();
                     if( file ) {
                         switch(file.substring(file.length-4) ) {
                             case '.pdf':
