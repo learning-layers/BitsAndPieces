@@ -116,6 +116,8 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             'service' : 'search',
             'data' : {
                 'keywordsToSearchFor' : tags,
+                'includeTags' : true,
+                'includeLabel' : true,
                 'typesToSearchOnlyFor' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
             }
         }).using('sss').execute().success(function(entities){
@@ -125,6 +127,8 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                 // XXX This is quite a bad check, in case the search results will
                 // change in future. Need a better check to determine entity
                 // being fully loaded.
+                // XXX Need to determine if this is even needed any more
+                // as the method might return the full entity representation now
                 if ( !entity.has(Voc.author) ) {
                     entity.fetch();
                 }
