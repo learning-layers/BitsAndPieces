@@ -35,7 +35,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
             service : 'learnEpCreate',
             data : {
                 'label' : model.get(Voc.label),
-                'description' : 'privateSpace'
+                'description' : ''
             }
         }).to('sss').execute().success(function(savedEntityUri) {
             model.set(model.idAttribute, savedEntityUri, options);
