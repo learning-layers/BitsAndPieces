@@ -123,16 +123,13 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         }).using('sss').execute().success(function(entities){
             that.LOG.debug('search entities', entities);
             entities = that.vie.entities.addOrUpdate(entities);
-            _.each(entities, function(entity) {
-                // XXX This is quite a bad check, in case the search results will
-                // change in future. Need a better check to determine entity
-                // being fully loaded.
-                // XXX Need to determine if this is even needed any more
-                // as the method might return the full entity representation now
-                if ( !entity.has(Voc.author) ) {
-                    entity.fetch();
-                }
-            });
+            // TODO Check if search returns full information for entities
+            // If not, determine ones that need to be loaded and load those
+            // using entityDescsGet call.
+            // Please make sure to return the fully loaded entities to the callback.
+            // One solution would be to load the ones that are needed, and only then
+            // run the callback method. If none need loading, then just run the callback
+            // here.
             callback(entities);
         });
     };

@@ -66,15 +66,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             that.tagCloud = {};
             box.empty();
             _.each(this.searchResultSet, function(result) {
-                // TODO Check if a better solution could be implemented
-                // This is here to make sure that all entities have finished
-                // loading and have some tags associated with them.
-                if ( result.model.get(Voc.hasTag) === undefined) {
-                    _.defer(function() {
-                        that.displayTagcloud();
-                    });
-                    return;
-                }
                 if ( result.model.get(Voc.hasTag) ) {
                     tmpTags = result.model.get(Voc.hasTag);
                     // Deals with single tag case
