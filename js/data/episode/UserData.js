@@ -31,14 +31,17 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
 
         if( method === 'update' ) {
             var changed = model.changedAttributes();
-            m.LOG.debug('changed', changed, _.keys(changed).length );
-            var currentVersionKey = this.vie.namespaces.uri(Voc.currentVersion);
-            if( changed[currentVersionKey] ) {
-                m.saveCurrentVersion(model, options);
-            }
-            if( _.keys(changed).length > 1 ) {
-                // handle rest of changed attributes by generic sync
-                this.vie.Entity.prototype.sync(method, model, options);
+            m.LOG.debug('changed', changed );
+            if ( changed ) {
+                m.LOG.debug('changed keys length', _.keys(changed).length );
+                var currentVersionKey = this.vie.namespaces.uri(Voc.currentVersion);
+                if( changed[currentVersionKey] ) {
+                    m.saveCurrentVersion(model, options);
+                }
+                if( _.keys(changed).length > 1 ) {
+                    // handle rest of changed attributes by generic sync
+                    this.vie.Entity.prototype.sync(method, model, options);
+                }
             }
         } else {
             this.vie.Entity.prototype.sync(method, model, options);
