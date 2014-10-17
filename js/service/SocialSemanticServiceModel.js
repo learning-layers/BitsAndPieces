@@ -248,7 +248,7 @@ define(['underscore', 'logger'], function(_, Logger) {
             },
             'preparation' : preparations['scrubParams']
         },
-        'recommTagsBasedOnUserEntityTagTime' : {
+        'recommTags' : {
             'resultKey' : 'tags',
             'params' : {
                 'maxTags' : { 'default' : 20 }

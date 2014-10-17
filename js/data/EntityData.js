@@ -21,7 +21,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             model.on('change:'+this.vie.namespaces.uri(Voc.hasTag), this.changedTags, this);
             model.on('change:'+this.vie.namespaces.uri(Voc.importance), this.setImportance, this);
             this.loadViewCount(model);
-            this.loadRecommTagsBasedOnUserEntityTagTime(model);
+            this.loadRecommTags(model);
         }
     };
     m.initUser = function(model, value, options) {
@@ -55,7 +55,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                         }
                     }).to('sss').execute().success(function(s){
                         that.LOG.debug('success addTag', s);
-                        that.loadRecommTagsBasedOnUserEntityTagTime(model);
+                        that.loadRecommTags(model);
                     }).fail(function(f){
                         var tags = model.get(Voc.hasTag) || [];
                         if( !_.isArray(tags)) tags = [tags];
@@ -80,7 +80,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                             'label' : tag
                         }
                     }).from('sss').execute().success(function(s){
-                        that.loadRecommTagsBasedOnUserEntityTagTime(model);
+                        that.loadRecommTags(model);
                         that.LOG.debug('success removeTag', s);
                     });
                 });
@@ -97,7 +97,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             'success' : function(result) {
                 that.LOG.debug('success setLabel', result);
                 // TODO check whether tag recomms can change due to label change
-                that.loadRecommTagsBasedOnUserEntityTagTime(model);
+                that.loadRecommTags(model);
                 if(options.success) {
                     options.success(result);
                 }
@@ -133,14 +133,14 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             callback(entities);
         });
     };
-    m.loadRecommTagsBasedOnUserEntityTagTime = function(model) {
+    m.loadRecommTags = function(model) {
         var that = this;
 
         this.vie.onUrisReady(
             model.getSubject(),
             function(modelUri) {
                 that.vie.analyze({
-                    'service' : 'recommTagsBasedOnUserEntityTagTime',
+                    'service' : 'recommTags',
                     'data' : {
                         'entity' : modelUri,
                         'maxTags' : 20
