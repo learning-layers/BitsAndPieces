@@ -130,7 +130,6 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'entityDescGet' : {
             'resultKey' : 'desc',
-            '@id' : 'entity',
             'decoration' : decorations['single_desc_entity']
         },
         'categoriesPredefinedGet' : {
