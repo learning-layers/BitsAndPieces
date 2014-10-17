@@ -194,7 +194,8 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'uEsGet' : {
             'resultKey' : 'uEs',
-            'decoration' : decorations['fixForVIE_only']
+            'decoration' : decorations['fixForVIE_only'],
+            '@type': 'ueType'
         },
         'learnEpVersionSetTimelineState' : {
             'resultKey' : 'learnEpTimelineState', 
