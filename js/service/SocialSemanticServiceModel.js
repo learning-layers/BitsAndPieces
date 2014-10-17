@@ -156,7 +156,6 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'entityDescsGet' : {
             'resultKey' : 'descs', 
-            '@id' : 'entity',
             'params' : {
                 'entities' : { 'type' : 'array' },
                 'types' : { 'type' : 'array' },
