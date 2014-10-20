@@ -7,7 +7,7 @@ Bits and Pieces is a user interface framework for sensemaking based on a design 
 Getting it to run
 -----------------
 
-You would need to have an instance of the [Social Semantic Server](https://github.com/learning-layers/SocialSemanticServer) running. In order to be able to use the Service API one would need to download the SSS client-side library from [Social Semantic Server Client Side](https://github.com/learning-layers/SocialSemanticServerClientSide) and install it somewhere in your local environment. Please make sure that SocialSemanticServer REST service location address is set to the currently used one within SSGlobals.js configuration file.  After having all of the required components running you need to adapt the `sss_url` variable in `js/main.js` to match your installation location.
+You would need to have an instance of the [Social Semantic Server](https://github.com/learning-layers/SocialSemanticServer) running. In order to be able to use the Service API one would need to deploy the Social Semantic Server REST Adapter onto the server, [Apache Tomcat](http://tomcat.apache.org/) is assumed by the installation instructions. After having all of the required components running you need to adapt the `sssHostREST` variable in `js/main.js` to match your installation location.
 
 Now open a web browser (Firefox or Chrome are recommended) and head to the root of the location where you checked out Bits and Pieces. Log in with your user credentials to start using the application, for instance `localhost/BitsAndPieces/`.
 
@@ -16,6 +16,5 @@ If you have not created any Learning Episodes yet, please use the menu on the to
 Service version requirements
 ----------------------------
 
-* SocialSemanticServer: v3.3.5-alpha
-* SocialSemanticServerClientSide: v4.3.4-alpha
+* SocialSemanticServer: v6.0.1-alpha(actually current master branch, due to some changes needed)
 
