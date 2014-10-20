@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 'view/sss/EntityView'], function(Logger, Voc, _, Data, EpisodeData, EntityView){
+define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 'userParams', 'view/sss/EntityView'], function(Logger, Voc, _, Data, EpisodeData, userParams, EntityView){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize UserData");
@@ -18,9 +18,12 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
             this.LOG.debug('user added', user);
             this.checkIntegrity(user, options);
             if( !user.isNew() ) {
-                this.fetchEpisodes(user);
-                this.fetchCurrentVersion(user);
-                this.fetchRange(user);
+                // Only fetch additional data for current user
+                if ( user === this.vie.entities.get(userParams.user) ) {
+                    this.fetchEpisodes(user);
+                    this.fetchCurrentVersion(user);
+                    this.fetchRange(user);
+                }
             } 
             user.sync = this.sync;
         }
