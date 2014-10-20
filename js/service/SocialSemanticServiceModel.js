@@ -42,6 +42,16 @@ define(['underscore', 'logger'], function(_, Logger) {
     var fixForVIE = function(object, idAttr, typeAttr) {
         if( !idAttr) idAttr = 'id';
         if( !typeAttr) typeAttr = 'type';
+
+        // If both @subject and @type are present, then there is no need
+        // to refix the result.
+        // As caching might lead to multiple callback being called on the
+        // same result set, do not fix it more than once.
+        // See service resolve() method for more details.
+        if ( object['@subject'] && object['@type'] ) {
+            return true;
+        }
+
         object[VIE.prototype.Entity.prototype.idAttribute] = object[idAttr];
         delete object[idAttr];
         if (object[typeAttr]) {
