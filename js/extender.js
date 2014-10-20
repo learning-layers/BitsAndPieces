@@ -18,9 +18,12 @@ define(['logger', 'underscore', 'voc'], function(Logger, _, Voc){
                             model.getSubject(),
                             function(modelUri) {
                                 that.vie.load({
-                                    'service' : 'entityGet',
+                                    'service' : 'entityDescGet',
                                     'data' : _.extend(options.data || {}, {
-                                        'entity' : modelUri
+                                        'entity' : modelUri,
+                                        'getTags' : true,
+                                        'getThumb' : true,
+                                        'getFlags' : true
                                     })
                                 }).from('sss').execute().success(function(readEntity){
                                     AppLog.debug("entity was read");
