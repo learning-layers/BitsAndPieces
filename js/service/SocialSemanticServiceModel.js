@@ -21,7 +21,7 @@ define(['underscore', 'logger'], function(_, Logger) {
                     creationTime = 1;
                 _.each(object['flags'], function(flag) {
                     // In case multiple are provided
-                    if ( flag.type === 'importance'  && flag.creationTime > creationTime) {
+                    if ( flag.flagType === 'importance'  && flag.creationTime > creationTime) {
                         importance = flag.value;
                         creationTime = flag.creationTime;
                     }
