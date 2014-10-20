@@ -106,10 +106,6 @@ define(['underscore', 'logger'], function(_, Logger) {
                 continue;
             }
             switch( scrub[key]['type'] ) {
-                case 'array':
-                    // XXX SSS Expects ARRAYS not CSV
-                    //params[key] = params[key].join(',');
-                    break;
                 case 'number':
                     // force cast to number
                     params[key] = params[key] - 0;
