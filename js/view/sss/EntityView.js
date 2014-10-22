@@ -242,7 +242,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
                 if( !this.icons[name]) name = 'user';
             }
 
-            if ( 'sss:file' === name || 'sss:evernoteResource' === name ) {
+            if ( this.model.isof(Voc.FILE) || this.model.isof(Voc.EVERNOTE_RESOURCE) ) {
                 mimeType  = this.model.get(Voc.hasMimeType);
                 if ( mimeType ) {
                     switch( mimeType ) {
