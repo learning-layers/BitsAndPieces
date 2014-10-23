@@ -230,16 +230,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 circles: [],
                 entities: []
             },
-            version = this.getCurrentVersion(),
-            widgets = version.get(Voc.hasWidget);
-            _.each(widgets, function(widget) {
-                if ( widget.get('@type').isof(Voc.ORGANIZE) ) {
-                    response.circles = widget.get(Voc.hasCircle) || [];
-                    if( !_.isArray(response.circles)) response.circles = [response.circles];
-                    response.entities = widget.get(Voc.hasEntity) || [];
-                    if( !_.isArray(response.entities)) response.entities = [response.entities];
-                }
-            });
+            version = this.getCurrentVersion();
+
+            response.circles = version.get(Voc.hasCircle) || [];
+            if( !_.isArray(response.circles)) response.circles = [response.circles];
+            response.entities = version.get(Voc.hasEntity) || [];
+            if( !_.isArray(response.entities)) response.entities = [response.entities];
 
             return response;
         },
@@ -251,11 +247,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     circles = $('<optgroup label="Circles"></optgroup>'),
                     entities = $('<optgroup label="Entities"></optgrpup>');
                 _.each(current.circles, function(circle) {
-                    circles.append('<option value="' + circle.attributes['@subject'] + '">' + circle.get(Voc.Label) + '</option>');
+                    circles.append('<option value="' + circle.getSubject() + '">' + circle.get(Voc.label) + '</option>');
                 });
                 _.each(current.entities, function(orgaentity) {
                     var entity = orgaentity.get(Voc.hasResource);
-                    entities.append('<option value="' + orgaentity.attributes['@subject']+ '">' + entity.get(Voc.label) + '</option>');
+                    entities.append('<option value="' + orgaentity.getSubject() + '">' + entity.get(Voc.label) + '</option>');
                 });
                 select.append(circles);
                 select.append(entities);
