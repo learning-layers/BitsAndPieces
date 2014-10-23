@@ -10,12 +10,12 @@
 
         <div class="toolbarSection">
             <div class="form-group">
-                <label>Episode Title:</label>
+                <label class="control-label">Episode Title:</label>
                 <input type="text" class="form-control" name="label" value="<%= entity.label %>" />
             </div>
 
             <div class="form-group">
-                <label>Description</label>
+                <label class="control-label">Description</label>
                 <textarea class="form-control" name="description"><%= entity.description %></textarea>
             </div>
 
@@ -40,17 +40,17 @@
                 <br />
 
                 <div class="form-group">
-                    <label>Share with:</label>
+                    <label class="control-label">Share with:</label>
                     <input type="text" class="form-control" name="sharewith" value="" placeholder="Enter username to search"/>
                 </div>
 
                 <div class="form-group">
-                    <label>Sharing notification text:</label>
+                    <label class="control-label">Sharing notification text:</label>
                     <textarea class="form-control" name="notificationtext" placeholder="Enter a text that user will receive when sharing episode"></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label>Share to folder:</label>
+                    <label class="control-label">Share to folder:</label>
                     <select class="form-control" name="sharetofolder" disabled="disabled">
                         <option value="None">None</option>
                     </select>
@@ -74,7 +74,7 @@
 
         <div class="toolbarSection toolbarSectionEpisodes">
             <div class="form-group">
-                <label>Search Episodes:</label>
+                <label class="control-label">Search Episodes:</label>
                 <input type="text" class="form-control" name="search" value="" placeholder="Enter episode name to search" />
             </div>
 

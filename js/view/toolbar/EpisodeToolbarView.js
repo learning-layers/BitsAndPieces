@@ -1,6 +1,7 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
+        'utils/SystemMessages',
         'text!templates/toolbar/episode.tpl',
-        'data/episode/EpisodeData', 'data/episode/UserData', 'view/toolbar/EpisodeListingView'], function(Logger, tracker, _, $, Backbone, Voc, EpisodeTemplate, EpisodeData, UserData, EpisodeListingView){
+        'data/episode/EpisodeData', 'data/episode/UserData', 'view/toolbar/EpisodeListingView'], function(Logger, tracker, _, $, Backbone, Voc, SystemMessages, EpisodeTemplate, EpisodeData, UserData, EpisodeListingView){
     return Backbone.View.extend({
         episodeViews: [],
         events: {
@@ -12,7 +13,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'click button[name="share"]' : 'shareEpisode',
             'click .selectedUser > span' : 'removeSelectedUser',
             'click input[name="onlyselected"]' : 'clickOnlySelected',
-            'keypress input[name="search"]' : 'updateOnEnter'
+            'keypress input[name="search"]' : 'updateOnEnter',
+            'keyup textarea[name="notificationtext"]' : 'revalidateNotificationText'
         },
         LOG: Logger.get('EpisodeToolbarView'),
         initialize: function() {
@@ -151,28 +153,32 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         shareEpisode: function(e) {
             var that = this,
+                hasErrors = false,
+                notificationTextElem = this.$el.find('textarea[name="notificationtext"]'),
                 shareType = this.$el.find('input[name="sharetype"]:checked').val(),
                 onlySelected = this.$el.find('input[name="onlyselected"]').is(':checked'),
-                notificationText = this.$el.find('textarea[name="notificationtext"]').val(),
+                notificationText = notificationTextElem.val(),
                 users = [],
                 excluded = [],
                 episode = this.getCurrentEpisode();
 
-            if ( _.isEmpty(notificationText.trim()) ) {
-                alert('Please provide a text for notification!');
+            // Validation
+            if ( !this.validateNotificationText() ) {
+                hasErrors = true;
+            }
+            if ( !this.validateSharedWith() ) {
+                hasErrors = true;
+            }
+            if ( hasErrors ) {
                 return false;
             }
 
-            if ( _.isEmpty(this.selectedUsers) ) {
-                alert('Please select at least one user from suggested list!');
-                return false;
-            }
-
+            var sharedWithUsernames = this.getUserNamesFromUris(this.selectedUsers);
             if ( shareType === 'coediting' ) {
                 EpisodeData.shareEpisode(episode, this.selectedUsers, notificationText);
                 this._cleanUpAfterSharing();
 
-                alert('Your episode has been shared successfully.');
+                SystemMessages.addSuccessMessage('Your episode has been shared successfully. For co-editing with ' + sharedWithUsernames.join(', '));
             } else if ( shareType === 'separatecopy' ) {
                 // Determine if some bits need to be excluded
                 if ( onlySelected === true ) {
@@ -180,11 +186,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     _.each(this.$el.find('select[name="only"] option:not(:selected)'), function(element) {
                         excluded.push($(element).val());
                     });
+
+                    SystemMessages.addInfoMessage('You have chosen to only share the selected bits.');
                 }
                 EpisodeData.copyEpisode(episode, this.selectedUsers, excluded, notificationText);
                 this._cleanUpAfterSharing();
 
-                alert('Your episode has been shared successfully.');
+                SystemMessages.addSuccessMessage('Your episode has been shared successfully. As a copy, with ' + sharedWithUsernames.join(', '));
             } else {
                 this.LOG.debug('Invalid share type');
             }
@@ -199,9 +207,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         addSelectedUser: function(event, ui, autocomplete) {
             if ( _.indexOf(this.selectedUsers, ui.item.value) === -1 ) {
+                var shareWithElem = $(autocomplete);
                 this.selectedUsers.push(ui.item.value);
-                $(autocomplete).val('');
-                $(autocomplete).parent().append('<div class="badge selectedUser" data-value="' + ui.item.value+ '"><span class="glyphicon glyphicon-user userIcon"></span> ' + ui.item.label + ' <span class="glyphicon glyphicon-remove-circle deleteIcon"><span></div>');
+                shareWithElem.val('');
+                shareWithElem.parent().append('<div class="badge selectedUser" data-value="' + ui.item.value+ '"><span class="glyphicon glyphicon-user userIcon"></span> ' + ui.item.label + ' <span class="glyphicon glyphicon-remove-circle deleteIcon"><span></div>');
+                this.validateSharedWith();
             }
         },
         removeSelectedUser: function(e) {
@@ -209,6 +219,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.selectedUsers = _.without(this.selectedUsers, removable.data('value'));
 
             removable.remove();
+            this.validateSharedWith();
         },
         getCurrentEntitiesAndCircles: function() {
             var response = {
@@ -272,6 +283,63 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             });
 
             return returned;
+        },
+        addValidationStateToParent: function(element, stateClass) {
+            element.parent().addClass(stateClass);
+        },
+        removeValidationStateFromParent: function(element) {
+            element.parent().removeClass('has-error has-warning has-success');
+        },
+        addAlert: function(element, stateClass, text) {
+            element.after('<div class="alert ' + stateClass+ '" role="alert">' + text + '</div>');
+        },
+        removeAlertsFromParent: function(element) {
+            this.removeAlerts(element.parent());
+        },
+        removeAlerts: function(element) {
+            element.find('.alert').remove();
+        },
+        validateSharedWith: function() {
+            var shareWithElem = this.$el.find('input[name="sharewith"]');
+
+            this.removeAlertsFromParent(shareWithElem);
+            if ( _.isEmpty(this.selectedUsers) ) {
+                this.addValidationStateToParent(shareWithElem, 'has-error');
+                this.addAlert(shareWithElem, 'alert-danger', 'Please select at least one user from suggested list!');          
+                return false;
+            } else {
+                this.removeValidationStateFromParent(shareWithElem);
+                return true;
+            }
+        },
+        validateNotificationText: function() {
+            var notificationTextElem = this.$el.find('textarea[name="notificationtext"]'),
+                notificationText = notificationTextElem.val();
+
+            this.removeAlertsFromParent(notificationTextElem);
+            if ( _.isEmpty(notificationText.trim()) ) {
+                this.addValidationStateToParent(notificationTextElem, 'has-error');
+                this.addAlert(notificationTextElem, 'alert-danger', 'Please provide a text for notification!');
+                return false;
+            } else {
+                this.removeValidationStateFromParent(notificationTextElem);
+                return true;
+            }
+        },
+        revalidateNotificationText: function(e) {
+            this.validateNotificationText();
+        },
+        getUserNamesFromUris: function(uris) {
+            var that = this;
+            return _.map(uris, function(uri) {
+                // TODO This might become a problem in case of very large number of users
+                // Might be better to create a lookup construct
+                var user = _.findWhere(that.searchableUsers, { value: uri });
+                if ( _.isObject(user) ) {
+                    return user.label;
+                }
+                return uri;
+            });
         }
     });
 });
