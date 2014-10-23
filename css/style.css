@@ -456,6 +456,7 @@ ul.episodeListing .episodeLabel {
     cursor: pointer;
 	min-height: 50px;
 	margin-left: 10px;
+	max-width: 150px;
 }
 
 table td.withPadding {
