@@ -1,7 +1,7 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
-        'utils/SystemMessages',
+        'userParams', 'utils/SystemMessages',
         'text!templates/toolbar/episode.tpl',
-        'data/episode/EpisodeData', 'data/episode/UserData', 'view/toolbar/EpisodeListingView'], function(Logger, tracker, _, $, Backbone, Voc, SystemMessages, EpisodeTemplate, EpisodeData, UserData, EpisodeListingView){
+        'data/episode/EpisodeData', 'data/episode/UserData', 'view/toolbar/EpisodeListingView'], function(Logger, tracker, _, $, Backbone, Voc, userParams, SystemMessages, EpisodeTemplate, EpisodeData, UserData, EpisodeListingView){
     return Backbone.View.extend({
         episodeViews: [],
         events: {
@@ -25,10 +25,14 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             var that = this;
             UserData.fetchAllUsers().then(function(users) {
                 _.each(users, function(user) {
-                    that.searchableUsers.push({
-                        label: user.label,
-                        value: user.id
-                    });
+                    // Make sure to remove the currently logged in user
+                    // Sharing with self is not allowed
+                    if ( user.id !== userParams.user ) {
+                        that.searchableUsers.push({
+                            label: user.label,
+                            value: user.id
+                        });
+                    }
                 });
             });
         },
