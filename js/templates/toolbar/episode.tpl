@@ -33,7 +33,7 @@
                 <br />
 
                 <div>
-                    <label>Selected bits only</label>
+                    <label class="control-label">Selected bits only</label>
                     <input type="checkbox" name="onlyselected" value="1" disabled="disabled" />
                 </div>
 

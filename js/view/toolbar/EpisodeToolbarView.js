@@ -14,7 +14,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'click .selectedUser > span' : 'removeSelectedUser',
             'click input[name="onlyselected"]' : 'clickOnlySelected',
             'keypress input[name="search"]' : 'updateOnEnter',
-            'keyup textarea[name="notificationtext"]' : 'revalidateNotificationText'
+            'keyup textarea[name="notificationtext"]' : 'revalidateNotificationText',
+            'change select[name="only"]' : 'revalidateOnlySelected'
         },
         LOG: Logger.get('EpisodeToolbarView'),
         initialize: function() {
@@ -173,6 +174,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if ( !this.validateSharedWith() ) {
                 hasErrors = true;
             }
+            if ( !this.validateOnlySelected() ) {
+                hasErrors = true;
+            }
             if ( hasErrors ) {
                 return false;
             }
@@ -187,7 +191,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 });
 
                 promise.fail(function() {
-                    that._cleanUpAfterSharing();
                     SystemMessages.addDangerMessage('Episode sharing failed!');
                 });
 
@@ -210,7 +213,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 });
 
                 promise.fail(function() {
-                    that._cleanUpAfterSharing();
                     SystemMessages.addDangerMessage('Episode sharing failed!');
                 });
 
@@ -274,6 +276,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 select.append(entities);
                 $(e.currentTarget).after(select);
             } else {
+                this.validateOnlySelected();
                 this.$el.find('select[name="only"]').remove();
             }
         },
@@ -345,6 +348,27 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         revalidateNotificationText: function(e) {
             this.validateNotificationText();
+        },
+        validateOnlySelected: function() {
+            var onlySelectedElem = this.$el.find('select[name="only"]'),
+                onlySelected = this.$el.find('input[name="onlyselected"]').is(':checked');
+
+            this.removeAlertsFromParent(onlySelectedElem);
+            if ( !onlySelected ) {
+                this.removeValidationStateFromParent(onlySelectedElem);
+                return true;
+            } else if ( onlySelectedElem.find('option:selected').length === 0 ) {
+                this.addValidationStateToParent(onlySelectedElem, 'has-error');
+                this.addAlert(onlySelectedElem, 'alert-danger', 'Please select at least one entity or circle!');
+                return false;
+            } else {
+                this.removeValidationStateFromParent(onlySelectedElem);
+                return true;
+            }
+
+        },
+        revalidateOnlySelected: function() {
+            this.validateOnlySelected();
         },
         getUserNamesFromUris: function(uris) {
             var that = this;
