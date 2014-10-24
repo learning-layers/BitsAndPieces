@@ -13,7 +13,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'click button[name="share"]' : 'shareEpisode',
             'click .selectedUser > span' : 'removeSelectedUser',
             'click input[name="onlyselected"]' : 'clickOnlySelected',
-            'keypress input[name="search"]' : 'updateOnEnter',
+            'keyup input[name="search"]' : 'updateOnKeyUp',
             'keyup textarea[name="notificationtext"]' : 'revalidateNotificationText',
             'change select[name="only"]' : 'revalidateOnlySelected'
         },
@@ -100,7 +100,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 } else if ( currentTarget.attr('name') === 'search' ) {
                     this.addOrUpdateEpisodeViews( this.searchEpisodes(currentTarget.val()) );
                 }
-
+            }
+        },
+        updateOnKeyUp: function(e) {
+            this.LOG.debug('updateOnKeyUp', e);
+            var currentTarget = $(e.currentTarget);
+            if ( currentTarget.attr('name') === 'search' ) {
+                this.addOrUpdateEpisodeViews( this.searchEpisodes(currentTarget.val()) );
             }
         },
         getEpisodeViewData: function() {
