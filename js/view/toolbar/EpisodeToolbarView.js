@@ -179,10 +179,18 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
             var sharedWithUsernames = this.getUserNamesFromUris(this.selectedUsers);
             if ( shareType === 'coediting' ) {
-                EpisodeData.shareEpisode(episode, this.selectedUsers, notificationText);
-                this._cleanUpAfterSharing();
+                var promise = EpisodeData.shareEpisode(episode, this.selectedUsers, notificationText);
 
-                SystemMessages.addSuccessMessage('Your episode has been shared successfully. For co-editing with ' + sharedWithUsernames.join(', '));
+                promise.done(function() {
+                    that._cleanUpAfterSharing();
+                    SystemMessages.addSuccessMessage('Your episode has been shared successfully. For co-editing with ' + sharedWithUsernames.join(', '));
+                });
+
+                promise.fail(function() {
+                    that._cleanUpAfterSharing();
+                    SystemMessages.addDangerMessage('Episode sharing failed!');
+                });
+
             } else if ( shareType === 'separatecopy' ) {
                 // Determine if some bits need to be excluded
                 if ( onlySelected === true ) {
@@ -190,13 +198,22 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     _.each(this.$el.find('select[name="only"] option:not(:selected)'), function(element) {
                         excluded.push($(element).val());
                     });
-
-                    SystemMessages.addInfoMessage('You have chosen to only share the selected bits.');
                 }
-                EpisodeData.copyEpisode(episode, this.selectedUsers, excluded, notificationText);
-                this._cleanUpAfterSharing();
+                var promise = EpisodeData.copyEpisode(episode, this.selectedUsers, excluded, notificationText);
 
-                SystemMessages.addSuccessMessage('Your episode has been shared successfully. As a copy, with ' + sharedWithUsernames.join(', '));
+                promise.done(function() {
+                    if ( onlySelected === true && excluded.length > 0 ) {
+                        SystemMessages.addInfoMessage('You have chosen to only share the selected bits.');
+                    }
+                    that._cleanUpAfterSharing();
+                    SystemMessages.addSuccessMessage('Your episode has been shared successfully. As a copy, with ' + sharedWithUsernames.join(', '));
+                });
+
+                promise.fail(function() {
+                    that._cleanUpAfterSharing();
+                    SystemMessages.addDangerMessage('Episode sharing failed!');
+                });
+
             } else {
                 this.LOG.debug('Invalid share type');
             }

@@ -82,10 +82,10 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                         entity['@type'] = Voc.ORGAENTITY;
                     });
                     version[Voc.hasEntity] = entityUris;
+
                     em.vie.entities.addOrUpdate(entities);
                 });
                 em.vie.entities.addOrUpdate(versions);
-
             }
         );
 
@@ -116,10 +116,10 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
         return coll;
     };
     m.shareEpisode = function(model, users, comment) {
-        var that = this;
+        var that = this,
+            defer = $.Deferred();
         this.vie.onUrisReady(
             model.getSubject(),
-            // XXX assuming that users uris are ready
             function(modelUri) {
                 that.vie.save({
                     'service' : 'entityShare',
@@ -130,15 +130,21 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                     }
                 }).using('sss').execute().success(function(){
                     that.LOG.debug('success entityShare');
+                    defer.resolve(true);
+                }).fail(function() {
+                    that.LOG.debug('error entityShare');
+                    defer.reject(false);
                 });
             }
         );
+
+        return defer.promise();
     };
     m.copyEpisode = function(model, users, exclude, comment) {
-        var that = this;
+        var that = this,
+            defer = $.Deferred();
         this.vie.onUrisReady(
             model.getSubject(),
-            // XXX assuming that users uris are ready
             function(modelUri) {
                 that.vie.save({
                     'service' : 'entityCopy',
@@ -150,9 +156,15 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                     }
                 }).using('sss').execute().success(function(){
                     that.LOG.debug('success entityCopy');
+                    defer.resolve(true);
+                }).fail(function() {
+                    that.LOG.debug('error entityCopy');
+                    defer.reject(false);
                 });
             }
         );
+
+        return defer.promise();
     };
     return m;
 });
