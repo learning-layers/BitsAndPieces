@@ -72,7 +72,7 @@ function (module, Logger, $) {
                     defer.resolve(true);
                 }
             });
-            return defer;
+            return defer.promise();
         },
         logout: function() {
             return $.removeCookie(this.authCookie);
