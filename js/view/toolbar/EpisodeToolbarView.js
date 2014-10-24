@@ -28,7 +28,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 _.each(users, function(user) {
                     // Make sure to remove the currently logged in user
                     // Sharing with self is not allowed
-                    if ( user.id !== userParams.user ) {
+                    // Also remove 'sytem' user
+                    if ( user.id !== userParams.user && user.id.indexOf('user/sytem', user.id.length - 'user/sytem'.length) === -1 ) {
                         that.searchableUsers.push({
                             label: user.label,
                             value: user.id
