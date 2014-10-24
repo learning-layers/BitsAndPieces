@@ -31,10 +31,6 @@
                 </tbody>
             </table>
 
-            <div style="display:none;">
-                <label>Amount of edits:</label> <%= entity.edits %>
-            </div>
-
             <% if ( entity.thumb ) { %>
             <div>
                 <label class="subsectionLabelSmall">Thumbnail</label>
