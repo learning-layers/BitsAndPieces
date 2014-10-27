@@ -1,7 +1,7 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'userParams', 'utils/SystemMessages',
-        'text!templates/toolbar/episode.tpl',
-        'data/episode/EpisodeData', 'data/episode/UserData', 'view/toolbar/EpisodeListingView'], function(Logger, tracker, _, $, Backbone, Voc, userParams, SystemMessages, EpisodeTemplate, EpisodeData, UserData, EpisodeListingView){
+        'text!templates/toolbar/episode.tpl', 'text!templates/toolbar/empty.tpl',
+        'data/episode/EpisodeData', 'data/episode/UserData', 'view/toolbar/EpisodeListingView'], function(Logger, tracker, _, $, Backbone, Voc, userParams, SystemMessages, EpisodeTemplate, EmptyTemplate, EpisodeData, UserData, EpisodeListingView){
     return Backbone.View.extend({
         episodeViews: [],
         events: {
@@ -54,7 +54,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.$el.empty();
             if( !version || !this.getCurrentEpisode() ) {
                 // ... empty the toolbar content
-                this.$el.html("No episode");
+                this.$el.html(_.template(EmptyTemplate, {
+                    title : 'Episode',
+                    message : 'No episode'
+                }));
                 if (version) {
                     // Wait for the episode to be ready
                     version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.render, this);

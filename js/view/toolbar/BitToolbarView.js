@@ -1,7 +1,7 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
-        'text!templates/toolbar/bit.tpl',
+        'text!templates/toolbar/bit.tpl', 'text!templates/toolbar/empty.tpl',
         'data/EntityData',
-        'data/sss/CategoryData'], function(Logger, tracker, _, $, Backbone, Voc, BitTemplate, EntityData, CategoryData){
+        'data/sss/CategoryData'], function(Logger, tracker, _, $, Backbone, Voc, BitTemplate, EmptyTemplate, EntityData, CategoryData){
     return Backbone.View.extend({
         events: {
             'slidechange .slider' : 'setImportance',
@@ -42,7 +42,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.$el.empty();
             if( !this.model ) {
                 // ... empty the toolbar content
-                this.$el.html("No bit selected")
+                this.$el.html(_.template(EmptyTemplate, {
+                    title : 'Bit',
+                    message : 'No bit selected'
+                }));
                 return;
             }
             this.$el.html(_.template(BitTemplate, this.getBitViewData()));
