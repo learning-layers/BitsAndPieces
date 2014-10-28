@@ -34,6 +34,18 @@ define(['underscore', 'logger'], function(_, Logger) {
         }
         return true;
     };
+
+    /**
+     * Fix in case object contains real entity data instead of URI.
+     * Applies fixForVIE to the attribute named 'entity', uses default
+     * idAttr and typeAttr.
+     * @param {object} object
+     * @retrun {undefined}
+     */
+    var fixForContainedEntity = function(object) {
+        return fixForVIE(object['entity']);
+    };
+
     /**
      * Workaround for VIE's non-standard json-ld values and parsing behaviour.
      * @param {type} object
@@ -118,6 +130,7 @@ define(['underscore', 'logger'], function(_, Logger) {
     var decorations = {
         'single_desc_entity' : [checkEmpty, fixEntityDesc, fixForVIE],
         'single_entity' : [checkEmpty, fixForVIE],
+        'single_entity_with_contained' : [checkEmpty, fixForContainedEntity, fixForVIE],
         'fixForVIE_only' : [fixForVIE]
     };
 
@@ -188,7 +201,7 @@ define(['underscore', 'logger'], function(_, Logger) {
                 },
                 {
                     'resultKey' : 'learnEpEntities',
-                    'decoration' : decorations['single_entity']
+                    'decoration' : decorations['single_entity_with_contained']
                 }
             ]
         },

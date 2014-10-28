@@ -60,6 +60,8 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                     episode.set(Voc.hasVersion, VersionData.newVersion(episode).getSubject());
                     return;
                 }
+                var resourceUris = [];
+                var resources = [];
                 // put uris of circles/entities into version
                 // and create circle/entity entities 
                 _.each(versions, function(version) {
@@ -77,6 +79,16 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                     var entityUris = [];
                     var entities = version[Voc.hasEntity];
                     _.each(version[Voc.hasEntity], function(entity) {
+                        // Check if resource is an object
+                        // If it is, then extract and add to resources if needed
+                        // Replace object with URI
+                        var resource = entity[Voc.hasResource];
+                        if ( typeof resource === 'object' ) {
+                            if ( resourceUris.indexOf(resource[em.vie.Entity.prototype.idAttribute]) === -1 ) {
+                                resources.push(resource);
+                            }
+                            entity[Voc.hasResource] = resource[em.vie.Entity.prototype.idAttribute];
+                        }
                         entityUris.push(entity[em.vie.Entity.prototype.idAttribute]);
                         entity[Voc.belongsToVersion] = version[em.vie.Entity.prototype.idAttribute];
                         entity['@type'] = Voc.ORGAENTITY;
@@ -86,6 +98,11 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                     em.vie.entities.addOrUpdate(entities);
                 });
                 em.vie.entities.addOrUpdate(versions);
+
+                // Add or update resources if any
+                if ( resources.length > 0 ) {
+                    em.vie.entities.addOrUpdate(resources);
+                }
             }
         );
 
