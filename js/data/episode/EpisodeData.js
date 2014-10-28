@@ -86,6 +86,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                         if ( typeof resource === 'object' ) {
                             if ( resourceUris.indexOf(resource[em.vie.Entity.prototype.idAttribute]) === -1 ) {
                                 resources.push(resource);
+                                resourceUris.push(resource[em.vie.Entity.prototype.idAttribute]);
                             }
                             entity[Voc.hasResource] = resource[em.vie.Entity.prototype.idAttribute];
                         }
