@@ -20,8 +20,6 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             model.on('change:'+this.vie.namespaces.uri(Voc.author), this.initUser, this); 
             model.on('change:'+this.vie.namespaces.uri(Voc.hasTag), this.changedTags, this);
             model.on('change:'+this.vie.namespaces.uri(Voc.importance), this.setImportance, this);
-            this.loadViewCount(model);
-            this.loadRecommTags(model);
         }
     };
     m.initUser = function(model, value, options) {
@@ -55,7 +53,6 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                         }
                     }).to('sss').execute().success(function(s){
                         that.LOG.debug('success addTag', s);
-                        that.loadRecommTags(model);
                     }).fail(function(f){
                         var tags = model.get(Voc.hasTag) || [];
                         if( !_.isArray(tags)) tags = [tags];
@@ -80,7 +77,6 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                             'label' : tag
                         }
                     }).from('sss').execute().success(function(s){
-                        that.loadRecommTags(model);
                         that.LOG.debug('success removeTag', s);
                     });
                 });
@@ -96,8 +92,6 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         model.save(Voc.label, label, {
             'success' : function(result) {
                 that.LOG.debug('success setLabel', result);
-                // TODO check whether tag recomms can change due to label change
-                that.loadRecommTags(model);
                 if(options.success) {
                     options.success(result);
                 }
@@ -123,13 +117,6 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         }).using('sss').execute().success(function(entities){
             that.LOG.debug('search entities', entities);
             entities = that.vie.entities.addOrUpdate(entities);
-            // TODO Check if search returns full information for entities
-            // If not, determine ones that need to be loaded and load those
-            // using entityDescsGet call.
-            // Please make sure to return the fully loaded entities to the callback.
-            // One solution would be to load the ones that are needed, and only then
-            // run the callback method. If none need loading, then just run the callback
-            // here.
             callback(entities);
         });
     };
@@ -199,6 +186,38 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                 });
             }
         );
+    };
+    m.hasLoaded = function(model, attributeUri) {
+        var loaded = model.get(Voc.hasLoaded);
+        if ( _.isUndefined(loaded) ) {
+            return false;
+        }
+
+        if ( !_.isArray(loaded) ) {
+            loaded = [loaded];
+        }
+
+        if ( loaded.indexOf(attributeUri) !== -1 ) {
+            return true;
+        }
+
+        return false;
+    };
+    m.addHasLoaded = function(model, attributeUri) {
+        var loaded = model.get(Voc.hasLoaded);
+        if ( _.isUndefined(loaded) ) {
+            loaded = [];
+        } else if ( !_.isArray(loaded) ) {
+            loaded = [loaded];
+        }
+
+        if ( loaded.indexOf(attributeUri) === -1 ) {
+            loaded.push(attributeUri);
+            model.set(Voc.hasLoaded, loaded);
+            return true;
+        }
+
+        return false;
     };
 
     return m;

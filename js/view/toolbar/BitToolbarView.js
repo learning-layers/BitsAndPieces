@@ -21,16 +21,21 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.stopListening(this.model, 'change', this.render);
             this.model = entity;
             if( entity ) {
-                // This deals with thumbnail loading
-                // As entityDescsGet does not load thumbnails
-                // XXX Need to be reviewed in case the behaviour
-                // changes
-                if ( ( this.getEntityThumbnail() === null
-                            || this.getEntityThumbnail() === undefined)
-                        && !this.model.get(Voc.thumbnailLoaded)
-                        ) {
-                    this.model.set(Voc.thumbnailLoaded, true);
+                // Check and load as needed
+
+                // Load thumbnail, bulk methods do not return this
+                // Review in case logic changes
+                if ( !EntityData.hasLoaded(this.model, Voc.hasThumbnail) ) {
+                    EntityData.addHasLoaded(this.model, Voc.hasThumbnail);
                     this.model.fetch();
+                }
+                if ( !EntityData.hasLoaded(this.model, Voc.hasTagRecommendation) ) {
+                    EntityData.addHasLoaded(this.model, Voc.hasTagRecommendation);
+                    EntityData.loadRecommTags(this.model);
+                }
+                if ( !EntityData.hasLoaded(this.model, Voc.hasViewCount) ) {
+                    EntityData.addHasLoaded(this.model, Voc.hasViewCount);
+                    EntityData.loadViewCount(this.model);
                 }
 
                 this.listenTo(this.model, 'change', this.render);
