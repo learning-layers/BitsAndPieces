@@ -8,6 +8,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
         this.vie.entities.on('add', this.filter, this);
         this.setIntegrityCheck(Voc.hasEpisode, Voc.EPISODE, Voc.belongsToUser);
         this.setIntegrityCheck(Voc.currentVersion, Voc.VERSION);
+        this.fetchAllUsers();
     };
     m.LOG = Logger.get('UserData');
     /** 
@@ -102,17 +103,34 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
         );
     };
     m.fetchAllUsers = function() {
-        var that = this,
-            defer = $.Deferred();
+        var that = this;
         this.vie.load({
             'service' : 'userAll',
         }).using('sss').execute().success(function(users){
             that.LOG.debug('user entities', users);
-            //users = that.vie.entities.addOrUpdate(users);
-            defer.resolve(users);
+            that.allUsers = users;
+        });
+    };
+    m.getAllUsers = function() {
+        return _.clone(this.allUsers);
+    };
+    m.getSearchableUsers = function() {
+        // TODO It might be a good idea to make the run only once
+        // And then serve data from cache
+        var searchableUsers = [];
+        _.each(this.allUsers, function(user) {
+            // Make sure to remove the currently logged in user
+            // Sharing with self is not allowed
+            // Also remove 'sytem' user
+            if ( user.id !== userParams.user && user.id.indexOf('user/sytem', user.id.length - 'user/sytem'.length) === -1 ) {
+                searchableUsers.push({
+                    label: user.label,
+                    value: user.id
+                });
+            }
         });
 
-        return defer;
+        return searchableUsers;
     };
     m.fetchRange= function( user, start, end, callbacks ) {
         var margin = 600000;

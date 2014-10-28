@@ -21,22 +21,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         initialize: function() {
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), this.episodeVersionChanged, this);
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEpisode), this.changeEpisodeSet, this);
-            this.searchableUsers = [];
             this.selectedUsers = [];
-            var that = this;
-            UserData.fetchAllUsers().then(function(users) {
-                _.each(users, function(user) {
-                    // Make sure to remove the currently logged in user
-                    // Sharing with self is not allowed
-                    // Also remove 'sytem' user
-                    if ( user.id !== userParams.user && user.id.indexOf('user/sytem', user.id.length - 'user/sytem'.length) === -1 ) {
-                        that.searchableUsers.push({
-                            label: user.label,
-                            value: user.id
-                        });
-                    }
-                });
-            });
         },
         episodeVersionChanged: function() {
             this.render();
@@ -64,11 +49,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 }
                 return;
             }
+
             this.$el.html(_.template(EpisodeTemplate, this.getEpisodeViewData()));
 
             // Initialize user select autocomplete
             this.$el.find('input[name="sharewith"]').autocomplete({
-                source: this.searchableUsers,
+                source: UserData.getSearchableUsers(),
                 select: function(event, ui) {
                     event.preventDefault();
                     that.addSelectedUser(event, ui, this);
@@ -385,7 +371,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return _.map(uris, function(uri) {
                 // TODO This might become a problem in case of very large number of users
                 // Might be better to create a lookup construct
-                var user = _.findWhere(that.searchableUsers, { value: uri });
+                var user = _.findWhere(UserData.getSearchableUsers(), { value: uri });
                 if ( _.isObject(user) ) {
                     return user.label;
                 }
