@@ -83,7 +83,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                         // If it is, then extract and add to resources if needed
                         // Replace object with URI
                         var resource = entity[Voc.hasResource];
-                        if ( typeof resource === 'object' ) {
+                        if ( _.isObject(resource) ) {
                             if ( resourceUris.indexOf(resource[em.vie.Entity.prototype.idAttribute]) === -1 ) {
                                 resources.push(resource);
                                 resourceUris.push(resource[em.vie.Entity.prototype.idAttribute]);
