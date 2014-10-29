@@ -9,6 +9,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             'bnp:unexpanded' : 'redraw'
         },
         initialize: function() {
+            var that = this;
             if (!this.model ) {
                 throw Error("no timeline model provided");
             }
@@ -37,7 +38,20 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             this.LOG.debug('TimelineView initialized');
 
-            
+            // Deal with window resize
+            // Redraw timeline when resize ends or pauses
+            var timer;
+            $(window).on('resize', function() {
+                if ( timer ) {
+                    clearTimeout(timer);
+                }
+
+                timer = setTimeout(function() {
+                    that.LOG.debug('Resize timeout called');
+                    timer = null;
+                    that.redraw();
+                }, 500);
+            });
         },
         changeEntitySet: function(model, set, options) {
             this.LOG.debug('changeEntitySet', set);  
