@@ -30,7 +30,7 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
             this.$el.append(contents);
             if( this.expanded ) {
                 contents.addClass("expanded");
-                contents.append("<div class=\"buttons\"><button class=\"closeCluster\">X</button><button class=\"zoomCluster\">&lt;&gt;</button></div>");
+                contents.append("<div class=\"buttons\"><button class=\"closeCluster\" title=\"Close\">X</button><button class=\"zoomCluster\" title=\"Fit to Timeline\">&lt;&gt;</button></div>");
                 _.each(entities, function(entity) {
                     contents.append(new EntityView({
                         'model': entity
