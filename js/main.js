@@ -1,5 +1,5 @@
 var require = (function() {
-    var sssHostREST = "http://localhost:8080/ss-adapter-rest/rest/SSAdapterRest/";
+    var sssHostREST = "http://localhost:8080/ss-adapter-rest/SSAdapterRest/";
     return {
         config: {
             'app' : {
@@ -10,6 +10,9 @@ var require = (function() {
             },
             'UserAuth' : {
                 'sssHostREST' : sssHostREST
+            },
+            'view/sss/EntityView' : {
+                'sssHostRESTFileDownload' : sssHostREST.replace(/SSAdapterRest/, 'SSAdapterRESTFileDownload')
             }
         },
         baseUrl: 'js',

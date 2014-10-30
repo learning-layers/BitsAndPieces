@@ -1,4 +1,4 @@
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView', 'voc'], function(VIE, Logger, tracker, _, $, Backbone, DetailView, Voc){
+define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView', 'voc', 'userParams'], function(module, VIE, Logger, tracker, _, $, Backbone, DetailView, Voc, userParams){
     return Backbone.View.extend({
         LOG: Logger.get('EntityView'),
         icons: {
@@ -132,16 +132,40 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/de
         handleDblClick : function() {
             this.defer();
         },
+        constructFileDownloadUri: function(fileUri) {
+            return module.config().sssHostRESTFileDownload
+                + 'fileDownloadGET?user=' + encodeURIComponent(userParams.user)
+                + '&key=' + encodeURIComponent(userParams.userKey)
+                + '&file=' + encodeURIComponent(fileUri);
+        },
         defer: function() {
             this.LOG.debug('defer');
             var resource = this.model.get(Voc.hasResource);
-            if( !resource ) resource = this.model.getSubject();
-            else resource = resource.getSubject();
-            var lastChar = resource[resource.length-1];
-            if( lastChar === '/') resource = resource.substring(0, resource.length-1);
-            tracker.info(tracker.OPENRESOURCE, resource);
-            this.LOG.log('open resource', resource);
-            window.open(resource);
+            if( !resource ) {
+                resource = this.model;
+            }
+            var resourceUri = resource.getSubject();
+            var lastChar = resourceUri[resourceUri.length-1];
+            if( lastChar === '/') resourceUri = resourceUri.substring(0, resourceUri.length-1);
+            tracker.info(tracker.OPENRESOURCE, resourceUri);
+            this.LOG.log('open resourceUri', resourceUri);
+
+            // Handle special cases with file download
+            if ( resource.isof(Voc.EVERNOTE_NOTE) || resource.isof(Voc.EVERNOTE_RESOURCE) ) {
+                var file = resource.get(Voc.file);
+                if ( file.isEntity ) {
+                    file = file.getSubject();
+                }
+                if ( file ) {
+                    window.open(this.constructFileDownloadUri(file));
+                    return true;
+                }
+            } else if ( resource.isof(Voc.FILE) ) {
+                window.open(this.constructFileDownloadUri(resourceUri));
+                return true;
+            }
+
+            window.open(resourceUri);
         },
         render: function() {
             var label,

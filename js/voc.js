@@ -62,6 +62,7 @@ define([], {
     hasTagRecommendation : 'sss:tagRecommendation',
 
     hasUserEvent : 'sss:hasUserEvent',
-    file : 'sss:file'
+    file : 'sss:file',
+    note : 'sss:note'
         
 });
