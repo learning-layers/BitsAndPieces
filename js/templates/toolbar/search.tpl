@@ -8,8 +8,13 @@
 
         <div class="toolbarSection">
             <div class="form-group search">
-                <label>Search a Bit:</label>
-                <input class="form-control" type="text" value="" placeholder="Enter tag" />
+                <label class="control-label">Search a Bit:</label>
+                <div class="input-group">
+                    <input class="form-control" type="text" value="" placeholder="Enter tag" />
+                    <span class="input-group-addon">
+                        <a href="#"><span class="glyphicon glyphicon-remove-circle"></span></a>
+                    </span>
+                </div>
             </div>
 
             <div class="tagcloud"></div>
@@ -18,7 +23,7 @@
 
         <div class="toolbarSection">
             <div class="form-group filter">
-                <label>Filter search result by deadline:</label>
+                <label class="control-label">Filter search result by deadline:</label>
                 <div class="input-group">
                     <input class="datepicker form-control" type="text" value="" placeholder="Select a date" disabled="disabled" />
                     <span class="input-group-addon">

@@ -8,6 +8,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'keypress .search input' : 'updateOnEnter', 
             'click .filter .clearDatepicker' : 'clearDatepicker',
             'click .tagcloud a' : 'filterSearchResults',
+            'click .search a' : '_clearSearch'
         },
         LOG: Logger.get('SearchToolbarView'),
         initialize: function() {
@@ -49,6 +50,17 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 });
                 that.displayTagcloud();
             });
+        },
+        _clearSearch: function(e) {
+           e.preventDefault();
+           this.$el.find('.search input').val('');
+           this.$el.find('.tagcloud').empty();
+           this.$el.find('.results').hide();
+           _.each(this.searchResultSet, function(view) {
+               view.remove();
+           });
+           this.searchResultSet = [];
+           this.tagCloud = {};
         },
         clearDatepicker: function(e) {
             e.preventDefault();
