@@ -39,7 +39,7 @@
             <label class="control-label">Write mew message to:</label>
 
             <div class="form-group">
-                <input type="text" class="form-control" name="user" value="" />            
+                <input type="text" class="form-control" name="messageRecipient" value="" />
             </div>
 
             <div class="form-group">

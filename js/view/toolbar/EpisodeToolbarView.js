@@ -1,7 +1,7 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
-        'userParams', 'utils/SystemMessages',
-        'text!templates/toolbar/episode.tpl', 'text!templates/toolbar/empty.tpl',
-        'data/episode/EpisodeData', 'data/episode/UserData', 'view/toolbar/EpisodeListingView'], function(Logger, tracker, _, $, Backbone, Voc, userParams, SystemMessages, EpisodeTemplate, EmptyTemplate, EpisodeData, UserData, EpisodeListingView){
+        'userParams', 'utils/SystemMessages', 'utils/InputValidation',
+        'text!templates/toolbar/episode.tpl', 'text!templates/toolbar/empty.tpl', 'text!templates/toolbar/components/selected_user.tpl',
+        'data/episode/EpisodeData', 'data/episode/UserData', 'view/toolbar/EpisodeListingView'], function(Logger, tracker, _, $, Backbone, Voc, userParams, SystemMessages, InputValidation, EpisodeTemplate, EmptyTemplate, SelectedUserTemplate, EpisodeData, UserData, EpisodeListingView){
     return Backbone.View.extend({
         episodeViews: [],
         events: {
@@ -54,7 +54,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
             // Initialize user select autocomplete
             this.$el.find('input[name="sharewith"]').autocomplete({
-                source: UserData.getSearchableUsers(),
+                source: UserData.getSearchableUsers(),// XXX If user loading finishes after rendering, the source will be empty. Get the value and saves that as available
                 select: function(event, ui) {
                     event.preventDefault();
                     that.addSelectedUser(event, ui, this);
@@ -229,7 +229,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 var shareWithElem = $(autocomplete);
                 this.selectedUsers.push(ui.item.value);
                 shareWithElem.val('');
-                shareWithElem.parent().append('<div class="badge selectedUser" data-value="' + ui.item.value+ '"><span class="glyphicon glyphicon-user userIcon"></span> ' + ui.item.label + ' <span class="glyphicon glyphicon-remove-circle deleteIcon"><span></div>');
+                shareWithElem.parent().append(_.template(SelectedUserTemplate, {
+                    value : ui.item.value,
+                    label : ui.item.label
+                }));
                 this.validateSharedWith();
             }
         },
@@ -300,47 +303,17 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
             return returned;
         },
-        addValidationStateToParent: function(element, stateClass) {
-            element.parent().addClass(stateClass);
-        },
-        removeValidationStateFromParent: function(element) {
-            element.parent().removeClass('has-error has-warning has-success');
-        },
-        addAlert: function(element, stateClass, text) {
-            element.after('<div class="alert ' + stateClass+ '" role="alert">' + text + '</div>');
-        },
-        removeAlertsFromParent: function(element) {
-            this.removeAlerts(element.parent());
-        },
-        removeAlerts: function(element) {
-            element.find('.alert').remove();
-        },
         validateSharedWith: function() {
-            var shareWithElem = this.$el.find('input[name="sharewith"]');
+            var element = this.$el.find('input[name="sharewith"]'),
+                alertText = 'Please select at least one user from suggested list!';
 
-            this.removeAlertsFromParent(shareWithElem);
-            if ( _.isEmpty(this.selectedUsers) ) {
-                this.addValidationStateToParent(shareWithElem, 'has-error');
-                this.addAlert(shareWithElem, 'alert-danger', 'Please select at least one user from suggested list!');          
-                return false;
-            } else {
-                this.removeValidationStateFromParent(shareWithElem);
-                return true;
-            }
+            return InputValidation.validateUserSelect(element, this.selectedUsers, alertText);
         },
         validateNotificationText: function() {
-            var notificationTextElem = this.$el.find('textarea[name="notificationtext"]'),
-                notificationText = notificationTextElem.val();
+            var element = this.$el.find('textarea[name="notificationtext"]'),
+                alertText = 'Please provide a text for notification!';
 
-            this.removeAlertsFromParent(notificationTextElem);
-            if ( _.isEmpty(notificationText.trim()) ) {
-                this.addValidationStateToParent(notificationTextElem, 'has-error');
-                this.addAlert(notificationTextElem, 'alert-danger', 'Please provide a text for notification!');
-                return false;
-            } else {
-                this.removeValidationStateFromParent(notificationTextElem);
-                return true;
-            }
+            return InputValidation.validateTextInput(element, alertText);
         },
         revalidateNotificationText: function(e) {
             this.validateNotificationText();
@@ -349,16 +322,16 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             var onlySelectedElem = this.$el.find('select[name="only"]'),
                 onlySelected = this.$el.find('input[name="onlyselected"]').is(':checked');
 
-            this.removeAlertsFromParent(onlySelectedElem);
+            InputValidation.removeAlertsFromParent(onlySelectedElem);
             if ( !onlySelected ) {
-                this.removeValidationStateFromParent(onlySelectedElem);
+                InputValidation.removeValidationStateFromParent(onlySelectedElem);
                 return true;
             } else if ( onlySelectedElem.find('option:selected').length === 0 ) {
-                this.addValidationStateToParent(onlySelectedElem, 'has-error');
-                this.addAlert(onlySelectedElem, 'alert-danger', 'Please select at least one entity or circle!');
+                InputValidation.addValidationStateToParent(onlySelectedElem, 'has-error');
+                InputValidation.addAlert(onlySelectedElem, 'alert-danger', 'Please select at least one entity or circle!');
                 return false;
             } else {
-                this.removeValidationStateFromParent(onlySelectedElem);
+                InputValidation.removeValidationStateFromParent(onlySelectedElem);
                 return true;
             }
 
