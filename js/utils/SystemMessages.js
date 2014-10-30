@@ -1,6 +1,6 @@
-define(['module', 'logger','jquery', 'backbone', 'underscore',
+define(['logger','jquery', 'backbone', 'underscore',
         'text!templates/messages/dismissible.tpl'],
-function (module, Logger, $, Backbone, _, DismissibleAlertTemplate) {
+function (Logger, $, Backbone, _, DismissibleAlertTemplate) {
     return {
         LOG: Logger.get('SystemMessages'),
         addMessage: function(type, text) {
