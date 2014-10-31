@@ -1,7 +1,7 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc', 
         'utils/InputValidation',
         'text!templates/toolbar/notifications.tpl', 'text!templates/toolbar/components/selected_user.tpl',
-        'data/episode/UserData'], function(Logger, tracker, _, $, Backbone, Voc, InputValidation, NotificationsTemplate, SelectedUserTemplate, UserData){
+        'data/episode/UserData', 'data/sss/MessageData'], function(Logger, tracker, _, $, Backbone, Voc, InputValidation, NotificationsTemplate, SelectedUserTemplate, UserData, MessageData){
     return Backbone.View.extend({
         events: {
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
@@ -57,17 +57,23 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     label : ui.item.label
                 }));
                 this.validateMessageRecipient();
+                // Disable input as only one recipient is allowed
+                input.prop('disabled', true);
             }
         },
         removeSelectedUser: function(e) {
-            var removable = $(e.currentTarget).parent();
+            var currentTarget = $(e.currentTarget),
+                removable = currentTarget.parent();
             this.selectedUsers = _.without(this.selectedUsers, removable.data('value'));
 
             removable.remove();
             this.validateMessageRecipient();
+            // Enable input once recipient is removed
+            this.$el.find(this.messageRecipientSelector).prop('disabled', false);
         },
         sendMessage: function(e) {
-            var hasErrors = false;
+            var that = this,
+                hasErrors = false;
 
             if ( !this.validateMessageRecipient() ) {
                 hasErrors = true;
@@ -81,9 +87,16 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 return false;
             }
 
-            console.error('NOT IMPLEMENTED');
+            var promise = MessageData.sendMessage(this.selectedUsers[0], this.$el.find(this.messageTextSelector).val());
 
-            this._cleanUpAdterSendMessage();
+            promise.done(function() {
+                that._cleanUpAdterSendMessage();
+                // TODO Show message
+            });
+
+            promise.fail(function() {
+                // TODO Show message
+            });
         },
         _cleanUpAdterSendMessage: function() {
             var that = this;
@@ -91,6 +104,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.$el.find(this.messageRecipientSelector).val('');
             this.$el.find('.selectedUser').remove();
             this.selectedUsers = [];
+            // Enable user selector once cleanUp procedure runs
+            this.$el.find(this.messageRecipientSelector).prop('disabled', false);
 
             // Disable message text input validation temporarily
             this.disableMessageTextValidation = true;

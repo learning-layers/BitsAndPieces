@@ -1,6 +1,7 @@
 define(['logger', 'voc', 'underscore', 'userParams',
         'data/episode/UserData',
         'data/sss/CategoryData',
+        'data/sss/MessageData',
         'data/episode/EpisodeData',
         'data/episode/VersionData',
         'data/timeline/TimelineData',
@@ -12,6 +13,7 @@ define(['logger', 'voc', 'underscore', 'userParams',
 function(Logger, Voc, _, userParams,
     UserData, 
     CategoryData, 
+    MessageData,
     EpisodeData, 
     VersionData, 
     TimelineData, 
@@ -26,6 +28,7 @@ function(Logger, Voc, _, userParams,
             this.vie = vie;
             UserData.init(this.vie);
             CategoryData.init(this.vie);
+            MessageData.init(this.vie);
             EpisodeData.init(this.vie);
             VersionData.init(this.vie);
             TimelineData.init(this.vie);
