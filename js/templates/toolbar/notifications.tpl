@@ -33,6 +33,7 @@
 
         <div class="form-group stream">
             <label class="control-label">Stream:</label>
+            <div class="resultSet"></div>
         </div><!-- .stream -->
 
         <div class="form-group writeMessage">

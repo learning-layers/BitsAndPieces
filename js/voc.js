@@ -12,6 +12,7 @@ define([], {
     EVERNOTE_RESOURCE: "sss:evernoteResource",
     EVERNOTE_NOTE: "sss:evernoteNote",
     EVERNOTE_NOTEBOOK: "sss:evernoteNotebook",
+    MESSAGE: "sss:message",
     CIRCLE: "sss:learnEpCircle",
     WIDGET: "sss:Widget",
     BROWSING_WIDGET: "sss:BrowsingWidget",

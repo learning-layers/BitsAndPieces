@@ -1353,6 +1353,23 @@
             "supertypes": [
                 "http://eval.bp/userEvent" 
             ] 
+        },
+        "http://eval.bp/message" : {
+            "ancestors": [
+                "http://eval.bp/entity"
+            ],
+            "comment": "",
+            "comment_plain": "",
+            "id": "http://eval.bp/message",
+            "label": "message",
+            "properties": [
+            ],
+            "specific_properties": [
+            ],
+            "subtypes": [],
+            "supertypes": [
+                "http://eval.bp/entity"
+            ]
         }
 
     }

@@ -1,7 +1,8 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc', 
         'utils/InputValidation',
         'text!templates/toolbar/notifications.tpl', 'text!templates/toolbar/components/selected_user.tpl',
-        'data/episode/UserData', 'data/sss/MessageData'], function(Logger, tracker, _, $, Backbone, Voc, InputValidation, NotificationsTemplate, SelectedUserTemplate, UserData, MessageData){
+        'view/sss/MessageView',
+        'data/episode/UserData', 'data/sss/MessageData'], function(Logger, tracker, _, $, Backbone, Voc, InputValidation, NotificationsTemplate, SelectedUserTemplate, MessageView, UserData, MessageData){
     return Backbone.View.extend({
         events: {
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
@@ -10,9 +11,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         LOG: Logger.get('NotificationsToolbarView'),
         initialize: function() {
+            this.messageResultViews = [];
             this.selectedUsers = [];
             this.messageRecipientSelector = 'input[name="messageRecipient"]';
             this.messageTextSelector = 'textarea[name="messageText"]';
+
+            this.fetchMessages();
         },
         render: function() {
             var that = this,
@@ -130,6 +134,37 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 // Re-enable message text input validation
                 this.disableMessageTextValidation = false;
             }
+        },
+        fetchMessages: function() {
+            var that = this,
+                promise = MessageData.getMessages(true);
+
+            promise.done(function(messages) {
+                if ( !_.isEmpty(that.messageResultViews) ) {
+                    _.each(that.messageResultViews, function(view) {
+                        view.remove();
+                    });
+                    that.messageResultViews = [];
+                }
+                _.each(messages, function(message) {
+                    var view = new MessageView({
+                        model : message
+                    });
+                    that.messageResultViews.push(view);
+                });
+                that.displayActivityStream();
+            });
+
+            promise.fail(function(f) {
+                // TODO Remove if unneeded
+            });
+        },
+        displayActivityStream: function() {
+            var resultSet = this.$el.find('.stream .resultSet');
+
+            _.each(this.messageResultViews, function(view) {
+                resultSet.append(view.render().$el);
+            });
         }
     });
 });
