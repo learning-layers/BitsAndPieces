@@ -1,4 +1,4 @@
-<div class="panel panel-default toolbarContent toolbarcontentNotifications">
+<div class="panel panel-default toolbarContent toolbarcontentActivityStream">
 
     <div class="panel-heading">
         <h3 class="panel-title">Activity Stream</h3>

@@ -1,10 +1,10 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc', 
-        'view/toolbar/BitToolbarView', 'view/toolbar/SearchToolbarView', 'view/toolbar/EpisodeToolbarView', 'view/toolbar/NotificationsToolbarView',
-        'text!templates/toolbar/toolbar.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitToolbarView, SearchToolbarView, EpisodeToolbarView, NotificationsToolbarView, ToolbarTemplate){
+        'view/toolbar/BitToolbarView', 'view/toolbar/SearchToolbarView', 'view/toolbar/EpisodeToolbarView', 'view/toolbar/ActivityStreamToolbarView',
+        'text!templates/toolbar/toolbar.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitToolbarView, SearchToolbarView, EpisodeToolbarView, ActivityStreamToolbarView, ToolbarTemplate){
     return Backbone.View.extend({
         subViews: {},
         tabMap : {
-            'notifications' : 0,
+            'activity_stream' : 0,
             'search' : 1,
             'bit' : 2,
             'episode' : 3
@@ -28,10 +28,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.$el.html(tabs);
             this.$el.find('#tabs').tabs();
 
-            this.subViews['notifications'] = new NotificationsToolbarView({
-                el : this.getTabId('notifications')
+            this.subViews['activity_stream'] = new ActivityStreamToolbarView({
+                el : this.getTabId('activity_stream')
             });
-            this.subViews['notifications'].render();
+            this.subViews['activity_stream'].render();
 
             this.subViews['search'] = new SearchToolbarView({
                 el : this.getTabId('search')

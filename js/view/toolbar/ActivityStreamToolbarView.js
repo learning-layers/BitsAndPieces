@@ -1,15 +1,15 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc', 
         'utils/InputValidation',
-        'text!templates/toolbar/notifications.tpl', 'text!templates/toolbar/components/selected_user.tpl',
+        'text!templates/toolbar/activity_stream.tpl', 'text!templates/toolbar/components/selected_user.tpl',
         'view/sss/MessageView',
-        'data/episode/UserData', 'data/sss/MessageData'], function(Logger, tracker, _, $, Backbone, Voc, InputValidation, NotificationsTemplate, SelectedUserTemplate, MessageView, UserData, MessageData){
+        'data/episode/UserData', 'data/sss/MessageData'], function(Logger, tracker, _, $, Backbone, Voc, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, UserData, MessageData){
     return Backbone.View.extend({
         events: {
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
             'keyup textarea[name="messageText"]' : 'revalidateMessageText',
             'click .selectedUser > span' : 'removeSelectedUser'
         },
-        LOG: Logger.get('NotificationsToolbarView'),
+        LOG: Logger.get('ActivityStreamToolbarView'),
         initialize: function() {
             this.messageResultViews = [];
             this.selectedUsers = [];
@@ -20,7 +20,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         render: function() {
             var that = this,
-                notifications = _.template(NotificationsTemplate);
+                notifications = _.template(ActivityStreamTemplate);
             this.$el.html(notifications);
 
             // Initialize user select autocomplete
