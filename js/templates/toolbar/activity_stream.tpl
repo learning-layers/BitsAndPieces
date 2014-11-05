@@ -37,7 +37,7 @@
         </div><!-- .stream -->
 
         <div class="form-group writeMessage">
-            <label class="control-label">Write mew message to:</label>
+            <label class="control-label">Write new message to:</label>
 
             <div class="form-group">
                 <input type="text" class="form-control" name="messageRecipient" value="" />

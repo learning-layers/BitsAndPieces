@@ -76,6 +76,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.$el.find(this.messageRecipientSelector).prop('disabled', false);
         },
         sendMessage: function(e) {
+            if ( this.messageBeingSent === true ) {
+                return false;
+            }
+
             var that = this,
                 hasErrors = false;
 
@@ -91,15 +95,19 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 return false;
             }
 
+            this.messageBeingSent = true;
+            InputValidation.removeAlerts(this.$el.find('.writeMessage'));
+
             var promise = MessageData.sendMessage(this.selectedUsers[0], this.$el.find(this.messageTextSelector).val());
 
             promise.done(function() {
+                that.messageBeingSent = false;
                 that._cleanUpAdterSendMessage();
-                // TODO Show message
             });
 
             promise.fail(function() {
-                // TODO Show message
+                that.messageBeingSent = false;
+                InputValidation.addAlert(that.$el.find('.writeMessage > label'), 'alert-danger', 'Message could not be sent! Please try again.');
             });
         },
         _cleanUpAdterSendMessage: function() {

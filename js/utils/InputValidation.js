@@ -10,6 +10,7 @@ function (Logger, $, Backbone, _, DismissibleAlertTemplate) {
             element.parent().removeClass('has-error has-warning has-success');
         },
         addAlert: function(element, stateClass, text) {
+            // alert-success, alert-info, alert-warning, alert-danger
             element.after('<div class="alert ' + stateClass+ '" role="alert">' + text + '</div>');
         },
         removeAlertsFromParent: function(element) {
