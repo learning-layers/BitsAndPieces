@@ -120,6 +120,20 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             callback(entities, passThrough);
         });
     };
+    m.loadSearchNextPage = function(pagesID, pageNumber, callback) {
+        var that = this;
+        this.vie.load({
+            'service' : 'search',
+            'data' : {
+                'pagesID' : pagesID,
+                'pageNumber' : pageNumber
+            }
+        }).using('sss').execute().success(function(entities, passThrough){
+            that.LOG.debug('search entities', entities, passThrough);
+            entities = that.vie.entities.addOrUpdate(entities);
+            callback(entities, passThrough);
+        });
+    };
     m.loadRecommTags = function(model) {
         var that = this;
 

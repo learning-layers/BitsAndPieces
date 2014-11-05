@@ -437,6 +437,10 @@ form.loginForm {
 	margin-bottom: 2px;
 }
 
+.tagcloud span.selected {
+	background-color: red;
+}
+
 .selectedUser {
 	background-color: #48a2c5;
 	color: #c9e3ee;

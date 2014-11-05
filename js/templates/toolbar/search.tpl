@@ -35,6 +35,7 @@
             <div class="results" style="display:none;">
                 <label class="subsectionLabelSmall">Results found:</label>
                 <div class="resultSet"></div>
+                <button type="button" class="btn btn-default btn-block" style="display:none;">Load more results</button>
             </div>
         </div>
 

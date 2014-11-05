@@ -8,10 +8,14 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'keypress .search input' : 'updateOnEnter', 
             'click .filter .clearDatepicker' : 'clearDatepicker',
             'click .tagcloud a' : 'filterSearchResults',
-            'click .search a' : '_clearSearch'
+            'click .search a' : '_clearSearch',
+            'click .results button' : 'loadNextPage'
         },
         LOG: Logger.get('SearchToolbarView'),
         initialize: function() {
+            this.loadMoreResultsSelector = '.results button';
+            this.resulSetSelector = '.results .resultSet';
+            this.currentTagFilter = null;
         },
         render: function() {
             var search = _.template(SearchTemplate);
@@ -24,17 +28,41 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 this.search($(e.currentTarget).val());
             }
         },
+        _addToResultSet: function(results) {
+            var that = this;
+                box = that.$el.find(this.resulSetSelector);
+            
+            _.each(results, function(result) {
+                var view = new EntityView({
+                    model : result
+                });
+                if ( that.getCurrentTagFilter() === null ) {
+                    box.append(view.render().$el);
+                } else {
+                    if ( that._checkModelHasTag(view.model, that.getCurrentTagFilter()) ) {
+                        box.append(view.render().$el);
+                    } else {
+                        box.append(view.render().$el.hide());
+                    }
+                }
+                that.searchResultSet.push(view);
+            });
+            // XXX Need to check if only new tags
+            // could be added and then the tagcloud displayed
+            this.displayTagcloud();
+        },
         search: function(searchString) {
             var that = this;
             var tags = [searchString];
             EntityData.search(tags, function(results, passThrough) {
-                // XXX Need to handle additional parameters held within
-                // passThrough object. Allow user to load more results.
-                var box = that.$el.find('.results .resultSet');
-                _.each(that.searchResultSet, function(view) {
-                    view.remove();
-                });
-                that.searchResultSet = [];
+
+                that.$el.find(that.loadMoreResultsSelector).hide();
+                that._clearResultSet();
+                that._resetCurrentTagFilter();
+
+                that.pageNumber = passThrough.pageNumber;
+                that.pageNumbers = passThrough.pageNumbers;
+                that.pagesID = passThrough.pagesID;
 
                 // Show or hide results holder
                 if ( !_.isEmpty(results) ) {
@@ -43,26 +71,46 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     that.$el.find('.results').hide();
                 }
 
-                _.each(results, function(result) {
-                    var view = new EntityView({
-                        model : result
-                    });
-                    box.append(view.render().$el);
-                    that.searchResultSet.push(view);
-                });
-                that.displayTagcloud();
+                that._addToResultSet(results);
+
+                if ( that.pageNumbers > that.pageNumber ) {
+                    that.$el.find(that.loadMoreResultsSelector).show();
+                }
             });
+        },
+        loadNextPage: function(e) {
+            var that = this,
+                box = that.$el.find('.results .resultSet');
+            if ( this.pageNumber >= this.pageNumbers ) {
+                this.$el.find(this.loadMoreResultsSelector).hide();
+                return;
+            }
+            EntityData.loadSearchNextPage(this.pagesID, this.pageNumber + 1, function(results, passThrough) {
+                that.pageNumber = passThrough.pageNumber;
+
+                that._addToResultSet(results);
+                if ( that.pageNumber >= that.pageNumbers ) {
+                    that.$el.find(that.loadMoreResultsSelector).hide();
+                }
+            });
+        },
+        _clearResultSet: function() {
+           _.each(this.searchResultSet, function(view) {
+               view.remove();
+           });
+           this.searchResultSet = [];
+           this.pageNumber = null;
+           this.pageNumbers = null;
+           this.pagesID = null;
         },
         _clearSearch: function(e) {
            e.preventDefault();
            this.$el.find('.search input').val('');
            this.$el.find('.tagcloud').empty();
            this.$el.find('.results').hide();
-           _.each(this.searchResultSet, function(view) {
-               view.remove();
-           });
-           this.searchResultSet = [];
            this.tagCloud = {};
+           this._clearResultSet();
+           this._resetCurrentTagFilter();
         },
         clearDatepicker: function(e) {
             e.preventDefault();
@@ -110,26 +158,52 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 index += 1;
             });
             _.each(that.tagCloud, function(frequ, tag) {
-                var fontSize = (frequ === frequMin) ? fontMin : (frequ / frequMax) * (fontMax - fontMin) + fontMin;
-                box.append(' <span class="badge"><a href="#" style="font-size:' + fontSize+ 'px;" data-tag="' + tag + '">' + tag + '</a></span>');
+                var fontSize = (frequ === frequMin) ? fontMin : (frequ / frequMax) * (fontMax - fontMin) + fontMin,
+                    tagClass = 'badge';
+                if ( that.getCurrentTagFilter() === tag ) {
+                    tagClass += ' selected';
+                }
+                box.append(' <span class="' + tagClass + '"><a href="#" style="font-size:' + fontSize+ 'px;" data-tag="' + tag + '">' + tag + '</a></span>');
             });
         },
         filterSearchResults: function(e) {
-            var tag = $(e.currentTarget).data('tag'),
+            var that = this,
+                currentTarget = $(e.currentTarget),
+                tagcloud = $(this.$el).find('.tagcloud'),
+                tag = currentTarget.data('tag'),
                 tmpTags;
             e.preventDefault();
+
+            this.currentTagFilter = tag;
+            tagcloud.find('span.badge').removeClass('selected');
+            currentTarget.parent().addClass('selected');
+
             _.each(this.searchResultSet, function(result) {
-                // Deals with single tag case
-                tmpTags = result.model.get(Voc.hasTag);
-                if ( _.isString(tmpTags) ) {
-                    tmpTags = [tmpTags];
-                }
-                if ( _.indexOf(tmpTags, tag) !== -1 ) {
+                if ( that._checkModelHasTag(result.model, tag) ) {
                     result.$el.show();
                 } else {
                     result.$el.hide();
                 }
             });
+        },
+        _checkModelHasTag: function(model, tag) {
+            // Deals with single tag case
+            tmpTags = model.get(Voc.hasTag);
+            if ( _.isString(tmpTags) ) {
+                tmpTags = [tmpTags];
+            }
+            
+            if ( _.indexOf(tmpTags, tag) !== -1 ) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        getCurrentTagFilter: function() {
+            return this.currentTagFilter;
+        },
+        _resetCurrentTagFilter: function() {
+            this.currentTagFilter = null;
         }
     });
 });
