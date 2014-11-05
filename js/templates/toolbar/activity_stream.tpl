@@ -9,16 +9,16 @@
             <label class="control-label">Show in toolbar:</label>
 
             <div class="form-group">
-                <input type="checkbox" id="showActivities" name="showInToolbar[]" value="activities" checked="checked" />
+                <input type="checkbox" id="showActivities" name="showInToolbar[]" value="activities" checked="checked" disabled="disabled" />
                 <label class="notBoldLabel" for="showActivities">Activities</label>
                 <br />
-                <input type="checkbox" id="showMessages" name="showInToolbar[]" value="messages" checked="checked" />
+                <input type="checkbox" id="showMessages" name="showInToolbar[]" value="messages" checked="checked" disabled="disabled" />
                 <label class="notBoldLabel" for="showMessages">Messages</label>
                 <br />
-                <input type="checkbox" id="showNotifications" name="showInToolbar[]" value="notifications" checked="checked" />
+                <input type="checkbox" id="showNotifications" name="showInToolbar[]" value="notifications" checked="checked" disabled="disabled" />
                 <label class="notBoldLabel" for="showNotifications">Notifications</label>
                 <br />
-                <input type="checkbox" id="showRecommendations" name="showInToolbar[]" value="recommendations" checked="checked" />
+                <input type="checkbox" id="showRecommendations" name="showInToolbar[]" value="recommendations" checked="checked" disabled="disabled" />
                 <label class="notBoldLabel" for="showRecommendations">Recommendations</label>
             </div>
 

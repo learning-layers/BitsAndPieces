@@ -162,7 +162,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         displayActivityStream: function() {
             var resultSet = this.$el.find('.stream .resultSet');
 
-            _.each(this.messageResultViews, function(view) {
+            var sortedViews = _.sortBy(this.messageResultViews, function(view) {
+                // Get reverse sort order
+                return view.model.get(Voc.creationTime) * -1;
+            });
+
+            _.each(sortedViews, function(view) {
                 resultSet.append(view.render().$el);
             });
         }
