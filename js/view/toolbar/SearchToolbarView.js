@@ -27,7 +27,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         search: function(searchString) {
             var that = this;
             var tags = [searchString];
-            EntityData.search(tags, function(results) {
+            EntityData.search(tags, function(results, passThrough) {
+                // XXX Need to handle additional parameters held within
+                // passThrough object. Allow user to load more results.
                 var box = that.$el.find('.results .resultSet');
                 _.each(that.searchResultSet, function(view) {
                     view.remove();

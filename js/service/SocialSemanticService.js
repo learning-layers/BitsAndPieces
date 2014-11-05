@@ -207,7 +207,18 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                     sss.LOG.debug('result', result);
                     // TODO change to call in context of service, not able
                     sss.decorateResult(able, result, service);
-                    able.resolve(result[service['resultKey']]);
+                    // Check if pass through keys are set and pass values
+                    // as object keys of second argument
+                    if ( _.isArray(service['passThroughKeys']) && service['passThroughKeys'].length > 0 ) {
+                        var passThrough = {};
+                        _.each(service['passThroughKeys'], function(key) {
+                            passThrough[key] = result[key];
+                        });
+
+                        able.resolve(result[service['resultKey']], passThrough);
+                    } else {
+                        able.resolve(result[service['resultKey']]);
+                    }
                 },
                 function(result) {
                     able.reject(able.options);

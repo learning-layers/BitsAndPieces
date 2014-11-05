@@ -114,10 +114,10 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                 'includeLabel' : true,
                 'typesToSearchOnlyFor' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
             }
-        }).using('sss').execute().success(function(entities){
-            that.LOG.debug('search entities', entities);
+        }).using('sss').execute().success(function(entities, passThrough){
+            that.LOG.debug('search entities', entities, passThrough);
             entities = that.vie.entities.addOrUpdate(entities);
-            callback(entities);
+            callback(entities, passThrough);
         });
     };
     m.loadRecommTags = function(model) {
