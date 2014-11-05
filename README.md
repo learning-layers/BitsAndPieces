@@ -16,5 +16,5 @@ If you have not created any Learning Episodes yet, please use the menu on the to
 Service version requirements
 ----------------------------
 
-* SocialSemanticServer: v6.0.1-alpha(actually current master branch, due to some changes needed)
+* SocialSemanticServer: v7.0.0-alpha
 
