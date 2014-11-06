@@ -1,8 +1,8 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc', 
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
         'utils/InputValidation',
         'text!templates/toolbar/activity_stream.tpl', 'text!templates/toolbar/components/selected_user.tpl',
         'view/sss/MessageView',
-        'data/episode/UserData', 'data/sss/MessageData'], function(Logger, tracker, _, $, Backbone, Voc, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, UserData, MessageData){
+        'data/episode/UserData', 'data/sss/MessageData'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, UserData, MessageData){
     return Backbone.View.extend({
         events: {
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
@@ -48,7 +48,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if (e.keyCode == 13) {
                 this.LOG.debug('updateOnEnter', e);
                 e.preventDefault();
-                this.sendMessage();
+                this.sendMessage(e);
             }
         },
         addSelectedUser: function(event, ui, autocomplete) {
@@ -75,7 +75,25 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             // Enable input once recipient is removed
             this.$el.find(this.messageRecipientSelector).prop('disabled', false);
         },
+        addAjaxLoader: function(element) {
+            if ( !this.spinner ) {
+                this.spinner = new Spinner({
+                    radius : 5,
+                    length : 5,
+                    width : 2
+                });
+            }
+            var wrapper = document.createElement('div');
+            wrapper.className = 'ajaxLoader';
+            element.prepend(wrapper);
+            this.spinner.spin(wrapper);
+        },
+        removeAjaxLoader: function(element) {
+            this.spinner.stop();
+            element.find('.ajaxLoader').remove();
+        },
         sendMessage: function(e) {
+            var currentTarget = $(e.currentTarget);
             if ( this.messageBeingSent === true ) {
                 return false;
             }
@@ -97,15 +115,18 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
             this.messageBeingSent = true;
             InputValidation.removeAlerts(this.$el.find('.writeMessage'));
+            this.addAjaxLoader(currentTarget.parent());
 
             var promise = MessageData.sendMessage(this.selectedUsers[0], this.$el.find(this.messageTextSelector).val());
 
             promise.done(function() {
+                that.removeAjaxLoader(currentTarget.parent());
                 that.messageBeingSent = false;
                 that._cleanUpAdterSendMessage();
             });
 
             promise.fail(function() {
+                that.removeAjaxLoader(currentTarget.parent());
                 that.messageBeingSent = false;
                 InputValidation.addAlert(that.$el.find('.writeMessage > label'), 'alert-danger', 'Message could not be sent! Please try again.');
             });
