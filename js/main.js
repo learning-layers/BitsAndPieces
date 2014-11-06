@@ -30,7 +30,8 @@ var require = (function() {
             'svg.foreignobject' : '../lib/svgjs/svg.foreignobject',
             'organize' : '../lib/organize/organize',
             'text' : '../lib/text',
-            'bootstrap': '../lib/bootstrap/js/bootstrap'
+            'bootstrap' : '../lib/bootstrap/js/bootstrap',
+            'spin' : '../lib/spinjs/spin.min'
         },
         shim: {
             'logger' : { 
@@ -64,6 +65,9 @@ var require = (function() {
             },
             'bootstrap' : {
                 'deps' : ['jquery']
+            },
+            'spin' : {
+                'exports' : 'Spinner'
             }
         },
         urlArgs: "bust=" + (new Date()).getTime()

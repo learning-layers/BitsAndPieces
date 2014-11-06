@@ -1,6 +1,6 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc', 
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
         'text!templates/toolbar/search.tpl',
-        'data/EntityData', 'view/sss/EntityView'], function(Logger, tracker, _, $, Backbone, Voc, SearchTemplate, EntityData, EntityView){
+        'data/EntityData', 'view/sss/EntityView'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, SearchTemplate, EntityData, EntityView){
     return Backbone.View.extend({
         searchResultSet : [],
         tagCloud: {},
@@ -112,10 +112,21 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return this.currentTagFilter;
         },
         addAjaxLoader: function(element) {
-            element.append('<img src="img/ajax-loader.gif" class="ajaxLoader" alt="loader" />');
+            if ( !this.spinner ) {
+                this.spinner = new Spinner({
+                    radius : 5,
+                    length : 5,
+                    width : 2
+                });
+            }
+            var wrapper = document.createElement('div');
+            wrapper.className = 'ajaxLoader';
+            element.append(wrapper);
+            this.spinner.spin(wrapper);
         },
         removeAjaxLoader: function(element) {
-            element.find('img.ajaxLoader').remove();
+            this.spinner.stop();
+            element.find('.ajaxLoader').remove();
         },
         search: function(searchString) {
             var that = this,
