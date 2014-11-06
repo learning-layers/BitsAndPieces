@@ -4,6 +4,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
     return Backbone.View.extend({
         searchResultSet : [],
         tagCloud: {},
+        currentTagFilter : null,
         events: {
             'keypress .search input' : 'updateOnEnter', 
             'click .filter .clearDatepicker' : 'clearDatepicker',
@@ -14,8 +15,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         LOG: Logger.get('SearchToolbarView'),
         initialize: function() {
             this.loadMoreResultsSelector = '.results button';
-            this.resulSetSelector = '.results .resultSet';
-            this.currentTagFilter = null;
+            this.resultsSelector = '.results';
+            this.resultSetSelector = '.results .resultSet';
+            this.tagCloudSelector = '.tagcloud';
         },
         render: function() {
             var search = _.template(SearchTemplate);
@@ -28,9 +30,32 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 this.search($(e.currentTarget).val());
             }
         },
+        _getModelTagsArray: function(model) {
+            // Can return undefined/null instead of an array
+            // Deals with single tag case
+            var tags = model.get(Voc.hasTag);
+            if ( _.isString(tags) ) {
+                tags = [tags];
+            }
+
+            return tags;
+        },
+        _addModelTagsToTagCloud: function(model) {
+            var that = this,
+                tmpTags = this._getModelTagsArray(model);
+            if ( tmpTags ) {
+                _.each(tmpTags, function(tag) {
+                    if ( _.has(that.tagCloud, tag) ) {
+                        that.tagCloud[tag] += 1;
+                    } else {
+                        that.tagCloud[tag] = 1;
+                    }
+                });
+            }
+        },
         _addToResultSet: function(results) {
             var that = this;
-                box = that.$el.find(this.resulSetSelector);
+                box = that.$el.find(this.resultSetSelector);
             
             _.each(results, function(result) {
                 var view = new EntityView({
@@ -46,53 +71,21 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     }
                 }
                 that.searchResultSet.push(view);
+                that._addModelTagsToTagCloud(view.model);
             });
-            // XXX Need to check if only new tags
-            // could be added and then the tagcloud displayed
             this.displayTagcloud();
         },
-        search: function(searchString) {
-            var that = this;
-            var tags = [searchString];
-            EntityData.search(tags, function(results, passThrough) {
+        _checkModelHasTag: function(model, tag) {
+            var tmpTags = this._getModelTagsArray(model);
 
-                that.$el.find(that.loadMoreResultsSelector).hide();
-                that._clearResultSet();
-                that._resetCurrentTagFilter();
-
-                that.pageNumber = passThrough.pageNumber;
-                that.pageNumbers = passThrough.pageNumbers;
-                that.pagesID = passThrough.pagesID;
-
-                // Show or hide results holder
-                if ( !_.isEmpty(results) ) {
-                    that.$el.find('.results').show();
-                } else {
-                    that.$el.find('.results').hide();
-                }
-
-                that._addToResultSet(results);
-
-                if ( that.pageNumbers > that.pageNumber ) {
-                    that.$el.find(that.loadMoreResultsSelector).show();
-                }
-            });
-        },
-        loadNextPage: function(e) {
-            var that = this,
-                box = that.$el.find('.results .resultSet');
-            if ( this.pageNumber >= this.pageNumbers ) {
-                this.$el.find(this.loadMoreResultsSelector).hide();
-                return;
+            if ( _.indexOf(tmpTags, tag) !== -1 ) {
+                return true;
+            } else {
+                return false;
             }
-            EntityData.loadSearchNextPage(this.pagesID, this.pageNumber + 1, function(results, passThrough) {
-                that.pageNumber = passThrough.pageNumber;
-
-                that._addToResultSet(results);
-                if ( that.pageNumber >= that.pageNumbers ) {
-                    that.$el.find(that.loadMoreResultsSelector).hide();
-                }
-            });
+        },
+        _resetTagCloud: function() {
+            this.tagCloud = {};
         },
         _clearResultSet: function() {
            _.each(this.searchResultSet, function(view) {
@@ -106,11 +99,72 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         _clearSearch: function(e) {
            e.preventDefault();
            this.$el.find('.search input').val('');
-           this.$el.find('.tagcloud').empty();
-           this.$el.find('.results').hide();
-           this.tagCloud = {};
+           this.$el.find(this.tagCloudSelector).empty();
+           this.$el.find(this.resultsSelector).hide();
+           this._resetTagCloud();
            this._clearResultSet();
            this._resetCurrentTagFilter();
+        },
+        _resetCurrentTagFilter: function() {
+            this.currentTagFilter = null;
+        },
+        getCurrentTagFilter: function() {
+            return this.currentTagFilter;
+        },
+        addAjaxLoader: function(element) {
+            element.append('<img src="img/ajax-loader.gif" class="ajaxLoader" alt="loader" />');
+        },
+        removeAjaxLoader: function(element) {
+            element.find('img.ajaxLoader').remove();
+        },
+        search: function(searchString) {
+            var that = this,
+                tags = [searchString];
+            EntityData.search(tags, function(results, passThrough) {
+
+                that.$el.find(that.loadMoreResultsSelector).hide();
+                that._clearResultSet();
+                that._resetCurrentTagFilter();
+                that._resetTagCloud();
+
+                that.pageNumber = passThrough.pageNumber;
+                that.pageNumbers = passThrough.pageNumbers;
+                that.pagesID = passThrough.pagesID;
+
+                // Show or hide results holder
+                if ( !_.isEmpty(results) ) {
+                    that.$el.find(that.resultsSelector).show();
+                } else {
+                    that.$el.find(that.resultsSelector).hide();
+                }
+
+                that._addToResultSet(results);
+
+                if ( that.pageNumbers > that.pageNumber ) {
+                    that.$el.find(that.loadMoreResultsSelector).show();
+                }
+            });
+        },
+        loadNextPage: function(e) {
+            var that = this,
+                box = this.$el.find(this.resultSetSelector),
+                moreResultsElement = this.$el.find(this.loadMoreResultsSelector);
+
+            moreResultsElement.hide().blur();
+            this.addAjaxLoader(box);
+            if ( this.pageNumber >= this.pageNumbers ) {
+                this.removeAjaxLoader(box);
+                return;
+            }
+            EntityData.loadSearchNextPage(this.pagesID, this.pageNumber + 1, function(results, passThrough) {
+                that.pageNumber = passThrough.pageNumber;
+
+                that._addToResultSet(results);
+                that.removeAjaxLoader(box);
+                if ( that.pageNumbers > that.pageNumber ) {
+                    moreResultsElement.show();
+                }
+            });
         },
         clearDatepicker: function(e) {
             e.preventDefault();
@@ -118,58 +172,34 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         displayTagcloud: function() {
             var that = this,
-                box = this.$el.find('.tagcloud'),
+                tagCloudElement = this.$el.find(this.tagCloudSelector),
                 fontMin = 10,
                 fontMax = 14,
                 frequMin = null,
-                frequMax = null,
-                tmpTags;
+                frequMax = null;
 
-            that.tagCloud = {};
-            box.empty();
-            _.each(this.searchResultSet, function(result) {
-                if ( result.model.get(Voc.hasTag) ) {
-                    tmpTags = result.model.get(Voc.hasTag);
-                    // Deals with single tag case
-                    if ( _.isString(tmpTags) ) {
-                        tmpTags = [tmpTags];
-                    }
-                    _.each(tmpTags, function(tag) {
-                        if ( _.has(that.tagCloud, tag) ) {
-                            that.tagCloud[tag] += 1;
-                        } else {
-                            that.tagCloud[tag] = 1;
-                        }
-                    });
-                }
+            tagCloudElement.empty();
 
-            });
-            var index = 0;
-            _.each(_.values(that.tagCloud), function(key, frequ) {
-                if (0 === index) {
-                    frequMin = frequ;
-                    frequMax = frequ;
-                }
-                if (frequ > frequMax) {
-                    frequMax = frequ;
-                } else if (frequ < frequMin) {
-                    frequMin = frequ;
-                }
-                index += 1;
-            });
+            if ( _.isEmpty(that.tagCloud) ) {
+                return;
+            }
+
+            frequMin = _.min(that.tagCloud);
+            frequMax = _.max(that.tagCloud);
+
             _.each(that.tagCloud, function(frequ, tag) {
                 var fontSize = (frequ === frequMin) ? fontMin : (frequ / frequMax) * (fontMax - fontMin) + fontMin,
                     tagClass = 'badge';
                 if ( that.getCurrentTagFilter() === tag ) {
                     tagClass += ' selected';
                 }
-                box.append(' <span class="' + tagClass + '"><a href="#" style="font-size:' + fontSize+ 'px;" data-tag="' + tag + '">' + tag + '</a></span>');
+                tagCloudElement.append(' <span class="' + tagClass + '"><a href="#" style="font-size:' + fontSize+ 'px;" data-tag="' + tag + '">' + tag + '</a></span>');
             });
         },
         filterSearchResults: function(e) {
             var that = this,
                 currentTarget = $(e.currentTarget),
-                tagcloud = $(this.$el).find('.tagcloud'),
+                tagcloud = $(this.$el).find(this.tagCloudSelector),
                 tag = currentTarget.data('tag'),
                 tmpTags;
             e.preventDefault();
@@ -185,25 +215,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     result.$el.hide();
                 }
             });
-        },
-        _checkModelHasTag: function(model, tag) {
-            // Deals with single tag case
-            tmpTags = model.get(Voc.hasTag);
-            if ( _.isString(tmpTags) ) {
-                tmpTags = [tmpTags];
-            }
-            
-            if ( _.indexOf(tmpTags, tag) !== -1 ) {
-                return true;
-            } else {
-                return false;
-            }
-        },
-        getCurrentTagFilter: function() {
-            return this.currentTagFilter;
-        },
-        _resetCurrentTagFilter: function() {
-            this.currentTagFilter = null;
         }
     });
 });
