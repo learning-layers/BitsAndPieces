@@ -304,7 +304,7 @@ div#tabs .results .resultSet .entity .labelable img.icon {
 	max-width: 50px;
 }
 
-div#tabs .results .resultSet label.withlabel {
+div#tabs .results .resultSet .entity .labelable label.withlabel {
 	position: relative;
 	top: 0px;
 	left: 5px;
