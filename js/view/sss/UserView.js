@@ -15,20 +15,14 @@ define(['view/sss/EntityView', 'logger', 'underscore', 'jquery', 'voc'], functio
               'class' : 'entity user',
               'about' : this.model.getSubject()
             });
-            this.$el.html(//"<div class=\"entity user\" about=\""+this.model.getSubject()+"\">"+
-                    "<img class=\"icon\" src=\""+this.getIcon()+"\" "+ 
-                    "alt=\"User " + this.model.get(Voc.label) + "\"/>"+
-                    "<div class=\"userLabel\">"+this.model.get(Voc.label)+"</div>");
+            this.$el.html(
+                    "<span class=\"glyphicon glyphicon-user\" style=\"font-size:50px;\"></span>"+
+                    "<div class=\"userLabel\">"+this.model.get(Voc.label)+"</div>"
+                    );
 
-                    //"</div>");
             // Prevent user dragging and dropping
             //this.draggable();
             return this;
-        },
-        _getIcon: function() {
-          this.LOG.debug(this.model.getSubject());
-          this.LOG.debug(this.model.vie.namespaces.curie(this.model.getSubject()));
-          return this.icons[this.model.vie.namespaces.curie(this.model.getSubject())];
         },
         _click: function(e) {
             // This currently prevents user from using entity click event
