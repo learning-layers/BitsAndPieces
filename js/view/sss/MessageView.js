@@ -13,15 +13,11 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
         render: function() {
             this.$el.empty();
             this.$el.html(_.template(MessageTemplate, {
-                icon : this.getIcon(),
                 date : $.datepicker.formatDate('dd.mm.yy', new Date(this.model.get(Voc.creationTime))),
                 author : this.getOwnerName(),
                 message : this.model.get(Voc.content),
             }));
             return this;
-        },
-        getIcon: function() {
-            return 'img/sss/user1.png';
         },
         getOwnerName: function() {
             if ( this.owner && this.owner.isEntity ) {

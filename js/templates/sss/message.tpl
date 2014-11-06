@@ -1,6 +1,6 @@
 <div class="singleMessage">
     <div class="messageIcon">
-        <img src="<%= icon %>" class="icon" alt="icon" />
+        <span class="glyphicon glyphicon-user"></span>
     </div>
     <div class="messageContent">
         <div class="date"><%= date %></div>

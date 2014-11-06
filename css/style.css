@@ -327,11 +327,13 @@ div#tabs .stream .resultSet .singleMessage {
 div#tabs .stream .resultSet .singleMessage .messageIcon {
 	display: inline-block;
 	vertical-align: top;
+	color: #48a2c5;
+	font-size: 50px;
 }
 
 div#tabs .stream .resultSet .singleMessage .messageContent {
 	display: inline-block;
-	width: 220px;
+	width: 210px;
 	padding-left: 10px;
 }
 
