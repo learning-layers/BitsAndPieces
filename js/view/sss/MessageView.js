@@ -11,7 +11,11 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
             this.listenTo(this.owner, 'change:'+this.model.vie.namespaces.uri(Voc.label), this.render);
         },
         render: function() {
-            this.$el.empty();
+            this.$el.attr({
+              'class' : 'message singleMessage',
+              'about' : this.model.getSubject()
+            });
+
             this.$el.html(_.template(MessageTemplate, {
                 date : $.datepicker.formatDate('dd.mm.yy', new Date(this.model.get(Voc.creationTime))),
                 author : this.getOwnerName(),
