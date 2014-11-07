@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, Data){
+define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger, Voc, _, $, Data){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize EntityData");
@@ -232,6 +232,29 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         }
 
         return false;
+    };
+    m.getRecommResources = function(data) {
+        var that = this,
+            defer = $.Deferred();
+
+        data = data || {};
+
+        this.vie.onUrisReady(
+            function() {
+                that.vie.analyze({
+                    'service' : 'recommResources',
+                    'data' : data
+                }).using('sss').execute().success(function(result){
+                    that.LOG.debug('recommTags success', result);
+                    // TODO Need to add the results to VIE
+                    defer.resolve(result);
+                }).fail(function(f) {
+                    that.LOG.debug('recommTags fail', f);
+                    defer.reject(f);
+                });
+            }
+        );
+        return defer.promise();
     };
 
     return m;

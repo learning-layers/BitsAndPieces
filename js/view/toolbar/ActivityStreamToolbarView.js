@@ -1,8 +1,8 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 'userParams',
         'utils/InputValidation',
         'text!templates/toolbar/activity_stream.tpl', 'text!templates/toolbar/components/selected_user.tpl',
         'view/sss/MessageView',
-        'data/episode/UserData', 'data/sss/MessageData'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, UserData, MessageData){
+        'data/episode/UserData', 'data/sss/MessageData', 'data/sss/ActivityData'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, UserData, MessageData, ActivityData){
     return Backbone.View.extend({
         events: {
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
@@ -164,6 +164,14 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
                 this.disableMessageTextValidation = false;
             }
         },
+        fetchActivities: function() {
+            var data = {
+                types : ['shareLearnEpWithUser']
+            },
+            promise = ActivityData.getActivities(data);
+
+            return promise;
+        },
         fetchMessages: function() {
             var that = this,
                 promise = MessageData.getMessages(true);
@@ -187,6 +195,20 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
             promise.fail(function(f) {
                 // TODO Remove if unneeded
             });
+        },
+        fetchRecommendations: function() {
+            var data = {
+                    forUser : userParams.user,
+                    maxResources : 20,
+                    typesToRecommOnly : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
+                },
+                promise = EntityData.getRecommResources(data);
+
+            return promise;
+        },
+        fetchActivityStream: function() {
+            // TODO IMPLEMENT ME
+            // Use jQuery.when()
         },
         displayActivityStream: function() {
             var resultSet = this.$el.find('.stream .resultSet');

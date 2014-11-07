@@ -1370,6 +1370,23 @@
             "supertypes": [
                 "http://eval.bp/Thing"
             ]
+        },
+        "http://eval.bp/activity" : {
+            "ancestors": [
+                "http://eval.bp/Thing"
+            ],
+            "comment": "",
+            "comment_plain": "",
+            "id": "http://eval.bp/activity",
+            "label": "activity",
+            "properties": [
+            ],
+            "specific_properties": [
+            ],
+            "subtypes": [],
+            "supertypes": [
+                "http://eval.bp/Thing"
+            ]
         }
 
     }

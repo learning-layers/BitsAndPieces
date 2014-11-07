@@ -296,6 +296,17 @@ define(['underscore', 'logger'], function(_, Logger) {
             },
             'preparation' : preparations['scrubParams'],
             'decoration' : decorations['single_entity']
+        },
+        'recommResources' : {
+            'resultKey' : 'resources',
+            'params' : {
+                'maxResources' : { 'default' : 20 }
+            },
+            'preparation' : preparations['scrubParams']
+        },
+        'activitiesGet' : {
+            'resultKey' : 'activities',
+            'decoration' : decorations['single_entity']
         }
     };
     return m;

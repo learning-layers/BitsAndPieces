@@ -46,6 +46,7 @@ function(module, VIE, Logger, tracker, userParams, UserData, SocialSemanticServi
     Logger.get('SystemMessages').setLevel(Logger.OFF);
     Logger.get('InputValidation').setLevel(Logger.OFF);
     Logger.get('MessageData').setLevel(Logger.OFF);
+    Logger.get('ActivityData').setLevel(Logger.OFF);
 
     if ( !userParams.isAuthenticated) {
         var loginView = new LoginFormView({
