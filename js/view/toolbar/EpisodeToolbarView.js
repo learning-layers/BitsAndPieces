@@ -101,8 +101,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             }
         },
         clearEpisodesSearch: function(e) {
-            this.LOG.debug('clearEpisodesSearch', e);
+            e.preventDefault();
             var currentTarget = $(e.currentTarget);
+
+            this.LOG.debug('clearEpisodesSearch', e);
             currentTarget.parent().parent().find('input[name="search"]').val('');
             this.addOrUpdateEpisodeViews( this.searchEpisodes('') );
         },
