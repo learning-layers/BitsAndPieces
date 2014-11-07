@@ -2,7 +2,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
         'utils/InputValidation',
         'text!templates/toolbar/activity_stream.tpl', 'text!templates/toolbar/components/selected_user.tpl',
         'view/sss/MessageView',
-        'data/episode/UserData', 'data/sss/MessageData', 'data/sss/ActivityData'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, UserData, MessageData, ActivityData){
+        'data/episode/UserData', 'data/sss/MessageData', 'data/sss/ActivityData', 'data/EntityData'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, UserData, MessageData, ActivityData, EntityData){
     return Backbone.View.extend({
         events: {
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
@@ -16,7 +16,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             this.messageRecipientSelector = 'input[name="messageRecipient"]';
             this.messageTextSelector = 'textarea[name="messageText"]';
 
-            this.fetchMessages();
+            this.fetchActivityStream();
         },
         render: function() {
             var that = this,
@@ -173,28 +173,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             return promise;
         },
         fetchMessages: function() {
-            var that = this,
-                promise = MessageData.getMessages(true);
+            var promise = MessageData.getMessages(true);
 
-            promise.done(function(messages) {
-                if ( !_.isEmpty(that.messageResultViews) ) {
-                    _.each(that.messageResultViews, function(view) {
-                        view.remove();
-                    });
-                    that.messageResultViews = [];
-                }
-                _.each(messages, function(message) {
-                    var view = new MessageView({
-                        model : message
-                    });
-                    that.messageResultViews.push(view);
-                });
-                that.displayActivityStream();
-            });
-
-            promise.fail(function(f) {
-                // TODO Remove if unneeded
-            });
+            return promise;
         },
         fetchRecommendations: function() {
             var data = {
@@ -207,8 +188,29 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             return promise;
         },
         fetchActivityStream: function() {
-            // TODO IMPLEMENT ME
-            // Use jQuery.when()
+            var that = this,
+                activitiesPromise = this.fetchActivities(),
+                messagesPromise = this.fetchMessages(),
+                recommendationsPromise = this.fetchRecommendations();
+
+            $.when(activitiesPromise, messagesPromise, recommendationsPromise)
+                .done(function(activities, messages, recommendations) {
+                    that.LOG.debug('fetchActivityStream', activities, messages, recommendations);
+                    if ( !_.isEmpty(that.messageResultViews) ) {
+                        _.each(that.messageResultViews, function(view) {
+                            view.remove();
+                        });
+                        that.messageResultViews = [];
+                    }
+                    _.each(messages, function(message) {
+                        var view = new MessageView({
+                            model : message
+                        });
+                        that.messageResultViews.push(view);
+                    });
+                    that.displayActivityStream();
+                });
+            // TODO Check if fail handler is also needed
         },
         displayActivityStream: function() {
             var resultSet = this.$el.find('.stream .resultSet');
