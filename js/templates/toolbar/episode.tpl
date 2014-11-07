@@ -73,9 +73,14 @@
     <div class="panel-body">
 
         <div class="toolbarSection toolbarSectionEpisodes">
-            <div class="form-group">
+            <div class="form-group search">
                 <label class="control-label">Search Episodes:</label>
-                <input type="text" class="form-control" name="search" value="" placeholder="Enter episode name to search" />
+                <div class="input-group">
+                    <input type="text" class="form-control" name="search" value="" placeholder="Enter episode name to search" />
+                    <span class="input-group-addon">
+                        <a href="#"><span class="glyphicon glyphicon-remove-circle"></span></a>
+                    </span>
+                </div>
             </div>
 
             <div class="myEpisodes">

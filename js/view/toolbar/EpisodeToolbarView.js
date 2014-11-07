@@ -15,7 +15,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'click input[name="onlyselected"]' : 'clickOnlySelected',
             'keyup input[name="search"]' : 'updateOnKeyUp',
             'keyup textarea[name="notificationtext"]' : 'revalidateNotificationText',
-            'change select[name="only"]' : 'revalidateOnlySelected'
+            'change select[name="only"]' : 'revalidateOnlySelected',
+            'click .search a' : 'clearEpisodesSearch'
         },
         LOG: Logger.get('EpisodeToolbarView'),
         initialize: function() {
@@ -98,6 +99,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if ( currentTarget.attr('name') === 'search' ) {
                 this.addOrUpdateEpisodeViews( this.searchEpisodes(currentTarget.val()) );
             }
+        },
+        clearEpisodesSearch: function(e) {
+            this.LOG.debug('clearEpisodesSearch', e);
+            var currentTarget = $(e.currentTarget);
+            currentTarget.parent().parent().find('input[name="search"]').val('');
+            this.addOrUpdateEpisodeViews( this.searchEpisodes('') );
         },
         getEpisodeViewData: function() {
             var episode = this.getCurrentEpisode();
