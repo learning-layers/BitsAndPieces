@@ -1356,7 +1356,7 @@
         },
         "http://eval.bp/message" : {
             "ancestors": [
-                "http://eval.bp/entity"
+                "http://eval.bp/Thing"
             ],
             "comment": "",
             "comment_plain": "",
@@ -1368,7 +1368,7 @@
             ],
             "subtypes": [],
             "supertypes": [
-                "http://eval.bp/entity"
+                "http://eval.bp/Thing"
             ]
         }
 
