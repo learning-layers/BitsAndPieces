@@ -7,7 +7,6 @@ workbench.xmi
 .project
 
 nbproject/*
-doc/*
 
 # Mac
 .DS_Store

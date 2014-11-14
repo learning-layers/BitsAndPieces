@@ -1,0 +1,3343 @@
+<img 
+src="docu0x.png" alt="" >
+                                                                            
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"  
+  "http://www.w3.org/TR/html4/loose.dtd">  
+<html > 
+<head><title></title> 
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"> 
+<meta name="generator" content="TeX4ht (http://www.cse.ohio-state.edu/~gurari/TeX4ht/)"> 
+<meta name="originator" content="TeX4ht (http://www.cse.ohio-state.edu/~gurari/TeX4ht/)"> 
+<!-- html --> 
+<meta name="src" content="docu.tex"> 
+<meta name="date" content="2014-11-14 17:03:00"> 
+<link rel="stylesheet" type="text/css" href="docu.css"> 
+</head><body 
+>
+<div class="titlepage">
+                                                                            <img 
+src="docu1x.png" alt="" >
+<img 
+src="docu2x.png" alt="" >
+                                                                            
+                                                                            <img 
+src="docu3x.png" alt="" >
+<img 
+src="docu4x.png" alt="" >
+                                                                            
+<!--l. 207--><p class="noindent" >
+                                                                            <img 
+src="docu5x.png" alt="" >
+<img 
+src="docu6x.png" alt="" >
+                                                                            
+
+<h2 class="titleHead">The Bits and Pieces Prototype -
+Documentation</h2>
+<div class="tabular"> <table id="TBL-1" class="tabular" 
+cellspacing="0" cellpadding="0"  
+><colgroup id="TBL-1-1g"><col 
+id="TBL-1-1"></colgroup><tr  
+ style="vertical-align:baseline;" id="TBL-1-1-"><td  style="white-space:nowrap; text-align:center;" id="TBL-1-1-1"  
+class="td11"><div class="author" ><span 
+class="cmr-17">Matthias Rella</span></div></td></tr></table>
+</div>
+<div class="date" ><span 
+class="cmr-17">November 14, 2014</span></div>
+                                                                            <img 
+src="docu7x.png" alt="" >
+<img 
+src="docu8x.png" alt="" >
+                                                                            
+<div class="minipage">
+</div>
+<div class="minipage">
+</div>
+                                                                            <img 
+src="docu9x.png" alt="" >
+<img 
+src="docu10x.png" alt="" >
+                                                                            
+</div>
+                                                                            <img 
+src="docu11x.png" alt="" >
+<img 
+src="docu12x.png" alt="" >
+                                                                            
+                                                                            <img 
+src="docu13x.png" alt="" >
+<img 
+src="docu14x.png" alt="" >
+                                                                            
+<h2 class="likechapterHead"><a 
+ id="x1-1000"></a>Contents</h2>
+<div class="tableofcontents">
+<span class="chapterToc" >1&#x00A0;&#x00A0;<a 
+href="#x1-30001" id="QQ2-1-3">The Bits and Pieces Prototype</a></span>
+<br />&#x00A0;<span class="sectionToc" >1.1&#x00A0;&#x00A0;<a 
+href="#x1-40001.1" id="QQ2-1-4">Approach</a></span>
+<br />&#x00A0;&#x00A0;<span class="subsectionToc" >1.1.1&#x00A0;&#x00A0;<a 
+href="#x1-50001.1.1" id="QQ2-1-5">The B&amp;P design idea</a></span>
+<br />&#x00A0;&#x00A0;<span class="subsectionToc" >1.1.2&#x00A0;&#x00A0;<a 
+href="#x1-80001.1.2" id="QQ2-1-10">Functional Requirements</a></span>
+<br />&#x00A0;&#x00A0;<span class="subsectionToc" >1.1.3&#x00A0;&#x00A0;<a 
+href="#x1-90001.1.3" id="QQ2-1-11">Non-Functional Requirements</a></span>
+<br />&#x00A0;<span class="sectionToc" >1.2&#x00A0;&#x00A0;<a 
+href="#x1-100001.2" id="QQ2-1-12">Framework</a></span>
+<br />&#x00A0;&#x00A0;<span class="subsectionToc" >1.2.1&#x00A0;&#x00A0;<a 
+href="#x1-110001.2.1" id="QQ2-1-13">Web Browser Runtime System</a></span>
+<br />&#x00A0;&#x00A0;<span class="subsectionToc" >1.2.2&#x00A0;&#x00A0;<a 
+href="#x1-160001.2.2" id="QQ2-1-19">Means of Semantic Interaction</a></span>
+<br />&#x00A0;&#x00A0;<span class="subsectionToc" >1.2.3&#x00A0;&#x00A0;<a 
+href="#x1-180001.2.3" id="QQ2-1-23">Alternative Runtimes</a></span>
+<br />&#x00A0;&#x00A0;<span class="subsectionToc" >1.2.4&#x00A0;&#x00A0;<a 
+href="#x1-220001.2.4" id="QQ2-1-27">User Interface Design and Workflow Overview</a></span>
+<br />&#x00A0;&#x00A0;<span class="subsectionToc" >1.2.5&#x00A0;&#x00A0;<a 
+href="#x1-230001.2.5" id="QQ2-1-29">Framework Architecture</a></span>
+<br />&#x00A0;<span class="sectionToc" >1.3&#x00A0;&#x00A0;<a 
+href="#x1-290001.3" id="QQ2-1-45">Application</a></span>
+<br />&#x00A0;&#x00A0;<span class="subsectionToc" >1.3.1&#x00A0;&#x00A0;<a 
+href="#x1-300001.3.1" id="QQ2-1-48">Social Semantic Service</a></span>
+<br />&#x00A0;&#x00A0;<span class="subsectionToc" >1.3.2&#x00A0;&#x00A0;<a 
+href="#x1-310001.3.2" id="QQ2-1-50">Type Hierarchy</a></span>
+<br />&#x00A0;&#x00A0;<span class="subsectionToc" >1.3.3&#x00A0;&#x00A0;<a 
+href="#x1-320001.3.3" id="QQ2-1-52">Timeline Data Module</a></span>
+<br />&#x00A0;&#x00A0;<span class="subsectionToc" >1.3.4&#x00A0;&#x00A0;<a 
+href="#x1-330001.3.4" id="QQ2-1-54">Organize Data Module</a></span>
+<br />&#x00A0;&#x00A0;<span class="subsectionToc" >1.3.5&#x00A0;&#x00A0;<a 
+href="#x1-340001.3.5" id="QQ2-1-57">Timeline Widget</a></span>
+<br />&#x00A0;&#x00A0;<span class="subsectionToc" >1.3.6&#x00A0;&#x00A0;<a 
+href="#x1-400001.3.6" id="QQ2-1-68">Venn Diagram Widget</a></span>
+                                                                            <img 
+src="docu15x.png" alt="" >
+<img 
+src="docu16x.png" alt="" >
+                                                                            
+</div>
+                                                                            <img 
+src="docu17x.png" alt="" >
+<img 
+src="docu18x.png" alt="" >
+                                                                            
+                                                                            <img 
+src="docu19x.png" alt="" >
+<img 
+src="docu20x.png" alt="" >
+                                                                            
+<!--l. 210--><p class="noindent" >
+                                                                            <img 
+src="docu21x.png" alt="" >
+<img 
+src="docu22x.png" alt="" >
+                                                                            
+<h2 class="likechapterHead"><a 
+ id="x1-2000"></a>List of Figures</h2>
+<div class="tableofcontents"><span class="lofToc" >1.1&#x00A0;<a 
+href="#x1-50011">Wireframe of the B&amp;P user interface</a></span><br /><span class="lofToc" >1.2&#x00A0;<a 
+href="#x1-50062">Example widgets of the
+B&amp;P user interface</a></span><br /><span class="lofToc" >1.3&#x00A0;<a 
+href="#x1-140073">JavaScript frameworks in use and how they
+interplay</a></span><br /><span class="lofToc" >1.4&#x00A0;<a 
+href="#x1-170034">JSON-LD example</a></span><br /><span class="lofToc" >1.5&#x00A0;<a 
+href="#x1-170065">RDFa example</a></span><br /><span class="lofToc" >1.6&#x00A0;<a 
+href="#x1-220016">B&amp;P UI design
+and workflow</a></span><br /><span class="lofToc" >1.7&#x00A0;<a 
+href="#x1-230017">B&amp;P framework architecture</a></span><br /><span class="lofToc" >1.8&#x00A0;<a 
+href="#x1-240038">Example service
+call</a></span><br /><span class="lofToc" >1.9&#x00A0;<a 
+href="#x1-250019">Framework data model</a></span><br /><span class="lofToc" >1.10&#x00A0;<a 
+href="#x1-2500210">Data module definition</a></span><br /><span class="lofToc" >1.11&#x00A0;<a 
+href="#x1-2500311">Data
+type specific initiation</a></span><br /><span class="lofToc" >1.12&#x00A0;<a 
+href="#x1-2500412">Data type specific sync</a></span><br /><span class="lofToc" >1.13&#x00A0;<a 
+href="#x1-2500613">Timing
+diagram of data flow between architectural layers</a></span><br /><span class="lofToc" >1.14&#x00A0;<a 
+href="#x1-2600414">Dragging
+function</a></span><br /><span class="lofToc" >1.15&#x00A0;<a 
+href="#x1-2600515">Sequence diagram for switching episodes</a></span><br /><span class="lofToc" >1.16&#x00A0;<a 
+href="#x1-2700116">Application
+data loading kickoff</a></span><br /><span class="lofToc" >1.17&#x00A0;<a 
+href="#x1-2900117">Timeline and Organize Widget as mockup and as
+UI</a></span><br /><span class="lofToc" >1.18&#x00A0;<a 
+href="#x1-2900818">Demo workflow of the B&amp;P prototype</a></span><br /><span class="lofToc" >1.19&#x00A0;<a 
+href="#x1-3000219">Social Semantic Server and
+Artifact Actor Networks</a></span><br /><span class="lofToc" >1.20&#x00A0;<a 
+href="#x1-3100320">Schema.org Timeline Widget</a></span><br /><span class="lofToc" >1.21&#x00A0;<a 
+href="#x1-3200121">Application
+Data Model</a></span><br /><span class="lofToc" >1.22&#x00A0;<a 
+href="#x1-3300122">OrganizeData.createCircle</a></span><br /><span class="lofToc" >1.23&#x00A0;<a 
+href="#x1-3300223">CircleData</a></span><br /><span class="lofToc" >1.24&#x00A0;<a 
+href="#x1-3500224">Propublica
+Time-setter</a></span><br /><span class="lofToc" >1.25&#x00A0;<a 
+href="#x1-3700225">SIMILE Timeline Widget</a></span><br /><span class="lofToc" >1.26&#x00A0;<a 
+href="#x1-3800226">Chronoline</a></span><br /><span class="lofToc" >1.27&#x00A0;<a 
+href="#x1-3900227">CHAP
+Links Timeline</a></span><br /><span class="lofToc" >1.28&#x00A0;<a 
+href="#x1-3900328">Structure of TimelineView</a></span><br /><span class="lofToc" >1.29&#x00A0;<a 
+href="#x1-4000529">Structure of
+OrganizeView</a></span><br /><span class="lofToc" >1.30&#x00A0;<a 
+href="#x1-4000630">StealthContainer</a></span><br /><span class="lofToc" >1.31&#x00A0;<a 
+href="#x1-4000731">Dropping function</a></span><br /><span class="lofToc" >1.32&#x00A0;<a 
+href="#x1-4000832">Sequence
+diagram of dropping an entity</a></span><br />
+</div>
+                                                                            <img 
+src="docu23x.png" alt="" >
+<img 
+src="docu24x.png" alt="" >
+                                                                            
+                                                                            <img 
+src="docu25x.png" alt="" >
+<img 
+src="docu26x.png" alt="" >
+                                                                            
+                                                                            <img 
+src="docu27x.png" alt="" >
+<img 
+src="docu28x.png" alt="" >
+                                                                            
+                                                                            <img 
+src="docu29x.png" alt="" >
+<img 
+src="docu30x.png" alt="" >
+                                                                            
+                                                                            <img 
+src="docu31x.png" alt="" >
+<img 
+src="docu32x.png" alt="" >
+                                                                            
+<!--l. 9--><p class="noindent" >
+                                                                            <img 
+src="docu33x.png" alt="" >
+<img 
+src="docu34x.png" alt="" >
+                                                                            
+<h2 class="chapterHead"><span class="titlemark">1</span>&#x00A0;&#x00A0;<a 
+ id="x1-30001"></a>The Bits and Pieces Prototype</h2>
+<h3 class="sectionHead"><span class="titlemark">1.1</span>&#x00A0;&#x00A0;<a 
+ id="x1-40001.1"></a>Approach</h3>
+<!--l. 16--><p class="noindent" >The sensemaking approach presented in this work is based on the user
+interface design idea B&amp;P introduced in the strand of the EU project Learning
+Layers<span class="footnote-mark"><a 
+href="docu2.html#fn1x3"><sup class="textsuperscript">1</sup></a></span><a 
+ id="x1-4001f1"></a> .
+It has been developed and validated with healthcare professionals in several
+co-design sessions (e.g., via participatory observation, interviews, paper
+prototyping) and is particularly designed for sensemaking of one&#8217;s own learning
+experiences (<span 
+class="cmbx-12">tomberg2013</span> ). However, since the design is primarily made for
+working with people&#8217;s everyday affairs, it relies upon several implicit assumptions
+on sensemaking. This section tries to make these assumptions explicit by applying
+the qualities of sensemaking distilled in chapter <span 
+class="cmbx-12">??</span> and elaborating a framework for
+sensemaking around the design idea.
+<!--l. 18--><p class="noindent" >
+<h4 class="subsectionHead"><span class="titlemark">1.1.1</span>&#x00A0;&#x00A0;<a 
+ id="x1-50001.1.1"></a>The B&amp;P design idea</h4>
+<!--l. 20--><p class="noindent" >The user interface design idea is oriented towards the usual screen size of
+desktop computers. The screen area is split into two equally sized parts, the
+&#8220;browsing&#8221; and the &#8220;organizing&#8221; canvas, which are arranged vertically. The
+upper canvas is reserved for widgets which enable users to browse their
+digital artifacts along contextual cues (eg. time, location, topics) whereas the
+lower canvas gives space to widgets for organizing these items semantically.
+Since each canvas can only display one widget at once the user can switch
+widgets horizontally. Widgets shall be able to visualize entities, ie. learning
+&#8220;bits&#8221;, in their own way and provide interaction upon them. It shall be
+possible to drag bits in the upper canvas and drop them in the lower one.
+                                                                            <img 
+src="docu35x.png" alt="" >
+<img 
+src="docu36x.png" alt="" >
+                                                                            
+Furthermore, entities need to be kept synchronized across widgets so that a
+change made to a bit in one widget is also reflected in the others (fig. <a 
+href="#x1-50001.1.1">1.1.1<!--tex4ht:ref: fig:wireframes --></a>).
+Finally, not visible in the wireframes, the state of the user&#8217;s sensemaking
+is persisted in the background automatically without the need to save it
+explicitly.
+<!--l. 23--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu37x.png" alt="" >
+<img 
+src="docu38x.png" alt="" >
+                                                                            
+<a 
+ id="x1-50011"></a>
+                                                                            <img 
+src="docu39x.png" alt="" >
+<img 
+src="docu40x.png" alt="" >
+                                                                            
+
+<!--l. 25--><p class="noindent" ><img 
+src="figures/wireframes.png" alt="PIC"  
+width="398.33862pt" height="214.48994pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.1: </td><td  
+class="content">The wireframe (by courtesy of Vladimir Tomberg) of the B&amp;P
+user interface with two canvases, one for browsing data, one for organizing
+them. The current widget in either canvas can be switched by the arrow left
+and right. </td></tr></table></div><!--tex4ht:label?: x1-50011 -->
+                                                                            <img 
+src="docu41x.png" alt="" >
+<img 
+src="docu42x.png" alt="" >
+                                                                            
+<!--l. 28--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 30--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu43x.png" alt="" >
+<img 
+src="docu44x.png" alt="" >
+                                                                            
+<a 
+ id="x1-50062"></a>
+                                                                            <img 
+src="docu45x.png" alt="" >
+<img 
+src="docu46x.png" alt="" >
+                                                                            
+<a 
+ id="x1-5002r1"></a>
+<div class="subfigure"><table><tr><td style="text-align:left"><img 
+src="figures/timeline-rings.png" alt="PIC"  
+width="179.25116pt" height="116.68082pt" >
+<div class="subfigcaption"><span 
+class="cmr-10">(a)</span>
+<span 
+class="cmr-10">Timeline</span>
+<span 
+class="cmr-10">&amp;</span>
+<span 
+class="cmr-10">Venn-rings</span></div></td></tr></table></div><a 
+ id="x1-5003r2"></a><div class="subfigure"><table><tr><td style="text-align:left"><img 
+src="figures/Layers-bearb.png" alt="PIC"  
+width="179.25116pt" height="117.69586pt" >
+<div class="subfigcaption"><span 
+class="cmr-10">(b)</span>
+<span 
+class="cmr-10">Geographical</span>
+<span 
+class="cmr-10">map</span>
+<span 
+class="cmr-10">&amp;</span>
+<span 
+class="cmr-10">layers</span></div></td></tr></table></div><a 
+ id="x1-5004r3"></a><div class="subfigure"><table><tr><td style="text-align:left"><img 
+src="figures/Matrix-bearb.png" alt="PIC"  
+width="179.25116pt" height="112.50314pt" >
+<div class="subfigcaption"><span 
+class="cmr-10">(c)</span>
+<span 
+class="cmr-10">Browsable</span>
+<span 
+class="cmr-10">list</span>
+<span 
+class="cmr-10">&amp;</span>
+<span 
+class="cmr-10">conceptual</span>
+<span 
+class="cmr-10">matrix</span></div></td></tr></table></div> <a 
+ id="x1-5005r4"></a><div class="subfigure"><table><tr><td style="text-align:left"><img 
+src="figures/wireframes_concept-bearb.png" alt="PIC"  
+width="179.25116pt" height="117.8985pt" >
+<div class="subfigcaption"><span 
+class="cmr-10">(d)</span>
+<span 
+class="cmr-10">Filterable</span>
+<span 
+class="cmr-10">list</span>
+<span 
+class="cmr-10">&amp;</span>
+<span 
+class="cmr-10">network</span>
+<span 
+class="cmr-10">graph</span></div></td></tr></table></div>
+ <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.2:  </td><td  
+class="content">Example  widgets  of  the  B&amp;P  user  interface  (by  courtesy  of
+Vladimir Tomberg).</td></tr></table></div><!--tex4ht:label?: x1-50062 -->
+                                                                            <img 
+src="docu47x.png" alt="" >
+<img 
+src="docu48x.png" alt="" >
+                                                                            
+<!--l. 49--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 51--><p class="noindent" >The design does not confine the set of available widgets but comes with some initial
+suggestions. So as for the browsing canvas there could be a timeline, a geographical
+map and a browsable and filterable list, whereas for the organizing canvas a
+Venn-diagram, a layered structure, a conceptual matrix and a network graph are
+envisioned (fig. <a 
+href="#x1-50062">1.2<!--tex4ht:ref: fig:example-widgets --></a>).
+<!--l. 53--><p class="noindent" >Finally, BnP should be capable of managing several &#8220;episodes&#8221; of sensemaking. An
+episode in the sense of BnP is sensemaking related to a specific topic, idea or
+question. Technically speaking, it is a means of giving a sensemaking session a
+name. An episode can have several versions, each reflecting the state of sensemaking
+(ie. the arrangement of entities and the configuration of widgets) at a certain point
+in time. The user can switch between episodes and between versions of episodes
+instantly.
+<h5 class="subsubsectionHead"><a 
+ id="x1-60001.1.1"></a>User Scenario</h5>
+<!--l. 57--><p class="noindent" >Stressing again the example from the beginning one might use the B&amp;P user
+interface in the following way: First, collected data is loaded into the application via
+Web services and visualized by the current browsing widget, eg. the timeline, which
+would display the bits chronologically by the creation timestamp. However, the
+timeline might be unsuitable if the user already knows the label of a needed
+bit. Instead, by switching the upper canvas to the browsable list, which
+displays bits in alphabetical order, finding a bit by name would be much
+easier.
+<!--l. 59--><p class="noindent" >Next, the user might find this bit related to another one which comes across while
+browsing the list further. In order to make this relation explicit the two bits are
+dragged and dropped to the lower canvas where the Venn diagram widget is active.
+The user can arrange the two bits spatially and draw a circle around them. The
+circle gets the label of the common category. Having found this representation, the
+user can continue the search for more bits which would fit into the same
+category.
+<!--l. 61--><p class="noindent" >However, if no more bits can be found, two things can be done: Either the
+representation needs to be changed (either by relabelling the circle or drawing new
+                                                                            <img 
+src="docu49x.png" alt="" >
+<img 
+src="docu50x.png" alt="" >
+                                                                            
+ones) or another widgets needs to be put in place, eg. the network graph. In that
+case there would already be three nodes visualized: the two bits and the category
+entity which was represented as a circle in the former Venn diagram widget. The
+edges would be drawn between the category entity and each bit - representing a
+&#8220;contains&#8221;-relationship. More bits can be dropped into the lower canvas and
+connected to the graph.
+<!--l. 63--><p class="noindent" >So having various widgets available can help in finding bits and building structure
+(representations) around them, ie. the B&amp;P design idea seems to support the
+sensemaking process. In order to prove this theoretical assumption the next section
+reviews the design in the light of the qualities of sensemaking.
+<!--l. 65--><p class="noindent" >
+<h5 class="subsubsectionHead"><a 
+ id="x1-70001.1.1"></a>Proving Sensemaking Support</h5>
+<!--l. 67--><p class="noindent" >The qualities of sensemaking have been derived as a theoretical requirements for
+sensemaking applications in chapter <span 
+class="cmbx-12">??</span>. As they have been used in chapter <span 
+class="cmbx-12">??</span> for
+evaluation of the related work B&amp;P also needs to undergo the review of its design in
+the light of the qualities. This section will show that B&amp;P fulfills these theoretical
+requirements.
+<!--l. 69--><p class="noindent" >First, the split screen design feature where the upper part is reserved for browsing
+and the lower part is reserved for organizing widgets apparently reflects the
+<span 
+class="cmti-12">bipolarity </span>of sensemaking. In the beginning, the process is more focussed on
+foraging for bits in the upper canvas, whereas towards the end of sensemaking, it is
+mostly concerned with organizing them in the lower canvas. In between the process
+is continuously progressing its focus, ie. the user will more and more shift his
+attention from browsing to organizing. Since both poles are equally important for
+the process, splitting the screen into two equally sized parts is a feasible way of
+designing bipolarity.
+<!--l. 71--><p class="noindent" >Second, the division into two canvases also accounts for <span 
+class="cmti-12">reciprocity </span>of sensemaking.
+The organize canvas can be used to build up representations based on the data in
+the browse canvas whereas the browsing can be guided by representations present in
+the organize canvas. It is this reciprocity which drives the overall sensemaking
+                                                                            <img 
+src="docu51x.png" alt="" >
+<img 
+src="docu52x.png" alt="" >
+                                                                            
+process between the two poles of foraging and organizing. So bipolarity and
+reciprocity complete each other in the B&amp;P design idea.
+<!--l. 75--><p class="noindent" >Third, as B&amp;P envisions various widgets for various sensemaking situations and the
+ease of switching between them, it adheres to the quality of <span 
+class="cmti-12">context-sensitivity</span>.
+Whether a tool for sensemaking is appropriate mainly depends on the context, eg.
+the kind of data, the specific goal, the user&#8217;s personal preferences, and so on.
+Furthermore, as the bits represent informal learning experiences they can not be
+defined by a certain type or structure. On the one hand they may vary in
+their intrinsic properties (textual notes, photos, audio records, etc.), on
+the other hand in their extrinsic ones (creation time, location, relation to
+other items etc.). By having the contents of both canvases to be switchable
+over an extensible set of widgets dynamically and independently the user
+can find the appropriate ones to visualize and interact with the data at
+hand.
+<!--l. 79--><p class="noindent" >Fourth, according to sensemaking&#8217;s <span 
+class="cmti-12">enactivity</span>, the design idea enables users to
+interact with each visible element. Generally, items can be dragged and dropped
+from the upper to the lower canvas. Furthermore, the design suggests a couple of
+specific widgets for each canvas each being interactive respectively. On the
+one hand, for instance, the timeline widget for the upper canvas can be
+panned and zoomed, on the other hand the lower canvas may contain an
+organizing widget for drawing rings and arranging items like in a Venn
+diagram.
+<!--l. 83--><p class="noindent" >Fifth, due to sensemaking&#8217;s quality of <span 
+class="cmti-12">continuity </span>users may cease sensemaking as
+soon as they see their task-specific goal achieved (<span 
+class="cmbx-12">Russell1993</span> ) or may come back
+later. B&amp;P achieves that by persisting the sensemaking state continuously in the
+background.
+<!--l. 86--><p class="noindent" >Sixth, <span 
+class="cmti-12">reification </span>is also reflected in the B&amp;P design idea as illustrated in the user
+scenario. When switching widgets, representations built in the one widget might
+serve as entities (ie. data) in another. For instance, categories may not only
+function as means of structuring bits but may be related to each other
+on a higher level of abstraction. B&amp;P achieves that by merely enabling
+reification of representations instead of defining a higher ordering structure
+explicitly.
+<!--l. 88--><p class="noindent" >Finally, the <span 
+class="cmti-12">individuality </span>of sensemaking is covered a priori as informal learning
+                                                                            <img 
+src="docu53x.png" alt="" >
+<img 
+src="docu54x.png" alt="" >
+                                                                            
+experiences are personal per se. Furthermore, B&amp;P allows for building of own
+representations through widgets and even the individual extension of the set of
+widgets.
+<!--l. 90--><p class="noindent" >The following list sums up the mapping of B&amp;P design features to qualities of
+sensemaking:
+      <ul class="itemize1">
+      <li class="itemize">two canvases (bipolarity, reciprocity)
+      </li>
+      <li class="itemize">switching  between  widgets  and  extensibility  of  the  set  of  widgets
+      (context-sensitivity, individuality)
+      </li>
+      <li class="itemize">visualization  and  interaction  of  bits  within  and  between  widgets
+      (enactivity)
+      </li>
+      <li class="itemize">continuous preservation of the sensemaking state (continuity)
+      </li>
+      <li class="itemize">representations serving as entities in certain widgets (reification)</li></ul>
+<!--l. 99--><p class="noindent" >
+<h4 class="subsectionHead"><span class="titlemark">1.1.2</span>&#x00A0;&#x00A0;<a 
+ id="x1-80001.1.2"></a>Functional Requirements</h4>
+<!--l. 101--><p class="noindent" >As B&amp;P is targeted towards a generic framework there are only a few functional
+requirements to mention. Most sensemaking functionality comes from individual
+widgets which is out of scope of the framework. However, as for design features
+which are related to the visualization, interaction and continuous preservation it is
+necessary to list at least the following:
+                                                                            <img 
+src="docu55x.png" alt="" >
+<img 
+src="docu56x.png" alt="" >
+                                                                            
+      <ul class="itemize1">
+      <li class="itemize">Drag and drop: Every bit needs to be drag- and droppable in order to
+      bring bits from the upper to the lower canvas. Hence, browsing widgets
+      need a common interface to pass out entities as do organizing widgets to
+      receive entities.
+      </li>
+      <li class="itemize">Bit  visualization:  Every  bit  needs  to  be  visualized  in  a  globally,
+      across-widget consistent form, ie. bits need to look the same in different
+      widgets for the sake of recognition.
+      </li>
+      <li class="itemize">Continuous preservation: The framework needs to save the sensemaking
+      state continuously so that the user can cease sensemaking at any point
+      in time without worrying about its preservation. This includes the state
+      of the widgets as well as which widgets are currently visible.
+      </li>
+      <li class="itemize">Data structure for episodes, versions, users and entities: These are data
+      types which are not specific to an application and hence need to be
+      implemented on the level of the framework.</li></ul>
+<!--l. 109--><p class="noindent" >
+<h4 class="subsectionHead"><span class="titlemark">1.1.3</span>&#x00A0;&#x00A0;<a 
+ id="x1-90001.1.3"></a>Non-Functional Requirements</h4>
+<!--l. 111--><p class="noindent" >The non-functional requirements are of more interest for the generic framework
+implementation because frameworks usually provide the means (the frame) to
+develop functionality rather than functionality as such. In the case of B&amp;P it is a
+framework for sensemaking widgets which has to meet the following non-functional
+requirements. These also match widely with <span 
+class="cmbx-12">ReactiveManifesto</span>  which states four
+properties reactive systems comply to: responsive, resilient, elastic and
+message-driven.
+                                                                            <img 
+src="docu57x.png" alt="" >
+<img 
+src="docu58x.png" alt="" >
+                                                                            
+      <ul class="itemize1">
+      <li class="itemize">On account of the extensibility widgets need to be <span 
+class="cmti-12">independent </span>modules
+      each tackling a specific aspect of data or functionality. Independence
+      maximizes the number of possible combinations of widgets and thereby
+      the  adaptability  to  the  specific  sensemaking  objection.  Furthermore
+      independence  of  widgets  makes  switching  between  them  flawless.
+      Independence of modules also entails resilience because individual widget
+      may fail while leaving the rest of the application run unaffected.
+      </li>
+      <li class="itemize">Interactivity requires <span 
+class="cmti-12">responsiveness</span>, ie. the application has to respond
+      to user input immediately without passing on time consuming loading
+      and processing times to the user&#8217;s experience. On the one hand this
+      implies that every visible bit needs to respond to any user action which
+      is executed upon it. On the other hand data loading and processing logic
+      needs to be decoupled from the visual frontend. This requirement implies
+      client-side elasticity since &#8220;the system stays responsive under varying
+      workload&#8221; (<span 
+class="cmbx-12">ReactiveManifesto</span> ).
+      </li>
+      <li class="itemize">In order to support continuous preservation the application&#8217;s state needs
+      to be <span 
+class="cmti-12">serializable </span>at any point. This further implies that any operation
+      triggered upon the data has to be atomic in order to make the application
+      resilient on the level of data.
+      </li>
+      <li class="itemize">Finally, if widgets have to be independent modules there needs to be
+      a common means of message passing in order to enable communication
+      with the framework and inter-widget coordination. However, the type
+      and structure of data can not be defined a priori and thus a common data
+      format either. Furthermore, any-time serializability needs a dynamic and
+      extensible data structure. Both issues can be tackled by the use of a <span 
+class="cmti-12">graph</span>
+      <span 
+class="cmti-12">data structure </span>as it does not impose any pre-defined structure apart from
+      nodes and links. Furthermore, graphs can represent reification which is
+      also a quality of sensemaking.</li></ul>
+                                                                            <img 
+src="docu59x.png" alt="" >
+<img 
+src="docu60x.png" alt="" >
+                                                                            
+<!--l. 123--><p class="noindent" >
+<h3 class="sectionHead"><span class="titlemark">1.2</span>&#x00A0;&#x00A0;<a 
+ id="x1-100001.2"></a>Framework</h3>
+<!--l. 125--><p class="noindent" >The implementation of the prototype is split into two parts. On account of the
+generic requirements described above a framework for use case agnostic features was
+developed. The framework is intended to ease the implementation of application
+specific widgets which can leverage the modularity, responsiveness and
+serializability provided. The main part of this section is concerned with the
+framework implementation. As an application two widgets of the Bits and Pieces
+design idea have been developed on top of this framework.
+<!--l. 127--><p class="noindent" >
+<h4 class="subsectionHead"><span class="titlemark">1.2.1</span>&#x00A0;&#x00A0;<a 
+ id="x1-110001.2.1"></a>Web Browser Runtime System</h4>
+<!--l. 129--><p class="noindent" >The framework relies on the runtime environment of Web browsers. The decision to
+use the Web browser as the application platform has several reasons. First, as the
+Bits and Pieces framework aims to facilitate sensemaking on the Web, the Web
+browser itself renders the runtime enviroment for this purpose. Second,
+HTML5<span class="footnote-mark"><a 
+href="docu3.html#fn2x3"><sup class="textsuperscript">2</sup></a></span><a 
+ id="x1-11001f2"></a>  together
+with CSS3<span class="footnote-mark"><a 
+href="docu4.html#fn3x3"><sup class="textsuperscript">3</sup></a></span><a 
+ id="x1-11002f3"></a> 
+provides a feature rich framework for structuring, integrating and presenting
+multimedia content. As a W3C Web standard it is implemented across various Web
+browsers. Third, Web applications running natively in the Web browser relieve users
+from awkward installation requirements. Furthermore as Web browsers are
+pre-installed on nowadays operating systems users can start working with the Web
+                                                                            <img 
+src="docu61x.png" alt="" >
+<img 
+src="docu62x.png" alt="" >
+                                                                            
+application right away.
+<!--l. 132--><p class="noindent" >JavaScript is the programming language commonly used for Web application
+programming. On top of the browser&#8217;s runtime environment, it deals with the
+aforementioned requirements out of the box. As for the common interface for
+inter-module communication, the events API of the Document Object Model
+(DOM)<span class="footnote-mark"><a 
+href="docu5.html#fn4x3"><sup class="textsuperscript">4</sup></a></span><a 
+ id="x1-11003f4"></a> 
+can be used to trigger and listen for application wide events which allow to transmit
+data objects between modules. The same mechanism enables interactivity as user
+initiated events (eg. a mouse click) can be captured and processed further. Asynchronous
+outbound communication is provided by the &#8221;Asynchronous JavaScript and XML
+(Ajax)&#8221;<span class="footnote-mark"><a 
+href="docu6.html#fn5x3"><sup class="textsuperscript">5</sup></a></span><a 
+ id="x1-11004f5"></a> 
+technique. The DOM tree, ie. the hierarchical HTML5 structure of the user
+interface elements, offers fine-grained access to the presentation layer as
+visual elements can be addressed and updated directly. Most importantly
+JavaScript is a dynamic scripting language which needs no compilation of
+its source code. Hence objects can be extended by additional properties
+at runtime which is especially handy in the given case of unstructured
+data.
+<!--l. 134--><p class="noindent" >However, these are low-level features of the language which are delicate to use in a
+productive environment. For instance, the manipulation of the DOM tree, the
+handling of events and the invocation of Ajax calls requires a considerable
+amount of code for relatively simple tasks. Due to slight differences in the
+various browser implementations specific knowledge and additional switches
+in the algorithms are necessary. Moreover, for JavaScript objects there is
+no communication channel like the DOM events and understandably the
+language does not ship with a graph database. For these reasons, a couple of
+open-source JavaScript frameworks have been used to ease the prototype
+development.
+                                                                            <img 
+src="docu63x.png" alt="" >
+<img 
+src="docu64x.png" alt="" >
+                                                                            
+<!--l. 136--><p class="noindent" >
+<h5 class="subsubsectionHead"><a 
+ id="x1-120001.2.1"></a>Backbone</h5>
+<!--l. 138--><p class="noindent" >Backbone<span class="footnote-mark"><a 
+href="docu7.html#fn6x3"><sup class="textsuperscript">6</sup></a></span><a 
+ id="x1-12001f6"></a> 
+consists of three classes which are relevant for the prototype. Web developers can
+extend <span 
+class="cmtt-12">Backbone.Model </span>which bundles logic for creation, access, alteration and
+deletion of objects. <span 
+class="cmtt-12">Backbone.Collection </span>is needed for logic at the level of collections
+of models, for instance retrieval, addition and removal of objects. Collection contain
+Models in an 1:n relationship. Models can be bound to a <span 
+class="cmtt-12">Backbone.View</span>, which
+cares for the presentation in HTML5. A view also keeps a reference to the DOM
+element where it puts model data to. All classes implement the Observer
+Pattern<span class="footnote-mark"><a 
+href="docu8.html#fn7x3"><sup class="textsuperscript">7</sup></a></span><a 
+ id="x1-12002f7"></a> ,
+which allows for event-driven communication between Backbone modules. For
+instance, a view can listen to changes to a model and trigger the appropriate
+functions to redraw the associated DOM element. A collection also fires events in
+the case of any operations invoked on it, eg. when adding a new object.
+Additionally <span 
+class="cmtt-12">Backbone.Model </span>provides a generic API for synchronizing
+data with external RESTful server applications. Backbone does not impose
+any specific architecture but allows for implementation of a clean software
+structure.
+<!--l. 140--><p class="noindent" >
+<h5 class="subsubsectionHead"><a 
+ id="x1-130001.2.1"></a>JQuery</h5>
+                                                                            <img 
+src="docu65x.png" alt="" >
+<img 
+src="docu66x.png" alt="" >
+                                                                            
+<!--l. 142--><p class="noindent" >JQuery<span class="footnote-mark"><a 
+href="docu9.html#fn8x3"><sup class="textsuperscript">8</sup></a></span><a 
+ id="x1-13001f8"></a> 
+provides a high-level API on top of JavaScript to simplify the traversal of the DOM
+tree, the retrieval of specific DOM elements and thus their manipulation. It also
+reduces the amount of code for the binding and unbinding of event listeners to the
+DOM which is needed for inter-widget communication. Sending AJAX calls and
+receiving responses is also covered by the library by providing an exhaustive
+callback registration interface. Furthermore JQuery&#8217;s modular structure allows for
+extending its functionality via plugins, eg. to get common user interface
+concepts like dialog boxes and drag and drop interactivity working with little
+effort.
+<!--l. 144--><p class="noindent" >
+<h5 class="subsubsectionHead"><a 
+ id="x1-140001.2.1"></a>VIE</h5>
+<!--l. 146--><p class="noindent" >VIE<span class="footnote-mark"><a 
+href="docu10.html#fn9x3"><sup class="textsuperscript">9</sup></a></span><a 
+ id="x1-14001f9"></a> 
+is the so-called semantic interaction framework which brings together Backbone and
+the Semantic Web (<span 
+class="cmbx-12">Grunwald2012</span> ) and enables developers to build interactive
+Web applications on top of semantic data. As the re-implementation of a graph
+database in JavaScript would neither be feasible nor high-performing VIE offers a
+subject-centric view of the semantic data based on JSON-LD (see <a 
+href="#x1-160001.2.2">1.2.2<!--tex4ht:ref: means_sem_ia --></a>). On top
+of Backbone it mimics a graph database by implementing <span 
+class="cmtt-12">VIE.Entity</span>
+, which is a type of <span 
+class="cmtt-12">Backbone.Model</span>, and <span 
+class="cmtt-12">VIE.Collection </span>which is a
+type of <span 
+class="cmtt-12">Backbone.Collection</span>for storing all entities in a central place.
+Every property of an entity is a URI and any entity can be retrieved from
+the collection by its identifying URI. Additionally, VIE provides utility
+functions for handling namespaces and the type hierarchy of its entities. For
+instance, an entity can be retrieved either by a URI or a (Safe) Compact URI
+                                                                            <img 
+src="docu67x.png" alt="" >
+<img 
+src="docu68x.png" alt="" >
+                                                                            
+(CURIE<span class="footnote-mark"><a 
+href="docu11.html#fn10x3"><sup class="textsuperscript">10</sup></a></span><a 
+ id="x1-14002f10"></a> ).
+Moreover, given a type hierarchy VIE can localize an entity&#8217;s type URI within that
+hierarchy. The type system can be parsed and imported from JSON files which use the same
+format<span class="footnote-mark"><a 
+href="docu12.html#fn11x3"><sup class="textsuperscript">11</sup></a></span><a 
+ id="x1-14003f11"></a>  as
+Schema.org<span class="footnote-mark"><a 
+href="docu13.html#fn12x3"><sup class="textsuperscript">12</sup></a></span><a 
+ id="x1-14004f12"></a> .
+The library also supports interaction with RDFa-annotated
+HTML content. Synchronization with various external data Web
+services is enabled through service adapters. Adapters for Open
+Calais<span class="footnote-mark"><a 
+href="docu14.html#fn13x3"><sup class="textsuperscript">13</sup></a></span><a 
+ id="x1-14005f13"></a>  or
+Apache Stanbol<span class="footnote-mark"><a 
+href="docu15.html#fn14x3"><sup class="textsuperscript">14</sup></a></span><a 
+ id="x1-14006f14"></a> 
+(<span 
+class="cmbx-12">Westenthaler2012</span> ) are already shipped with the official distribution of
+VIE.
+<!--l. 148--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu69x.png" alt="" >
+<img 
+src="docu70x.png" alt="" >
+                                                                            
+<a 
+ id="x1-140073"></a>
+                                                                            <img 
+src="docu71x.png" alt="" >
+<img 
+src="docu72x.png" alt="" >
+                                                                            
+
+<!--l. 150--><p class="noindent" ><img 
+src="figures/frameworks.png" alt="PIC"  
+width="358.50232pt" height="185.8035pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.3:  </td><td  
+class="content">JavaScript  frameworks  in  use  and  how  they  interplay:  VIE
+represents a graph data structure via inter-referenced objects of VIE.Entity,
+which   is   an   extension   of   Backbone.Model.   All   objects   are   kept   in
+VIE.Collection and can be connected to a Backbone.View which leverages
+JQuery in order to render the browser content.</td></tr></table></div><!--tex4ht:label?: x1-140073 -->
+                                                                            <img 
+src="docu73x.png" alt="" >
+<img 
+src="docu74x.png" alt="" >
+                                                                            
+<!--l. 153--><p class="noindent" ></div><hr class="endfigure">
+<h5 class="subsubsectionHead"><a 
+ id="x1-150001.2.1"></a>Additional Utility Libraries</h5>
+<!--l. 156--><p class="noindent" >Apart from the aforementioned JavaScript libraries which are inherent parts
+of the prototype, some additional libraries are used for utility purposes.
+RequireJS<span class="footnote-mark"><a 
+href="docu16.html#fn15x3"><sup class="textsuperscript">15</sup></a></span><a 
+ id="x1-15001f15"></a> 
+simplifies dependency management of the software modules and libraries and allows for Lazy
+Loading<span class="footnote-mark"><a 
+href="docu17.html#fn16x3"><sup class="textsuperscript">16</sup></a></span><a 
+ id="x1-15002f16"></a> , a
+design pattern for loading JavaScript files just in time when they are needed by the application.
+Js-Logger<span class="footnote-mark"><a 
+href="docu18.html#fn17x3"><sup class="textsuperscript">17</sup></a></span><a 
+ id="x1-15003f17"></a> 
+is used for logging and debugging needs. Finally, Twitter
+Bootstrap<span class="footnote-mark"><a 
+href="docu19.html#fn18x3"><sup class="textsuperscript">18</sup></a></span><a 
+ id="x1-15004f18"></a> 
+complements JQuery in UI design issues.
+<!--l. 158--><p class="noindent" >
+<h4 class="subsectionHead"><span class="titlemark">1.2.2</span>&#x00A0;&#x00A0;<a 
+ id="x1-160001.2.2"></a>Means of Semantic Interaction</h4>
+                                                                            <img 
+src="docu75x.png" alt="" >
+<img 
+src="docu76x.png" alt="" >
+                                                                            
+<!--l. 162--><p class="noindent" >The prototype leverages two essential standards from the sphere of Linked Data for
+the representation of semantic data based on Web technologies: JSON-LD and
+RDFa. Recently, both specifications have been released as official recommendations
+by the W3 Consortium (W3C).
+<!--l. 164--><p class="noindent" >
+<h5 class="subsubsectionHead"><a 
+ id="x1-170001.2.2"></a>JSON-LD</h5>
+<!--l. 166--><p class="noindent" >The VIE framework allows for flawless integration with external semantic Web services through
+JSON-LD<span class="footnote-mark"><a 
+href="docu20.html#fn19x3"><sup class="textsuperscript">19</sup></a></span><a 
+ id="x1-17001f19"></a> , a
+W3C standard<span class="footnote-mark"><a 
+href="docu21.html#fn20x3"><sup class="textsuperscript">20</sup></a></span><a 
+ id="x1-17002f20"></a> 
+for the serialization of Linked Data (<span 
+class="cmbx-12">Lanthaler2013</span> ). Building upon the
+JavaScript Object Notation (JSON) it introduces additional concepts in order
+to map JSON objects keys to URIs. For instance, the <span 
+class="cmtt-12">@context </span>contains
+namespace mappings and general type definitions. Additional keywords like <span 
+class="cmtt-12">@id</span>,
+<span 
+class="cmtt-12">@type </span>or <span 
+class="cmtt-12">@list </span>implement node identifiers, data type relations and ordered
+lists.
+<!--l. 169--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu77x.png" alt="" >
+<img 
+src="docu78x.png" alt="" >
+                                                                            
+<a 
+ id="x1-170034"></a>
+                                                                            <img 
+src="docu79x.png" alt="" >
+<img 
+src="docu80x.png" alt="" >
+                                                                            
+<div class="verbatim" id="verbatim-1">
+{
+&#x00A0;<br />&#x00A0;&#x00A0;"@context":&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;"name":&#x00A0;"http://xmlns.com/foaf/name",
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;"homepage":&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;"@id":&#x00A0;"http://xmlns.com/foaf/homepage",
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;"@type":&#x00A0;"@id"
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;}
+&#x00A0;<br />&#x00A0;&#x00A0;},
+&#x00A0;<br />&#x00A0;&#x00A0;"homepage":&#x00A0;"http://manu.sporny.org/",
+&#x00A0;<br />&#x00A0;&#x00A0;"name":&#x00A0;"Manu&#x00A0;Sporny"
+&#x00A0;<br />}
+&#x00A0;<br />
+&#x00A0;<br />//&#x00A0;N-Triples:
+&#x00A0;<br />_:b0&#x00A0;&#x003C;http://xmlns.com/foaf/homepage&#x003E;&#x00A0;&#x003C;http://manu.sporny.org/&#x003E;&#x00A0;.
+&#x00A0;<br />_:b0&#x00A0;&#x003C;http://xmlns.com/foaf/name&#x003E;&#x00A0;"Manu&#x00A0;Sporny"&#x00A0;.
+</div>
+<!--l. 187--><p class="nopar" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Listing&#x00A0;1.4:  </td><td  
+class="content">Example  of  JSON-LD  and  respective  triples:  The  <span 
+class="cmtt-12">@context</span>
+object describes the mapping of <span 
+class="cmtt-12">homepage </span>and <span 
+class="cmtt-12">name </span>to URIs.</td></tr></table></div><!--tex4ht:label?: x1-170034 -->
+                                                                            <img 
+src="docu81x.png" alt="" >
+<img 
+src="docu82x.png" alt="" >
+                                                                            
+<!--l. 190--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 193--><p class="noindent" >RDFa<span class="footnote-mark"><a 
+href="docu22.html#fn21x3"><sup class="textsuperscript">21</sup></a></span><a 
+ id="x1-17004f21"></a> , also a
+W3C standard<span class="footnote-mark"><a 
+href="docu23.html#fn22x3"><sup class="textsuperscript">22</sup></a></span><a 
+ id="x1-17005f22"></a> ,
+allows for annotation of XML with RDF. It enables Web developers to markup
+contents of the document with semantics primarily to make the contents more
+machine-readable. For instance, contact information on a Web page could be
+directly imported to the contact list of the visitor. RDFa defines a set of attributes
+which denote the relation between the documents elements and semantic entities.
+For instance, the <span 
+class="cmtt-12">property </span>attribute describes the URI (absolute or relative
+to the namespace) of the predicate between a subject and the contained
+data.
+<!--l. 197--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu83x.png" alt="" >
+<img 
+src="docu84x.png" alt="" >
+                                                                            
+<a 
+ id="x1-170065"></a>
+                                                                            <img 
+src="docu85x.png" alt="" >
+<img 
+src="docu86x.png" alt="" >
+                                                                            
+<div class="verbatim" id="verbatim-2">
+&#x003C;p&#x00A0;vocab="http://xmlns.com/foaf/"&#x003E;
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;My&#x00A0;name&#x00A0;is
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x003C;span&#x00A0;property="name"&#x003E;Manu&#x00A0;Sporny&#x003C;/span&#x003E;
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;and&#x00A0;my&#x00A0;homepage&#x00A0;is
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x003C;a&#x00A0;property="homepage"&#x00A0;href="http://manu.sporny.org/"&#x003E;
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;my&#x00A0;homepage
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x003C;/a&#x003E;.
+&#x00A0;<br />&#x003C;/p&#x003E;
+&#x00A0;<br />
+&#x00A0;<br />//&#x00A0;N-Triples:
+&#x00A0;<br />_:b0&#x00A0;&#x003C;http://xmlns.com/foaf/homepage&#x003E;&#x00A0;&#x003C;http://manu.sporny.org/&#x003E;&#x00A0;.
+&#x00A0;<br />_:b0&#x00A0;&#x003C;http://xmlns.com/foaf/name&#x003E;&#x00A0;"Manu&#x00A0;Sporny"&#x00A0;.
+</div>
+<!--l. 212--><p class="nopar" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Listing&#x00A0;1.5: </td><td  
+class="content">Example of RDFa and respective triples: <span 
+class="cmtt-12">@property</span>/value pairs
+can be expressed in RDFa within HTML5, here framed by the namespace
+declaration <span 
+class="cmtt-12">vocab</span>.</td></tr></table></div><!--tex4ht:label?: x1-170065 -->
+                                                                            <img 
+src="docu87x.png" alt="" >
+<img 
+src="docu88x.png" alt="" >
+                                                                            
+<!--l. 215--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 218--><p class="noindent" >Listings <a 
+href="#x1-170034">1.4<!--tex4ht:ref: fig:jsonld --></a> and <a 
+href="#x1-170065">1.5<!--tex4ht:ref: fig:rdfa --></a> give examples of both represenations and the triples expressed in
+Turle<span class="footnote-mark"><a 
+href="docu24.html#fn23x3"><sup class="textsuperscript">23</sup></a></span><a 
+ id="x1-17007f23"></a> 
+notation.
+<h4 class="subsectionHead"><span class="titlemark">1.2.3</span>&#x00A0;&#x00A0;<a 
+ id="x1-180001.2.3"></a>Alternative Runtimes</h4>
+<!--l. 222--><p class="noindent" >There exist alternative environments for building semantically enabled applications,
+most of them running in the Java Runtime Environment (JRE). The following
+provides an overview of pros and cons of such approaches:
+<!--l. 224--><p class="noindent" >
+<h5 class="subsubsectionHead"><a 
+ id="x1-190001.2.3"></a>Play</h5>
+<!--l. 225--><p class="noindent" >The Play Framework<span class="footnote-mark"><a 
+href="docu25.html#fn24x3"><sup class="textsuperscript">24</sup></a></span><a 
+ id="x1-19001f24"></a> 
+is a Java and Scala framework for building reactive Web applications. Together with the
+<span 
+class="cmti-12">Imperium </span>plugin<span class="footnote-mark"><a 
+href="docu26.html#fn25x3"><sup class="textsuperscript">25</sup></a></span><a 
+ id="x1-19002f25"></a> 
+it can be extended to process RDF data. The framework adheres to the MVC
+architectural pattern allowing for templating HTML markup in views, processing
+user input in controllers and representing the application logic in models. It merely
+runs on the server-side while enabling the addition of client-side JavaScript code as
+                                                                            <img 
+src="docu89x.png" alt="" >
+<img 
+src="docu90x.png" alt="" >
+                                                                            
+assets. Play is scalable in terms of workload and component development. It comes
+with a RESTful interface and WebSockets by default and allows for big data
+support.
+<!--l. 227--><p class="noindent" >Play is a good candidate for building Web applications which do not need much
+processing power on the client side. Its velocity stems from an asynchronous
+communication model and from the fact that it runs as a compiled Java/Scala
+application on servers. Client merely serve as thin-clients in the classical sense.
+However, for the implementation of interactive and rich internet applications one
+needs to fallback to JavaScript snippets shipped as assets. Since most of the BnP
+design idea is client-side oriented one would need to re-implement a whole
+architecture for this relying merely on such assets while the powerful server-side
+features of the Play framework remain unused.
+<!--l. 229--><p class="noindent" >
+<h5 class="subsubsectionHead"><a 
+ id="x1-200001.2.3"></a>ROLE</h5>
+<!--l. 231--><p class="noindent" >ROLE  (Responsive  Open  Learning
+Environments)<span class="footnote-mark"><a 
+href="docu27.html#fn26x3"><sup class="textsuperscript">26</sup></a></span><a 
+ id="x1-20001f26"></a> 
+implements the concept of Mash-Up Personal Learning Environments on top of a
+semantic model, ie. the ROLE ontology. The semantic model relies on the concept
+of spaces. Users can create spaces, where they can manage learning content and
+collaborate with other users. A space can host a bundle of Web widgets, has a list of
+participants in the space and enables them to communicate and collaborate.
+Moreover, for supporting complex applications, the widgets can exchange
+information across browsers by using the inter-widget communication mechanisms
+developed within ROLE. Messages are composed of URI/value pairs and
+hence allow for handling semantic data. The widget framework is oriented
+to work on the client-side with the server functioning as a central point
+of the widget store, the identity provider and the cross-browser XMPP
+communication.
+                                                                            <img 
+src="docu91x.png" alt="" >
+<img 
+src="docu92x.png" alt="" >
+                                                                            
+<!--l. 233--><p class="noindent" >In this respect, ROLE is a full-featured widget framework written in Java
+and JavaScript facilitating individual development of widgets, inter-widget
+communication and user collaboration. Integration and flawless invocation of
+widgets from the widget store is one of its main targets. However, its design is fixed
+to the notion of Personal Learning Environments, ie. widgets serve as small
+information processing and user interaction units but cannot be used for more
+ambitious application needs like the highly interactive and multimedial canvases
+envisioned by the BnP design idea. Additionally, there is no common data base for
+the widgets as every widget is an island of its own data. The only means of
+matching data is through the exhaustive communication mechanism which would
+be cumbersome to apply, for instance, to the Learning Loop Complex in
+sensemaking.
+<!--l. 235--><p class="noindent" >
+<h5 class="subsubsectionHead"><a 
+ id="x1-210001.2.3"></a>Callimachus</h5>
+<!--l. 237--><p class="noindent" >Callimachus, a wiki-based data management framework, is specifically made for
+Semantic Web applications. It comes with inherent RESTful APIs, user account
+management, various authentication mechanisms and most notably with a
+full-featured user interface which makes building a semantically enabled hyperlinked
+Web applications a matter of a few clicks. Users with minimal knowledge on
+Semantic Technologies can stick together an ontology with the integrated
+editor and create &#8220;Create&#8221;-, &#8220;Edit&#8221;- and &#8220;View&#8221;-templates for RDF classes.
+Templates are marked up with RDFa with support for variables (ie. parts of
+the template which need to adapt to changes in the RDF data model),
+expressions and loops. &#8220;View&#8221;-templates can be invoked and displayed on
+the result set of a SPARQL query. Additionally Callimachus supports a
+set of charts for visualizing the semantic data of an application as well as
+XProc<span class="footnote-mark"><a 
+href="docu28.html#fn27x3"><sup class="textsuperscript">27</sup></a></span><a 
+ id="x1-21001f27"></a> 
+as a W3C standardized technology for realizing
+                                                                            <img 
+src="docu93x.png" alt="" >
+<img 
+src="docu94x.png" alt="" >
+                                                                            
+Extract-Transform-Load-pipelines<span class="footnote-mark"><a 
+href="docu29.html#fn28x3"><sup class="textsuperscript">28</sup></a></span><a 
+ id="x1-21002f28"></a> .
+<!--l. 239--><p class="noindent" >Callimachus implements a full stack of Semantic Web technologies, including a
+graph database, RDF/XML RESTful APIs, a SPARQL endpoint, an ontology
+editor and RDFa templates. These enable users to easily build Semantic Web
+applications in a &#8220;wiki&#8221;, ie. fast, way. However, Callimachus itself is more an
+application than a framework. In order to add new kinds of visualization or to
+implement highly interactive applications, one would need to go beyond the scope of
+Callimachus. For instance, charts are merely oriented at presenting semantic data in
+a visually appealing form. There is no API for programming further means of user
+interaction on top of visualizations. The provided JavaScript API only allows for
+invoking functionality which is reachable via Callimachus&#8217; user menu anyway. Even
+if it were manageable to implement individual visualizations one would
+still hassle with setting up a way of communication between them. For
+instance, interactive features as required by BnP functionally, like dragging and
+dropping of bits between widgets, could not be implemented easily with
+Callimachus.
+<!--l. 242--><p class="noindent" >
+<h4 class="subsectionHead"><span class="titlemark">1.2.4</span>&#x00A0;&#x00A0;<a 
+ id="x1-220001.2.4"></a>User Interface Design and Workflow Overview</h4>
+<!--l. 244--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu95x.png" alt="" >
+<img 
+src="docu96x.png" alt="" >
+                                                                            
+<a 
+ id="x1-220016"></a>
+                                                                            <img 
+src="docu97x.png" alt="" >
+<img 
+src="docu98x.png" alt="" >
+                                                                            
+
+<!--l. 246--><p class="noindent" ><img 
+src="figures/BnP-interface-new.png" alt="PIC"  
+width="358.50232pt" height="145.41661pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.6: </td><td  
+class="content">B&amp;P user interface design and workflow overview: The B&amp;P user
+interface carries on the initial design idea of two canvases which contain widgets
+(eg. a timeline and a Venn diagram widgets). Widget implementations are
+part of the presentation layer and react to user interaction events. The Service
+Layer stores and retrieves application data to and from remote Web services.
+This external data sources might by supplied by the user&#8217;s mobile collection
+services.</td></tr></table></div><!--tex4ht:label?: x1-220016 -->
+                                                                            <img 
+src="docu99x.png" alt="" >
+<img 
+src="docu100x.png" alt="" >
+                                                                            
+<!--l. 249--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 251--><p class="noindent" >The user interaction workflow is driven by two phases. In the first phase the user
+collects data, ie. informal learning experiences, which might be textual notes,
+pictures, Web links and other types of multimedial content, with the help of mobile
+applications in the field. These collection services can be connected to other remote
+Web services which provide semantic access to the data for the second phase. Here
+the user operates the B&amp;P user interface to make sense of the collection of learning
+bits. The data undergo a transformation pipeline through the layered architecture
+of the B&amp;P framework: the Service, the Data and finally the Presentation
+layer.
+<!--l. 253--><p class="noindent" >Widgets of the Presentation Layer implement individual visualization and
+interaction functionality. Bits are displayed uniformly across widgets in order to
+ease recognition and to ensure consistent appearance when dragging and dropping
+bits from the upper to the lower widget. A sidebar to the right of the screen pops
+up on clicking on a bit. The sidebar contains detail information and allows
+for changing various properties of the bit (eg. the title). Double-clicking
+a bit opens another Web browser tab in order to dereference its URI if
+possible.
+<h4 class="subsectionHead"><span class="titlemark">1.2.5</span>&#x00A0;&#x00A0;<a 
+ id="x1-230001.2.5"></a>Framework Architecture</h4>
+<!--l. 259--><p class="noindent" >The B&amp;P framework separates the concerns for remote services, data and
+presentation in a three-layered architecture. The service layer wraps remote Web
+services and prepares external data sets. The data layer curates the collection of
+entities of the application. It keeps references between entities consistent to
+adaptable data integrity constraints and bundles data loading and creation logic.
+The presentation layer consists of one or more views which build up the user
+interface from the entities given, leveraging Backbone&#8217;s declarative event handling
+mechanism.
+<!--l. 261--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu101x.png" alt="" >
+<img 
+src="docu102x.png" alt="" >
+                                                                            
+<a 
+ id="x1-230017"></a>
+                                                                            <img 
+src="docu103x.png" alt="" >
+<img 
+src="docu104x.png" alt="" >
+                                                                            
+
+<!--l. 263--><p class="noindent" ><img 
+src="figures/architecture.png" alt="PIC"  
+width="358.50232pt" height="190.67079pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.7: </td><td  
+class="content">The B&amp;P framework architecture: The service layer wraps remote
+data services (eg. the Social Semantic Server) to the data layer, ie. its data
+modules, which curate the entity collection. Views are bound to entities and
+propagate changes in the data to the user frontend. Users may generate content
+via external systems, eg. EVERNOTE, which can be fed back into the remote
+data service.</td></tr></table></div><!--tex4ht:label?: x1-230017 -->
+                                                                            <img 
+src="docu105x.png" alt="" >
+<img 
+src="docu106x.png" alt="" >
+                                                                            
+<!--l. 266--><p class="noindent" ></div><hr class="endfigure">
+<h5 class="subsubsectionHead"><a 
+ id="x1-240001.2.5"></a>Service Layer</h5>
+<!--l. 270--><p class="noindent" >In general, the service layer implements VIE&#8217;s service adapter
+interface <span 
+class="cmtt-12">VIE.Able </span>which provides extensions for loading, saving
+and analyzing content. All extensions implement JQuery&#8217;s Deferred
+Object<span class="footnote-mark"><a 
+href="docu30.html#fn29x3"><sup class="textsuperscript">29</sup></a></span><a 
+ id="x1-24001f29"></a> , a design pattern
+resembling the Builder Pattern<span class="footnote-mark"><a 
+href="docu31.html#fn30x3"><sup class="textsuperscript">30</sup></a></span><a 
+ id="x1-24002f30"></a> 
+for configuring the service call with parameters and callback functions. Callbacks
+are executed as soon as a service call, which is made asynchronously via AJAX, gets
+a response from the remote server. Services need to be registered with the runtime
+instance of <span 
+class="cmtt-12">VIE</span>. Listing <a 
+href="#x1-240038">1.8<!--tex4ht:ref: service_call --></a> gives an example.
+<!--l. 273--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu107x.png" alt="" >
+<img 
+src="docu108x.png" alt="" >
+                                                                            
+<a 
+ id="x1-240038"></a>
+                                                                            <img 
+src="docu109x.png" alt="" >
+<img 
+src="docu110x.png" alt="" >
+                                                                            
+<div class="verbatim" id="verbatim-3">
+this.VIE.load({&#8217;service&#8217;&#x00A0;:&#x00A0;&#8217;entityDescsGet&#8217;})
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;.from(&#8217;sss&#8217;)
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;.execute()
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;.success(function(entities)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;LOG.debug("successfully&#x00A0;loaded&#x00A0;entities",&#x00A0;entities);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;})
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;.fail(function(errorMsg)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;LOG.debug("an&#x00A0;error&#x00A0;occurred",&#x00A0;errorMsg);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;});
+</div>
+<!--l. 284--><p class="nopar" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Listing&#x00A0;1.8: </td><td  
+class="content">Example service call using JQuery Deferred Object: <span 
+class="cmtt-12">load </span>initiates
+the Deferred Object, ie. the <span 
+class="cmtt-12">Loadable </span>which extends <span 
+class="cmtt-12">VIE.Able</span>, parameterized
+for the specific service call <span 
+class="cmtt-12">entityDescsGet</span>. <span 
+class="cmtt-12">from </span>configures the object to use
+the registered service <span 
+class="cmtt-12">&#8217;sss&#8217;</span>. <span 
+class="cmtt-12">execute </span>invokes this service, which transmits the
+actual server request. <span 
+class="cmtt-12">success </span>and <span 
+class="cmtt-12">fail </span>execute their callback in the case of
+the respective response type.</td></tr></table></div><!--tex4ht:label?: x1-240038 -->
+                                                                            <img 
+src="docu111x.png" alt="" >
+<img 
+src="docu112x.png" alt="" >
+                                                                            
+<!--l. 287--><p class="noindent" ></div><hr class="endfigure">
+<h5 class="subsubsectionHead"><a 
+ id="x1-250001.2.5"></a>Data Layer</h5>
+<!--l. 292--><p class="noindent" >The VIE framework provides the data layer with utility functionality for dealing
+with semantic data. As all entities are of the type <span 
+class="cmtt-12">VIE.Entity </span>and kept in a single
+<span 
+class="cmtt-12">VIE.Collection </span>(see fig. <a 
+href="#x1-230001.2.5">1.2.5<!--tex4ht:ref: fig:arch --></a>) they are subject to VIE&#8217;s semantic interaction
+framework. The data layer is organized in modules each handling an aspect of the
+application data. Modules may trigger data operation on each other to the extend
+of their inter-dependency. For instance, application specific data modules for a
+hierarchical data model can listen to certain entities being added to the entity
+collection (see lst. <a 
+href="#x1-2500210">1.10<!--tex4ht:ref: lst:data_module --></a>) and trigger the loading of its child entities (see <a 
+href="#x1-2500311">1.11<!--tex4ht:ref: lst:entity_init --></a>). Data
+modules need to be initialized in the data layer&#8217;s core component <span 
+class="cmtt-12">AppData </span>which
+can also be used to initialize additional application specific data, eg. the initial
+widgets to get the user start working with. Apart from this component and
+the data modules the data layer consists of the Data Integrity Module
+(<span 
+class="cmtt-12">Data</span>) which subsumes common integrity functionality and <span 
+class="cmtt-12">CopyMachine </span>for
+cloning of entities. The framework also comes with a couple of predefined
+data modules which are a requirement of BnP: <span 
+class="cmtt-12">UserData </span>manages user
+data and related episodes. <span 
+class="cmtt-12">EpisodeData </span>and <span 
+class="cmtt-12">VersionData </span>deal with the
+respective data types and control for cloning of sensemaking states, ie.
+the arrangement of entities and widget configuration. <span 
+class="cmtt-12">EntityData </span>is a
+special data module for common data logic of entities such as for tagging or
+authorship. However, appropriate application-specific service calls have
+to be integrated to have these modules synchronizing with external Web
+services.
+<!--l. 294--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu113x.png" alt="" >
+<img 
+src="docu114x.png" alt="" >
+                                                                            
+<a 
+ id="x1-250019"></a>
+                                                                            <img 
+src="docu115x.png" alt="" >
+<img 
+src="docu116x.png" alt="" >
+                                                                            
+
+<!--l. 296--><p class="noindent" ><img 
+src="figures/datamodel.png" alt="PIC"  
+width="398.33862pt" height="79.62584pt" >
+<br />  <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.9:  </td><td  
+class="content">The  data  model  of  the  framework  as  it  implemented  by
+the  respective  data  modules  <span 
+class="cmtt-12">UserData</span>,  <span 
+class="cmtt-12">EpisodeData</span>,  <span 
+class="cmtt-12">VersionData </span>and
+<span 
+class="cmtt-12">EntityData</span>. For the data type <span 
+class="cmtt-12">Widget </span>there is no data module on the level of
+the framework because widgets are application specific. Nevertheless, widget
+implementations have to adhere to this data model.</td></tr></table></div><!--tex4ht:label?: x1-250019 -->
+                                                                            <img 
+src="docu117x.png" alt="" >
+<img 
+src="docu118x.png" alt="" >
+                                                                            
+<!--l. 299--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 301--><p class="noindent" >Data modules may inherit from the Data Integrity Module in order to impose
+integrity constraints on their data structure. For instance, having an entity with a
+relationship to another type of entity may be reflected by the integrity constraint
+<span 
+class="cmtt-12">&#x003C;relation1, type, relation2&#x003E;</span>. Whenever an entity is created or updated the
+data integrity module should check that the entity has a property named
+<span 
+class="cmtt-12">relation1 </span>with the reference to another entity of type <span 
+class="cmtt-12">type</span>and vice-versa with
+<span 
+class="cmtt-12">relation2</span>. If the constraint is violated it will be fixed. If the entity is deleted,
+respective relationships of other entities to the deleted one need to be removed
+also.
+<!--l. 303--><p class="noindent" >For these two purposes, setting up an integrity constraint and checking it
+upon an entity, data modules inherit two methods from Data Integrity
+Module:
+      <ul class="itemize1">
+      <li class="itemize"><span 
+class="cmtt-12">setIntegrityCheck( relation1, type, relation2 ) </span>(see lst. <a 
+href="#x1-2500210">1.10<!--tex4ht:ref: lst:data_module --></a>)
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">checkIntegrity( entity ) </span>(see lst. <a 
+href="#x1-2500311">1.11<!--tex4ht:ref: lst:entity_init --></a>)</li></ul>
+<!--l. 311--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu119x.png" alt="" >
+<img 
+src="docu120x.png" alt="" >
+                                                                            
+<a 
+ id="x1-2500210"></a>
+                                                                            <img 
+src="docu121x.png" alt="" >
+<img 
+src="docu122x.png" alt="" >
+                                                                            
+<div class="verbatim" id="verbatim-4">
+var&#x00A0;UserModule&#x00A0;=&#x00A0;Object.create(Data);
+&#x00A0;<br />UserModule.init&#x00A0;=&#x00A0;function(VIE)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.VIE&#x00A0;=&#x00A0;VIE;
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.VIE.entities.on(&#8217;add&#8217;,&#x00A0;this.filter,&#x00A0;this);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.setIntegrityCheck(
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;Voc.hasEpisode,&#x00A0;Voc.Episode,&#x00A0;Voc.belongsToUser);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.setIntegrityCheck(
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;Voc.currentVersion,&#x00A0;Voc.Version);
+&#x00A0;<br />};
+</div>
+<!--l. 322--><p class="nopar" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Listing&#x00A0;1.10: </td><td  
+class="content">Example definition of a data module and initiation of a user
+entity: First, JavaScript&#8217;s <span 
+class="cmtt-12">Object.create() </span>initiates <span 
+class="cmtt-12">UserModule </span>with <span 
+class="cmtt-12">Data</span>,
+the  Data  Integrity  Component,  as  its  prototype.  <span 
+class="cmtt-12">init </span>gets  VIE&#8217;s  runtime
+instance and sets up an event listener, which filters entities for user entities,
+and integrity constraints to episode and version entities.</td></tr></table></div><!--tex4ht:label?: x1-2500210 -->
+                                                                            <img 
+src="docu123x.png" alt="" >
+<img 
+src="docu124x.png" alt="" >
+                                                                            
+<!--l. 325--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 331--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu125x.png" alt="" >
+<img 
+src="docu126x.png" alt="" >
+                                                                            
+<a 
+ id="x1-2500311"></a>
+                                                                            <img 
+src="docu127x.png" alt="" >
+<img 
+src="docu128x.png" alt="" >
+                                                                            
+<div class="verbatim" id="verbatim-5">
+UserModule.filter&#x00A0;=&#x00A0;function(entity)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;if(&#x00A0;entity.isof(Voc.User)&#x00A0;)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.checkIntegrity(entity);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.fetchEpisodes(entity);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.fetchCurrentVersion(entity);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;entity.sync&#x00A0;=&#x00A0;this.sync;
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;}};
+</div>
+<!--l. 340--><p class="nopar" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Listing&#x00A0;1.11: </td><td  
+class="content">Data type specific initiation: <span 
+class="cmtt-12">filter </span>is invoked on <span 
+class="cmtt-12">add</span>-events
+on the entity collection. If the new entity is of type <span 
+class="cmtt-12">Voc.User </span>the integrity
+constraints are checked and additional data (the user&#8217;s episodes and the current
+version the user is working on) are loaded. Finally the entity&#8217;s <span 
+class="cmtt-12">sync </span>method is
+overwritten by the module&#8217;s one (see lst. <a 
+href="#x1-2500412">1.12<!--tex4ht:ref: lst:model_sync --></a>).</td></tr></table></div><!--tex4ht:label?: x1-2500311 -->
+                                                                            <img 
+src="docu129x.png" alt="" >
+<img 
+src="docu130x.png" alt="" >
+                                                                            
+<!--l. 343--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 346--><p class="noindent" >The framework extends <span 
+class="cmtt-12">VIE.Entity </span>so that it overwrites <span 
+class="cmtt-12">Backbone.Model</span>&#8217;s <span 
+class="cmtt-12">sync</span>
+method, which is used by Backbone to create/read/update/delete (CRUD)
+an entity to external data services. It can be used to implement generic
+synchronization functionality which applies to all types of entities. However, data
+modules might overwrite <span 
+class="cmtt-12">sync </span>once more with data type specific synchronization
+functionality (see lst. <a 
+href="#x1-2500412">1.12<!--tex4ht:ref: lst:model_sync --></a>).
+<!--l. 349--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu131x.png" alt="" >
+<img 
+src="docu132x.png" alt="" >
+                                                                            
+<a 
+ id="x1-2500412"></a>
+                                                                            <img 
+src="docu133x.png" alt="" >
+<img 
+src="docu134x.png" alt="" >
+                                                                            
+<div class="verbatim" id="verbatim-6">
+UserModule.sync&#x00A0;=&#x00A0;function(method,&#x00A0;entity,&#x00A0;options)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;if(&#x00A0;method&#x00A0;!==&#x00A0;&#8217;update&#8217;&#x00A0;)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.VIE.Entity.prototype.sync(method,&#x00A0;entity,&#x00A0;options);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;return;
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;}
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;if(&#x00A0;UserModule.hasCurrentVersionChanged(entity)&#x00A0;)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;UserModule.saveCurrentVersion(entity,&#x00A0;options);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;}
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;//&#x00A0;handle&#x00A0;rest&#x00A0;of&#x00A0;changed&#x00A0;attributes&#x00A0;by&#x00A0;generic&#x00A0;sync
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.VIE.Entity.prototype.sync(method,&#x00A0;entity,&#x00A0;options);
+&#x00A0;<br />},
+</div>
+<!--l. 362--><p class="nopar" >
+<br />  <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Listing&#x00A0;1.12:   </td><td  
+class="content">Data   type   specific   <span 
+class="cmtt-12">sync  </span>method:   If   the   user   entity&#8217;s
+<span 
+class="cmtt-12">currentVersion  </span>attribute  changes,  this  <span 
+class="cmtt-12">sync  </span>method  invokes  specific
+functionality to save this attribute. For changes to other attributes again the
+generic <span 
+class="cmtt-12">sync </span>method is used.</td></tr></table></div><!--tex4ht:label?: x1-2500412 -->
+                                                                            <img 
+src="docu135x.png" alt="" >
+<img 
+src="docu136x.png" alt="" >
+                                                                            
+<!--l. 365--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 368--><p class="noindent" >The data layer synchronizes application data with the presentation layer which
+needs to serve immediate response to the user despite time-consuming
+asynchronous operations of the service layer. For instance, in the case of loading
+entities the data layer may provide the presentation layer with preliminary
+mockup data until the requested entities are passed in through the service
+layer. In the case of the creation of an entity the data layer may create a
+representation of it which exists merely on the client-side by giving it a blank
+node<span class="footnote-mark"><a 
+href="docu32.html#fn31x3"><sup class="textsuperscript">31</sup></a></span><a 
+ id="x1-25005f31"></a> 
+URI of the form <span 
+class="cmtt-12">_:b</span><span 
+class="cmti-12">N </span>with <span 
+class="cmti-12">N </span>being a serial number. The user may continue
+working with the temporary entity representation. As soon as the service layer
+hands back the response of the server-side creation of the entity containing its real
+URI the data layer can transmit any further changes made meanwhile on the
+client-side representation. See fig. <a 
+href="#x1-250001.2.5">1.2.5<!--tex4ht:ref: fig:layersflow --></a> for a timing diagram of this data
+flow.
+<!--l. 370--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu137x.png" alt="" >
+<img 
+src="docu138x.png" alt="" >
+                                                                            
+<a 
+ id="x1-2500613"></a>
+                                                                            <img 
+src="docu139x.png" alt="" >
+<img 
+src="docu140x.png" alt="" >
+                                                                            
+
+<!--l. 372--><p class="noindent" ><img 
+src="figures/layersflow.png" alt="PIC"  
+width="398.33862pt" height="114.64948pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.13: </td><td  
+class="content">Data flows between layers for creating and changing an entity.
+Both flows are initiated by the user, processed by the presentation layer and
+handed over to the data layer. In the first flow the new entity is created as a
+blank node while the service layer saves the entity to an external Web service
+asynchronously. In the second flow changes made to the entity cannot be passed
+to the service layer immediately because the URI is not yet available due to
+delayed response from the prior Web service call. As soon as the URI is ready,
+the changes can be saved.</td></tr></table></div><!--tex4ht:label?: x1-2500613 -->
+                                                                            <img 
+src="docu141x.png" alt="" >
+<img 
+src="docu142x.png" alt="" >
+                                                                            
+<!--l. 375--><p class="noindent" ></div><hr class="endfigure">
+<h5 class="subsubsectionHead"><a 
+ id="x1-260001.2.5"></a>Presentation Layer</h5>
+<!--l. 379--><p class="noindent" >A view in the presentation layer has to keep track of changes of entities which it is
+projecting to the visual HTML5 frontend of the user interface. Alternatively a view
+may also listen to new entities added to the entity collection and create new
+instances of subordinate views. Individual widgets can implement meaningful
+visualization techniques and interaction affordances on top of the semantics of a bit.
+The interface of the DOM tree provides fine-granular access to respective DOM
+elements for either manipulating its contents or listening for user events
+triggered upon it. According to Backbone a view also handles user input
+and hence takes the role of a controller to some extend. For instance, it
+is feasible to have a main view which controls the instantiation of other
+views.
+<!--l. 381--><p class="noindent" >The presentation layer consists of the <span 
+class="cmtt-12">AppView </span>which manages the space for the two
+canvases as well as application-wide events. Essentially it triggers re-rendering of
+widgets if the user switches versions since each version might have different
+widgets activated. Each version will get its representation in the DOM
+tree but only the current version element with its child widget elements is
+shown by toggling the CSS <span 
+class="cmtt-12">visibility </span>property. Additionally, there are
+two other types of views which application specific view implementations
+need to reuse: <span 
+class="cmtt-12">WidgetView </span>and <span 
+class="cmtt-12">EntityView</span>. <span 
+class="cmtt-12">WidgetView </span>functions as a
+facade<span class="footnote-mark"><a 
+href="docu33.html#fn32x3"><sup class="textsuperscript">32</sup></a></span><a 
+ id="x1-26001f32"></a> 
+between the <span 
+class="cmtt-12">AppView </span>and application specific widgets. It distinguishes between &#8220;browsing&#8221;
+and &#8220;organizing&#8221; widgets and applies respective functionality. For instance, organizing
+widgets need to handle dropped entities appropriately by the help of the JQuery UI plugin
+Droppable<span class="footnote-mark"><a 
+href="docu34.html#fn33x3"><sup class="textsuperscript">33</sup></a></span><a 
+ id="x1-26002f33"></a> .
+                                                                            <img 
+src="docu143x.png" alt="" >
+<img 
+src="docu144x.png" alt="" >
+                                                                            
+For each widget available <span 
+class="cmtt-12">WidgetView </span>has to provide a method to create
+it.
+<!--l. 383--><p class="noindent" >On the other hand, <span 
+class="cmtt-12">EntityView </span>provides common UI functionality of entities and
+can be overwritten by type specific views. It provides an appropriate image of
+an entity given a list of type-to-icon mappings and handles mouse events
+triggered upon its containing DOM element. Browser-generated click events are
+wrapped into the framework-specific &#8220;bnp:clickEntity&#8221; event which contains a
+direct reference to entity object. Furthermore, using the JQuery UI plugin
+Draggable<span class="footnote-mark"><a 
+href="docu35.html#fn34x3"><sup class="textsuperscript">34</sup></a></span><a 
+ id="x1-26003f34"></a> 
+<span 
+class="cmtt-12">EntityView </span>makes the DOM element draggable. In order to identify the entity
+object which belongs to the dragged DOM element, the view also adds RDFa to its
+HTML markup (see fig. <a 
+href="#x1-2600414">1.14<!--tex4ht:ref: lst:dragfunc --></a> and also <a 
+href="#x1-4000731">1.31<!--tex4ht:ref: lst:dropfunc --></a>).
+<!--l. 386--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu145x.png" alt="" >
+<img 
+src="docu146x.png" alt="" >
+                                                                            
+<a 
+ id="x1-2600414"></a>
+                                                                            <img 
+src="docu147x.png" alt="" >
+<img 
+src="docu148x.png" alt="" >
+                                                                            
+<div class="verbatim" id="verbatim-7">
+this.$el.draggable({
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;zIndex:&#x00A0;10000,
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;helper:&#x00A0;"clone",
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;appendTo:&#x00A0;"body",
+&#x00A0;<br />});
+</div>
+<!--l. 393--><p class="nopar" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Listing&#x00A0;1.14: </td><td  
+class="content">JQuery draggable: <span 
+class="cmtt-12">this.$el </span>refers to the (JQuery wrapped)
+DOM element of the <span 
+class="cmtt-12">EntityView</span>. <span 
+class="cmtt-12">helper: &#8216;&#8216;clone&#8217;&#8217; </span>instructs <span 
+class="cmtt-12">draggable </span>to
+create a copy of the DOM element which is moved along the mouse moving. By
+<span 
+class="cmtt-12">appendTo: &#8216;&#8216;body&#8217;&#8217; </span>the helper element becomes draggable over the whole
+page.</td></tr></table></div><!--tex4ht:label?: x1-2600414 -->
+                                                                            <img 
+src="docu149x.png" alt="" >
+<img 
+src="docu150x.png" alt="" >
+                                                                            
+<!--l. 396--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 400--><p class="noindent" >Finally, <span 
+class="cmtt-12">EpisodeManagerView </span>together with <span 
+class="cmtt-12">EpisodeView </span>manages episodes and
+versions. In the header above the upper canvas the label of the current episode is
+displayed. A dropdown box enables the user to switch between episodes and
+versions. According to the MVC pattern, views are updated on changes in the
+model. Therefore switching first changes the property <span 
+class="cmtt-12">Voc.currentVersion </span>of the
+user entity which then triggers re-rendering of the canvases by <span 
+class="cmtt-12">AppView </span>(see fig.
+<a 
+href="#x1-260001.2.5">1.2.5<!--tex4ht:ref: fig:model-view --></a>).
+<!--l. 402--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu151x.png" alt="" >
+<img 
+src="docu152x.png" alt="" >
+                                                                            
+<a 
+ id="x1-2600515"></a>
+                                                                            <img 
+src="docu153x.png" alt="" >
+<img 
+src="docu154x.png" alt="" >
+                                                                            
+
+<!--l. 404--><p class="noindent" ><img 
+src="figures/model-view.png" alt="PIC"  
+width="398.33862pt" height="171.78053pt" >
+<br />       <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.15:         </td><td  
+class="content">Sequence         diagram         for         switching
+episodes: The first sequence before the dashed line shows the registration of
+a <span 
+class="cmtt-12">change:Voc.currentVersion</span>-listener with the callback <span 
+class="cmtt-12">showVersion</span>. The
+other sequence demonstrates the interaction of components (dark color) and
+entities (light color) when the user switches to another episode by clicking on
+the its view. </td></tr></table></div><!--tex4ht:label?: x1-2600515 -->
+                                                                            <img 
+src="docu155x.png" alt="" >
+<img 
+src="docu156x.png" alt="" >
+                                                                            
+<!--l. 407--><p class="noindent" ></div><hr class="endfigure">
+<h5 class="subsubsectionHead"><a 
+ id="x1-270001.2.5"></a>Operative Components</h5>
+<!--l. 413--><p class="noindent" >Apart from the layers there exist a few operative components which stick the
+system parts together.
+      <ul class="itemize1">
+      <li class="itemize"><span 
+class="cmtt-12">index.html </span>is the first file to load which contains initial instructions
+      for the initialization of BnP. Apart from CSS files it loads the external
+      library RequireJS together with its configuration component <span 
+class="cmtt-12">main.js</span>.
+      The body of <span 
+class="cmtt-12">index.html </span>only invokes RequireJS to start the application
+      from <span 
+class="cmtt-12">app.js</span>.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">Main  </span>configures  dependencies  between  the  components  leveraging
+      RequireJS. Based on this configuration RequireJS loads JavaScript files
+      in the right sequence avoiding dependency leaks.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">App </span>is the applications entry point. It initializes loggers, checks for user
+      authentication,  creates  the  runtime  instance  of  VIE,  loads  the  type
+      system from a Schema.org-file and invokes <span 
+class="cmtt-12">extender</span>. Most importantly
+      <span 
+class="cmtt-12">App </span>initializes the layers by creating and registering services, passing the
+      VIE instance to <span 
+class="cmtt-12">AppData.init() </span>and finally rendering <span 
+class="cmtt-12">AppView</span>. Since
+      data modules are event-driven, <span 
+class="cmtt-12">App </span>also kicks off initial data retrieval by
+      creating/loading the entity which represents the user (see lst. <a 
+href="#x1-2700116">1.16<!--tex4ht:ref: lst:data_init --></a>).
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">UserParams </span>is  initialized  with  the  login  data  of  the  user  and  made
+      available throughout the whole system in order to give other components
+      a means of identification.
+                                                                            <img 
+src="docu157x.png" alt="" >
+<img 
+src="docu158x.png" alt="" >
+                                                                            
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">Extender </span>extends the instance of VIE which additional functionality
+      needed
+      throughout BnP. Essentially it overwrites <span 
+class="cmtt-12">VIE.Entity</span>&#8217;s <span 
+class="cmtt-12">sync </span>method to
+      use certain generic Web services for creating/reading/updating/deleting
+      entities and adds a special listener function <span 
+class="cmtt-12">onUrisReady </span>which provides
+      the retention of service calls for temporary entities with blank URIs. The
+      function waits for these entities to get real URIs and then executes a
+      callback which might make the service call.</li></ul>
+<!--l. 424--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu159x.png" alt="" >
+<img 
+src="docu160x.png" alt="" >
+                                                                            
+<a 
+ id="x1-2700116"></a>
+                                                                            <img 
+src="docu161x.png" alt="" >
+<img 
+src="docu162x.png" alt="" >
+                                                                            
+<div class="verbatim" id="verbatim-8">
+var&#x00A0;user&#x00A0;=&#x00A0;new&#x00A0;VIE.Entity;
+&#x00A0;<br />user.set(&#8217;@id&#8217;,&#x00A0;UserParams.userId);
+&#x00A0;<br />user.set(&#8217;@type&#8217;,&#x00A0;Voc.User);
+&#x00A0;<br />VIE.entities.addOrUpdate(user);
+&#x00A0;<br />user.fetch();
+</div>
+<!--l. 431--><p class="nopar" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Listing&#x00A0;1.16: </td><td  
+class="content">Kicking off application data loading: The data of the logged-in
+user, provided by <span 
+class="cmtt-12">UserParams</span>, is used to initialize the first <span 
+class="cmtt-12">VIE.Entity</span>, which
+is of type <span 
+class="cmtt-12">Voc.User</span>. By adding it to the entities collection loading mechanisms
+of other data modules will be triggered. Finally, the user&#8217;s additional properties
+are fetched asynchronously.</td></tr></table></div><!--tex4ht:label?: x1-2700116 -->
+                                                                            <img 
+src="docu163x.png" alt="" >
+<img 
+src="docu164x.png" alt="" >
+                                                                            
+<!--l. 434--><p class="noindent" ></div><hr class="endfigure">
+<h5 class="subsubsectionHead"><a 
+ id="x1-280001.2.5"></a>Supportive Components</h5>
+<!--l. 440--><p class="noindent" >Finally there exist a couple of components which have mere supportive function for
+the system.
+      <ul class="itemize1">
+      <li class="itemize"><span 
+class="cmtt-12">LoginFormView </span>renders  the  login  form  when  the  user  has  not  been
+      authenticated yet and invokes <span 
+class="cmtt-12">UserAuth </span>which contains authenticating
+      Web  service  calls  (outside  of  the  service  layer).  User  data  then  is
+      written to <span 
+class="cmtt-12">UserParams</span>. For debugging purposes these components can
+      be bypassed completely. However, in that case <span 
+class="cmtt-12">UserParams </span>needs to be
+      filled with appropriate user data manually.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">Voc </span>contains  variable  mappings  for  URIs.  Although  URIs  should  no
+      change, it happens during development. Since URIs are used throughout
+      the whole system, <span 
+class="cmtt-12">Voc </span>provides a central place for defining them.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">Tracker </span>is an extension of <span 
+class="cmtt-12">Logger </span>and is used to log user actions to an
+      external Web service.</li></ul>
+<!--l. 448--><p class="noindent" >
+<h3 class="sectionHead"><span class="titlemark">1.3</span>&#x00A0;&#x00A0;<a 
+ id="x1-290001.3"></a>Application</h3>
+<!--l. 450--><p class="noindent" >BnP comes with a couple of suggestions for widgets. Two of them, the timeline and
+the Venn diagram, have been implemented with the framework described in the
+previous section. The timeline is rendered in the upper canvas and displays entities
+chronologically according to their creation timestamp. The Venn diagram is a
+                                                                            <img 
+src="docu165x.png" alt="" >
+<img 
+src="docu166x.png" alt="" >
+                                                                            
+widget for the lower canvas and allows for drawing circles and arranging entities
+spatially. Fig. <a 
+href="#x1-290001.3">1.3<!--tex4ht:ref: fig:mockup-reality --></a> shows the mockup drawings of the two widgets together with its
+realization as the BnP user interface. Fig. <a 
+href="#x1-2900818">1.18<!--tex4ht:ref: fig:bnp-workflow --></a> shows an example workflow using
+it.
+<!--l. 452--><p class="noindent" >Since the application is under heavy development by the time writing this thesis the
+interface has progressed and now contains additional functionality like for searching,
+sharing and collaboration which is all wrapped up in the sidebar component of the
+user interface. However, due to that functionality going beyond the scope of this
+thesis, it is not covered here in detail, although it is worth mentioning that the Bits
+and Pieces framework is still in use and allows for application specific extensions
+with richer features than those of the first prototype version presented
+here. Implementation of widget switching has also been postponed because
+it would not yield much relevance for the essential functionality of the
+framework although it would be an important feature for sensemaking as
+such.
+<!--l. 456--><p class="noindent" >Two views have been added to the presentation layer, <span 
+class="cmtt-12">TimelineView </span>and
+<span 
+class="cmtt-12">OrganizeView</span>, together with sub-views wrapping visualized entities. As for the
+data layer, respective data modules have been implemented, ie. <span 
+class="cmtt-12">TimelineData </span>and
+<span 
+class="cmtt-12">OrganizeData</span>, also with associated data modules for contained entities. Finally, a
+service adapter for the Web services of the Social Semantic Server has also found its
+way into the application.
+<!--l. 458--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu167x.png" alt="" >
+<img 
+src="docu168x.png" alt="" >
+                                                                            
+<a 
+ id="x1-2900117"></a>
+                                                                            <img 
+src="docu169x.png" alt="" >
+<img 
+src="docu170x.png" alt="" >
+                                                                            
+
+<!--l. 460--><p class="noindent" ><img 
+src="figures/timeline-rings.png" alt="PIC"  
+width="398.33862pt" height="259.30814pt" > <img 
+src="figures/bnp6.png" alt="PIC"  
+width="398.33862pt" height="240.18478pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.17: </td><td  
+class="content">The mockup of the timeline and the Venn diagram widget and
+how it is realized.</td></tr></table></div><!--tex4ht:label?: x1-2900117 -->
+                                                                            <img 
+src="docu171x.png" alt="" >
+<img 
+src="docu172x.png" alt="" >
+                                                                            
+<!--l. 464--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 465--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu173x.png" alt="" >
+<img 
+src="docu174x.png" alt="" >
+                                                                            
+<a 
+ id="x1-2900818"></a>
+                                                                            <img 
+src="docu175x.png" alt="" >
+<img 
+src="docu176x.png" alt="" >
+                                                                            
+<a 
+ id="x1-29002r1"></a>
+<div class="subfigure"><table><tr><td style="text-align:left"><img 
+src="figures/bnp1.png" alt="PIC"  
+width="179.25116pt" height="108.07616pt" >
+<div class="subfigcaption"><span 
+class="cmr-10">(a)</span>
+<span 
+class="cmr-10">Beginning</span>
+<span 
+class="cmr-10">of</span>
+<span 
+class="cmr-10">sensemaking:</span>
+<span 
+class="cmr-10">Timeline</span>
+<span 
+class="cmr-10">shows</span>
+<span 
+class="cmr-10">two</span>
+<span 
+class="cmr-10">clusters</span>
+<span 
+class="cmr-10">of</span>
+<span 
+class="cmr-10">bits</span>
+<span 
+class="cmr-10">and</span>
+<span 
+class="cmr-10">one</span>
+<span 
+class="cmr-10">PDF</span>
+<span 
+class="cmr-10">bit</span>
+<span 
+class="cmr-10">on  a</span>
+<span 
+class="cmr-10">month-wide</span>
+<span 
+class="cmr-10">scale.</span></div></td></tr></table></div>  <a 
+ id="x1-29003r2"></a><div class="subfigure"><table><tr><td style="text-align:left"><img 
+src="figures/bnp2.png" alt="PIC"  
+width="179.25116pt" height="108.07616pt" >
+<div class="subfigcaption"><span 
+class="cmr-10">(b)</span>
+<span 
+class="cmr-10">Sidebar</span>
+<span 
+class="cmr-10">pops</span>
+<span 
+class="cmr-10">up</span>
+<span 
+class="cmr-10">on</span>
+<span 
+class="cmr-10">click</span>
+<span 
+class="cmr-10">on</span>
+<span 
+class="cmr-10">the</span>
+<span 
+class="cmr-10">PDF</span>
+<span 
+class="cmr-10">bit</span>
+<span 
+class="cmr-10">showing</span>
+<span 
+class="cmr-10">detail</span>
+<span 
+class="cmr-10">information.</span></div></td></tr></table></div><a 
+ id="x1-29004r3"></a><div class="subfigure"><table><tr><td style="text-align:left"><img 
+src="figures/bnp3_arrow.png" alt="PIC"  
+width="179.25116pt" height="108.07616pt" >
+<div class="subfigcaption"><span 
+class="cmr-10">(c)</span>
+<span 
+class="cmr-10">Drag</span>
+<span 
+class="cmr-10">and</span>
+<span 
+class="cmr-10">drop</span>
+<span 
+class="cmr-10">of</span>
+<span 
+class="cmr-10">the</span>
+<span 
+class="cmr-10">PDF</span>
+<span 
+class="cmr-10">bit</span>
+<span 
+class="cmr-10">to</span>
+<span 
+class="cmr-10">the</span>
+<span 
+class="cmr-10">lower</span>
+<span 
+class="cmr-10">canvas.</span></div></td></tr></table></div> <a 
+ id="x1-29005r4"></a><div class="subfigure"><table><tr><td style="text-align:left"><img 
+src="figures/bnp4.png" alt="PIC"  
+width="179.25116pt" height="108.07616pt" >
+<div class="subfigcaption"><span 
+class="cmr-10">(d)</span>
+<span 
+class="cmr-10">On</span>
+<span 
+class="cmr-10">click</span>
+<span 
+class="cmr-10">on</span>
+<span 
+class="cmr-10">cluster</span>
+<span 
+class="cmr-10">show</span>
+<span 
+class="cmr-10">bits</span>
+<span 
+class="cmr-10">contained.</span>
+<span 
+class="cmr-10">On</span>
+<span 
+class="cmr-10">click</span>
+<span 
+class="cmr-10">on</span>
+<span 
+class="cmr-10">the</span>
+<span 
+class="cmr-10">&#8220;</span><span 
+class="cmmi-10">&#x003C;&#x003E;</span><span 
+class="cmr-10">&#8221;</span>
+<span 
+class="cmr-10">button</span>
+<span 
+class="cmr-10">&#x2026;</span></div>   </td></tr></table></div> <a 
+ id="x1-29006r5"></a><div class="subfigure"><table><tr><td style="text-align:left"><img 
+src="figures/bnp5_arrow.png" alt="PIC"  
+width="179.25116pt" height="108.07616pt" >
+<div class="subfigcaption"><span 
+class="cmr-10">(e)</span>
+<span 
+class="cmr-10">&#x2026;zoom</span>
+<span 
+class="cmr-10">the</span>
+<span 
+class="cmr-10">timeline</span>
+<span 
+class="cmr-10">automatically</span>
+<span 
+class="cmr-10">to</span>
+<span 
+class="cmr-10">show</span>
+<span 
+class="cmr-10">exactly</span>
+<span 
+class="cmr-10">the</span>
+<span 
+class="cmr-10">clustered</span>
+<span 
+class="cmr-10">bits.</span>
+<span 
+class="cmr-10">Drag</span>
+<span 
+class="cmr-10">and</span>
+<span 
+class="cmr-10">drop</span>
+<span 
+class="cmr-10">two</span>
+<span 
+class="cmr-10">more</span>
+<span 
+class="cmr-10">bits.</span></div> </td></tr></table></div>     <a 
+ id="x1-29007r6"></a><div class="subfigure"><table><tr><td style="text-align:left"><img 
+src="figures/bnp6.png" alt="PIC"  
+width="179.25116pt" height="108.07616pt" >
+<div class="subfigcaption"><span 
+class="cmr-10">(f)</span>
+<span 
+class="cmr-10">Draw</span>
+<span 
+class="cmr-10">circles,</span>
+<span 
+class="cmr-10">name</span>
+<span 
+class="cmr-10">them</span>
+<span 
+class="cmr-10">and</span>
+<span 
+class="cmr-10">place</span>
+<span 
+class="cmr-10">bits</span>
+<span 
+class="cmr-10">inside.</span></div> </td></tr></table></div>
+ <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.18: </td><td  
+class="content">Demo workflow of the B&amp;P prototype: The upper canvas contains
+the timeline, the lower canvas the organize widget. The header contains the
+label of the episode and a dropdown menu.</td></tr></table></div><!--tex4ht:label?: x1-2900818 -->
+                                                                            <img 
+src="docu177x.png" alt="" >
+<img 
+src="docu178x.png" alt="" >
+                                                                            
+<!--l. 491--><p class="noindent" ></div><hr class="endfigure">
+<h4 class="subsectionHead"><span class="titlemark">1.3.1</span>&#x00A0;&#x00A0;<a 
+ id="x1-300001.3.1"></a>Social Semantic Service</h4>
+<!--l. 495--><p class="noindent" >In the service layer, the prototype application wraps remote RESTful Web services of the Social
+Semantic Server<span class="footnote-mark"><a 
+href="docu36.html#fn35x3"><sup class="textsuperscript">35</sup></a></span><a 
+ id="x1-30001f35"></a> 
+(SSS, <span 
+class="cmbx-12">Kowald2013</span> ), which hosts the so-called Artifact-Actor-Network (AAN,
+<span 
+class="cmbx-12">reinhardt2009</span> ). In AANs, users and digital artifacts can be interlinked
+and used together with common features of social networks. Low Level
+Services support sharing and subscribing processes of artifacts, provide
+functionalities to annotate entities with metadata, to authenticate users and to
+deal with digital artifacts such as texts or multimedia documents (e.g.
+pictures and videos) involved in the AAN. High Level Services use given
+semantic structures formed by Low Level Services. They exploit explicit and
+implicit (social) relations to provide functions that support a personalized
+reflection of AANs, to discuss about digital artifacts, to handle collaborative
+work on digital artifacts and to allow for (re-) structuring of hierarchical
+and ordered collections of digital artifacts (fig. <a 
+href="#x1-300001.3.1">1.3.1<!--tex4ht:ref: fig:sss --></a>). The SSS can also
+mediate data from 3rd-party collection services, eg. Evernote. As for the
+application SSS backs up all data storage and retrieval needs of BnP since it is
+also part of the Learning Layers Project and developed in parallel with
+BnP.
+<!--l. 499--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu179x.png" alt="" >
+<img 
+src="docu180x.png" alt="" >
+                                                                            
+<a 
+ id="x1-3000219"></a>
+                                                                            <img 
+src="docu181x.png" alt="" >
+<img 
+src="docu182x.png" alt="" >
+                                                                            
+
+<!--l. 501--><p class="noindent" ><img 
+src="figures/sss.png" alt="PIC"  
+width="318.6721pt" height="222.96748pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.19: </td><td  
+class="content">Social Semantic Server and Artifact Actor Networks</td></tr></table></div><!--tex4ht:label?: x1-3000219 -->
+                                                                            <img 
+src="docu183x.png" alt="" >
+<img 
+src="docu184x.png" alt="" >
+                                                                            
+<!--l. 504--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 506--><p class="noindent" >The SSS is written in Java and is accessible via REST or WebSockets. To increase
+interoperability, services receiving application input or delivering results to the
+requesting application use JSON to encode and transmit data. For the framework,
+REST and WebSocket JavaScript libraries are available to be included in
+applications directly to minimize efforts of tying the framework to custom
+applications.
+<!--l. 508--><p class="noindent" >The service adapter for BnP consists of <span 
+class="cmtt-12">SocialSemanticServer </span>and
+<span 
+class="cmtt-12">SocialSemanticServiceModel</span>. The first implements the <span 
+class="cmtt-12">VIE.Able </span>interface and
+bundles logic for handling server request. The latter describes a subset of SSS
+services in terms of parameter and result types as well as pre- and postprocessing
+functions in a concise form. <span 
+class="cmtt-12">SocialSemanticService </span>looks up service descriptions,
+invokes preprocessing functions on the parameters, transmits the service call to the
+SSS endpoint and postprocesses the result. A common preprocessing function
+is <span 
+class="cmtt-12">scrubParams </span>which makes sure that parameters are of the type (eg.
+array, scalar number) expected by the service. A common postprocessing
+function is <span 
+class="cmtt-12">fixForVIE </span>since by the time developing BnP SSS is not serving
+JSON-LD yet and according transformation of the result data is necessary. The
+application utilizes the following SSS services (excerpt from <span 
+class="cmtt-12">SSConns.js </span>of
+SSSClientSide<span class="footnote-mark"><a 
+href="docu37.html#fn36x3"><sup class="textsuperscript">36</sup></a></span><a 
+ id="x1-30003f36"></a> ):
+      <ul class="itemize1">
+      <li class="itemize"><span 
+class="cmtt-12">entityGet </span>returns  generic  properties  like  label,  author  or  creation
+      timestamp of a single entity by its URI.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">entityDescGet </span>returns more detailed information for given entity URI
+      such as tags, user events or a thumbnail.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">entityDescsGet </span>returns more detailed information for a set of given
+      entity URIs.
+                                                                            <img 
+src="docu185x.png" alt="" >
+<img 
+src="docu186x.png" alt="" >
+                                                                            
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">entityUpdate </span>updates or adds given properties for an entity URI.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">uEsGet </span>returns user events for a given user URI, an entity URI and a
+      time range, ie. user events which were caused by a certain user, on a
+      certain entity within a certain time range.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpCreate </span>creates an episode by its label and returns the URI.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpsGet </span>returns all episodes for a given user URI.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpVersionsGet </span>returns all versions with their entities and circles
+      for a given episode URI.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpVersionGet </span>returns a single version with its entities and circles
+      given its URI.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpVersionCurrentGet </span>returns the version URI which the user is
+      currently working on.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpVersionCurrentSet </span>saves the version URI which the user is
+      currently working on.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpVersionGetTimelineState </span>returns the state of the timeline of
+      a given version URI, ie. the setting of start and end timestamps of the
+      timeline.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpVersionSetTimelineState </span>saves the start and end timestamps
+      of the timeline.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpVersionCreate </span>creates a new version for a given episode URI
+      and returns the version&#8217;s URI.
+                                                                            <img 
+src="docu187x.png" alt="" >
+<img 
+src="docu188x.png" alt="" >
+                                                                            
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpVersionAddCircle </span>add a new circle (coordinates, size and label)
+      for a given episode URI.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpVersionUpdateCircle </span>updates given attributes for a circle URI.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpVersionRemoveCircle </span>removes a circle by its URI.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpVersionAddEntity </span>add  a  new  orga-entity  (an  entity  of  type
+      <span 
+class="cmtt-12">OrgaEntity </span>with coordinates and a resource entity URI) for a given
+      episode URI.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpVersionUpdateEntity  </span>updates   given   attributes   for   an
+      orga-entity URI.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">learnEpVersionRemoveEntity </span>removes an orga-entity by its URI.</li></ul>
+<h4 class="subsectionHead"><span class="titlemark">1.3.2</span>&#x00A0;&#x00A0;<a 
+ id="x1-310001.3.2"></a>Type Hierarchy</h4>
+<!--l. 535--><p class="noindent" >Prior to the initialization of the application its type hierarchy
+is loaded into VIE using its <span 
+class="cmtt-12">loadSchemaOrg </span>utility method.
+Schema.org<span class="footnote-mark"><a 
+href="docu38.html#fn37x3"><sup class="textsuperscript">37</sup></a></span><a 
+ id="x1-31001f37"></a> 
+is an initiative of several major search engines to standardize semantic markup for
+Web pages which can be parsed by their crawlers. There exist schemata for
+domains of events, organizations, persons, actions and many more. The whole
+ontology can be loaded as RDF/Turtle, RDF/XML, RDF/NTriples, CSV or
+                                                                            <img 
+src="docu189x.png" alt="" >
+<img 
+src="docu190x.png" alt="" >
+                                                                            
+JSON<span class="footnote-mark"><a 
+href="docu39.html#fn38x3"><sup class="textsuperscript">38</sup></a></span><a 
+ id="x1-31002f38"></a> .
+As VIE comes with a parser for the latter the application-specific type
+hierarchy has been created in the same format. Fig. <a 
+href="#x1-3100320">1.20<!--tex4ht:ref: fig:schema-json --></a> provides an example
+definition.
+<!--l. 537--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu191x.png" alt="" >
+<img 
+src="docu192x.png" alt="" >
+                                                                            
+<a 
+ id="x1-3100320"></a>
+                                                                            <img 
+src="docu193x.png" alt="" >
+<img 
+src="docu194x.png" alt="" >
+                                                                            
+
+<!--l. 539--><p class="noindent" ><img 
+src="figures/schema-json.png" alt="PIC"  
+width="278.83582pt" height="216.03017pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.20: </td><td  
+class="content">Timeline widget type hierarchy in Schema.org JSON format.
+<span 
+class="cmtt-12">http://eval.bp </span>is the namespace of the application.</td></tr></table></div><!--tex4ht:label?: x1-3100320 -->
+                                                                            <img 
+src="docu195x.png" alt="" >
+<img 
+src="docu196x.png" alt="" >
+                                                                            
+<!--l. 542--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 544--><p class="noindent" >There exist types for <span 
+class="cmtt-12">OrganizingWidget</span>, a widget with &#8220;organizing features&#8221;,
+<span 
+class="cmtt-12">Organize</span>, the Venn diagram widget, a generic <span 
+class="cmtt-12">entity </span>type which is the parent
+type of, for instance, <span 
+class="cmtt-12">evernoteResource </span>or <span 
+class="cmtt-12">evernoteNote </span>and a <span 
+class="cmtt-12">userEvent </span>type
+with a large body of subtypes.
+<h4 class="subsectionHead"><span class="titlemark">1.3.3</span>&#x00A0;&#x00A0;<a 
+ id="x1-320001.3.3"></a>Timeline Data Module</h4>
+<!--l. 548--><p class="noindent" ><span 
+class="cmtt-12">TimelineData </span>manages data affairs concerning the timeline widget, ie. of entities of
+the type <span 
+class="cmtt-12">Voc.Timeline </span>which contain the current visible range of the timeline
+in terms of start and end timestamps as well as a reference to the user
+entity the timeline belongs to. Finally, a timeline entity has a reference to a
+version since widgets belong to a version in general. Hence, <span 
+class="cmtt-12">TimelineData</span>,
+by extending the Data Integrity Module <span 
+class="cmtt-12">Data</span>, imposes the following two
+constraints:
+<!--l. 550--><p class="noindent" ><span 
+class="cmtt-12">setIntegrityCheck(Voc.belongsToVersion,Voc.Version,Voc.hasWidget)</span>
+<br 
+class="newline" /><span 
+class="cmtt-12">setIntegrityCheck(Voc.belongsToUser,Voc.User)</span>
+<!--l. 553--><p class="noindent" ><span 
+class="cmtt-12">TimelineData </span>does not manage the entities displayed in the timeline itself. Instead
+this is delegated to <span 
+class="cmtt-12">UserData </span>since the user events belong to user entities. In
+general, the data module uses its version entity to invoke the two SSS services
+<span 
+class="cmtt-12">learnEpVersionGetTimelineState </span>and <span 
+class="cmtt-12">learnEpVersionSetTimelineState</span>.
+Finally, the data module provides an interface for copying its data structure in
+order to enable <span 
+class="cmtt-12">CopyMachine </span>to clone a timeline entity. In sum <span 
+class="cmtt-12">TimelineData</span>
+consists of the following methods:
+      <ul class="itemize1">
+      <li class="itemize"><span 
+class="cmtt-12">init </span>sets up the aforementioned integrity constraints and binds <span 
+class="cmtt-12">filter</span>
+      to <span 
+class="cmtt-12">add</span>-events on the entities collection.
+                                                                            <img 
+src="docu197x.png" alt="" >
+<img 
+src="docu198x.png" alt="" >
+                                                                            
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">filter(entity) </span>filters entities of type <span 
+class="cmtt-12">Voc.Timeline </span>and applies the
+      integrity  checks  on  them.  Furthermore,  it  fetches  the  timeline  state
+      calling <span 
+class="cmtt-12">fetchTimelineState </span>and sets up an event handler function for
+      changes of the time range which calls <span 
+class="cmtt-12">UserData.fetchRange</span>.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">sync(method, entity)  </span>overwrites   the   generic   <span 
+class="cmtt-12">sync  </span>method   of
+      <span 
+class="cmtt-12">VIE.Entity </span>to  call  <span 
+class="cmtt-12">saveTimelineState </span>if  <span 
+class="cmtt-12">method </span>is  &#8220;update&#8221;  and
+      <span 
+class="cmtt-12">fetchTimelineState </span>if <span 
+class="cmtt-12">method </span>is &#8220;read&#8221;.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">saveTimelineState(entity)</span>
+      invokes the SSS service <span 
+class="cmtt-12">learnEpVersionSetTimelineState </span>passing the
+      start and end timestamps of the entity.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">fetchTimelineState(entity)                            </span>invokes
+      the SSS service <span 
+class="cmtt-12">learnEpVersionGetTimelineState </span>and puts the result
+      (start and end timestamps) on the entity.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">copy(entity, overrideAttributes) </span>creates  a  copy  of  the  entity,
+      optionally overriding its attributes with <span 
+class="cmtt-12">overrideAttributes</span>.</li></ul>
+<!--l. 564--><p class="noindent" ><span 
+class="cmtt-12">UserData </span>has been extended to provide user events and associated entities.
+<span 
+class="cmtt-12">fetchRange </span>calls the SSS service <span 
+class="cmtt-12">uEsGet </span>for retrieval of user event entities between
+given start and end timestamps. These entities have a <span 
+class="cmtt-12">Voc.hasResource </span>reference
+to a resource entity. For a bulk retrieval of their properties, <span 
+class="cmtt-12">fetchRange </span>passes their
+URIs on to the SSS service <span 
+class="cmtt-12">entityDescsGet</span>.
+<!--l. 566--><p class="noindent" >Fig. <a 
+href="#x1-320001.3.3">1.3.3<!--tex4ht:ref: fig:app-datamodel --></a> provides an overview of the whole data model of the application.
+<!--l. 568--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu199x.png" alt="" >
+<img 
+src="docu200x.png" alt="" >
+                                                                            
+<a 
+ id="x1-3200121"></a>
+                                                                            <img 
+src="docu201x.png" alt="" >
+<img 
+src="docu202x.png" alt="" >
+                                                                            
+
+<!--l. 570--><p class="noindent" ><img 
+src="figures/app-datamodel.png" alt="PIC"  
+width="398.33862pt" height="162.90823pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.21: </td><td  
+class="content">The data model of the application: Data modules (dark blue)
+frame entities (light blue) which they handle.</td></tr></table></div><!--tex4ht:label?: x1-3200121 -->
+                                                                            <img 
+src="docu203x.png" alt="" >
+<img 
+src="docu204x.png" alt="" >
+                                                                            
+<!--l. 573--><p class="noindent" ></div><hr class="endfigure">
+<h4 class="subsectionHead"><span class="titlemark">1.3.4</span>&#x00A0;&#x00A0;<a 
+ id="x1-330001.3.4"></a>Organize Data Module</h4>
+<!--l. 577--><p class="noindent" ><span 
+class="cmtt-12">OrganizeData </span>bundles data logic for entities of type <span 
+class="cmtt-12">Voc.Organize</span>. As
+<span 
+class="cmtt-12">TimelineData </span>the data module sets up the integrity constraint that <span 
+class="cmtt-12">Voc.Organize</span>
+entities must have the relationship <span 
+class="cmtt-12">Voc.belongsToVersion </span>to an entity of type
+<span 
+class="cmtt-12">Voc.Version </span>and a relationship <span 
+class="cmtt-12">Voc.hasWidget </span>vice-versa. <span 
+class="cmtt-12">OrganizeData </span>also
+implements a <span 
+class="cmtt-12">copy </span>method for cloning of an organize entity&#8217;s data structure.
+Finally, the data module handles the creation of orga-entities and circles and adds
+them to the entities collection (see lst. <a 
+href="#x1-3300122">1.22<!--tex4ht:ref: lst:createItem --></a>). An orga-entity is a wrapper around
+the actual resource entity which gets visualized on the canvas. In addition to the
+referenced resource entity, an orga-entity carries the coordinates for positioning
+within the canvas space.
+<!--l. 579--><p class="noindent" >Actual create/update/delete operations on orga-entities and circles are delegated
+to the data modules <span 
+class="cmtt-12">OrgaEntityData </span>and <span 
+class="cmtt-12">CircleData</span>. Both listen for
+entities of the respective type being added to the entities collection and
+overwrite their <span 
+class="cmtt-12">sync </span>method with appropriate SSS service invocations (see lst.
+<a 
+href="#x1-3300223">1.23<!--tex4ht:ref: lst:CircleData --></a>).
+<!--l. 582--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu205x.png" alt="" >
+<img 
+src="docu206x.png" alt="" >
+                                                                            
+<a 
+ id="x1-3300122"></a>
+                                                                            <img 
+src="docu207x.png" alt="" >
+<img 
+src="docu208x.png" alt="" >
+                                                                            
+<div class="verbatim" id="verbatim-9">
+OrganizeData.createCircle&#x00A0;=&#x00A0;function(organize,&#x00A0;circle)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;circle.set({
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#8217;@type&#8217;:&#x00A0;Voc.Circle
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;});
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;var&#x00A0;version&#x00A0;=&#x00A0;organize.get(Voc.belongsToVersion);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;circle.set(Voc.belongsToVersion,&#x00A0;version.getSubject());
+&#x00A0;<br />
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.vie.entities.addOrUpdate(circle);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;circle.save();
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;return&#x00A0;circle;
+&#x00A0;<br />};
+</div>
+<!--l. 595--><p class="nopar" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Listing&#x00A0;1.22:  </td><td  
+class="content">OrganizeData.createCircle:  The  method  receives  an  organize
+entity representing the widget and a circle entity (with coordinates, size and
+label already set by the presentation layer). The type and the relationship to
+the version of the organize widget are set accordingly. Finally, the new entity
+is added to the entities collection and saved. <span 
+class="cmtt-12">CircleData </span>processes the entity
+further (lst. <a 
+href="#x1-3300223">1.23<!--tex4ht:ref: lst:CircleData --></a>).</td></tr></table></div><!--tex4ht:label?: x1-3300122 -->
+                                                                            <img 
+src="docu209x.png" alt="" >
+<img 
+src="docu210x.png" alt="" >
+                                                                            
+<!--l. 598--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 601--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu211x.png" alt="" >
+<img 
+src="docu212x.png" alt="" >
+                                                                            
+<a 
+ id="x1-3300223"></a>
+                                                                            <img 
+src="docu213x.png" alt="" >
+<img 
+src="docu214x.png" alt="" >
+                                                                            
+<div class="verbatim" id="verbatim-10">
+CircleData.init&#x00A0;=&#x00A0;function(vie)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.vie&#x00A0;=&#x00A0;vie;
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.vie.entities.on(&#8217;add&#8217;,&#x00A0;this.filter,&#x00A0;this);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.setIntegrityCheck(
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;Voc.belongsToVersion,&#x00A0;Voc.VERSION,&#x00A0;Voc.hasCircle);
+&#x00A0;<br />};
+&#x00A0;<br />CircleData.filter&#x00A0;=&#x00A0;function(model)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;if(model.isof(Voc.CIRCLE)){
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.checkIntegrity(model);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;model.sync&#x00A0;=&#x00A0;this.sync;
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;}
+&#x00A0;<br />};
+&#x00A0;<br />CircleData.sync=&#x00A0;function(method,&#x00A0;model,&#x00A0;options)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;if(&#x00A0;method&#x00A0;===&#x00A0;&#8217;create&#8217;&#x00A0;)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;m.createCircle(model,&#x00A0;options);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;}&#x00A0;else&#x00A0;...
+&#x00A0;<br />};
+&#x00A0;<br />CircleData.createCircle&#x00A0;=&#x00A0;function(model,&#x00A0;options)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;var&#x00A0;version&#x00A0;=&#x00A0;model.get(Voc.belongsToVersion);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;var&#x00A0;data&#x00A0;=&#x00A0;this.mapAttributes(model);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.vie.save({
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#8217;service&#8217;&#x00A0;:&#x00A0;&#8217;learnEpVersionAddCircle&#8217;,
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#8217;data&#8217;&#x00A0;:&#x00A0;_.extend(
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;data,&#x00A0;{learnEpVersion&#x00A0;:&#x00A0;version.getSubject()}),
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;}).to(&#8217;sss&#8217;).execute().success(function(savedEntityUri)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;model.set(&#8217;@id&#8217;,&#x00A0;savedEntityUri,&#x00A0;options);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;if(options.success)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;options.success(savedEntityUri);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;}
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;});
+&#x00A0;<br />};
+</div>
+<!--l. 634--><p class="nopar" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Listing&#x00A0;1.23:  </td><td  
+class="content">Excerpt  of  CircleData:  On  initialization  the  event  handler
+                                                                            <img 
+src="docu215x.png" alt="" >
+<img 
+src="docu216x.png" alt="" >
+                                                                            
+<span 
+class="cmtt-12">filter </span>for added entities and an integrity constraint is set up. <span 
+class="cmtt-12">filter </span>checks
+the  constraint  and  overwrites  the  circle  entity&#8217;s  <span 
+class="cmtt-12">sync </span>method.  <span 
+class="cmtt-12">sync </span>calls
+<span 
+class="cmtt-12">createCircle </span>when <span 
+class="cmtt-12">method </span>equals &#8220;create&#8221;. <span 
+class="cmtt-12">createCircle </span>finally invokes
+the SSS service <span 
+class="cmtt-12">learnEpVersionAddCircle </span>passing the version URI to the
+parameter <span 
+class="cmtt-12">learnEpVersion</span>.</td></tr></table></div><!--tex4ht:label?: x1-3300223 -->
+                                                                            <img 
+src="docu217x.png" alt="" >
+<img 
+src="docu218x.png" alt="" >
+                                                                            
+<!--l. 637--><p class="noindent" ></div><hr class="endfigure">
+<h4 class="subsectionHead"><span class="titlemark">1.3.5</span>&#x00A0;&#x00A0;<a 
+ id="x1-340001.3.5"></a>Timeline Widget</h4>
+<!--l. 642--><p class="noindent" >The timeline provides a time-based visualization of entities and allows
+for interactive configuration of its displayed time range by zooming and
+panning. If more than one entity overlap in the timeline they are clustered in
+order to clean up the browsing space. The number of entities contained is
+rendered as the label of the cluster. Hence, depending on the zoom level of the
+timeline it can provide a quick overview of the distribution of the entities by
+letting them be clustered accordingly. Clicking on a cluster expands the
+box to yield all contained entities in sequential order. Additionally the
+browsing widget can be zoomed automatically to show all entities of a
+cluster.
+<!--l. 644--><p class="noindent" >Sketched in the mockup but not realized in the implementation is the possibility
+to view entities of various users at once. This feature might be added in
+a later stage of the prototype. Instead just the entities of the currently
+logged in user are visualized. The timeline is read-only, ie. the position
+of entities cannot be changed. The following list sums up the functional
+requirements:
+      <ul class="itemize1">
+      <li class="itemize">Visualize entities chronologically according to the creation timestamp.
+      </li>
+      <li class="itemize">Widen and narrow the time range (zoom in/out) by scrolling.
+      </li>
+      <li class="itemize">Move the beginning and end of the time range by holding the mouse
+      button down.
+      </li>
+      <li class="itemize">Cluster overlapping entities.
+                                                                            <img 
+src="docu219x.png" alt="" >
+<img 
+src="docu220x.png" alt="" >
+                                                                            
+      </li>
+      <li class="itemize">Show contained entities on clicking the cluster.
+      </li>
+      <li class="itemize">Allow for adapting the time range to show exactly the contained entities.</li></ul>
+<!--l. 655--><p class="noindent" >There exist several external JavaScript libraries for timeline visualizations. In order
+to assess the right one for the aforementioned requirements, several open source
+candidates have been evaluated to their modularity and adaptability primarily.
+Modularity means how reusable parts of the code are without big changes. This
+includes that the library shall integrate well. Adaptability means how easily the
+code can be extended/changed to fit own needs. This includes setting own callbacks
+for user interaction and changing the appearance.
+<!--l. 657--><p class="noindent" >
+<h5 class="subsubsectionHead"><a 
+ id="x1-350001.3.5"></a>Propublica Time-setter</h5>
+<!--l. 658--><p class="noindent" >Propublica Time-setter<span class="footnote-mark"><a 
+href="docu40.html#fn39x3"><sup class="textsuperscript">39</sup></a></span><a 
+ id="x1-35001f39"></a> 
+provides a bar with ticks for single events, coloured by group. Events can be
+hidden/displayed by respective group selection. There are two separate buttons for
+zooming in and zooming out in steps (not smoothly). Double-click on timeline
+zooms in too. On click on a tick the associated html is displayed below the timeline.
+Furthermore, there are two buttons other buttons for iterating over the events in
+chronological order (see fig. <a 
+href="#x1-350001.3.5">1.3.5<!--tex4ht:ref: fig:timeline-setter --></a>). <hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu221x.png" alt="" >
+<img 
+src="docu222x.png" alt="" >
+                                                                            
+<a 
+ id="x1-3500224"></a>
+                                                                            <img 
+src="docu223x.png" alt="" >
+<img 
+src="docu224x.png" alt="" >
+                                                                            
+
+<!--l. 661--><p class="noindent" ><img 
+src="figures/Timeline-setter.png" alt="PIC"  
+width="278.83582pt" height="183.77321pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.24: </td><td  
+class="content">Propublica Time-setter</td></tr></table></div><!--tex4ht:label?: x1-3500224 -->
+                                                                            <img 
+src="docu225x.png" alt="" >
+<img 
+src="docu226x.png" alt="" >
+                                                                            
+<!--l. 664--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 666--><p class="noindent" >As for modularity, the timeline integrates view components which could be reused.
+Utility functions which calculate intervals and bounds of the bar for various scales
+could be reused also. Appearance fully customizable by CSS. Data can be ingested
+in JSON format on initialization and at runtime. However, no parallel,
+simultaneous events or time spans are possible. Additionally, it is not customizable
+where and when the detail view appears. This behaviour is hard-coded. Also
+hard-coded is the user interaction, ie. it is not possible to add one own&#8217;s
+interaction hooks. Finally, ticks yield too little possibilities to visual entities
+appropriately.
+<h5 class="subsubsectionHead"><a 
+ id="x1-360001.3.5"></a>Verite Timeline.js</h5>
+<!--l. 670--><p class="noindent" >Verite Timeline.js<span class="footnote-mark"><a 
+href="docu41.html#fn40x3"><sup class="textsuperscript">40</sup></a></span><a 
+ id="x1-36001f40"></a> 
+provides timelines which can be moved on mouse down and zoomed via separate
+buttons. Events can be visualized with thumbnails and in parallel for simultaneous
+ones. The library offers big support for multimedia content (eg. image and video
+sources).
+<!--l. 678--><p class="noindent" >Although the appearance can be adapted by CSS overwriting, the whole library is
+monolithic and highly depends on Verite&#8217;s Core JS. Data can not be added or
+changed at runtime. Verite Timeline.js is made for a specific use-case in mind,
+especially for visualization of events on news sites, which are meant to be static and
+need not much interaction on the level of entities.
+<!--l. 680--><p class="noindent" >
+<h5 class="subsubsectionHead"><a 
+ id="x1-370001.3.5"></a>SIMILE Timeline Widget</h5>
+                                                                            <img 
+src="docu227x.png" alt="" >
+<img 
+src="docu228x.png" alt="" >
+                                                                            
+<!--l. 682--><p class="noindent" >SIMILE Timeline Widget<span class="footnote-mark"><a 
+href="docu42.html#fn41x3"><sup class="textsuperscript">41</sup></a></span><a 
+ id="x1-37001f41"></a> 
+consists of several bands of different scale of the timeline. On each band discrete
+events and time spans can be visualized. When one band is moved, the others move
+synchronously at the various speed relative to their scale. Detail information can be
+obtained by hovering the mouse over an entity, and the data can be filtered and
+highlighted on demand.
+<!--l. 684--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu229x.png" alt="" >
+<img 
+src="docu230x.png" alt="" >
+                                                                            
+<a 
+ id="x1-3700225"></a>
+                                                                            <img 
+src="docu231x.png" alt="" >
+<img 
+src="docu232x.png" alt="" >
+                                                                            
+
+<!--l. 686--><p class="noindent" ><img 
+src="figures/Timeline-sample.jpg" alt="PIC"  
+width="278.83582pt" height="140.86647pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.25: </td><td  
+class="content">SIMILE Timeline Widget</td></tr></table></div><!--tex4ht:label?: x1-3700225 -->
+                                                                            <img 
+src="docu233x.png" alt="" >
+<img 
+src="docu234x.png" alt="" >
+                                                                            
+<!--l. 689--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 691--><p class="noindent" >The appearance of the widget can be adapted via overwriting CSS classes. The
+programming structure of the timeline is also highly modular so that individual
+components can reused quite easily. Data can be loaded on initialization
+and at runtime dynamically. Developers claim the timeline to work also
+with a big load of events. However, it was not flawless to get the widget
+running since it is poorly documented. After all, despite its rich features -
+also with respect to modularity - the SIMILE Timeline widget has not
+been maintained since 2009 and hence yields the risk of having unfixed
+bugs.
+<h5 class="subsubsectionHead"><a 
+ id="x1-380001.3.5"></a>Chronoline</h5>
+<!--l. 695--><p class="noindent" >Chronoline<span class="footnote-mark"><a 
+href="docu43.html#fn42x3"><sup class="textsuperscript">42</sup></a></span><a 
+ id="x1-38001f42"></a> 
+timelines can be moved mouse down or on click on arrow buttons left and right
+of the timeline. Events and time spans are rendered as coloured bars, no
+thumbnail-based visualization of entities is possible. The title of the event is
+displayed on moving the mouse of it.
+<!--l. 697--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu235x.png" alt="" >
+<img 
+src="docu236x.png" alt="" >
+                                                                            
+<a 
+ id="x1-3800226"></a>
+                                                                            <img 
+src="docu237x.png" alt="" >
+<img 
+src="docu238x.png" alt="" >
+                                                                            
+
+<!--l. 699--><p class="noindent" ><img 
+src="figures/Chronoline.png" alt="PIC"  
+width="358.50232pt" height="78.12846pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.26: </td><td  
+class="content">Chronoline</td></tr></table></div><!--tex4ht:label?: x1-3800226 -->
+                                                                            <img 
+src="docu239x.png" alt="" >
+<img 
+src="docu240x.png" alt="" >
+                                                                            
+<!--l. 702--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 704--><p class="noindent" >Chronoline depends on the popular visualization library
+Raphael<span class="footnote-mark"><a 
+href="docu44.html#fn43x3"><sup class="textsuperscript">43</sup></a></span><a 
+ id="x1-38003f43"></a> 
+and probably provides rich possibilities of adaptation of the visual appearance of
+the timeline. However, the code is monolithic and hard to reuse. Furthermore,
+Chronoline seems to be quite a young project with little community and hence with
+a higher probability of containing bugs.
+<h5 class="subsubsectionHead"><a 
+ id="x1-390001.3.5"></a>CHAP Links Timeline</h5>
+<!--l. 708--><p class="noindent" >CHAP Links Library<span class="footnote-mark"><a 
+href="docu45.html#fn44x3"><sup class="textsuperscript">44</sup></a></span><a 
+ id="x1-39001f44"></a> 
+is a collection of visualization charts, also containing a timeline. It provides
+interactive control for movement by mouse down and for zooming by scrolling,
+smoothly scaling from milliseconds up to centuries. Events can be ingested as JSON
+data and may contain simultaneous events as well as time spans. Events can even
+be separated in multiple lanes. Most remarkably, the timeline also provides
+clustering of events as soon as their bounding boxes overlap.
+<!--l. 710--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu241x.png" alt="" >
+<img 
+src="docu242x.png" alt="" >
+                                                                            
+<a 
+ id="x1-3900227"></a>
+                                                                            <img 
+src="docu243x.png" alt="" >
+<img 
+src="docu244x.png" alt="" >
+                                                                            
+
+<!--l. 712--><p class="noindent" ><img 
+src="figures/timeline.png" alt="PIC"  
+width="358.50232pt" height="175.3396pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.27: </td><td  
+class="content">CHAP Links Timeline</td></tr></table></div><!--tex4ht:label?: x1-3900227 -->
+                                                                            <img 
+src="docu245x.png" alt="" >
+<img 
+src="docu246x.png" alt="" >
+                                                                            
+<!--l. 715--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 717--><p class="noindent" >The appearance is highly customizable not only via CSS but also by injecting
+custom DOM elements. The timeline also offers a well-documented and rich API for
+controlling it programmatically. Additionally it comes with an event listening
+system, which specific callbacks can be registered with in order to bind application
+functionality to user events happening on the timeline (eg. when changing the time
+range). Although not needed by BnP, the timeline also allows for editing of events
+direcly, either by moving or deleting them. For CHAP Links Timeline outweighs the
+other libraries in terms of adaptability, modularity and feature support, the
+<span 
+class="cmtt-12">TimelineView </span>wraps its functionality instead of implementing a timeline on its
+own.
+<!--l. 719--><p class="noindent" ><span 
+class="cmtt-12">TimelineView </span>consists of <span 
+class="cmtt-12">UserView </span>and <span 
+class="cmtt-12">ClusterHelper</span>, which consists of
+<span 
+class="cmtt-12">EntityView </span>and <span 
+class="cmtt-12">ClusterView </span>(see fig. <a 
+href="#x1-390001.3.5">1.3.5<!--tex4ht:ref: fig:timelineview --></a>). The view is bound to the timeline
+entity, which holds runtime data of the timeline such as the start/end timestamp of
+the current range, and to the user entity, which holds user events. <span 
+class="cmtt-12">UserView</span>
+renders the representation of the user entity which <span 
+class="cmtt-12">Voc.belongsTo </span>the
+timeline entity. <span 
+class="cmtt-12">ClusterHelper </span>manages the transformation of entities
+to visible representations on the timeline, either as a <span 
+class="cmtt-12">EntityView</span>, if an
+entity can be rendered as such, or as a <span 
+class="cmtt-12">ClusterView</span>, if more than one
+entities are too close to each other. <span 
+class="cmtt-12">TimelineView </span>consists of the following
+methods:
+      <ul class="itemize1">
+      <li class="itemize"><span 
+class="cmtt-12">initialize </span>initializes an instance of <span 
+class="cmtt-12">ClusterHelper </span>and binds event
+      listeners to
+           <ul class="itemize2">
+           <li class="itemize">changes of the set of entities in <span 
+class="cmtt-12">Voc.hasUserEvent </span>of the user entity
+           to call <span 
+class="cmtt-12">changeEntitySet</span>.
+           </li>
+           <li class="itemize">changes of the start/end timestamps of the timeline entity in order
+           to call <span 
+class="cmtt-12">rearrangeVisibleArea</span>.</li></ul>
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">changeEntitySet </span>checks for added and removed entities in <span 
+class="cmtt-12">Voc.hasUserEvent</span>.
+      However, not the user events are to be visualized but the resource
+                                                                            <img 
+src="docu247x.png" alt="" >
+<img 
+src="docu248x.png" alt="" >
+                                                                            
+      entities they reference, ie. the actual learning bit. Added resources are
+      passed to <span 
+class="cmtt-12">addEntities </span>and removed ones to <span 
+class="cmtt-12">removeEntityView </span>of the
+      <span 
+class="cmtt-12">ClusterHelper</span>.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">addEntities </span>calls <span 
+class="cmtt-12">ClusterHelper.addEntityView </span>for each resource entity. If
+      the timeline has just been initialized so that the set of new resource entities is
+      the first ingest to the chart, the algorithm checks for the chronologically last
+      entity and calls <span 
+class="cmtt-12">browseTo </span>for this one.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">browseTo </span>browses the timeline to the given entity.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">render </span>actually creates the timeline chart object of CHAP Links Timeline
+      and connects the timeline-specific event <span 
+class="cmtt-12">rangechange </span>to the timeline entity.
+      That way any moves and zooms made to the timeline by the user are passed
+      on to the timeline entity and <span 
+class="cmtt-12">ClusterHelper.reclusterByRangeChange </span>is
+      called to calculate clusters for the new visible range. <span 
+class="cmtt-12">render </span>also creates the
+      <span 
+class="cmtt-12">UserView </span>for the user entity and displays it next to the timeline. Finally, the
+      user entity&#8217;s <span 
+class="cmtt-12">Voc.hasUserEvent </span>user event resources are ingested via
+      <span 
+class="cmtt-12">addEntities</span>.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">rearrangeVisibleArea </span>reads changed values of the start/end timestamps of
+      the timeline entity and passes them on to the timeline chart. However, if the
+      change has come from a user-initiated event on the timeline chart, it is not
+      propagated again to the chart. <span 
+class="cmtt-12">ClusterHelper.reclusterByRangeChange </span>is
+      called for the new visible range.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">expand </span>is called on clicking the &#8220;<span 
+class="cmmi-12">&#x003C;&#x003E;</span>&#8221;-button on a cluster. The resulting
+      <span 
+class="cmtt-12">zoomCluster </span>event contains the respective <span 
+class="cmtt-12">ClusterView </span>instance. The
+      timestamps of the first and the last entity of the cluster are used to set the
+      timeline chart range accordingly.</li></ul>
+<!--l. 735--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu249x.png" alt="" >
+<img 
+src="docu250x.png" alt="" >
+                                                                            
+<a 
+ id="x1-3900328"></a>
+                                                                            <img 
+src="docu251x.png" alt="" >
+<img 
+src="docu252x.png" alt="" >
+                                                                            
+
+<!--l. 737--><p class="noindent" ><img 
+src="figures/timelineview.png" alt="PIC"  
+width="199.16931pt" height="99.48177pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.28: </td><td  
+class="content">The architecture of <span 
+class="cmtt-12">TimelineView</span></td></tr></table></div><!--tex4ht:label?: x1-3900328 -->
+                                                                            <img 
+src="docu253x.png" alt="" >
+<img 
+src="docu254x.png" alt="" >
+                                                                            
+<!--l. 740--><p class="noindent" ></div><hr class="endfigure">
+<h4 class="subsectionHead"><span class="titlemark">1.3.6</span>&#x00A0;&#x00A0;<a 
+ id="x1-400001.3.6"></a>Venn Diagram Widget</h4>
+<!--l. 744--><p class="noindent" >The Venn diagram widget allows for arranging entities spatially by dragging and
+dropping them within the canvas. Circles can be drawn around them and the label
+of the circle can be changed. Circles can also be dragged and dropped along with
+contained entities and moved within the canvas. Circles may overlap and entities
+may be placed inside the intersections. When moving one of such overlapping
+circles the other ones need to move too in order to keep the arrangement
+of entities within the overlapping circles. Functional requirements found
+here:
+      <ul class="itemize1">
+      <li class="itemize">Visualize entities spatially.
+      </li>
+      <li class="itemize">Move entities spatially by dragging and dropping.
+      </li>
+      <li class="itemize">Delete entities from the widget.
+      </li>
+      <li class="itemize">Create and delete circles by double clicking into the canvas space.
+      </li>
+      <li class="itemize">Change and move the label of the circle.
+      </li>
+      <li class="itemize">Move circles spatially by dragging and dropping. Contained entities need
+      to move along with it. Overlapping circles with entities contained in the
+      intersections need to move also.</li></ul>
+                                                                            <img 
+src="docu255x.png" alt="" >
+<img 
+src="docu256x.png" alt="" >
+                                                                            
+<!--l. 755--><p class="noindent" >The view for the Venn diagram widget is called <span 
+class="cmtt-12">OrganizeView </span>for the external
+visualization tool it is wrapping is named <span 
+class="cmtt-12">Organize.js</span>. This tool provides the
+Venn diagram features of spatial arrangement of entities and circles and has been
+developed in the course of the Learning Layers Project. For its implementation,
+there were at least two possibilities: either using HTML5 Canvas or using SVG.
+Considering that with SVG, each SVG element is available within the DOM
+and therefore open to native event handling, and taking into account that
+such event handling does not exist in HTML Canvas, SVG was a natural
+choice.
+<!--l. 757--><p class="noindent" >There are several libraries available for easing the development of web applications using SVG:
+SVGKit<span class="footnote-mark"><a 
+href="docu46.html#fn45x3"><sup class="textsuperscript">45</sup></a></span><a 
+ id="x1-40001f45"></a> ,
+PERGOLA<span class="footnote-mark"><a 
+href="docu47.html#fn46x3"><sup class="textsuperscript">46</sup></a></span><a 
+ id="x1-40002f46"></a> ,
+Raphael<span class="footnote-mark"><a 
+href="docu48.html#fn47x3"><sup class="textsuperscript">47</sup></a></span><a 
+ id="x1-40003f47"></a> , various JQuery
+SVG plugins and SVG.js<span class="footnote-mark"><a 
+href="docu49.html#fn48x3"><sup class="textsuperscript">48</sup></a></span><a 
+ id="x1-40004f48"></a> .
+After analyzing these libraries, SVG.js was the chosen one, since it is flexible,
+provides a rich set of library functions, has a good documentation and meets the
+needs of the Venn diagram widget. Along with this library, some plugins were also
+used:
+      <ul class="itemize1">
+      <li class="itemize">svg.draggable.js   -   for   implementing   the   dragging   and   dropping
+      functionalities within the SVG canvas.
+      </li>
+                                                                            <img 
+src="docu257x.png" alt="" >
+<img 
+src="docu258x.png" alt="" >
+                                                                            
+      <li class="itemize">svg.foreignobjects.js - for the inline text input on the SVG canvas, which
+      is necessary for entering the labels for each circle. In this case, a HTML
+      text area was used as SVG foreign object.</li></ul>
+<!--l. 763--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu259x.png" alt="" >
+<img 
+src="docu260x.png" alt="" >
+                                                                            
+<a 
+ id="x1-4000529"></a>
+                                                                            <img 
+src="docu261x.png" alt="" >
+<img 
+src="docu262x.png" alt="" >
+                                                                            
+
+<!--l. 765--><p class="noindent" ><img 
+src="figures/organizeview.png" alt="PIC"  
+width="179.25116pt" height="113.85547pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.29: </td><td  
+class="content">The architecture of <span 
+class="cmtt-12">OrganizeView</span></td></tr></table></div><!--tex4ht:label?: x1-4000529 -->
+                                                                            <img 
+src="docu263x.png" alt="" >
+<img 
+src="docu264x.png" alt="" >
+                                                                            
+<!--l. 768--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 770--><p class="noindent" ><span 
+class="cmtt-12">Organize.js </span>also supports user-driven changes. Data is not merely provided by the
+application but also by the user who may create, move, resize and delete circles or
+move and delete entities from the canvas. These changes are propagated by the
+component through DOM events which are caught by the wrapping view and then
+translated to further operations on the data layer. For the translation,
+<span 
+class="cmtt-12">OrganizeView </span>internally maps IDs of SVG elements generated by <span 
+class="cmtt-12">Organize.js </span>to
+entities, ie. <span 
+class="cmtt-12">OrgaEntity</span>s and <span 
+class="cmtt-12">Circle</span>s. Additionally, the visualization of
+<span 
+class="cmtt-12">OrgaEntity</span>s is managed by <span 
+class="cmtt-12">OrgaEntityView</span>, which contains an <span 
+class="cmtt-12">EntityView </span>of the
+referenced resource entity (fig. <a 
+href="#x1-400001.3.6">1.3.6<!--tex4ht:ref: fig:organizeview --></a>). <span 
+class="cmtt-12">OrgaEntityView </span>renders this <span 
+class="cmtt-12">EntityView</span>
+internally and wraps the result in an SVG representation which is then passed on to
+<span 
+class="cmtt-12">Organize.js</span>.
+<!--l. 772--><p class="noindent" ><span 
+class="cmtt-12">OrganizeView </span>consists of the following methods:
+      <ul class="itemize1">
+      <li class="itemize"><span 
+class="cmtt-12">initialize </span>binds  the  event  handler  function  <span 
+class="cmtt-12">changeStuff </span>for  the
+      <span 
+class="cmtt-12">change</span>-event to the version entity the organize entity belongs to.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">render </span>calls <span 
+class="cmtt-12">loadOrganizeCanvas </span>of <span 
+class="cmtt-12">Organize.js </span>which initializes the
+      SVG canvas. Additionally, <span 
+class="cmtt-12">stealthContainer </span>is created and appended
+      as a sibling node to the canvas. This container is hidden to the user and
+      contains the <span 
+class="cmtt-12">EntityView</span>s of <span 
+class="cmtt-12">OrgaEntityView</span>s. Events coming from the
+      SVG canvas (eg. <span 
+class="cmtt-12">ClickEntity </span>can be translated to native click events on
+      these hidden <span 
+class="cmtt-12">EntityView</span>s. Other parts of the application can catch these
+      events which would not be possible with the original events from the
+      SVG canvas (see fig. <a 
+href="#x1-4000630">1.30<!--tex4ht:ref: lst:stealthContainer --></a>). Finally, entities and circles are retrieved from
+      the version entity and passed to <span 
+class="cmtt-12">addEntity </span>and <span 
+class="cmtt-12">addCircle </span>respectively.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">changeStuff  </span>checks   whether   there   are   changes   to   the   sets   of
+      <span 
+class="cmtt-12">Voc.hasEntity  </span>or   <span 
+class="cmtt-12">Voc.hasCircle</span>.   For   each   added   orga-entity
+      <span 
+class="cmtt-12">addEntity </span>or <span 
+class="cmtt-12">addCircle </span>is called respectively to its type (<span 
+class="cmtt-12">OrgaEntity</span>
+      or <span 
+class="cmtt-12">Circle</span>).
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">addEntity </span>(initial lower-case letter) adds an orga-entity to the view,
+                                                                            <img 
+src="docu265x.png" alt="" >
+<img 
+src="docu266x.png" alt="" >
+                                                                            
+      coordinates  already  provided,  by  creating  an  <span 
+class="cmtt-12">OrgaEntityView </span>of  it,
+      getting the SVG rendering and passing it to <span 
+class="cmtt-12">createAndDropSvgEntity</span>
+      of   <span 
+class="cmtt-12">Organize.js</span>.   Additionally,   the   <span 
+class="cmtt-12">EntityView  </span>wrapped   by   the
+      <span 
+class="cmtt-12">OrgaEntityView </span>is rendered into <span 
+class="cmtt-12">stealthContainer</span>.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">addCircle </span>(initial lower-case letter) adds a circle entity to the view by
+      calling <span 
+class="cmtt-12">drawCircle </span>of  <span 
+class="cmtt-12">Organize.js</span>. Both <span 
+class="cmtt-12">addEntity </span>and <span 
+class="cmtt-12">addCircle</span>
+      set up the mapping between entity and ID of the SVG element.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">AddCircle </span>(initial upper-case letter) is bound to the <span 
+class="cmtt-12">AddCircle</span>-event
+      of the SVG canvas which is triggered when the user creates a new circle.
+      It calls <span 
+class="cmtt-12">OrganizeData.createCircle </span>with the generated data in order
+      to create the circle entity which is mapped to the ID of the SVG element
+      finally.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">ChangeCircle </span>is bound to the <span 
+class="cmtt-12">ChangeCircle</span>-event of the SVG canvas
+      which is triggered when the user makes changes to a circle by either
+      moving,  resizing  or  relabelling  it.  The  changed  data  is  saved  to  the
+      respective circle entity.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">RemoveCircle </span>is bound to the <span 
+class="cmtt-12">RemoveCircle</span>-event of the SVG canvas
+      which is triggered when the user deletes a circle. It calls <span 
+class="cmtt-12">destroy </span>of the
+      respective circle entity.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">ChangeEntity </span>is bound to the <span 
+class="cmtt-12">ChangeEntity</span>-event of the SVG canvas
+      which is triggered when the user moves an orga-entity. The changed data
+      is saved to the respective orga-entity.
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">RemoveEntity </span>is bound to the <span 
+class="cmtt-12">RemoveEntity</span>-event of the SVG canvas
+      which is triggered when the user deletes an orga-entity. It calls <span 
+class="cmtt-12">destroy</span>
+      of the respective orga-entity.
+                                                                            <img 
+src="docu267x.png" alt="" >
+<img 
+src="docu268x.png" alt="" >
+                                                                            
+      </li>
+      <li class="itemize"><span 
+class="cmtt-12">ClickEntity </span>is bound to the <span 
+class="cmtt-12">ClickEntity</span>-event of the SVG canvas
+      which is triggered when the user clicks on an orga-entity. The event
+      is translated to a native <span 
+class="cmtt-12">click</span>-event and triggered on the <span 
+class="cmtt-12">EntityView</span>
+      contained in <span 
+class="cmtt-12">stealthContainer</span>.</li></ul>
+<!--l. 788--><p class="noindent" >There is neither an event nor a method <span 
+class="cmtt-12">AddEntity </span>(initial upper-case letter) since
+entities can only be added via dragging and dropping an entity from the upper
+widget. This case it handled by <span 
+class="cmtt-12">WidgetView </span>(see lst. <a 
+href="#x1-4000731">1.31<!--tex4ht:ref: lst:dropfunc --></a>).
+<!--l. 791--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu269x.png" alt="" >
+<img 
+src="docu270x.png" alt="" >
+                                                                            
+<a 
+ id="x1-4000630"></a>
+                                                                            <img 
+src="docu271x.png" alt="" >
+<img 
+src="docu272x.png" alt="" >
+                                                                            
+<div class="verbatim" id="verbatim-11">
+render&#x00A0;:&#x00A0;function()&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;...
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.stealthContainer&#x00A0;=&#x00A0;$("&#x003C;div&#x00A0;style=\"display:none\"&#x003E;");
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.$el.append(this.stealthContainer);
+&#x00A0;<br />},
+&#x00A0;<br />addEntity&#x00A0;:&#x00A0;function(entity)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;var&#x00A0;view&#x00A0;=&#x00A0;new&#x00A0;OrgaEntityView({model:entity});
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;this.stealthContainer.append(view.resourceView.$el);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;var&#x00A0;id&#x00A0;=&#x00A0;this.organize.createAndDropSvgEntity(view.getSvgData());
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;view.setSvgId(id);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;...
+&#x00A0;<br />}
+</div>
+<!--l. 805--><p class="nopar" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Listing&#x00A0;1.30:  </td><td  
+class="content">StealthContainer:  The  <span 
+class="cmtt-12">render </span>method  creates  the  hidden
+DOM element, stores its reference in <span 
+class="cmtt-12">OrganizeView.stealthContainer </span>and
+appends its to the DOM element (<span 
+class="cmtt-12">this.$el</span>) of  <span 
+class="cmtt-12">OrganizeView</span>. <span 
+class="cmtt-12">addEntity</span>
+appends the DOM element of the <span 
+class="cmtt-12">EntityView</span>, ie. <span 
+class="cmtt-12">view.resourceView.$el</span>,
+to the <span 
+class="cmtt-12">stealthContainer </span>from where events can be triggered and propagated
+through the application.</td></tr></table></div><!--tex4ht:label?: x1-4000630 -->
+                                                                            <img 
+src="docu273x.png" alt="" >
+<img 
+src="docu274x.png" alt="" >
+                                                                            
+<!--l. 808--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 810--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu275x.png" alt="" >
+<img 
+src="docu276x.png" alt="" >
+                                                                            
+<a 
+ id="x1-4000731"></a>
+                                                                            <img 
+src="docu277x.png" alt="" >
+<img 
+src="docu278x.png" alt="" >
+                                                                            
+<div class="verbatim" id="verbatim-12">
+organizeBody.droppable({
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;drop:&#x00A0;function(event,&#x00A0;ui)&#x00A0;{
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;var&#x00A0;id&#x00A0;=&#x00A0;ui.helper.attr(&#8217;about&#8217;);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;var&#x00A0;offset&#x00A0;=&#x00A0;$(this).offset();
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;var&#x00A0;orgaEntity&#x00A0;=&#x00A0;{};
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;orgaEntity[Voc.x]&#x00A0;=&#x00A0;ui.offset.left&#x00A0;-&#x00A0;offset.left;
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;orgaEntity[Voc.y]&#x00A0;=&#x00A0;ui.offset.top&#x00A0;-&#x00A0;offset.top;
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;orgaEntity[Voc.hasResource]&#x00A0;=&#x00A0;id;
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;&#x00A0;OrganizeData.createEntity(that.model,&#x00A0;orgaEntity);
+&#x00A0;<br />&#x00A0;&#x00A0;&#x00A0;&#x00A0;}
+&#x00A0;<br />});
+</div>
+<!--l. 823--><p class="nopar" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Listing&#x00A0;1.31:  </td><td  
+class="content">JQuery  droppable:  <span 
+class="cmtt-12">organizeBody </span>is  the  (JQuery  wrapped)
+DOM element containing the Organize Widget. <span 
+class="cmtt-12">drop : function() </span>is called
+as  soon  as  the  user  drops  the  dragged  element  (see  lst.  <a 
+href="#x1-2600414">1.14<!--tex4ht:ref: lst:dragfunc --></a>).  <span 
+class="cmtt-12">ui.helper</span>
+contains a clone of the dragged element which has been marked up with RDFa
+(the attribute &#8220;about&#8221;) by <span 
+class="cmtt-12">EntityView</span>. <span 
+class="cmtt-12">that.model </span>is the organize widget
+entity, <span 
+class="cmtt-12">orgaEntity </span>is created with the coordinates of the dropping position
+and a reference to the dragged resource entity.</td></tr></table></div><!--tex4ht:label?: x1-4000731 -->
+                                                                            <img 
+src="docu279x.png" alt="" >
+<img 
+src="docu280x.png" alt="" >
+                                                                            
+<!--l. 826--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 829--><p class="noindent" ><hr class="figure"><div class="figure" 
+>
+                                                                            <img 
+src="docu281x.png" alt="" >
+<img 
+src="docu282x.png" alt="" >
+                                                                            
+<a 
+ id="x1-4000832"></a>
+                                                                            <img 
+src="docu283x.png" alt="" >
+<img 
+src="docu284x.png" alt="" >
+                                                                            
+
+<!--l. 832--><p class="noindent" ><img 
+src="figures/dragdrop-seq.png" alt="PIC"  
+width="478.00513pt" height="202.33513pt" >
+<br /> <div class="caption"><table class="caption" 
+><tr style="vertical-align:baseline;" class="caption"><td class="id">Figure&#x00A0;1.32: </td><td  
+class="content">Sequence diagram of dropping an entity to the Venn diagram.
+Components have been coloured by the architectural layer they belong to:
+yellow - presentation layer, blue - data layer, green - service layer. Dark blue -
+data modules, light blue - entities.</td></tr></table></div><!--tex4ht:label?: x1-4000832 -->
+                                                                            <img 
+src="docu285x.png" alt="" >
+<img 
+src="docu286x.png" alt="" >
+                                                                            
+<!--l. 835--><p class="noindent" ></div><hr class="endfigure">
+<!--l. 837--><p class="noindent" >Fig. <a 
+href="#x1-400001.3.6">1.3.6<!--tex4ht:ref: fig:dragdrop-seq --></a> shows how the application components play together by example of
+dropping an entity to the Venn diagram widget.
+                                                                            <img 
+src="docu287x.png" alt="" >
+<img 
+src="docu288x.png" alt="" >
+                                                                            
+ 
+</body></html> 
+
+                                                                            <img 
+src="docu289x.png" alt="" >
+
+
