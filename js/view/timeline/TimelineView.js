@@ -221,7 +221,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                     new Date(view.model.get(Voc.start)), new Date(view.model.get(Voc.end)), 
                     new Date(range.start), new Date(range.end));
 
-                view.model.save(vals, { 'by' : view });
+                view.model.save(vals, { 'by' : view, 'calledBy' : 'renderTimeline' });
             });
         },
         reclusterByRangeChange: function(prev_start, prev_end, start, end) {
@@ -254,7 +254,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             vals[Voc.start] = start;
             vals[Voc.end] = end;
-            this.model.save(vals, { 'by' : this });
+            this.model.save(vals, { 'by' : this, 'calledBy' : 'browseTo' });
             this.LOG.debug("start", parseInt(entity.get(this.timeAttr) - diff / 2), start, "end", parseInt(entity.get(this.timeAttr) + diff / 2), end);
             this.timeline.setVisibleChartRange(start, end, true);
         },
@@ -279,7 +279,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                     new Date(this.model.get(Voc.start)), new Date(this.model.get(Voc.end)),
                     vals[Voc.start], vals[Voc.end]
                 );
-            this.model.save(vals, { 'by' : this });
+            this.model.save(vals, { 'by' : this, 'calledBy' : 'expand' });
         },
         minmax: function(entities) {
             var min, max;
