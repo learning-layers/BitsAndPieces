@@ -72,6 +72,7 @@ function(module, VIE, Logger, tracker, userParams, UserData, SocialSemanticServi
     //v.namespaces.base(namespace);
 
     extender.syncByVIE(v);
+    extender.addOnUrisReady(v);
     //extender.autoResolveReferences(v);
 
     AppData.init(v);
