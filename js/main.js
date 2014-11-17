@@ -1,5 +1,7 @@
 var require = (function() {
     var sssHostREST = "http://localhost:8080/ss-adapter-rest/SSAdapterRest/";
+    var oidcAuthorizationUrl = "";
+    var oidcClientID = "";
     return {
         config: {
             'app' : {
@@ -13,6 +15,10 @@ var require = (function() {
             },
             'view/sss/EntityView' : {
                 'sssHostRESTFileDownload' : sssHostREST.replace(/SSAdapterRest/, 'SSAdapterRESTFileDownload')
+            },
+            'view/LoginFormView' : {
+                'oidcAuthorizationUrl' : oidcAuthorizationUrl,
+                'oidcClientID' : oidcClientID
             }
         },
         baseUrl: 'js',
