@@ -189,13 +189,17 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
         },
         fetchActivityStream: function() {
             var that = this,
-                activitiesPromise = this.fetchActivities(),
-                messagesPromise = this.fetchMessages(),
-                recommendationsPromise = this.fetchRecommendations();
+                //activitiesPromise = this.fetchActivities(),
+                messagesPromise = this.fetchMessages();
+                //recommendationsPromise = this.fetchRecommendations();
 
-            $.when(activitiesPromise, messagesPromise, recommendationsPromise)
-                .done(function(activities, messages, recommendations) {
-                    that.LOG.debug('fetchActivityStream', activities, messages, recommendations);
+            //$.when(activitiesPromise, messagesPromise, recommendationsPromise)
+            //    .done(function(activities, messages, recommendations) {
+            //        that.LOG.debug('fetchActivityStream', activities, messages, recommendations);
+            $.when(messagesPromise)
+                .done(function(messages) {
+                    that.LOG.debug('fetchActivityStream', messages);
+
                     if ( !_.isEmpty(that.messageResultViews) ) {
                         _.each(that.messageResultViews, function(view) {
                             view.remove();
