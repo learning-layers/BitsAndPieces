@@ -19,7 +19,7 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
             this.$el.html(_.template(MessageTemplate, {
                 date : $.datepicker.formatDate('dd.mm.yy', new Date(this.model.get(Voc.creationTime))),
                 author : this.getOwnerName(),
-                message : this.model.get(Voc.content),
+                message : this.model.get(Voc.content)
             }));
             return this;
         },

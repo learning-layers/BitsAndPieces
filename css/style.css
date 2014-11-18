@@ -319,19 +319,19 @@ div#tabs .stream .resultSet {
 	overflow-y: auto;
 }
 
-div#tabs .stream .resultSet .singleMessage {
+div#tabs .stream .resultSet .singleMessage, div#tabs .stream .resultSet .singleActivity {
 	margin: 10px;
 	border-bottom: 1px solid rgb(221, 221, 221);
 }
 
-div#tabs .stream .resultSet .singleMessage .messageIcon {
+div#tabs .stream .resultSet .singleMessage .messageIcon, div#tabs .stream .resultSet .singleActivity .activityIcon {
 	display: inline-block;
 	vertical-align: top;
 	color: #48a2c5;
 	font-size: 50px;
 }
 
-div#tabs .stream .resultSet .singleMessage .messageContent {
+div#tabs .stream .resultSet .singleMessage .messageContent, div#tabs .stream .resultSet .singleActivity .activityContent {
 	display: inline-block;
 	width: 210px;
 	padding-left: 10px;

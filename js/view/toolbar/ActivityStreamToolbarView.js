@@ -1,8 +1,8 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 'userParams',
         'utils/InputValidation',
         'text!templates/toolbar/activity_stream.tpl', 'text!templates/toolbar/components/selected_user.tpl',
-        'view/sss/MessageView',
-        'data/episode/UserData', 'data/sss/MessageData', 'data/sss/ActivityData', 'data/EntityData'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, UserData, MessageData, ActivityData, EntityData){
+        'view/sss/MessageView', 'view/sss/ActivityView',
+        'data/episode/UserData', 'data/sss/MessageData', 'data/sss/ActivityData', 'data/EntityData'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, ActivityView, UserData, MessageData, ActivityData, EntityData){
     return Backbone.View.extend({
         events: {
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
@@ -11,6 +11,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
         },
         LOG: Logger.get('ActivityStreamToolbarView'),
         initialize: function() {
+            this.activityResultViews = [];
             this.messageResultViews = [];
             this.selectedUsers = [];
             this.messageRecipientSelector = 'input[name="messageRecipient"]';
@@ -189,17 +190,29 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
         },
         fetchActivityStream: function() {
             var that = this,
-                //activitiesPromise = this.fetchActivities(),
-                messagesPromise = this.fetchMessages();
-                //recommendationsPromise = this.fetchRecommendations();
+                activitiesPromise = this.fetchActivities(),
+                messagesPromise = this.fetchMessages(),
+                recommendationsPromise = this.fetchRecommendations();
 
-            //$.when(activitiesPromise, messagesPromise, recommendationsPromise)
-            //    .done(function(activities, messages, recommendations) {
-            //        that.LOG.debug('fetchActivityStream', activities, messages, recommendations);
-            $.when(messagesPromise)
-                .done(function(messages) {
-                    that.LOG.debug('fetchActivityStream', messages);
+            $.when(activitiesPromise, messagesPromise, recommendationsPromise)
+                .done(function(activities, messages, recommendations) {
+                    that.LOG.debug('fetchActivityStream', activities, messages, recommendations);
 
+                    // Deal with activities
+                    if ( !_.isEmpty(that.activityResultViews) ) {
+                        _.each(that.activityResultViews, function(view) {
+                            view.remove();
+                        });
+                        that.activityResultViews = [];
+                    }
+                    _.each(activities, function(activity) {
+                        var view = new ActivityView({
+                            model : activity
+                        });
+                        that.activityResultViews.push(view);
+                    });
+
+                    // Deal with messages
                     if ( !_.isEmpty(that.messageResultViews) ) {
                         _.each(that.messageResultViews, function(view) {
                             view.remove();
@@ -218,8 +231,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
         },
         displayActivityStream: function() {
             var resultSet = this.$el.find('.stream .resultSet');
+                combined = this.activityResultViews.concat(this.messageResultViews);
 
-            var sortedViews = _.sortBy(this.messageResultViews, function(view) {
+            var sortedViews = _.sortBy(combined, function(view) {
                 // Get reverse sort order
                 return view.model.get(Voc.creationTime) * -1;
             });

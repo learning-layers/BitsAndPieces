@@ -29,6 +29,7 @@ define([], {
     hasWidget: 'sss:hasWidget',
     hasResource : 'sss:entity',
     hasEpisode : 'sss:hasEpisode',
+    hasEntities : 'sss:entities',
     timestamp : 'sss:timestamp',
     creationTime : 'sss:creationTime',
     timeAttr : 'sss:timeAttr',
