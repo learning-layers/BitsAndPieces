@@ -319,6 +319,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return InputValidation.validateUserSelect(element, this.selectedUsers, alertText);
         },
         validateNotificationText: function() {
+            // TEMPORARY DISABLE NOTIFICATION TEXT VALIDATION
+            return true;
+
             var element = this.$el.find('textarea[name="notificationtext"]'),
                 alertText = 'Please provide a text for notification!';
 
