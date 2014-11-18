@@ -19,16 +19,22 @@ define(['module', 'logger', 'underscore', 'jquery', 'backbone', 'voc', 'UserAuth
                 this.oidcAuthorizationUrl = oidcAuthorizationUrl;
                 this.oidcClientID = oidcClientID;
 
-                // Check if we have returned
+                // Check if user has returned after authentication with OIDC
                 if ( window.location.hash ) {
                     var params = this.parseQueryString();
                     this.oidcLogin(params['access_token']);
-                    // TODO Probably need to display some ajaxLoader
-                    // and disable resubmitting the form
                 }
             } else {
                 this.$el.html(_.template(LoginTemplate));
             }
+        },
+        disableFormSubmission: function() {
+            this.$el.find('form :submit').prop('disabled', true);
+            this.formSubmissionDisabled = true;
+        },
+        enableFormSubmission: function() {
+            this.$el.find('form :submit').prop('disabled', false);
+            this.formSubmissionDisabled = false;
         },
         parseQueryString: function() {
             var params = {},
@@ -51,6 +57,13 @@ define(['module', 'logger', 'underscore', 'jquery', 'backbone', 'voc', 'UserAuth
                 password = this.$el.find('input[name="password"]').val(),
                 that = this;
             e.preventDefault();
+
+            if ( this.formSubmissionDisabled === true ) {
+                return false;
+            }
+
+            that.disableFormSubmission();
+
             if ( username && password ) {
                 UserAuth.authenticate(username, password).then(
                     function() {
@@ -58,13 +71,19 @@ define(['module', 'logger', 'underscore', 'jquery', 'backbone', 'voc', 'UserAuth
                     },
                     function() {
                         that.$el.find('form[name="login"]').effect('shake');
+                        that.enableFormSubmission();
                     });
             } else {
                 that.$el.find('form[name="login"]').effect('shake');
+                that.enableFormSubmission();
             }
         },
         oidcLoginRedirect: function(e) {
             e.preventDefault();
+
+            if ( this.formSubmissionDisabled === true ) {
+                return false;
+            }
 
             var url = this.oidcAuthorizationUrl + '?response_type=' + encodeURIComponent('id_token token') + '&client_id=' + this.oidcClientID + '&scope=' + encodeURIComponent('openid email profile');
 
@@ -72,6 +91,13 @@ define(['module', 'logger', 'underscore', 'jquery', 'backbone', 'voc', 'UserAuth
         },
         oidcLogin: function(access_token) {
             var that = this;
+
+            if ( this.formSubmissionDisabled === true ) {
+                return false;
+            }
+
+            that.disableFormSubmission();
+
             UserAuth.oidcAuthenticate(access_token).then(
                 function() {
                     // Reload while removing hash and query string
@@ -79,6 +105,7 @@ define(['module', 'logger', 'underscore', 'jquery', 'backbone', 'voc', 'UserAuth
                 },
                 function() {
                     that.$el.find('form[name="oidcLogin"]').effect('shake');
+                    that.enableFormSubmission();
                 }
             );
         }
