@@ -181,7 +181,7 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                     for ( ; i < service['decoration'].length; i++) {
                         decorator = service['decoration'][i];
                         // invoke decorator with loadable as context on result and result meta data
-                        if( !decorator.call(able, item, service['@id'], service['@type'] ) ) {
+                        if( !decorator.call(able, item, service['@id'], service['@type'], service['@resourceKey']) ) {
                             return;
                         }
                     }
