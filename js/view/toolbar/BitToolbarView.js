@@ -1,7 +1,7 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
+        'utils/DateHelpers',
         'text!templates/toolbar/bit.tpl', 'text!templates/toolbar/empty.tpl',
-        'data/EntityData',
-        'data/sss/CategoryData'], function(Logger, tracker, _, $, Backbone, Voc, BitTemplate, EmptyTemplate, EntityData, CategoryData){
+        'data/EntityData', 'data/sss/CategoryData'], function(Logger, tracker, _, $, Backbone, Voc, DateHelpers, BitTemplate, EmptyTemplate, EntityData, CategoryData){
     return Backbone.View.extend({
         events: {
             'slidechange .slider' : 'setImportance',
@@ -128,7 +128,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return {'entity' : {
                 'label' : this.model.get(Voc.label),
                 'author' : author,
-                'creationTime' : $.datepicker.formatDate('dd.mm.yy', new Date(this.model.get(Voc.creationTime))),
+                'creationTime' : DateHelpers.formatTimestampDateDMY(this.model.get(Voc.creationTime)),
                 'views' : this.model.get(Voc.hasViewCount) || 0,
                 'tags' : this.getBitTags(),
                 'predefined' : CategoryData.getPredefinedCategories(),

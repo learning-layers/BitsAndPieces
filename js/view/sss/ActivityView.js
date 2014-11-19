@@ -1,7 +1,7 @@
 define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
-        'userParams',
+        'userParams', 'utils/DateHelpers',
         'text!templates/sss/activity.tpl',
-        'view/sss/EntityView'], function(_, Backbone, Logger, $, Voc, userParams, ActivityTemplate, EntityView) {
+        'view/sss/EntityView'], function(_, Backbone, Logger, $, Voc, userParams, DateHelpers, ActivityTemplate, EntityView) {
     return Backbone.View.extend({
         LOG: Logger.get('ActivityView'),
         events: {
@@ -21,7 +21,7 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
                 isLoggedInActor = (this.getOwnerUri() === userParams.user),
                 templateSettings = {
                     'iconClass' : [],
-                    'date' : $.datepicker.formatDate('dd.mm.yy', new Date(this.model.get(Voc.creationTime))),
+                    'date' : DateHelpers.formatTimestampDateDMYHM(this.model.get(Voc.creationTime)),
                     'author' : '',
                     'content' : ''
                 };

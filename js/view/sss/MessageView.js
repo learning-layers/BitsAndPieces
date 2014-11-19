@@ -1,6 +1,7 @@
 define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
+        'utils/DateHelpers',
         'text!templates/sss/message.tpl',
-        'view/sss/EntityView'], function(_, Backbone, Logger, $, Voc, MessageTemplate, EntityView) {
+        'view/sss/EntityView'], function(_, Backbone, Logger, $, Voc, DateHelpers, MessageTemplate, EntityView) {
     return Backbone.View.extend({
         LOG: Logger.get('MessageView'),
         events: {
@@ -17,7 +18,7 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
             });
 
             this.$el.html(_.template(MessageTemplate, {
-                date : $.datepicker.formatDate('dd.mm.yy', new Date(this.model.get(Voc.creationTime))),
+                date : DateHelpers.formatTimestampDateDMYHM(this.model.get(Voc.creationTime)),
                 author : this.getOwnerName(),
                 message : this.model.get(Voc.content)
             }));

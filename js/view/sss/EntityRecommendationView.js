@@ -1,5 +1,6 @@
 define(['view/sss/EntityView', 'logger', 'underscore', 'jquery', 'voc',
-        'text!templates/sss/entity_recommendation.tpl'], function(EntityView, Logger, _, $, Voc, EntityRecommendationTemplate){
+        'utils/DateHelpers',
+        'text!templates/sss/entity_recommendation.tpl'], function(EntityView, Logger, _, $, Voc, DateHelpers, EntityRecommendationTemplate){
     return EntityView.extend({
         LOG: Logger.get('EntityRecommendationView'),
         render: function() {
@@ -26,7 +27,7 @@ define(['view/sss/EntityView', 'logger', 'underscore', 'jquery', 'voc',
             this.$el.html(_.template(EntityRecommendationTemplate, {
                 icon : this.getIcon(),
                 iconClass : iconClass,
-                date : $.datepicker.formatDate('dd.mm.yy', new Date(this.model.get(Voc.creationTime))),
+                date: DateHelpers.formatTimestampDateDMYHM(this.model.get(Voc.creationTime)),
                 content : 'The bit <strong>' + this.model.get(Voc.label) + '</strong> is recommended for you'
             }));
 
