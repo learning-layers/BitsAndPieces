@@ -12,7 +12,7 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
         },
         render: function() {
             this.$el.attr({
-              'class' : 'message singleMessage',
+              'class' : 'message singleEntry singleMessage',
               'about' : this.model.getSubject()
             });
 

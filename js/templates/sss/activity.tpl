@@ -1,8 +1,8 @@
-<div class="activityIcon">
-    <span class="glyphicon <%= iconClass %>"></span>
+<div class="entryIcon activityIcon">
+    <span class="glyphicon <%= iconClass.join(' ') %>"></span>
 </div>
-<div class="activityContent">
+<div class="entryContent activityContent">
     <div class="date"><%= date %></div>
-    <%= author %> shared with me
-    <%= episodeLabel %>
+    <strong><%= author %></strong>
+    <%= content %>
 </div>

@@ -30,6 +30,8 @@ define([], {
     hasResource : 'sss:entity',
     hasEpisode : 'sss:hasEpisode',
     hasEntities : 'sss:entities',
+    hasActivityType : 'sss:activityType',
+    hasUsers : 'sss:users',
     timestamp : 'sss:timestamp',
     creationTime : 'sss:creationTime',
     timeAttr : 'sss:timeAttr',
