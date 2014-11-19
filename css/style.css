@@ -321,6 +321,7 @@ div#tabs .stream .resultSet {
 
 div#tabs .stream .resultSet .singleEntry {
 	margin: 10px;
+	min-height: 50px;
 	border-bottom: 1px solid rgb(221, 221, 221);
 }
 
@@ -330,9 +331,16 @@ div#tabs .stream .resultSet .singleEntry .entryIcon {
 	font-size: 50px;
 }
 
+div#tabs .stream .resultSet .singleEntry .entryIcon img {
+	max-width: 50px;
+	max-height: 50px;
+	vertical-align: top;
+}
+
 div#tabs .stream .resultSet .singleEntry .entryContent {
 	display: inline-block;
 	width: 210px;
+	min-height: 70px;
 	padding-left: 10px;
 }
 

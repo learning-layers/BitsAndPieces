@@ -29,6 +29,7 @@ function(module, VIE, Logger, tracker, userParams, UserData, SocialSemanticServi
     Logger.get('UserView').setLevel(Logger.OFF);
     Logger.get('MessageView').setLevel(Logger.OFF);
     Logger.get('ActivityView').setLevel(Logger.OFF);
+    Logger.get('EntityRecommendationView').setLevel(Logger.OFF);
     Logger.get('App').setLevel(Logger.OFF);
     Logger.get('AppData').setLevel(Logger.OFF);
     Logger.get('Add').setLevel(Logger.OFF);

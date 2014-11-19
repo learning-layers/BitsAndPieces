@@ -1,8 +1,8 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 'userParams',
         'utils/InputValidation',
         'text!templates/toolbar/activity_stream.tpl', 'text!templates/toolbar/components/selected_user.tpl',
-        'view/sss/MessageView', 'view/sss/ActivityView',
-        'data/episode/UserData', 'data/sss/MessageData', 'data/sss/ActivityData', 'data/EntityData'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, ActivityView, UserData, MessageData, ActivityData, EntityData){
+        'view/sss/MessageView', 'view/sss/ActivityView', 'view/sss/EntityRecommendationView',
+        'data/episode/UserData', 'data/sss/MessageData', 'data/sss/ActivityData', 'data/EntityData'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, ActivityView, EntityRecommendationView, UserData, MessageData, ActivityData, EntityData){
     return Backbone.View.extend({
         events: {
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
@@ -13,6 +13,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
         initialize: function() {
             this.activityResultViews = [];
             this.messageResultViews = [];
+            this.recommendationsResultViews = [];
             this.selectedUsers = [];
             this.messageRecipientSelector = 'input[name="messageRecipient"]';
             this.messageTextSelector = 'textarea[name="messageText"]';
@@ -225,13 +226,29 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                         });
                         that.messageResultViews.push(view);
                     });
+
+                    // Deal with recommendations
+                    if ( !_.isEmpty(that.recommendationsResultViews) ) {
+                        _.each(that.recommendationsResultViews, function(view) {
+                            view.remove();
+                        });
+                        that.recommendationsResultViews = [];
+                    }
+                    _.each(recommendations, function(recommendation) {
+                        var view = new EntityRecommendationView({
+                            model : recommendation
+                        });
+                        that.recommendationsResultViews.push(view);
+                    });
+
+
                     that.displayActivityStream();
                 });
             // TODO Check if fail handler is also needed
         },
         displayActivityStream: function() {
             var resultSet = this.$el.find('.stream .resultSet');
-                combined = this.activityResultViews.concat(this.messageResultViews);
+                combined = this.activityResultViews.concat(this.messageResultViews, this.recommendationsResultViews);
 
             var sortedViews = _.sortBy(combined, function(view) {
                 // Get reverse sort order

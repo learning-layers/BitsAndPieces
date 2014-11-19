@@ -246,8 +246,13 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
                     'data' : data
                 }).using('sss').execute().success(function(result){
                     that.LOG.debug('recommTags success', result);
-                    // TODO Need to add the results to VIE
-                    defer.resolve(result);
+                    var entities = [];
+                    _.each(result, function(single) {
+                        entities.push(single.resource);
+                    });
+                    // TODO Think about adding "likelihood" to an entity
+                    entities = that.vie.entities.addOrUpdate(entities);
+                    defer.resolve(entities);
                 }).fail(function(f) {
                     that.LOG.debug('recommTags fail', f);
                     defer.reject(f);
