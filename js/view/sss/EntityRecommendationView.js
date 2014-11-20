@@ -6,7 +6,7 @@ define(['view/sss/EntityView', 'logger', 'underscore', 'jquery', 'voc',
         render: function() {
             var label,
                 iconClass = '',
-                type = 'bit';
+                type = this.getRecommendationEntityType();
 
             this.$el.attr({
               'class' : 'recommendation singleEntry singleRecommendation',
@@ -20,20 +20,30 @@ define(['view/sss/EntityView', 'logger', 'underscore', 'jquery', 'voc',
             }
             if( label && label.isEntity ) label = label.getSubject();
 
-            if ( this.model.isof(Voc.FILE) ) {
-                type = 'file';
-            }
-
             this.$el.html(_.template(EntityRecommendationTemplate, {
                 icon : this.getIcon(),
                 iconClass : iconClass,
                 date: DateHelpers.formatTimestampDateDMYHM(this.model.get(Voc.creationTime)),
-                content : 'The bit <strong>' + label + '</strong> is recommended for you',
+                content : 'The ' + type + ' <strong>' + label + '</strong> is recommended for you',
                 label : label
             }));
 
             this.draggable();
             return this;
+        },
+        getRecommendationEntityType: function() {
+            var type = 'bit';
+            if ( this.model.isof(Voc.FILE) ) {
+                type = 'file';
+            } else if ( this.model.isof(Voc.EVERNOTE_RESOURCE) ) {
+                type = 'evernote resource';
+            } else if ( this.model.isof(Voc.EVERNOTE_NOTE) ) {
+                type = 'evernote note';
+            } else if ( this.model.isof(Voc.EVERNOTE_NOTEBOOK) ) {
+                type = 'evernote notebook';
+            }
+
+            return type;
         }
     });
 });
