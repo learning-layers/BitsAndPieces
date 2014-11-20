@@ -1,11 +1,12 @@
 define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
-        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'data/organize/OrganizeData', 'voc' ], 
-    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, Voc){
+        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'data/organize/OrganizeData', 'data/sss/CategoryData', 'voc' ],
+    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, CategoryData, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('OrganizeView'),
         events:{
             'AddCircle': 'AddCircle',
             'ChangeCircle': 'ChangeCircle',
+            'ChangeCircleLabel': 'ChangeCircleLabel',
             'RemoveCircle': 'RemoveCircle',
             //'AddEntity': 'AddEntity',
             'ChangeEntity': 'ChangeEntity',
@@ -153,6 +154,38 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             //circle['_organizeId'] = circle['id'];
             delete circle['id'];
             view.model.save(this.mapAttributes(circle), {'by': this});
+        },
+
+        ChangeCircleLabel: function(event){
+            this.LOG.debug('event', event);
+            if( !event || !event.detail ) return;
+            var that = this,
+                circle = event.detail;
+            this.LOG.debug("ChangeCircle caught");
+            this.LOG.debug("circle", circle);
+            var view = this.views[circle.id];
+            this.LOG.debug("view", view);
+            if( !view ) {
+              this.LOG.warn("Organize.CollectionView didn't know of this circle!");
+              return;
+            }
+
+            $('#renamedCircleLabel').val(view.model.get(Voc.label));
+            $('#renamedCircleLabel').autocomplete({
+                source: CategoryData.getPredefinedCategories()
+            });
+            $('#circleRenameModal').find('button.btn-primary').off('click').on('click', function(e){
+                e.preventDefault();
+                circle.Label = $('#renamedCircleLabel').val();
+                $('#circleRenameModal').modal('hide');
+                tracker.info(tracker.CHANGEORGANIZECIRCLE, view.model.getSubject(), circle);
+                //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
+                //circle['_organizeId'] = circle['id'];
+                delete circle['id'];
+                that.organize.currentLabel.text(circle.Label);
+                view.model.save(that.mapAttributes(circle), {'by': that});
+            });
+            $('#circleRenameModal').modal('show');
         },
 
         RemoveCircle: function(event){
