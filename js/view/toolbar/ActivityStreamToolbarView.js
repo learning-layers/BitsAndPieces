@@ -7,7 +7,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
         events: {
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
             'keyup textarea[name="messageText"]' : 'revalidateMessageText',
-            'click .selectedUser > span' : 'removeSelectedUser'
+            'click .selectedUser > span' : 'removeSelectedUser',
+            'change input[name="showInToolbar[]"]' : 'filterStream'
         },
         LOG: Logger.get('ActivityStreamToolbarView'),
         initialize: function() {
@@ -258,6 +259,44 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             _.each(sortedViews, function(view) {
                 resultSet.append(view.render().$el);
             });
+        },
+        _showHideStreamViews: function(views, doShow) {
+           if ( views.length > 0 ) {
+               _.each(views, function(view) {
+                   if ( doShow ) {
+                       view.$el.show();
+                   } else {
+                       view.$el.hide();
+                   }
+               });
+           }
+        },
+        filterStream: function(e) {
+            this.LOG.debug('FilterStream', e);
+            var currentTarget = $(e.currentTarget),
+                value = currentTarget.val(),
+                isChecked = currentTarget.is(':checked'),
+                views = [];
+
+            this.$el.find('input[name="showInToolbar[]"]').prop('disabled', true);
+
+            switch (value) {
+                case 'activities':
+                    views = this.activityResultViews;
+                    break;
+                case 'messages':
+                    views = this.messageResultViews;
+                    break;
+                case 'notifications':
+                    // TODO Handle this when implemented
+                    break;
+                case 'recommendations':
+                    views = this.recommendationsResultViews;
+                    break;
+            }
+
+            this._showHideStreamViews(views, isChecked);
+            this.$el.find('input[name="showInToolbar[]"]').prop('disabled', false);
         }
     });
 });

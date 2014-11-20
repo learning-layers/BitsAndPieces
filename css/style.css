@@ -344,10 +344,6 @@ div#tabs .stream .resultSet .singleEntry {
 	border-bottom: 1px solid rgb(221, 221, 221);
 }
 
-div#tabs .stream .resultSet .singleEntry:last-child {
-	border-bottom: none;
-}
-
 div#tabs .stream .resultSet .singleEntry .entryIcon {
 	display: inline-block;
 	vertical-align: top;
