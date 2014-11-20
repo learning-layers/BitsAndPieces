@@ -313,6 +313,25 @@ div#tabs .results .resultSet .entity .labelable label.withlabel {
 	width: 200px;
 }
 
+.singleRecommendation .entryIcon img {
+	max-width: 50px;
+	max-height: 50px;
+}
+
+.singleRecommendation .recommendationContent {
+	display: none;
+}
+
+.singleRecommendation label.recommendationLabel {
+	text-align: left;
+    border: 0 none;
+    display: block;
+    font-family: sans;
+    font-size: 50%;
+    margin-top: 2px;
+	max-width: 50px;
+}
+
 div#tabs .stream .resultSet {
 	border: 1px solid rgb(221, 221, 221);
 	max-height: 200px;
@@ -346,6 +365,10 @@ div#tabs .stream .resultSet .singleEntry .entryContent {
 	width: 210px;
 	min-height: 70px;
 	padding-left: 10px;
+}
+
+div#tabs .stream .resultSet .singleRecommendation label.recommendationLabel {
+	display: none;
 }
 
 .streamActionOthers {

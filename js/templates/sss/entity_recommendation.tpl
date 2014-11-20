@@ -5,3 +5,6 @@
     <div class="date"><%= date %></div>
     <%= content %>
 </div>
+<label class="recommendationLabel">
+    <strong><%= label %></strong>
+</label>

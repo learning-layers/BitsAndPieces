@@ -28,7 +28,8 @@ define(['view/sss/EntityView', 'logger', 'underscore', 'jquery', 'voc',
                 icon : this.getIcon(),
                 iconClass : iconClass,
                 date: DateHelpers.formatTimestampDateDMYHM(this.model.get(Voc.creationTime)),
-                content : 'The bit <strong>' + this.model.get(Voc.label) + '</strong> is recommended for you'
+                content : 'The bit <strong>' + label + '</strong> is recommended for you',
+                label : label
             }));
 
             this.draggable();
