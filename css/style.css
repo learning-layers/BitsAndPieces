@@ -224,7 +224,7 @@ div#myToolbar {
 
 /* This is needed so that it would not be covered by toolbar*/
 .ui-front {
-	z-index: 1000;
+	z-index: 1500;
 }
 
 div#myToolbar .toolbar-handle {
