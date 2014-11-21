@@ -41,7 +41,7 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
                 default:
                     templateSettings.iconClass.push('glyphicon-question-sign');
                     templateSettings.author = '';
-                    templateSettings.content = 'Unhandled activity type';
+                    templateSettings.content = 'Unhandled activity type: ' + activityType;
             }
 
             if ( isLoggedInActor ) {
