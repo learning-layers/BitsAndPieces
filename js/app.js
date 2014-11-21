@@ -50,6 +50,7 @@ function(module, VIE, Logger, tracker, userParams, UserData, SocialSemanticServi
     Logger.get('InputValidation').setLevel(Logger.OFF);
     Logger.get('MessageData').setLevel(Logger.OFF);
     Logger.get('ActivityData').setLevel(Logger.OFF);
+    Logger.get('CircleRenameModalView').setLevel(Logger.OFF);
 
     if ( !userParams.isAuthenticated) {
         var loginView = new LoginFormView({
