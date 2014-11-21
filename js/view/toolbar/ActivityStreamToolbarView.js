@@ -1,17 +1,21 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 'userParams',
         'utils/InputValidation',
         'text!templates/toolbar/activity_stream.tpl', 'text!templates/toolbar/components/selected_user.tpl',
-        'view/sss/MessageView',
-        'data/episode/UserData', 'data/sss/MessageData', 'data/sss/ActivityData', 'data/EntityData'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, UserData, MessageData, ActivityData, EntityData){
+        'view/sss/MessageView', 'view/sss/ActivityView', 'view/sss/EntityRecommendationView',
+        'data/sss/MessageData', 'data/sss/ActivityData', 'data/EntityData',
+        'utils/SearchHelper'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, ActivityView, EntityRecommendationView, MessageData, ActivityData, EntityData, SearchHelper){
     return Backbone.View.extend({
         events: {
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
             'keyup textarea[name="messageText"]' : 'revalidateMessageText',
-            'click .selectedUser > span' : 'removeSelectedUser'
+            'click .selectedUser > span' : 'removeSelectedUser',
+            'change input[name="showInToolbar[]"]' : 'filterStream'
         },
         LOG: Logger.get('ActivityStreamToolbarView'),
         initialize: function() {
+            this.activityResultViews = [];
             this.messageResultViews = [];
+            this.recommendationsResultViews = [];
             this.selectedUsers = [];
             this.messageRecipientSelector = 'input[name="messageRecipient"]';
             this.messageTextSelector = 'textarea[name="messageText"]';
@@ -25,19 +29,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
 
             // Initialize user select autocomplete
             this.$el.find(this.messageRecipientSelector).autocomplete({
-                source: function(request, response) {
-                    // TODO Consider making a user search helper, move all the searchc logic there
-                    // It could also deal with caching of search results if needed
-                    // XXX This get the data multiple times
-                    // Need some caching logic
-                    var users = UserData.getSearchableUsers();
-                    var pattern = new RegExp(request.term, 'i');
-                    response(
-                        _.filter(users, function(user) {
-                            return pattern.test(user.label);
-                        })
-                    );
-                },
+                source: SearchHelper.userAutocompleteSource,
                 select: function(event, ui) {
                     event.preventDefault();
                     that.addSelectedUser(event, ui, this);
@@ -189,17 +181,29 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
         },
         fetchActivityStream: function() {
             var that = this,
-                //activitiesPromise = this.fetchActivities(),
-                messagesPromise = this.fetchMessages();
-                //recommendationsPromise = this.fetchRecommendations();
+                activitiesPromise = this.fetchActivities(),
+                messagesPromise = this.fetchMessages(),
+                recommendationsPromise = this.fetchRecommendations();
 
-            //$.when(activitiesPromise, messagesPromise, recommendationsPromise)
-            //    .done(function(activities, messages, recommendations) {
-            //        that.LOG.debug('fetchActivityStream', activities, messages, recommendations);
-            $.when(messagesPromise)
-                .done(function(messages) {
-                    that.LOG.debug('fetchActivityStream', messages);
+            $.when(activitiesPromise, messagesPromise, recommendationsPromise)
+                .done(function(activities, messages, recommendations) {
+                    that.LOG.debug('fetchActivityStream', activities, messages, recommendations);
 
+                    // Deal with activities
+                    if ( !_.isEmpty(that.activityResultViews) ) {
+                        _.each(that.activityResultViews, function(view) {
+                            view.remove();
+                        });
+                        that.activityResultViews = [];
+                    }
+                    _.each(activities, function(activity) {
+                        var view = new ActivityView({
+                            model : activity
+                        });
+                        that.activityResultViews.push(view);
+                    });
+
+                    // Deal with messages
                     if ( !_.isEmpty(that.messageResultViews) ) {
                         _.each(that.messageResultViews, function(view) {
                             view.remove();
@@ -212,14 +216,31 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                         });
                         that.messageResultViews.push(view);
                     });
+
+                    // Deal with recommendations
+                    if ( !_.isEmpty(that.recommendationsResultViews) ) {
+                        _.each(that.recommendationsResultViews, function(view) {
+                            view.remove();
+                        });
+                        that.recommendationsResultViews = [];
+                    }
+                    _.each(recommendations, function(recommendation) {
+                        var view = new EntityRecommendationView({
+                            model : recommendation
+                        });
+                        that.recommendationsResultViews.push(view);
+                    });
+
+
                     that.displayActivityStream();
                 });
             // TODO Check if fail handler is also needed
         },
         displayActivityStream: function() {
             var resultSet = this.$el.find('.stream .resultSet');
+                combined = this.activityResultViews.concat(this.messageResultViews, this.recommendationsResultViews);
 
-            var sortedViews = _.sortBy(this.messageResultViews, function(view) {
+            var sortedViews = _.sortBy(combined, function(view) {
                 // Get reverse sort order
                 return view.model.get(Voc.creationTime) * -1;
             });
@@ -227,6 +248,44 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             _.each(sortedViews, function(view) {
                 resultSet.append(view.render().$el);
             });
+        },
+        _showHideStreamViews: function(views, doShow) {
+           if ( views.length > 0 ) {
+               _.each(views, function(view) {
+                   if ( doShow ) {
+                       view.$el.show();
+                   } else {
+                       view.$el.hide();
+                   }
+               });
+           }
+        },
+        filterStream: function(e) {
+            this.LOG.debug('FilterStream', e);
+            var currentTarget = $(e.currentTarget),
+                value = currentTarget.val(),
+                isChecked = currentTarget.is(':checked'),
+                views = [];
+
+            this.$el.find('input[name="showInToolbar[]"]').prop('disabled', true);
+
+            switch (value) {
+                case 'activities':
+                    views = this.activityResultViews;
+                    break;
+                case 'messages':
+                    views = this.messageResultViews;
+                    break;
+                case 'notifications':
+                    // TODO Handle this when implemented
+                    break;
+                case 'recommendations':
+                    views = this.recommendationsResultViews;
+                    break;
+            }
+
+            this._showHideStreamViews(views, isChecked);
+            this.$el.find('input[name="showInToolbar[]"]').prop('disabled', false);
         }
     });
 });

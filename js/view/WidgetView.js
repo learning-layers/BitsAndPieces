@@ -10,6 +10,8 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
             initialize: function() {
                 this.LOG.debug('el', this.el, this.$el);
                 this.listenTo(this.model, 'destroy', this.remove);
+
+                this.circleRenameModalView = this.options.circleRenameModalView;
                 
             },
             remove: function() {
@@ -74,7 +76,8 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
                 var organizeView = new OrganizeView({
                     model: this.model,
                     EntityView: EntityView,
-                    el: organizeBody
+                    el: organizeBody,
+                    circleRenameModalView: this.circleRenameModalView
                 });
                 organizeView.render();
 

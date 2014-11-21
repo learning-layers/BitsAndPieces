@@ -224,7 +224,7 @@ div#myToolbar {
 
 /* This is needed so that it would not be covered by toolbar*/
 .ui-front {
-	z-index: 1000;
+	z-index: 1500;
 }
 
 div#myToolbar .toolbar-handle {
@@ -313,28 +313,62 @@ div#tabs .results .resultSet .entity .labelable label.withlabel {
 	width: 200px;
 }
 
+.singleRecommendation .entryIcon img {
+	max-width: 50px;
+	max-height: 50px;
+}
+
+.singleRecommendation .recommendationContent {
+	display: none;
+}
+
+.singleRecommendation label.recommendationLabel {
+	text-align: left;
+    border: 0 none;
+    display: block;
+    font-family: sans;
+    font-size: 50%;
+    margin-top: 2px;
+	max-width: 50px;
+}
+
 div#tabs .stream .resultSet {
 	border: 1px solid rgb(221, 221, 221);
 	max-height: 200px;
 	overflow-y: auto;
 }
 
-div#tabs .stream .resultSet .singleMessage {
+div#tabs .stream .resultSet .singleEntry {
 	margin: 10px;
+	min-height: 50px;
 	border-bottom: 1px solid rgb(221, 221, 221);
 }
 
-div#tabs .stream .resultSet .singleMessage .messageIcon {
+div#tabs .stream .resultSet .singleEntry .entryIcon {
 	display: inline-block;
 	vertical-align: top;
-	color: #48a2c5;
 	font-size: 50px;
 }
 
-div#tabs .stream .resultSet .singleMessage .messageContent {
+div#tabs .stream .resultSet .singleEntry .entryIcon img {
+	max-width: 50px;
+	max-height: 50px;
+	vertical-align: top;
+}
+
+div#tabs .stream .resultSet .singleEntry .entryContent {
 	display: inline-block;
 	width: 210px;
+	min-height: 70px;
 	padding-left: 10px;
+}
+
+div#tabs .stream .resultSet .singleRecommendation label.recommendationLabel {
+	display: none;
+}
+
+.streamActionOthers {
+	color: #48a2c5;
 }
 
 div#tabs .importance .ui-slider-horizontal {

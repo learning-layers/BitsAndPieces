@@ -44,7 +44,7 @@
                     <input type="text" class="form-control" name="sharewith" value="" placeholder="Enter username to search"/>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" style="display:none;">
                     <label class="control-label">Sharing notification text:</label>
                     <textarea class="form-control" name="notificationtext" placeholder="Enter a text that user will receive when sharing episode"></textarea>
                 </div>

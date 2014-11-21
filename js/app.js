@@ -27,6 +27,9 @@ function(module, VIE, Logger, tracker, userParams, UserData, SocialSemanticServi
     Logger.get('OrgaEntityView').setLevel(Logger.OFF);
     Logger.get('UserEventView').setLevel(Logger.OFF);
     Logger.get('UserView').setLevel(Logger.OFF);
+    Logger.get('MessageView').setLevel(Logger.OFF);
+    Logger.get('ActivityView').setLevel(Logger.OFF);
+    Logger.get('EntityRecommendationView').setLevel(Logger.OFF);
     Logger.get('App').setLevel(Logger.OFF);
     Logger.get('AppData').setLevel(Logger.OFF);
     Logger.get('Add').setLevel(Logger.OFF);
@@ -42,11 +45,13 @@ function(module, VIE, Logger, tracker, userParams, UserData, SocialSemanticServi
     Logger.get('UserAuth').setLevel(Logger.OFF);
     Logger.get('EpisodeToolbarView').setLevel(Logger.OFF);
     Logger.get('EntitiesHelper').setLevel(Logger.OFF);
+    Logger.get('SearchHelper').setLevel(Logger.OFF);
     Logger.get('CategoryData').setLevel(Logger.OFF);
     Logger.get('SystemMessages').setLevel(Logger.OFF);
     Logger.get('InputValidation').setLevel(Logger.OFF);
     Logger.get('MessageData').setLevel(Logger.OFF);
     Logger.get('ActivityData').setLevel(Logger.OFF);
+    Logger.get('CircleRenameModalView').setLevel(Logger.OFF);
 
     if ( !userParams.isAuthenticated) {
         var loginView = new LoginFormView({
@@ -72,6 +77,7 @@ function(module, VIE, Logger, tracker, userParams, UserData, SocialSemanticServi
     //v.namespaces.base(namespace);
 
     extender.syncByVIE(v);
+    extender.addOnUrisReady(v);
     //extender.autoResolveReferences(v);
 
     AppData.init(v);

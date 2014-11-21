@@ -48,35 +48,44 @@ define(['underscore', 'logger'], function(_, Logger) {
 
     /**
      * Workaround for VIE's non-standard json-ld values and parsing behaviour.
-     * @param {type} object
+     * @param {object} object      Single resultSet object
+     * @param {string} idAttr      Mappable identifier attribute name
+     * @param {string} typeAttr    Mappable type attribute name
+     * @param {string} resourceKey Resource key name if the root object is not a resource
      * @return {undefined}
      */
-    var fixForVIE = function(object, idAttr, typeAttr) {
+    var fixForVIE = function(object, idAttr, typeAttr, resourceKey) {
+        var fixable = object;
+
         if( !idAttr) idAttr = 'id';
         if( !typeAttr) typeAttr = 'type';
+
+        if ( resourceKey ) {
+            fixable = object[resourceKey];
+        }
 
         // If both @subject and @type are present, then there is no need
         // to refix the result.
         // As caching might lead to multiple callback being called on the
         // same result set, do not fix it more than once.
         // See service resolve() method for more details.
-        if ( object['@subject'] && object['@type'] ) {
+        if ( fixable['@subject'] && fixable['@type'] ) {
             return true;
         }
 
-        object[VIE.prototype.Entity.prototype.idAttribute] = object[idAttr];
-        delete object[idAttr];
-        if (object[typeAttr]) {
-            object['@type'] = object[typeAttr].indexOf('sss:') === 0 ? object[typeAttr] : "sss:"+object[typeAttr];
-            delete object[typeAttr];
+        fixable[VIE.prototype.Entity.prototype.idAttribute] = fixable[idAttr];
+        delete fixable[idAttr];
+        if ( fixable[typeAttr] ) {
+            fixable['@type'] = fixable[typeAttr].indexOf('sss:') === 0 ? fixable[typeAttr] : "sss:"+fixable[typeAttr];
+            delete fixable[typeAttr];
         }
 
-        for( var prop in object ) {
+        for( var prop in fixable ) {
             if( prop.indexOf('@') === 0 ) continue;
             if( prop.indexOf('sss:') === 0 ) continue;
             if( prop.indexOf('http:') === 0 ) continue;
-            object['sss:'+prop] = object[prop];
-            delete object[prop];
+            fixable['sss:'+prop] = fixable[prop];
+            delete fixable[prop];
         }
         return true;
     };
@@ -302,7 +311,9 @@ define(['underscore', 'logger'], function(_, Logger) {
             'params' : {
                 'maxResources' : { 'default' : 20 }
             },
-            'preparation' : preparations['scrubParams']
+            'preparation' : preparations['scrubParams'],
+            'decoration' : decorations['fixForVIE_only'],
+            '@resourceKey' : 'resource'
         },
         'activitiesGet' : {
             'resultKey' : 'activities',
