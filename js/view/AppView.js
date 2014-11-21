@@ -7,9 +7,10 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
         'view/WidgetView',
         'view/episode/EpisodeManagerView',
         'view/toolbar/ToolbarView',
+        'view/CircleRenameModalView',
         'utils/SystemMessages',
         'text!templates/navbar.tpl'],
-    function(Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, SystemMessages, NavbarTemplate){
+    function(Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, SystemMessages, NavbarTemplate){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {
@@ -82,6 +83,10 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                     el : toolbar
                 });
                 this.toolbarView.render();
+
+                // Initialize and place the CircleRenameMoval view
+                this.circleRenameModalView = new CircleRenameModalView().render();
+                this.$el.parent().prepend(this.circleRenameModalView.$el);
             },
             drawWidget: function(versionElem, widget) {
                 AppLog.debug('drawWidget', widget);
@@ -94,7 +99,8 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
 
                 var widgetView = new WidgetView({
                     model: widget,
-                    tagName: 'fieldset'
+                    tagName: 'fieldset',
+                    circleRenameModalView: this.circleRenameModalView
                 });
 
                 if( widgetView.isBrowse() ) {

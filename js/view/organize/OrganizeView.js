@@ -1,6 +1,6 @@
 define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
-        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'data/organize/OrganizeData', 'data/sss/CategoryData', 'voc' ],
-    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, CategoryData, Voc){
+        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'data/organize/OrganizeData', 'voc' ],
+    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('OrganizeView'),
         events:{
@@ -25,6 +25,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
 
             this.LOG.debug("initialize Organize component");
             this.organize = new Organize();
+
+            this.circleRenameModalView = this.options.circleRenameModalView;
 
         },
         changeStuff: function(model, options) {
@@ -170,14 +172,15 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
               return;
             }
 
-            $('#renamedCircleLabel').val(view.model.get(Voc.label));
-            $('#renamedCircleLabel').autocomplete({
-                source: CategoryData.getPredefinedCategories()
-            });
-            $('#circleRenameModal').find('button.btn-primary').off('click').on('click', function(e){
+            // Set title, reset autocomplete (make sure that loaded info is used),
+            // set save action handler (will close the modal), open modal
+            this.circleRenameModalView.setRenamedCircleLabel(view.model.get(Voc.label));
+            this.circleRenameModalView.resetAutocompleteSource();
+            this.circleRenameModalView.setSaveActionHandler(function(e){
                 e.preventDefault();
-                circle.Label = $('#renamedCircleLabel').val();
-                $('#circleRenameModal').modal('hide');
+                circle.Label = that.circleRenameModalView.getRenamedCircleLabel();
+                that.circleRenameModalView.hideModal();
+
                 tracker.info(tracker.CHANGEORGANIZECIRCLE, view.model.getSubject(), circle);
                 //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
                 //circle['_organizeId'] = circle['id'];
@@ -185,7 +188,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
                 that.organize.currentLabel.text(circle.Label);
                 view.model.save(that.mapAttributes(circle), {'by': that});
             });
-            $('#circleRenameModal').modal('show');
+            this.circleRenameModalView.showModal();
         },
 
         RemoveCircle: function(event){
