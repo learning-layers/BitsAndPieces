@@ -2,7 +2,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
         'utils/InputValidation',
         'text!templates/toolbar/activity_stream.tpl', 'text!templates/toolbar/components/selected_user.tpl',
         'view/sss/MessageView', 'view/sss/ActivityView', 'view/sss/EntityRecommendationView',
-        'data/episode/UserData', 'data/sss/MessageData', 'data/sss/ActivityData', 'data/EntityData'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, ActivityView, EntityRecommendationView, UserData, MessageData, ActivityData, EntityData){
+        'data/sss/MessageData', 'data/sss/ActivityData', 'data/EntityData',
+        'utils/SearchHelper'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, ActivityView, EntityRecommendationView, MessageData, ActivityData, EntityData, SearchHelper){
     return Backbone.View.extend({
         events: {
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
@@ -28,19 +29,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
 
             // Initialize user select autocomplete
             this.$el.find(this.messageRecipientSelector).autocomplete({
-                source: function(request, response) {
-                    // TODO Consider making a user search helper, move all the searchc logic there
-                    // It could also deal with caching of search results if needed
-                    // XXX This get the data multiple times
-                    // Need some caching logic
-                    var users = UserData.getSearchableUsers();
-                    var pattern = new RegExp(request.term, 'i');
-                    response(
-                        _.filter(users, function(user) {
-                            return pattern.test(user.label);
-                        })
-                    );
-                },
+                source: SearchHelper.userAutocompleteSource,
                 select: function(event, ui) {
                     event.preventDefault();
                     that.addSelectedUser(event, ui, this);

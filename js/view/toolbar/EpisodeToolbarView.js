@@ -1,7 +1,8 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'userParams', 'utils/SystemMessages', 'utils/InputValidation',
         'text!templates/toolbar/episode.tpl', 'text!templates/toolbar/empty.tpl', 'text!templates/toolbar/components/selected_user.tpl',
-        'data/episode/EpisodeData', 'data/episode/UserData', 'view/toolbar/EpisodeListingView'], function(Logger, tracker, _, $, Backbone, Voc, userParams, SystemMessages, InputValidation, EpisodeTemplate, EmptyTemplate, SelectedUserTemplate, EpisodeData, UserData, EpisodeListingView){
+        'data/episode/EpisodeData', 'view/toolbar/EpisodeListingView',
+        'utils/SearchHelper'], function(Logger, tracker, _, $, Backbone, Voc, userParams, SystemMessages, InputValidation, EpisodeTemplate, EmptyTemplate, SelectedUserTemplate, EpisodeData, EpisodeListingView, SearchHelper){
     return Backbone.View.extend({
         episodeViews: [],
         events: {
@@ -55,7 +56,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
             // Initialize user select autocomplete
             this.$el.find('input[name="sharewith"]').autocomplete({
-                source: UserData.getSearchableUsers(),// XXX If user loading finishes after rendering, the source will be empty. Get the value and saves that as available
+                source: SearchHelper.userAutocompleteSource,
                 select: function(event, ui) {
                     event.preventDefault();
                     that.addSelectedUser(event, ui, this);
@@ -356,7 +357,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return _.map(uris, function(uri) {
                 // TODO This might become a problem in case of very large number of users
                 // Might be better to create a lookup construct
-                var user = _.findWhere(UserData.getSearchableUsers(), { value: uri });
+                var user = _.findWhere(SearchHelper.getSearchableUsers(), { value: uri });
                 if ( _.isObject(user) ) {
                     return user.label;
                 }
