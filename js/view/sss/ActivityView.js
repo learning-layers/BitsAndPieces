@@ -29,14 +29,65 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
             switch (activityType) {
                 case 'shareLearnEpWithUser':
                     var episodeLabel = this.getEntitiesLabels()[0];
+
                     templateSettings.iconClass.push('glyphicon-bell');
                     if ( isLoggedInActor ) {
-                        templateSettings.content = 'I shared episode ' + episodeLabel;
+                        templateSettings.content = ' shared episode ' + episodeLabel;
                         // TODO Missing information about whome the episode was shared with
                     } else {
-                        templateSettings.author = this.getOwnerName();
                         templateSettings.content = ' shared with me ' + episodeLabel;
                     }
+                    break;
+                case 'createLearnEp':
+                    var eisodeLabel = this.getEntitiesLabels()[0];
+
+                    templateSettings.iconClass.push('glyphicon-briefcase');
+                    templateSettings.content = ' created an episode ' + episodeLabel;
+                    break;
+                case 'addEntityToLearnEpVersion':
+                    // XXX Labels not set
+                    var bitLabel = '',
+                        episodeLabel = '';
+
+                    templateSettings.iconClass.push('glyphicon-plus-sign');
+                    templateSettings.content = ' added bit ' + bitLabel + ' to episode ' + episodeLabel;
+                    break;
+                case 'updateLearnEpVersionEntity':
+                    // XXX Labels not set
+                    var bitLabel = '',
+                        episodeLabel = '';
+
+                    templateSettings.iconClass.push('glyphicon-info-sign');
+                    templateSettings.content = ' updated bit ' + bitLabel + ' of episode' + episodeLabel;
+                    break;
+                case 'removeLearnEpVersionEntity':
+                    // XXX Labels not set
+                    var bitLabel = '',
+                        episodeLabel = '';
+
+                    templateSettings.iconClass.push('glyphicon-minus-sign');
+                    templateSettings.content = ' removed bit ' + bitLabel + ' from episode' + episodeLabel;
+                    break;
+                case 'addCircleToLearnEpVersion':
+                    // XXX Labels not set
+                    var circleLabel = '',
+                        episodeLabel = '';
+                    templateSettings.iconClass.push('glyphicon-plus-sign');
+                    templateSettings.content = ' added circle ' + circleLabel + ' to episode ' + episodeLabel;
+                    break;
+                case 'updateLearnEpVersionCircle':
+                    // XXX Labels not set
+                    var circleLabel = '',
+                        episodeLabel = '';
+                    templateSettings.iconClass.push('glyphicon-info-sign');
+                    templateSettings.content = ' updated circle ' + circleLabel + ' of episode ' + episodeLabel;
+                    break;
+                case 'removeLearnEpVersionCircle':
+                    // XXX Labels not set
+                    var circleLabel = '',
+                        episodeLabel = '';
+                    templateSettings.iconClass.push('glyphicon-minus-sign');
+                    templateSettings.content = ' removed circle ' + circleLabel + ' from episode ' + episodeLabel;
                     break;
                 default:
                     templateSettings.iconClass.push('glyphicon-question-sign');
@@ -45,8 +96,10 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
             }
 
             if ( isLoggedInActor ) {
+                templateSettings.author = 'I';
                 templateSettings.iconClass.push('streamActionMine');
             } else {
+                templateSettings.author = this.getOwnerName();
                 templateSettings.iconClass.push('streamActionOthers');
             }
 

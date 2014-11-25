@@ -158,7 +158,18 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
         },
         fetchActivities: function() {
             var data = {
-                types : ['shareLearnEpWithUser']
+                types : [
+                    'addCategory',
+                    'removeCategory',
+                    'createLearnEp',
+                    'addEntityToLearnEpVersion',
+                    'updateLearnEpVersionEntity', // Potential slow-down due to a large number
+                    'removeLearnEpVersionEntity',
+                    'addCircleToLearnEpVersion',
+                    'updateLearnEpVersionCircle', // Petential slow-down due to a large number
+                    'removeLearnEpVersionCircle',
+                    'shareLearnEpWithUser'
+                ]
             },
             promise = ActivityData.getActivities(data);
 
