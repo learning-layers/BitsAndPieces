@@ -77,7 +77,21 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
                         'learnEpVersion' : versionUri
                     }
                 }).from('sss').execute().success(function(state) {
+                    var type = null;
+
+                    // Store @type and remove it from entity data
+                    if ( state['@type'] ) {
+                        type = state['@type'];
+                        delete state['@type'];
+                    }
+
                     model.set(state);
+
+                    // Add @type back if stored
+                    if ( null !== type ) {
+                        state['@type'] = type;
+                    }
+
                     if(options.success) {
                         options.success(state);
                     }
