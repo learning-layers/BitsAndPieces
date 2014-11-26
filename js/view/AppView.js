@@ -102,7 +102,6 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                     tagName: 'fieldset',
                     circleRenameModalView: this.circleRenameModalView
                 });
-
                 if( widgetView.isBrowse() ) {
                     versionElem.prepend(widgetView.$el);
                 }else if( widgetView.isOrganize() ) {
@@ -143,7 +142,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                 if( version === this.model.get(Voc.currentVersion)) {
                     this.show(version);
                 } else {
-                    versionElem.css('visibility', 'hidden');
+                    versionElem.addClass('widgetHidden');
                 }
             },
             show: function(version) {
@@ -156,12 +155,22 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                 AppLog.debug('showing', version.getSubject());
 
                 var that= this;
-                this.widgetFrame.children().css('visibility', 'hidden');
+                this.widgetFrame.children().addClass('widgetHidden');
                 AppLog.debug('hide' , this.widgetFrame.children());
                 var element = this.widgetFrame.children('*[about="'+version.getSubject()+'"]');
-                element.css('visibility', 'visible');
+                element.removeClass('widgetHidden');
                 element.detach();
                 this.widgetFrame.prepend(element);
+
+                // This force redraws current timeline element.
+                // This happends due to elements being hidden initially.
+                _.each(this.widgetViews, function(widget) {
+                    if ( widget.model.get(Voc.belongsToVersion) === version ) {
+                        if ( widget.isBrowse() && widget.view.timeline ) {
+                            widget.view.timeline.redraw();
+                        }
+                    }
+                });
 
             },
             browseCurrentBrowseWidget: function(entity) {

@@ -85,7 +85,11 @@ define(['module', 'logger', 'underscore', 'jquery', 'backbone', 'voc', 'UserAuth
                 return false;
             }
 
-            var url = this.oidcAuthorizationUrl + '?response_type=' + encodeURIComponent('id_token token') + '&client_id=' + this.oidcClientID + '&scope=' + encodeURIComponent('openid email profile');
+            var url = this.oidcAuthorizationUrl
+                + '?response_type=' + encodeURIComponent('id_token token')
+                + '&client_id=' + this.oidcClientID
+                + '&scope=' + encodeURIComponent('openid email profile')
+                + '&redirect_uri=' + encodeURIComponent(window.location.origin + window.location.pathname);
 
             window.location.href = url;
         },

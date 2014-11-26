@@ -543,3 +543,7 @@ label.notBoldLabel {
 	position: relative;
 }
 
+.widgetHidden {
+	display: none;
+}
+
