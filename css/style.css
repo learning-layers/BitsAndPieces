@@ -18,6 +18,11 @@ div.timelineFrame > .timeline {
     width: 90%;
     margin-left: 10%;
 }
+
+div.timelineFrame > .timeline .cluster {
+	z-index: 100;
+}
+
 img.icon {
     height: 50px;
     display:block;
