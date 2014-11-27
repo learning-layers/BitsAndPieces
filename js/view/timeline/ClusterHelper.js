@@ -164,7 +164,7 @@ function(_, Backbone, EntitiesHelper){
             var data = {
                 'start' : new Date(cluster.get(this.timeAttr)),
                 'content' : view.render().$el.get(0),
-                'className' : 'cluster'
+                'className' : 'timeline-cluster'
             };
             this.LOG.debug('addClusterView', cluster, view, data);
             this.timeline.addItem(data);

@@ -19,7 +19,7 @@ div.timelineFrame > .timeline {
     margin-left: 10%;
 }
 
-div.timelineFrame > .timeline .cluster {
+div.timelineFrame > .timeline .timeline-cluster {
 	z-index: 100;
 }
 
