@@ -271,13 +271,16 @@ div#tabs .ui-tabs-panel {
 	padding: 0;
 }
 
-#tabs ul.ui-tabs-nav li:first-child {
-	margin-left: 3px;
-	color: red;
+#tabs ul.ui-tabs-nav li {
+	width: 25%;
+	margin-left: 0;
+	margin-right: 0;
+	padding-left: 0;
+	padding-right: 0;
 }
 
 #tabs ul.ui-tabs-nav li a {
-	width: 73px;
+	width: 100%;
 	text-align: center;
 }
 
