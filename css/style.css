@@ -366,7 +366,7 @@ div#tabs .stream .resultSet .singleEntry .entryIcon img {
 
 div#tabs .stream .resultSet .singleEntry .entryContent {
 	display: inline-block;
-	width: 210px;
+	width: 180px;
 	min-height: 70px;
 	padding-left: 10px;
 }
