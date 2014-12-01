@@ -298,7 +298,7 @@ div#tabs .results .resultSet {
 
 div#tabs .results .resultSet .entity {
 	display: block;
-	height: 50px;
+	min-height: 50px;
 	margin: 10px 10px 10px 10px;
 }
 
@@ -307,18 +307,18 @@ div#tabs .results .resultSet .entity .labelable {
 }
 
 div#tabs .results .resultSet .entity .labelable img.icon {
-	margin:0;
 	display: inline-block;
 	max-width: 50px;
 }
 
 div#tabs .results .resultSet .entity .labelable label.withlabel {
-	position: relative;
-	top: 0px;
-	left: 5px;
 	display: inline-block;
 	min-height: 50px;
 	width: 200px;
+	vertical-align: top;
+	padding-left: 5px;
+	padding-top: 15px;
+	word-wrap: break-word;
 }
 
 .singleRecommendation .entryIcon img {
