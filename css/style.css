@@ -47,6 +47,18 @@ img.small-icon {
     overflow: visible;
 }
 
+.timeline-event .entity:hover .labelable .withlabel {
+	position: relative;
+	top: 10px;
+	background-color: #fff;
+	z-index: 999;
+	display: inline-block;
+}
+
+.timeline-cluster .entity:hover .labelable .withlabel {
+	top: 5px;
+}
+
 .labelable label, .labelable text {
     text-align: left;
     border: 0 none;
