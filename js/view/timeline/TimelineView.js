@@ -297,7 +297,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         redraw: function(e) {
             this.LOG.debug('clickCluster', e);
             this.timeline.redraw();
-            if ( e.clusterView ) {
+            if ( e && e.clusterView ) {
                 if ( e.type === 'bnp:expanded' ) {
                     e.clusterView.$el.parent().parent().css('z-index', '150');
                 } else if ( e.type === 'bnp:unexpanded' ) {
