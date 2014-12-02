@@ -55,6 +55,11 @@ img.small-icon {
     font-size: 50%;
     margin-top: 2px;
 }
+
+.labelable text {
+	font-size: 65%;
+}
+
 label.nolabel {
     font-style: italic;
     color: gray;
@@ -304,6 +309,10 @@ div#tabs .results .resultSet .entity {
 
 div#tabs .results .resultSet .entity .labelable {
 	max-width: 250px;
+}
+
+div#tabs .results .resultSet .entity .labelable label {
+	font-size: 65%;
 }
 
 div#tabs .results .resultSet .entity .labelable img.icon {
