@@ -5,7 +5,7 @@ div.timeline-event-content {
     overflow: visible;
 }
 div.timelineFrame {
-    height: 180px;
+    height: 200px;
 }
 div.timelineFrame > .user-container {
     width: 5%;
@@ -21,6 +21,7 @@ div.timelineFrame > .timeline {
 
 div.timelineFrame > .timeline .timeline-cluster {
 	z-index: 100;
+	padding-bottom: 5px;
 }
 
 img.icon {
@@ -56,7 +57,7 @@ img.small-icon {
 }
 
 .timeline-cluster .entity:hover .labelable .withlabel {
-	top: 5px;
+	top: 10px;
 }
 
 .labelable label, .labelable text {
@@ -64,11 +65,11 @@ img.small-icon {
     border: 0 none;
     display: block;
     font-family: sans;
-    font-size: 50%;
+    font-size: 85%;
     margin-top: 2px;
 }
 
-.labelable text {
+.timeline-event .labelable label {
 	font-size: 65%;
 }
 
@@ -321,10 +322,6 @@ div#tabs .results .resultSet .entity {
 
 div#tabs .results .resultSet .entity .labelable {
 	max-width: 250px;
-}
-
-div#tabs .results .resultSet .entity .labelable label {
-	font-size: 65%;
 }
 
 div#tabs .results .resultSet .entity .labelable img.icon {
