@@ -5,7 +5,7 @@ div.timeline-event-content {
     overflow: visible;
 }
 div.timelineFrame {
-    height: 180px;
+    height: 200px;
 }
 div.timelineFrame > .user-container {
     width: 5%;
@@ -18,6 +18,12 @@ div.timelineFrame > .timeline {
     width: 90%;
     margin-left: 10%;
 }
+
+div.timelineFrame > .timeline .timeline-cluster {
+	z-index: 100;
+	padding-bottom: 5px;
+}
+
 img.icon {
     height: 50px;
     display:block;
@@ -42,14 +48,31 @@ img.small-icon {
     overflow: visible;
 }
 
+.timeline-event .entity:hover .labelable .withlabel {
+	position: relative;
+	top: 10px;
+	background-color: #fff;
+	z-index: 999;
+	display: inline-block;
+}
+
+.timeline-cluster .entity:hover .labelable .withlabel {
+	top: 10px;
+}
+
 .labelable label, .labelable text {
     text-align: left;
     border: 0 none;
     display: block;
     font-family: sans;
-    font-size: 50%;
+    font-size: 85%;
     margin-top: 2px;
 }
+
+.timeline-event .labelable label {
+	font-size: 65%;
+}
+
 label.nolabel {
     font-style: italic;
     color: gray;
@@ -266,13 +289,16 @@ div#tabs .ui-tabs-panel {
 	padding: 0;
 }
 
-#tabs ul.ui-tabs-nav li:first-child {
-	margin-left: 3px;
-	color: red;
+#tabs ul.ui-tabs-nav li {
+	width: 25%;
+	margin-left: 0;
+	margin-right: 0;
+	padding-left: 0;
+	padding-right: 0;
 }
 
 #tabs ul.ui-tabs-nav li a {
-	width: 73px;
+	width: 100%;
 	text-align: center;
 }
 
@@ -290,7 +316,7 @@ div#tabs .results .resultSet {
 
 div#tabs .results .resultSet .entity {
 	display: block;
-	height: 50px;
+	min-height: 50px;
 	margin: 10px 10px 10px 10px;
 }
 
@@ -299,18 +325,18 @@ div#tabs .results .resultSet .entity .labelable {
 }
 
 div#tabs .results .resultSet .entity .labelable img.icon {
-	margin:0;
 	display: inline-block;
 	max-width: 50px;
 }
 
 div#tabs .results .resultSet .entity .labelable label.withlabel {
-	position: relative;
-	top: 0px;
-	left: 5px;
 	display: inline-block;
 	min-height: 50px;
 	width: 200px;
+	vertical-align: top;
+	padding-left: 5px;
+	padding-top: 15px;
+	word-wrap: break-word;
 }
 
 .singleRecommendation .entryIcon img {
@@ -358,7 +384,7 @@ div#tabs .stream .resultSet .singleEntry .entryIcon img {
 
 div#tabs .stream .resultSet .singleEntry .entryContent {
 	display: inline-block;
-	width: 210px;
+	width: 180px;
 	min-height: 70px;
 	padding-left: 10px;
 }
@@ -537,6 +563,14 @@ label.notBoldLabel {
 	padding-left: 5px;
 	padding-right: 5px;
 	z-index: 998;
+}
+
+.systemMessages {
+	padding-right: 5px !important;
+}
+
+.systemMessagesToolbarOpen {
+	padding-right: 335px !important;
 }
 
 .ajaxLoader {

@@ -3,6 +3,7 @@ define(['logger', 'underscore', 'jquery', 'backbone',
         'text!templates/circle_rename_modal.tpl'], function(Logger, _, $, Backbone, CategoryData, CircleRenameModalTemplate){
     return Backbone.View.extend({
         events: {
+            'submit form' : 'submitForm'
         },
         LOG: Logger.get('CircleRenameModalView'),
         initialize: function() {
@@ -37,6 +38,10 @@ define(['logger', 'underscore', 'jquery', 'backbone',
             this.$el.find('button.btn-primary')
                 .off('click') // Remove any previously registered handlers
                 .on('click', cb);
+        },
+        submitForm: function(e) {
+            e.preventDefault();
+            this.$el.find('button.btn-primary').trigger('click');
         }
     });
 });

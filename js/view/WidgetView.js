@@ -62,7 +62,7 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
                     //groupBy: this.vie.namespaces.uri('sss:user'),
                     timeline: {
                         'width': '100%',
-                        'height': '180px',
+                        'height': '200px',
                         'editable': false, // disable dragging and editing events
                         'axisOnTop': true,
                         'stackEvents': false,

@@ -121,8 +121,8 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
         _.each(this.allUsers, function(user) {
             // Make sure to remove the currently logged in user
             // Sharing with self is not allowed
-            // Also remove 'sytem' user
-            if ( user.id !== userParams.user && user.id.indexOf('user/sytem', user.id.length - 'user/sytem'.length) === -1 ) {
+            // Also remove 'system' user
+            if ( user.id !== userParams.user && user.id.indexOf('user/system', user.id.length - 'user/system'.length) === -1 ) {
                 searchableUsers.push({
                     label: user.label,
                     value: user.id

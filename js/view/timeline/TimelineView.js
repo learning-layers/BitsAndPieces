@@ -200,7 +200,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 'start' : start,
                 'end' : end,
                 'min' : new Date('2013-01-01'),
-                'max' : new Date('2015-01-01'),
+                'max' : new Date('2016-01-01'),
                 'zoomMin' : 300000, // 5 minute
                 'zoomMax' : 4320000000 // 5 days
             }));
@@ -297,6 +297,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         redraw: function(e) {
             this.LOG.debug('clickCluster', e);
             this.timeline.redraw();
+            if ( e && e.clusterView ) {
+                if ( e.type === 'bnp:expanded' ) {
+                    e.clusterView.$el.parent().parent().css('z-index', '150');
+                } else if ( e.type === 'bnp:unexpanded' ) {
+                    e.clusterView.$el.parent().parent().css('z-index', '');
+                }
+            }
         }
 
     });

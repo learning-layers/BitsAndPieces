@@ -15,6 +15,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
         return Backbone.View.extend({
             events : {
                 'bnp:clickEntity' : 'clickEntity',
+                'bnp:showHideToolbar' : 'handleShowHideToolbar'
             },
             initialize: function() {
                 this.vie = this.options.vie;
@@ -190,6 +191,15 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                 if ( e.viewContext && e.viewContext === this.toolbarView ) {
                     AppLog.debug("clickEntity called within ToolbarView context");
                     this.browseCurrentBrowseWidget(e.entity);
+                }
+            },
+            handleShowHideToolbar: function(e) {
+                var systemMessages = $(document).find('#systemMessages');
+
+                if ( 'shown' === e.customType ) {
+                    systemMessages.toggleClass('systemMessagesToolbarOpen', true, function() {});
+                } else {
+                    systemMessages.toggleClass('systemMessagesToolbarOpen', false);
                 }
             }
         });

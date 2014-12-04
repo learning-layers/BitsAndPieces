@@ -29,14 +29,20 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
             var contents = $('<div>');
             this.$el.append(contents);
             if( this.expanded ) {
+                var tmpWidth = 0;
                 contents.addClass("expanded");
                 contents.append("<div class=\"buttons\"><button class=\"closeCluster\" title=\"Close\">X</button><button class=\"zoomCluster\" title=\"Fit to Timeline\">&lt;&gt;</button></div>");
+                tmpWidth += contents.find('.buttons').outerWidth(true) + 5;
                 _.each(entities, function(entity) {
-                    contents.append(new EntityView({
+                    var tmpView =  new EntityView({
                         'model': entity
-                    }).render().$el);
-                            
+                    }).render(),
+                        tmpViewWidth = tmpView.$el.outerWidth(true);
+
+                    contents.append(tmpView.$el);
+                    tmpWidth += (tmpViewWidth >= 50) ? tmpViewWidth : 50;
                 });
+                contents.css('width', tmpWidth + 'px');
             } else {
                 contents.addClass("expandable");
                 var label = entities.length + " bits";
