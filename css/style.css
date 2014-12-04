@@ -565,6 +565,14 @@ label.notBoldLabel {
 	z-index: 998;
 }
 
+.systemMessages {
+	padding-right: 5px !important;
+}
+
+.systemMessagesToolbarOpen {
+	padding-right: 335px !important;
+}
+
 .ajaxLoader {
 	position: relative;
 }

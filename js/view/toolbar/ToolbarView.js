@@ -14,6 +14,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'bnp:clickEntity' : 'clickEntity'
         },
         LOG: Logger.get('ToolbarView'),
+        _triggerShowHideEvent: function(type) {
+            var ev = $.Event("bnp:showHideToolbar", {
+                customType: type
+            });
+            this.$el.trigger(ev);
+        },
         initialize: function() {
             this.is_hidden = true;
             this.$el.addClass('toolbarHidden');
@@ -57,11 +63,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     toolbar.is_hidden = false;
                     handle.find('.glyphicon').switchClass('glyphicon-chevron-left', 'glyphicon-chevron-right');
                 });
+                toolbar._triggerShowHideEvent('shown');
             } else {
                 this.$el.switchClass('toolbarShown', 'toolbarHidden', function() {
                     toolbar.is_hidden = true;
                     handle.find('.glyphicon').switchClass('glyphicon-chevron-right', 'glyphicon-chevron-left');
                 });
+                toolbar._triggerShowHideEvent('hidden');
             }
         },
         isHidden: function() {
