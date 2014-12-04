@@ -24,7 +24,7 @@
 
         </div><!-- .showInToolbar -->
 
-        <div class="form-group hotTopics">
+        <div class="form-group hotTopics" style="display:none;">
             <label class="control-label">Hot topics:</label>
 
             <div class="tagcloud"></div>
