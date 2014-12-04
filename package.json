@@ -1,0 +1,33 @@
+{
+  "name": "BitsAndPieces",
+  "version": "2.2.2",
+  "description": "Bits and Pieces is a user interface framework for sensemaking based on a design idea introduced in the strand of the EU project Learning Layers.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/learning-layers/BitsAndPieces.git"
+  },
+  "author": "Learning Layers <layers@learning-layers.eu> (https://github.com/learning-layers)",
+  "contributors": [
+    {
+      "name": "Matthias Rella",
+      "email: "mrella@know-center.at"
+    },
+    {
+      "name": "Isaias Barreto da Rosa",
+      "email": "ibr@tlu.ee"
+    },
+    {
+      "name": "Dieter Theiler",
+      "email": "dtheiler@know-center.at",
+    },
+    {
+      "name": "Pjotr Savitki",
+      "email": "gnum@tlu.ee",
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "http://layers.dbis.rwth-aachen.de/jira/browse/LL/component/10109#selectedTab=com.atlassian.jira.plugin.system.project%3Acomponent-issues-panel"
+  },
+  "homepage": "https://github.com/learning-layers/BitsAndPieces",
+  "private": true
+}
