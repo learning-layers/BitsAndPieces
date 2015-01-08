@@ -122,7 +122,6 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                         'url' : sss.hostREST + op + "/",
                         'type': "POST",
                         'data' : JSON.stringify(_.extend(par, {
-                            'op': op,
                             'user' : userUri || "mailto:dummyUser",
                             'key' : sss.userKey || "someKey"
                         })),

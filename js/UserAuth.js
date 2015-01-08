@@ -34,9 +34,6 @@ function (module, Logger, $) {
                 defer = $.Deferred();
                 op = "authCheckCred";
                 params = {
-                    'op': op,
-                    'user' : "mailto:dummyUser",
-                    'key' : "someKey",
                     'label' : username, 
                     'password' : password
                 },
