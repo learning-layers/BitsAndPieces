@@ -261,7 +261,7 @@ define(['underscore', 'logger'], function(_, Logger) {
             },
             'preparation' : preparations['scrubParams']
         },
-        'entityShare' : {
+        'circleEntityShare' : {
             'resultKey' : 'worked',
             'params' : {
                 'users' : { 'type' : 'array' },

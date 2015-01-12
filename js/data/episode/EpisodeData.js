@@ -140,17 +140,17 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
             model.getSubject(),
             function(modelUri) {
                 that.vie.save({
-                    'service' : 'entityShare',
+                    'service' : 'circleEntityShare',
                     'data' : {
                         'entity' : modelUri,
                         'users' : users,
                         'comment' : comment
                     }
                 }).using('sss').execute().success(function(){
-                    that.LOG.debug('success entityShare');
+                    that.LOG.debug('success circleEntityShare');
                     defer.resolve(true);
                 }).fail(function() {
-                    that.LOG.debug('error entityShare');
+                    that.LOG.debug('error circleEntityShare');
                     defer.reject(false);
                 });
             }
