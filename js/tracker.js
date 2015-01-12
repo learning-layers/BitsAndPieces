@@ -5,7 +5,6 @@ define(['module', 'jquery', 'userParams', 'logger'],
         tracker.setHandler(function(messages, context){
             var op = "uEAdd";
             var params = {
-                    'op': op,
                     'user' : userParams.user,
                     'key' : userParams.userKey,
                     'type' : messages[0],
