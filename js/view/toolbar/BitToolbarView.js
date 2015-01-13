@@ -9,7 +9,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'click .deleteTag' : 'deleteTag',
             'click .deadline .clearDatepicker' : 'clearDatepicker',
             'keypress input[name="title"]' : 'updateOnEnter',
+            'keypress textarea[name="description"]' : 'updateOnEnter',
             'blur input[name="title"]' : 'changeLabel',
+            'blur textarea[name="description"]' : 'changeDescription',
             'click .recommendedTags .tagcloud a' : 'clickRecommendedTag'
         },
         LOG: Logger.get('BitToolbarView'),
@@ -113,7 +115,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if (e.keyCode == 13) {
                 this.LOG.debug('e', e);
                 var currentTarget = $(e.currentTarget);
-                if ( currentTarget.attr('name') === 'title' ) {
+                if ( currentTarget.attr('name') === 'title' || currentTarget.attr('name') === 'description' ) {
                     $(e.currentTarget).blur();
                 } else {
                     this.addTag($(e.currentTarget).val());
@@ -127,6 +129,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             }
             return {'entity' : {
                 'label' : this.model.get(Voc.label),
+                'description' : this.model.get(Voc.description),
                 'author' : author,
                 'creationTime' : DateHelpers.formatTimestampDateDMY(this.model.get(Voc.creationTime)),
                 'views' : this.model.get(Voc.hasViewCount) || 0,
@@ -151,6 +154,21 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             EntityData.setLabel(this.model, label, {
                 'error' : function() {
                     that.$el.find('input[name="title"]').effect("shake");
+                },
+                'user_initiated' : true
+            });
+        },
+        changeDescription: function(e) {
+            var that = this,
+            currentTarget = $(e.currentTarget),
+            description = currentTarget.val();
+
+            if( this.model.get(Voc.description) == description) return;
+            this.LOG.debug('changeDescription', description);
+            // Make sure to set user_initiated flag
+            EntityData.setDescription(this.model, description, {
+                'error' : function() {
+                    that.$el.find('textarea[name="description"]').effect("shake");
                 },
                 'user_initiated' : true
             });

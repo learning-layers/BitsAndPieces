@@ -104,6 +104,27 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
             }
         });
     };
+    m.setDescription = function(model, description, options) {
+        var that = this;
+        options = options || {};
+        // Only change if user_initiated flag is set to true
+        if ( options.user_initiated !== true ) return;
+        if ( model.previous(Voc.description) === description ) return;
+        model.save(Voc.description, description, {
+            'success' : function(result) {
+                that.LOG.debug('success setDescription', result);
+                if(options.success) {
+                    options.success(result);
+                }
+            },
+            'error' : function(result) {
+                that.LOG.debug('fail setDescription', result);
+                if( options.error ) {
+                    options.error(result);
+                }
+            }
+        });
+    };
     m.search = function(tags, callback) {
         var that = this;
         this.vie.load({

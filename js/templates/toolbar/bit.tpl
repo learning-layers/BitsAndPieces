@@ -14,6 +14,11 @@
                 <input type="text" class="form-control" name="title" value="<%= entity.label %>" />
             </div>
 
+            <div class="form-group">
+                <label class="control-label">Description</label>
+                <textarea class="form-control" name="description"><%= entity.description %></textarea>
+            </div>
+
             <table>
                 <tbody>
                     <tr>
