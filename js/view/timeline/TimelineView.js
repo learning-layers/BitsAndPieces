@@ -201,8 +201,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 'end' : end,
                 'min' : new Date('2013-01-01'),
                 'max' : new Date('2016-01-01'),
-                'zoomMin' : 300000, // 5 minute
-                'zoomMax' : 4320000000 // 5 days
+                'zoomMin' : 21600000, // 6 hours
+                'zoomMax' : 31556940000 // 1 year
             }));
             this.timeline.deleteItem(0); // remove dummy node
             this.LOG.debug('timeline', this.timeline);
