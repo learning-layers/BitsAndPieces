@@ -1,6 +1,6 @@
 define(['logger', 'underscore', 'jquery', 'backbone',
-        'data/sss/CategoryData',
-        'text!templates/circle_rename_modal.tpl'], function(Logger, _, $, Backbone, CategoryData, CircleRenameModalTemplate){
+        'data/sss/CategoryData', 'data/episode/UserData',
+        'text!templates/circle_rename_modal.tpl'], function(Logger, _, $, Backbone, CategoryData, UserData, CircleRenameModalTemplate){
     return Backbone.View.extend({
         events: {
             'submit form' : 'submitForm'
@@ -15,7 +15,7 @@ define(['logger', 'underscore', 'jquery', 'backbone',
             
             this.$el.find(this.renamedCircleLableSelector).autocomplete({
                 source: [] // The source data will be set later
-            });
+            }).autocomplete('widget').addClass('circleRenameAutoComplete');
             
             return this;
         },
@@ -26,7 +26,7 @@ define(['logger', 'underscore', 'jquery', 'backbone',
             this.$el.find(this.renamedCircleLableSelector).val(value);
         },
         resetAutocompleteSource: function() {
-            this.$el.find(this.renamedCircleLableSelector).autocomplete('option', 'source', CategoryData.getPredefinedCategories());
+            this.$el.find(this.renamedCircleLableSelector).autocomplete('option', 'source', _.union(CategoryData.getPredefinedCategories(), UserData.getRecommendedTags()));
         },
         showModal: function() {
             this.$el.find(this.circleRenameModalSelector).modal('show');

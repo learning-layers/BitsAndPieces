@@ -9,6 +9,8 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
         this.setIntegrityCheck(Voc.hasEpisode, Voc.EPISODE, Voc.belongsToUser);
         this.setIntegrityCheck(Voc.currentVersion, Voc.VERSION);
         this.fetchAllUsers();
+        this.recommendedTags = [];
+        this.fetchRecommendedTags();
     };
     m.LOG = Logger.get('UserData');
     /** 
@@ -206,6 +208,27 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
         }).from('sss').execute().success(function(entities) {
             that.vie.entities.addOrUpdate(entities);
         });
+    };
+    m.fetchRecommendedTags = function() {
+        var that = this;
+        this.vie.load({
+            'service' : 'recommTags',
+            'data' : {
+                'forUser' : userParams.user,
+                'maxTags' : 20
+            }
+        }).using('sss').execute().success(function(tags) {
+            if ( tags && _.isArray(tags) && !_.isEmpty(tags) ) {
+                var tagsLabels;
+                tagsLabels = _.map(tags, function(tag) {
+                    return tag.label;
+                });
+                that.recommendedTags = tagsLabels;
+            }
+        });
+    };
+    m.getRecommendedTags = function() {
+        return _.clone(this.recommendedTags);
     };
     return m;
 });
