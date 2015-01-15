@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 'userParams', 'view/sss/EntityView'], function(Logger, Voc, _, Data, EpisodeData, userParams, EntityView){
+define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/EpisodeData', 'userParams', 'view/sss/EntityView'], function(Logger, Voc, _, $, Data, EpisodeData, userParams, EntityView){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize UserData");
@@ -229,6 +229,25 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
     };
     m.getRecommendedTags = function() {
         return _.clone(this.recommendedTags);
+    };
+    m.getCurrentUserTagFrequencies = function() {
+        var that = this,
+            defer = $.Deferred();
+        this.vie.load({
+            'service' : 'tagFrequsGet',
+            'data' : {
+                'forUser' : userParams.user,
+                'useUsersEntities' : true
+            }
+        }).using('sss').execute().success(function(data) {
+            that.LOG.debug('success tagFrequsGet', data);
+            defer.resolve(data);
+        }).fail(function(f) {
+            that.LOG.debug('error tagFrequsGet', f);
+            defer.reject(f);
+        });
+
+        return defer.promise();
     };
     return m;
 });

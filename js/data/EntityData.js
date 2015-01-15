@@ -125,16 +125,28 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
             }
         });
     };
-    m.search = function(tags, callback) {
-        var that = this;
+    m.search = function(keywords, tags, callback) {
+        var that = this,
+            serviceData = {
+                'typesToSearchOnlyFor' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook'],
+                'localSearchOp' : 'or',
+                'globalSearchOp' : 'and'
+            };
+
+        if ( !_.isEmpty(keywords) ) {
+            serviceData.includeLabel = true;
+            serviceData.labelsToSearchFor = keywords;
+            serviceData.includeDescription = true;
+            serviceData.descriptionsToSearchFor = keywords;
+        }
+        if ( !_.isEmpty(tags) ) {
+            serviceData.includeTags = true;
+            serviceData.tagsToSearchFor = tags;
+        }
+
         this.vie.load({
             'service' : 'search',
-            'data' : {
-                'keywordsToSearchFor' : tags,
-                'includeTags' : true,
-                'includeLabel' : true,
-                'typesToSearchOnlyFor' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
-            }
+            'data' : serviceData
         }).using('sss').execute().success(function(entities, passThrough){
             that.LOG.debug('search entities', entities, passThrough);
             entities = that.vie.entities.addOrUpdate(entities);

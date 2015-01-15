@@ -318,6 +318,9 @@ define(['underscore', 'logger'], function(_, Logger) {
         'activitiesGet' : {
             'resultKey' : 'activities',
             'decoration' : decorations['single_entity']
+        },
+        'tagFrequsGet' : {
+            'resultKey' : 'tagFrequs'
         }
     };
     return m;

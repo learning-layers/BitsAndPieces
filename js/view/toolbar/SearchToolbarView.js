@@ -1,23 +1,35 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
         'text!templates/toolbar/search.tpl',
-        'data/EntityData', 'view/sss/EntityView'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, SearchTemplate, EntityData, EntityView){
+        'data/EntityData', 'data/episode/UserData', 'view/sss/EntityView'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, SearchTemplate, EntityData, UserData, EntityView){
     return Backbone.View.extend({
         searchResultSet : [],
         tagCloud: {},
-        currentTagFilter : null,
         events: {
             'keypress .search input' : 'updateOnEnter', 
             'click .filter .clearDatepicker' : 'clearDatepicker',
-            'click .tagcloud a' : 'filterSearchResults',
+            'click .tagcloud a' : 'tagCloudTagClicked',
             'click .search a' : '_clearSearch',
             'click .results button' : 'loadNextPage'
         },
         LOG: Logger.get('SearchToolbarView'),
         initialize: function() {
+            var that = this,
+                promise = UserData.getCurrentUserTagFrequencies();
             this.loadMoreResultsSelector = '.results button';
             this.resultsSelector = '.results';
             this.resultSetSelector = '.results .resultSet';
             this.tagCloudSelector = '.tagcloud';
+            this.searchInputSelector = '.search input';
+
+            promise.then(
+                function(data) {
+                    that.tagCloud = data;
+                    that.displayTagCloud();
+                },
+                function(f) {
+                    that.LOG.debug('Failed to load tags cloud frequencies', f);
+                }
+            );
         },
         render: function() {
             var search = _.template(SearchTemplate);
@@ -30,29 +42,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
                 this.search($(e.currentTarget).val());
             }
         },
-        _getModelTagsArray: function(model) {
-            // Can return undefined/null instead of an array
-            // Deals with single tag case
-            var tags = model.get(Voc.hasTag);
-            if ( _.isString(tags) ) {
-                tags = [tags];
-            }
-
-            return tags;
-        },
-        _addModelTagsToTagCloud: function(model) {
-            var that = this,
-                tmpTags = this._getModelTagsArray(model);
-            if ( tmpTags ) {
-                _.each(tmpTags, function(tag) {
-                    if ( _.has(that.tagCloud, tag) ) {
-                        that.tagCloud[tag] += 1;
-                    } else {
-                        that.tagCloud[tag] = 1;
-                    }
-                });
-            }
-        },
         _addToResultSet: function(results) {
             var that = this;
                 box = that.$el.find(this.resultSetSelector);
@@ -61,29 +50,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
                 var view = new EntityView({
                     model : result
                 });
-                if ( that.getCurrentTagFilter() === null ) {
-                    box.append(view.render().$el);
-                } else {
-                    if ( that._checkModelHasTag(view.model, that.getCurrentTagFilter()) ) {
-                        box.append(view.render().$el);
-                    } else {
-                        box.append(view.render().$el.hide());
-                    }
-                }
+                box.append(view.render().$el);
                 that.searchResultSet.push(view);
-                that._addModelTagsToTagCloud(view.model);
             });
-            this.displayTagcloud();
         },
-        _checkModelHasTag: function(model, tag) {
-            var tmpTags = this._getModelTagsArray(model);
-
-            if ( _.indexOf(tmpTags, tag) !== -1 ) {
-                return true;
-            } else {
-                return false;
-            }
-        },
+        //@unused Probably is unused
         _resetTagCloud: function() {
             this.tagCloud = {};
         },
@@ -99,17 +70,21 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
         _clearSearch: function(e) {
            e.preventDefault();
            this.$el.find('.search input').val('');
-           this.$el.find(this.tagCloudSelector).empty();
            this.$el.find(this.resultsSelector).hide();
-           this._resetTagCloud();
+           this.$el.find(this.tagCloudSelector).find('span.selected').removeClass('selected');
            this._clearResultSet();
-           this._resetCurrentTagFilter();
         },
-        _resetCurrentTagFilter: function() {
-            this.currentTagFilter = null;
-        },
-        getCurrentTagFilter: function() {
-            return this.currentTagFilter;
+        _getSelectedTags: function() {
+            var selectedTags = [],
+                selectedTagElements = this.$el.find(this.tagCloudSelector).find('span.selected');
+
+            if ( selectedTagElements && selectedTagElements.length > 0 ) {
+                _.each(selectedTagElements, function(element) {
+                    selectedTags.push($(element).find('a').data('tag'));
+                });
+            }
+
+            return selectedTags;
         },
         addAjaxLoader: function(element) {
             if ( !this.spinner ) {
@@ -130,13 +105,17 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
         },
         search: function(searchString) {
             var that = this,
-                tags = [searchString];
-            EntityData.search(tags, function(results, passThrough) {
+                keywords = [],
+                tags = this._getSelectedTags();
+
+            // Replace multiple spaces and split by space
+            searchString = searchString.replace(/\s{2,}/g, '');
+            keywords = searchString.split(' ');
+
+            EntityData.search(keywords, tags, function(results, passThrough) {
 
                 that.$el.find(that.loadMoreResultsSelector).hide();
                 that._clearResultSet();
-                that._resetCurrentTagFilter();
-                that._resetTagCloud();
 
                 that.pageNumber = passThrough.pageNumber;
                 that.pageNumbers = passThrough.pageNumbers;
@@ -181,7 +160,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
             e.preventDefault();
             this.$el.find('.filter input.datepicker').val('');
         },
-        displayTagcloud: function() {
+        displayTagCloud: function(data) {
             var that = this,
                 tagCloudElement = this.$el.find(this.tagCloudSelector),
                 fontMin = 10,
@@ -195,37 +174,23 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
                 return;
             }
 
-            frequMin = _.min(that.tagCloud);
-            frequMax = _.max(that.tagCloud);
+            frequMin = _.min(that.tagCloud, function(tag) { return tag.frequ; }).frequ;
+            frequMax = _.max(that.tagCloud, function(tag) { return tag.frequ; }).frequ;
 
-            _.each(that.tagCloud, function(frequ, tag) {
-                var fontSize = (frequ === frequMin) ? fontMin : (frequ / frequMax) * (fontMax - fontMin) + fontMin,
+            _.each(that.tagCloud, function(single) {
+                var tag = single.label,
+                    frequ = single.frequ,
+                    fontSize = (frequ === frequMin) ? fontMin : (frequ / frequMax) * (fontMax - fontMin) + fontMin,
                     tagClass = 'badge';
-                if ( that.getCurrentTagFilter() === tag ) {
-                    tagClass += ' selected';
-                }
                 tagCloudElement.append(' <span class="' + tagClass + '"><a href="#" style="font-size:' + fontSize+ 'px;" data-tag="' + tag + '">' + tag + '</a></span>');
             });
         },
-        filterSearchResults: function(e) {
-            var that = this,
-                currentTarget = $(e.currentTarget),
-                tagcloud = $(this.$el).find(this.tagCloudSelector),
-                tag = currentTarget.data('tag'),
-                tmpTags;
+        tagCloudTagClicked: function(e) {
             e.preventDefault();
+            var currentTarget = $(e.currentTarget);
 
-            this.currentTagFilter = tag;
-            tagcloud.find('span.badge').removeClass('selected');
-            currentTarget.parent().addClass('selected');
-
-            _.each(this.searchResultSet, function(result) {
-                if ( that._checkModelHasTag(result.model, tag) ) {
-                    result.$el.show();
-                } else {
-                    result.$el.hide();
-                }
-            });
+            currentTarget.parent().toggleClass('selected');
+            this.search( this.$el.find(this.searchInputSelector).val() );
         }
     });
 });

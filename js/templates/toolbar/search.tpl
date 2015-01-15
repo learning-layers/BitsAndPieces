@@ -10,7 +10,7 @@
             <div class="form-group search">
                 <label class="control-label">Search a Bit:</label>
                 <div class="input-group">
-                    <input class="form-control" type="text" value="" placeholder="Enter tag" />
+                    <input class="form-control" type="text" value="" placeholder="Enter text to search for" />
                     <span class="input-group-addon">
                         <a href="#"><span class="glyphicon glyphicon-remove-circle"></span></a>
                     </span>
