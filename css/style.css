@@ -520,7 +520,22 @@ form.loginForm {
 }
 
 .shareBitsOnly {
-	max-width: 250px;
+	width: 100%;
+	max-height: 150px;
+	overflow-y: auto;
+	margin-bottom: 0;
+}
+
+.shareBitsOnly input[type="checkbox"] {
+	display: none;
+}
+
+.shareBitsOnly label.selectable {
+	font-weight: normal;
+}
+
+.shareBitsOnly label.selected {
+	color: #5BA74A;
 }
 
 ul.episodeListing {

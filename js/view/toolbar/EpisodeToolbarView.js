@@ -16,14 +16,18 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'click input[name="onlyselected"]' : 'clickOnlySelected',
             'keyup input[name="search"]' : 'updateOnKeyUp',
             'keyup textarea[name="notificationtext"]' : 'revalidateNotificationText',
-            'change select[name="only"]' : 'revalidateOnlySelected',
-            'click .search a' : 'clearEpisodesSearch'
+            'change input[name="only[]"]' : 'revalidateOnlySelected',
+            'click .search a' : 'clearEpisodesSearch',
+            'click .shareBitsOnly label.selectable' : 'clickCheckboxLabel'
         },
         LOG: Logger.get('EpisodeToolbarView'),
         initialize: function() {
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), this.episodeVersionChanged, this);
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEpisode), this.changeEpisodeSet, this);
             this.selectedUsers = [];
+            this.shareBitsOnlySelector = '.shareBitsOnly';
+            this.onlySelector = 'input[name="only[]"]';
+            this.onlySelectedSelector = 'input[name="onlyselected"]';
         },
         episodeVersionChanged: function() {
             this.render();
@@ -153,13 +157,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         shareTypeChanged: function(e) {
             if ( $(e.currentTarget).val() === 'coediting' ) {
-                var onlyselected = this.$el.find('input[name="onlyselected"]');
+                var onlyselected = this.$el.find(this.onlySelectedSelector);
                 if ( onlyselected.is(':checked') ) {
                     onlyselected.trigger('click');
                 }
                 onlyselected.prop('disabled', true)
             } else if ( $(e.currentTarget).val() === 'separatecopy' ) {
-                this.$el.find('input[name="onlyselected"]').prop('disabled', false);
+                this.$el.find(this.onlySelectedSelector).prop('disabled', false);
             }
         },
         shareEpisode: function(e) {
@@ -167,7 +171,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 hasErrors = false,
                 notificationTextElem = this.$el.find('textarea[name="notificationtext"]'),
                 shareType = this.$el.find('input[name="sharetype"]:checked').val(),
-                onlySelected = this.$el.find('input[name="onlyselected"]').is(':checked'),
+                onlySelected = this.$el.find(this.onlySelectedSelector).is(':checked'),
                 notificationText = notificationTextElem.val(),
                 users = [],
                 excluded = [],
@@ -204,10 +208,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 // Determine if some bits need to be excluded
                 if ( onlySelected === true ) {
                     this.LOG.debug('Only selected bits');
-                    _.each(this.$el.find('select[name="only"] option:not(:selected)'), function(element) {
+                    _.each(this.$el.find(this.onlySelector + ':not(:checked)'), function(element) {
                         excluded.push($(element).val());
                     });
                 }
+
                 var promise = EpisodeData.copyEpisode(episode, this.selectedUsers, excluded, notificationText);
 
                 promise.done(function() {
@@ -231,7 +236,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.$el.find('input[name="sharewith"]').val('');
             this.$el.find('textarea[name="notificationtext"]').val('');
             this.$el.find('.selectedUser').remove();
-            this.$el.find('select[name="only"]').remove();
+            this.$el.find(this.shareBitsOnlySelector).remove();
             this.selectedUsers = [];
         },
         addSelectedUser: function(event, ui, autocomplete) {
@@ -271,22 +276,45 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             var current = this.getCurrentEntitiesAndCircles();
             if ( $(e.currentTarget).is(':checked') ) {
                 // Add and render
-                var select = $('<select name="only" multiple="multiple" class="form-control shareBitsOnly"></select>'),
-                    circles = $('<optgroup label="Circles"></optgroup>'),
-                    entities = $('<optgroup label="Entities"></optgrpup>');
+                var select = $('<div class="panel panel-default shareBitsOnly"><div class="panel-body"></div></div>'),
+                    circles = $('<div><label>Circles</label></div>'),
+                    entities = $('<div><label>Entities</label></div>');
                 _.each(current.circles, function(circle) {
-                    circles.append('<option value="' + circle.getSubject() + '">' + circle.get(Voc.label) + '</option>');
+                    var circleSubect = circle.getSubject(),
+                        circleElemId = 'only-' + circleSubect;
+                    circles.append(
+                        '<div><input type="checkbox" id="'
+                        + circleElemId
+                        + '" name="only[]" value="'
+                        + circleSubect
+                        + '" /><label for="'
+                        + circleElemId
+                        + '" class="selectable">'
+                        + circle.get(Voc.label)
+                        + '</label></div>'
+                    );
                 });
                 _.each(current.entities, function(orgaentity) {
-                    var entity = orgaentity.get(Voc.hasResource);
-                    entities.append('<option value="' + orgaentity.getSubject() + '">' + entity.get(Voc.label) + '</option>');
+                    var entity = orgaentity.get(Voc.hasResource),
+                        orgaEntitySubject = orgaentity.getSubject(),
+                        orgaEntityElemId = 'only-' + orgaEntitySubject;
+                    entities.append(
+                        '<div><input type="checkbox" id="'
+                        + orgaEntityElemId
+                        + '" name="only[]" value="'
+                        + orgaEntitySubject + '" /><label for="'
+                        + orgaEntityElemId
+                        + '" class="selectable">'
+                        + entity.get(Voc.label)
+                        + '</label></div>'
+                    );
                 });
-                select.append(circles);
-                select.append(entities);
+                select.find('.panel-body').append(circles);
+                select.find('.panel-body').append(entities);
                 $(e.currentTarget).after(select);
             } else {
                 this.validateOnlySelected();
-                this.$el.find('select[name="only"]').remove();
+                this.$el.find(this.shareBitsOnlySelector).remove();
             }
         },
         getEpisodes: function() {
@@ -332,19 +360,20 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.validateNotificationText();
         },
         validateOnlySelected: function() {
-            var onlySelectedElem = this.$el.find('select[name="only"]'),
-                onlySelected = this.$el.find('input[name="onlyselected"]').is(':checked');
+            var onlySelectedElemsChecked = this.$el.find(this.onlySelector + ':checked'),
+                shareBitsOnlyElem = this.$el.find(this.shareBitsOnlySelector),
+                onlySelected = this.$el.find(this.onlySelectedSelector).is(':checked');
 
-            InputValidation.removeAlertsFromParent(onlySelectedElem);
+            InputValidation.removeAlertsFromParent(shareBitsOnlyElem);
             if ( !onlySelected ) {
-                InputValidation.removeValidationStateFromParent(onlySelectedElem);
+                InputValidation.removeValidationStateFromParent(shareBitsOnlyElem);
                 return true;
-            } else if ( onlySelectedElem.find('option:selected').length === 0 ) {
-                InputValidation.addValidationStateToParent(onlySelectedElem, 'has-error');
-                InputValidation.addAlert(onlySelectedElem, 'alert-danger', 'Please select at least one entity or circle!');
+            } else if ( onlySelectedElemsChecked.length === 0 ) {
+                InputValidation.addValidationStateToParent(shareBitsOnlyElem, 'has-error');
+                InputValidation.addAlert(shareBitsOnlyElem, 'alert-danger', 'Please select at least one entity or circle!');
                 return false;
             } else {
-                InputValidation.removeValidationStateFromParent(onlySelectedElem);
+                InputValidation.removeValidationStateFromParent(shareBitsOnlyElem);
                 return true;
             }
 
@@ -363,6 +392,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 }
                 return uri;
             });
+        },
+        clickCheckboxLabel: function(e) {
+            $(e.currentTarget).toggleClass('selected');
         }
     });
 });
