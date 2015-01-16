@@ -7,8 +7,13 @@
     <div class="panel-body">
 
         <div class="toolbarSection">
+            <div class="form-group tagSearch">
+                <label class="control-label">Search with tags:</label>
+                <div class="tagcloud"></div>
+            </div>
+
             <div class="form-group search">
-                <label class="control-label">Search a Bit:</label>
+                <label class="control-label">Search in labels and descriptions:</label>
                 <div class="input-group">
                     <input class="form-control" type="text" value="" placeholder="Enter text to search for" />
                     <span class="input-group-addon">
@@ -16,9 +21,6 @@
                     </span>
                 </div>
             </div>
-
-            <div class="tagcloud"></div>
-            <br />
         </div>
 
         <div class="toolbarSection">

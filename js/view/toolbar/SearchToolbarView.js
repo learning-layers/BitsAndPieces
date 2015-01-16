@@ -8,7 +8,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
             'keypress .search input' : 'updateOnEnter', 
             'click .filter .clearDatepicker' : 'clearDatepicker',
             'click .tagcloud a' : 'tagCloudTagClicked',
-            'click .search a' : '_clearSearch',
+            'click .search a' : '_clearLabelSearchAndRestart',
             'click .results button' : 'loadNextPage'
         },
         LOG: Logger.get('SearchToolbarView'),
@@ -20,9 +20,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
             this.resultSetSelector = '.results .resultSet';
             this.tagCloudSelector = '.tagcloud';
             this.searchInputSelector = '.search input';
+            this.tagSearchSelector = '.tagSearch';
 
             promise.then(
                 function(data) {
+                    that.$el.find(that.tagSearchSelector).show();
                     that.tagCloud = data;
                     that.displayTagCloud();
                 },
@@ -36,6 +38,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
             this.$el.html(search);
 
             this.$el.find('.filter input.datepicker').datepicker();
+            this.$el.find(this.tagSearchSelector).hide();
         },
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {
@@ -67,6 +70,15 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
            this.pageNumbers = null;
            this.pagesID = null;
         },
+        _clearLabelSearchAndRestart: function(e) {
+           e.preventDefault();
+           this.$el.find('.search input').val('');
+           this.$el.find(this.resultsSelector).hide();
+           this._clearResultSet();
+           // Restart the search because there might be selected tags
+           this.search( this.$el.find(this.searchInputSelector).val() );
+        },
+        //@unused
         _clearSearch: function(e) {
            e.preventDefault();
            this.$el.find('.search input').val('');
