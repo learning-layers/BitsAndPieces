@@ -7,7 +7,7 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
             //'mouseover .expandable' : 'expand', 
             //'mouseleave .expanded' : 'close',
             'click .expanded .closeCluster' : 'close',
-            'click .expanded .zoomCluster' : 'zoom'
+            'click .expanded .zoomCluster' : 'zoom' //@unused UI removed
         },
         initialize: function(options) {
             this.model.on('change:entities', this.render, this);
@@ -31,7 +31,10 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
             if( this.expanded ) {
                 var tmpWidth = 0;
                 contents.addClass("expanded");
-                contents.append("<div class=\"buttons\"><button class=\"closeCluster\" title=\"Close\">X</button><button class=\"zoomCluster\" title=\"Fit to Timeline\">&lt;&gt;</button></div>");
+                contents.append("<div class=\"buttons\"></div>")
+                    .find('.buttons')
+                    .append("<button class=\"closeCluster\" title=\"Close\">X</button>");
+                    //@unused .append("<button class=\"zoomCluster\" title=\"Fit to Timeline\">&lt;&gt;</button>");
                 tmpWidth += contents.find('.buttons').outerWidth(true) + 5;
                 _.each(entities, function(entity) {
                     var tmpView =  new EntityView({
@@ -69,6 +72,7 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
             }));
 
         },
+        //@unused UI removed
         zoom: function(e) {
             this.$el.trigger($.Event('bnp:zoomCluster', {
                 originalEvent : e,

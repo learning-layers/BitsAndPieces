@@ -4,7 +4,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         LOG: Logger.get('TimelineView'),
         waitingForLastOne : 0,
         events: {
-            'bnp:zoomCluster' : 'expand',
+            'bnp:zoomCluster' : 'expand', //@unused UI removed
             'bnp:expanded' : 'redraw',
             'bnp:unexpanded' : 'redraw'
         },
@@ -258,6 +258,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             this.LOG.debug("start", parseInt(entity.get(this.timeAttr) - diff / 2), start, "end", parseInt(entity.get(this.timeAttr) + diff / 2), end);
             this.timeline.setVisibleChartRange(start, end, true);
         },
+        //@unused UI removed
         expand: function(e) {
             this.LOG.debug('clickCluster event', e);
             var entities = e.cluster.get('entities');
