@@ -75,8 +75,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
            this.$el.find('.search input').val('');
            this.$el.find(this.resultsSelector).hide();
            this._clearResultSet();
-           // Restart the search because there might be selected tags
-           this.search( this.$el.find(this.searchInputSelector).val() );
+           // Trigger a search in case there were any selected tags
+           if ( !_.isEmpty(this._getSelectedTags()) ) {
+               this.search( this.$el.find(this.searchInputSelector).val() );
+           }
         },
         //@unused
         _clearSearch: function(e) {
