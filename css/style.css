@@ -365,7 +365,7 @@ div#tabs .stream .resultSet {
 }
 
 div#tabs .stream .resultSet .singleEntry {
-	margin: 10px;
+	padding: 10px;
 	min-height: 50px;
 	border-bottom: 1px solid rgb(221, 221, 221);
 }
@@ -395,6 +395,15 @@ div#tabs .stream .resultSet .singleRecommendation label.recommendationLabel {
 
 .streamActionOthers {
 	color: #48a2c5;
+}
+
+.unreadMessage .messageIcon span {
+	color: #f6a551;
+	cursor: pointer;
+}
+
+.unreadMessage {
+	background-color: #fef3e9;
 }
 
 div#tabs .importance .ui-slider-horizontal {

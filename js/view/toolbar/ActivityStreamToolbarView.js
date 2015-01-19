@@ -9,7 +9,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
             'keyup textarea[name="messageText"]' : 'revalidateMessageText',
             'click .selectedUser > span' : 'removeSelectedUser',
-            'change input[name="showInToolbar[]"]' : 'filterStream'
+            'change input[name="showInToolbar[]"]' : 'filterStream',
+            'bnp:markMessageAsRead' : 'reduceAndUpdateUnreadMessagesCount'
         },
         LOG: Logger.get('ActivityStreamToolbarView'),
         initialize: function() {
@@ -17,6 +18,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             this.messageResultViews = [];
             this.recommendationsResultViews = [];
             this.selectedUsers = [];
+            this.unreadMessagesCount = 0;
             this.messageRecipientSelector = 'input[name="messageRecipient"]';
             this.messageTextSelector = 'textarea[name="messageText"]';
 
@@ -209,13 +211,18 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                             view.remove();
                         });
                         that.messageResultViews = [];
+                        that.unreadMessagesCount = 0;
                     }
                     _.each(messages, function(message) {
                         var view = new MessageView({
                             model : message
                         });
                         that.messageResultViews.push(view);
+                        if ( view.model.get(Voc.isRead) !== true ) {
+                            that.unreadMessagesCount += 1;
+                        }
                     });
+                    that.addUpdateUnreadMessagesCount();
 
                     // Deal with recommendations
                     if ( !_.isEmpty(that.recommendationsResultViews) ) {
@@ -286,6 +293,26 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
 
             this._showHideStreamViews(views, isChecked);
             this.$el.find('input[name="showInToolbar[]"]').prop('disabled', false);
+        },
+        addUpdateUnreadMessagesCount: function() {
+            var showMessagesLabel = this.$el.find('label[for="showMessages"]'),
+                theCountBadge = showMessagesLabel.find('span.badge');
+
+            if ( this.unreadMessagesCount > 0) {
+                if ( theCountBadge.length > 0 ) {
+                    theCountBadge.html(this.unreadMessagesCount);
+                } else {
+                    showMessagesLabel.append(' <span class="badge">' + this.unreadMessagesCount + '</span>');
+                }
+            } else {
+                if ( theCountBadge.length > 0 ) {
+                    theCountBadge.remove();
+                }
+            }
+        },
+        reduceAndUpdateUnreadMessagesCount: function(e) {
+            this.unreadMessagesCount -= 1;
+            this.addUpdateUnreadMessagesCount();
         }
     });
 });

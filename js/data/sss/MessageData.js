@@ -69,6 +69,26 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
 
         return defer.promise();
     };
+    m.markAsRead = function(model) {
+        var that = this,
+            defer = $.Deferred();
+        this.vie.load({
+            'service' : 'entityUpdate',
+            'data' : {
+                'entity' : model.getSubject(),
+                'read' : true
+            }
+        }).using('sss').execute().success(function(data) {
+            that.LOG.debug('success markAsRead', data);
+            model.set(Voc.isRead, true);
+            defer.resolve(data);
+        }).fail(function(f) {
+            that.LOG.debug('error markAsRead', f);
+            defer.reject(f);
+        });
+
+        return defer.promise();
+    };
     return m;
 
 });

@@ -60,6 +60,7 @@ define([], {
     hasTag : 'sss:tags',
     importance : 'sss:importance',
     isUsed : 'sss:isUsed',
+    isRead : "sss:read",
     hasMimeType : 'sss:mimeType',
     hasThumbnail : 'sss:thumb',
     hasLoaded : 'sss:hasLoaded',
