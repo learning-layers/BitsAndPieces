@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger, Voc, _, $, Data){
+define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], function(Logger, Voc, _, $, Data, userParams){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize EntityData");
@@ -177,7 +177,8 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
                     'service' : 'recommTags',
                     'data' : {
                         'entity' : modelUri,
-                        'maxTags' : 20
+                        'maxTags' : 20,
+                        'forUser' : userParams.user
                     }
                 }).using('sss').execute().success(function(result){
                     that.LOG.debug('recommTags', result);
