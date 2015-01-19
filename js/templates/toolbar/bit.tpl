@@ -89,7 +89,7 @@
 
         <br />
 
-        <div class="form-group predefinedTags">
+        <div class="form-group predefinedTags" style="display:none;">
             <label class="subsectionLabel">Predefined tags:</label>
             <select class="form-control" disabled>
             <% _.each(entity.predefined, function(predefined) { %>

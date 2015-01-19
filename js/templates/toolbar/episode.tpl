@@ -49,7 +49,7 @@
                     <textarea class="form-control" name="notificationtext" placeholder="Enter a text that user will receive when sharing episode"></textarea>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" style="display:none;">
                     <label class="control-label">Share to folder:</label>
                     <select class="form-control" name="sharetofolder" disabled="disabled">
                         <option value="None">None</option>
