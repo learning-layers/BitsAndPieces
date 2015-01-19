@@ -3,6 +3,9 @@ define(['module', 'jquery', 'userParams', 'logger'],
         tracker = Logger.get('Tracker');
         tracker.setLevel(Logger.INFO);
         tracker.setHandler(function(messages, context){
+            // Sending events is disabled
+            return;
+
             var op = "uEAdd";
             var params = {
                     'user' : userParams.user,
