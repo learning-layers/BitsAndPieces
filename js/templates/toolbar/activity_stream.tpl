@@ -15,9 +15,9 @@
                 <input type="checkbox" id="showMessages" name="showInToolbar[]" value="messages" checked="checked" />
                 <label class="notBoldLabel" for="showMessages">Messages</label>
                 <br />
-                <input type="checkbox" id="showNotifications" name="showInToolbar[]" value="notifications" checked="checked" />
+                <!--input type="checkbox" id="showNotifications" name="showInToolbar[]" value="notifications" checked="checked" />
                 <label class="notBoldLabel" for="showNotifications">Notifications</label>
-                <br />
+                <br /-->
                 <input type="checkbox" id="showRecommendations" name="showInToolbar[]" value="recommendations" checked="checked" />
                 <label class="notBoldLabel" for="showRecommendations">Recommendations</label>
             </div>
