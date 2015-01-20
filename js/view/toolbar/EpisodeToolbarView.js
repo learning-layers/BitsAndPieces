@@ -2,7 +2,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'userParams', 'utils/SystemMessages', 'utils/InputValidation',
         'text!templates/toolbar/episode.tpl', 'text!templates/toolbar/empty.tpl', 'text!templates/toolbar/components/selected_user.tpl',
         'data/episode/EpisodeData', 'view/toolbar/EpisodeListingView',
-        'utils/SearchHelper'], function(Logger, tracker, _, $, Backbone, Voc, userParams, SystemMessages, InputValidation, EpisodeTemplate, EmptyTemplate, SelectedUserTemplate, EpisodeData, EpisodeListingView, SearchHelper){
+        'utils/SearchHelper', 'utils/EntityHelpers'], function(Logger, tracker, _, $, Backbone, Voc, userParams, SystemMessages, InputValidation, EpisodeTemplate, EmptyTemplate, SelectedUserTemplate, EpisodeData, EpisodeListingView, SearchHelper, EntityHelpers){
     return Backbone.View.extend({
         episodeViews: [],
         events: {
@@ -28,35 +28,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.shareBitsOnlySelector = '.shareBitsOnly';
             this.onlySelector = 'input[name="only[]"]';
             this.onlySelectedSelector = 'input[name="onlyselected"]';
-        },
-        _getEpisodeVisibility: function(episode) {
-            var circleTypes = episode.get(Voc.circleTypes);
-
-            if ( !_.isEmpty(circleTypes) ) {
-                circleTypes = ( _.isArray(circleTypes) ) ? circleTypes : [circleTypes];
-                if ( _.indexOf(circleTypes, 'group') !== -1 ) {
-                    return 'shared';
-                }
-            }
-
-            return 'private';
-        },
-        _getSharedWithNames: function(episode) {
-            var sharedWithNames = [],
-                sharedWith = episode.get(Voc.hasUsers);
-
-            if ( !_.isEmpty(sharedWith) ) {
-                sharedWith = ( _.isArray(sharedWith) ) ? sharedWith : [sharedWith];
-                var currentAutor = episode.get(Voc.author);
-
-                _.each(sharedWith, function(user) {
-                    if ( user.getSubject() !== currentAutor.getSubject() ) {
-                        sharedWithNames.push(user.get(Voc.label));
-                    }
-                });
-            }
-
-            return sharedWithNames;
         },
         episodeVersionChanged: function() {
             this.render();
@@ -148,8 +119,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 entity : {
                     label : episode.get(Voc.label),
                     description : episode.get(Voc.description),
-                    visibility : this._getEpisodeVisibility(episode),
-                    sharedWith : this._getSharedWithNames(episode).join(', ')
+                    visibility : EntityHelpers.getEpisodeVisibility(episode),
+                    sharedWith : EntityHelpers.getSharedWithNames(episode).join(', ')
                 }
             };
         },
