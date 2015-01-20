@@ -97,9 +97,34 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
                     user.set(Voc.hasEpisode, false);
                     return;
                 }
+
+                var userUrisToBeAdded = [];
+                var usersToBeAdded = [];
                 _.each(episodes, function(episode) {
                     episode['@type'] = Voc.EPISODE;
+
+                    var users = episode[Voc.hasUsers];
+                    if ( users && _.isArray(users) && users.length > 0) {
+                        var userUris = [];
+                        _.each(users, function(user) {
+                            var userUri = user[v.Entity.prototype.idAttribute];
+
+                            user['@type'] = Voc.USER;
+                            userUris.push(userUri);
+
+                            if ( _.indexOf(userUrisToBeAdded, userUri) === -1 ) {
+                                userUrisToBeAdded.push(userUri);
+                                usersToBeAdded.push(user);
+                            }
+                        });
+                        episode[Voc.hasUsers] = userUris;
+                    }
                 });
+
+                if ( !_.isEmpty(usersToBeAdded) ) {
+                    v.entities.addOrUpdate(usersToBeAdded);
+                }
+
                 v.entities.addOrUpdate(episodes);
             }
         );

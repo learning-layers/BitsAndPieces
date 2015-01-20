@@ -2,7 +2,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'userParams', 'utils/SystemMessages', 'utils/InputValidation',
         'text!templates/toolbar/episode.tpl', 'text!templates/toolbar/empty.tpl', 'text!templates/toolbar/components/selected_user.tpl',
         'data/episode/EpisodeData', 'view/toolbar/EpisodeListingView',
-        'utils/SearchHelper'], function(Logger, tracker, _, $, Backbone, Voc, userParams, SystemMessages, InputValidation, EpisodeTemplate, EmptyTemplate, SelectedUserTemplate, EpisodeData, EpisodeListingView, SearchHelper){
+        'utils/SearchHelper', 'utils/EntityHelpers'], function(Logger, tracker, _, $, Backbone, Voc, userParams, SystemMessages, InputValidation, EpisodeTemplate, EmptyTemplate, SelectedUserTemplate, EpisodeData, EpisodeListingView, SearchHelper, EntityHelpers){
     return Backbone.View.extend({
         episodeViews: [],
         events: {
@@ -118,7 +118,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return {
                 entity : {
                     label : episode.get(Voc.label),
-                    description : episode.get(Voc.description)
+                    description : episode.get(Voc.description),
+                    visibility : EntityHelpers.getEpisodeVisibility(episode),
+                    sharedWith : EntityHelpers.getSharedWithNames(episode).join(', ')
                 }
             };
         },

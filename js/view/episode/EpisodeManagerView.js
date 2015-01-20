@@ -1,5 +1,6 @@
 // TODO EpisodeManagerView could be renamed to MenuView
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc'], function(VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc){
+define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
+        'utils/EntityHelpers'], function(VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
@@ -53,6 +54,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             }
             var label = this.currentEpisode.get(Voc.label);
             this.renderLabel(this.currentEpisode, label);
+            this.renderVisibility(this.currentEpisode, this.currentEpisode.get(Voc.circleTypes));
+            this.renderSharedWith(this.currentEpisode, this.currentEpisode.get(Voc.hasUsers));
 
             var prevCurrVersion = this.model.previous(Voc.currentVersion);
             var prevCurrEpisode, epView;
@@ -71,6 +74,14 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         renderLabel: function(episode, label) {
             this.LOG.debug('renderLabel', label);
             this.$el.find('.currentEpisodeLabel').html(label);
+        },
+        renderVisibility: function(episode, circleTypes) {
+            this.LOG.debug('renderVisibility', circleTypes);
+            this.$el.find('.currentEpisodeVisibility').html(EntityHelpers.getEpisodeVisibility(episode));
+        },
+        renderSharedWith: function(episode, users) {
+            this.LOG.debug('renderSharedWith', users);
+            this.$el.find('.currentEpisodeSharedWith').html(EntityHelpers.getSharedWithNames(episode).join(', '));
         },
         changeEpisodeSet: function(model, set, options) {
             this.LOG.debug('changeEpisodeSet', set);  
