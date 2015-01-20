@@ -1,5 +1,5 @@
-define(['logger','jquery', 'backbone', 'underscore', 'voc'],
-function (Logger, $, Backbone, _, Voc) {
+define(['logger','jquery', 'backbone', 'underscore', 'voc', 'userParams'],
+function (Logger, $, Backbone, _, Voc, userParams) {
     return {
         LOG: Logger.get('EntityHelpers'),
         getEpisodeVisibility: function(episode) {
@@ -20,10 +20,10 @@ function (Logger, $, Backbone, _, Voc) {
 
             if ( !_.isEmpty(sharedWith) ) {
                 sharedWith = ( _.isArray(sharedWith) ) ? sharedWith : [sharedWith];
-                var currentAutor = episode.get(Voc.author);
+                var currentUserUri = userParams.user;
 
                 _.each(sharedWith, function(user) {
-                    if ( user.getSubject() !== currentAutor.getSubject() ) {
+                    if ( user.getSubject() !== currentUserUri ) {
                         sharedWithNames.push(user.get(Voc.label));
                     }
                 });
