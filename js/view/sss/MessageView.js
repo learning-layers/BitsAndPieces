@@ -42,6 +42,8 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
                         // View updates automatically when model attribute value changes
                     });
                 });
+            } else {
+                this.$el.find('.messageIcon .glyphicon').addClass('streamActionOthers');
             }
 
             return this;
