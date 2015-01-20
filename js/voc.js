@@ -36,6 +36,7 @@ define([], {
     creationTime : 'sss:creationTime',
     timeAttr : 'sss:timeAttr',
     circleType: 'sss:circleType', 
+    circleTypes : 'sss:circleTypes',
     orgaEntityType: 'sss:orgaEntityType',
     belongsToUser: 'sss:user',
     start: 'sss:startTime',

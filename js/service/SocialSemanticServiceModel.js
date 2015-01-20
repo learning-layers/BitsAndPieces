@@ -199,7 +199,13 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'learnEpsGet' : {
             'resultKey' : 'learnEps',
-            'decoration' : decorations['single_entity']
+            'decoration' : decorations['single_entity'],
+            'subResults' : [
+                {
+                    'resultKey' : 'users',
+                    'decoration' : decorations['single_entity']
+                }
+            ]
         },
         'learnEpVersionsGet' : {
             'resultKey' : 'learnEpVersions',

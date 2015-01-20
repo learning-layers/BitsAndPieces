@@ -10,6 +10,11 @@
 
         <div class="toolbarSection">
             <div class="form-group">
+                <span class="episodeVisibility"><%= entity.visibility %></span>
+                | <span class="episodeSharedWith"><%= entity.sharedWith %></span>
+            </div>
+
+            <div class="form-group">
                 <label class="control-label">Episode Title:</label>
                 <input type="text" class="form-control" name="label" value="<%= entity.label %>" />
             </div>

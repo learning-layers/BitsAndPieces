@@ -29,6 +29,35 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.onlySelector = 'input[name="only[]"]';
             this.onlySelectedSelector = 'input[name="onlyselected"]';
         },
+        _getEpisodeVisibility: function(episode) {
+            var circleTypes = episode.get(Voc.circleTypes);
+
+            if ( !_.isEmpty(circleTypes) ) {
+                circleTypes = ( _.isArray(circleTypes) ) ? circleTypes : [circleTypes];
+                if ( _.indexOf(circleTypes, 'group') !== -1 ) {
+                    return 'shared';
+                }
+            }
+
+            return 'private';
+        },
+        _getSharedWithNames: function(episode) {
+            var sharedWithNames = [],
+                sharedWith = episode.get(Voc.hasUsers);
+
+            if ( !_.isEmpty(sharedWith) ) {
+                sharedWith = ( _.isArray(sharedWith) ) ? sharedWith : [sharedWith];
+                var currentAutor = episode.get(Voc.author);
+
+                _.each(sharedWith, function(user) {
+                    if ( user.getSubject() !== currentAutor.getSubject() ) {
+                        sharedWithNames.push(user.get(Voc.label));
+                    }
+                });
+            }
+
+            return sharedWithNames;
+        },
         episodeVersionChanged: function() {
             this.render();
         },
@@ -118,7 +147,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return {
                 entity : {
                     label : episode.get(Voc.label),
-                    description : episode.get(Voc.description)
+                    description : episode.get(Voc.description),
+                    visibility : this._getEpisodeVisibility(episode),
+                    sharedWith : this._getSharedWithNames(episode).join(', ')
                 }
             };
         },
