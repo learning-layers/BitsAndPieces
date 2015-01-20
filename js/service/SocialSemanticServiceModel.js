@@ -167,7 +167,6 @@ define(['underscore', 'logger'], function(_, Logger) {
             'resultKey' : 'entities',
             'passThroughKeys' : ['pageNumber', 'pageNumbers', 'pagesID'],
             'params' : {
-                'keywordsToSearchFor' : {'type' : 'array'},
                 'wordsToSearchFor' : {'type' : 'array'},
                 'tagsToSearchFor' : {'type' : 'array'},
                 'misToSearchFor' : {'type' : 'array'},
