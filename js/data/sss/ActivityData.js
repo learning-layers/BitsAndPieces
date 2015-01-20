@@ -40,7 +40,55 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
                     'data' : data
                 }).using('sss').execute().success(function(activities){
                     that.LOG.debug('activitiesGet success', activities);
-                    activities = that.vie.entities.addOrUpdate(activities);
+
+                    if ( !_.isEmpty(activities) ) {
+                        var combinedUrisToBeAdded = [];
+                        var combinedToBeAdded = [];
+
+                        _.each(activities, function(activity) {
+                            var users = activity[Voc.hasUsers];
+                            var entities = activity[Voc.hasEntities];
+
+                            if ( !_.isEmpty(users) ) {
+                                var userUris = [];
+
+                                _.each(users, function(user) {
+                                    var userUri = user[that.vie.Entity.prototype.idAttribute];
+
+                                    userUris.push(userUri);
+                                    
+                                    if ( _.indexOf(combinedUrisToBeAdded, userUri) === -1 ) {
+                                        combinedUrisToBeAdded.push(userUri);
+                                        combinedToBeAdded.push(user);
+                                    }
+                                });
+                                activity[Voc.hasUsers] = userUris;
+                            }
+
+                            if ( !_.isEmpty(entities) ) {
+                                var entityUris = [];
+
+                                _.each(entities, function(entity) {
+                                    var entityUri = entity[that.vie.Entity.prototype.idAttribute];
+
+                                    entityUris.push(entityUri);
+
+                                    if ( _.indexOf(combinedUrisToBeAdded, entityUri) === -1 ) {
+                                        combinedUrisToBeAdded.push(entityUri);
+                                        combinedToBeAdded.push(entity);
+                                    }
+                                });
+                                activity[Voc.hasEntities] = entityUris;
+                            }
+                        });
+
+                        if ( !_.isEmpty(combinedToBeAdded) ) {
+                            that.vie.entities.addOrUpdate(combinedToBeAdded);
+                        }
+
+                        activities = that.vie.entities.addOrUpdate(activities);
+                    }
+
                     defer.resolve(activities);
                 }).fail(function(f) {
                     that.LOG.debug('activitiesGet fail', f);

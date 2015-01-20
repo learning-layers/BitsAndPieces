@@ -104,7 +104,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
                     episode['@type'] = Voc.EPISODE;
 
                     var users = episode[Voc.hasUsers];
-                    if ( users && _.isArray(users) && users.length > 0) {
+                    if ( !_.isEmpty(users) ) {
                         var userUris = [];
                         _.each(users, function(user) {
                             var userUri = user[v.Entity.prototype.idAttribute];
