@@ -159,6 +159,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             return this;
         },
         renderUser: function () {
+            //@unused This functionality has been disabled for now
+            return false;
             if( this.user && this.user.isEntity) {
                 var par = $('<div class="user-container">');
                 this.userDOM = $('<div class="user">');

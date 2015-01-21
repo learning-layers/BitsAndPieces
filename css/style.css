@@ -15,8 +15,9 @@ div.timelineFrame > .user-container {
 }
 div.timelineFrame > .timeline {
     height: 100%;
-    width: 90%;
-    margin-left: 10%;
+	width: 100%;
+    /*width: 90%;
+    margin-left: 10%;*/
 }
 
 div.timelineFrame > .timeline .timeline-cluster {
