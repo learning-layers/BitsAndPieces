@@ -62,6 +62,8 @@ define([], {
     importance : 'sss:importance',
     isUsed : 'sss:isUsed',
     isRead : "sss:read",
+    isLocked : "sss:locked",
+    isLockedByUser : "sss:lockedByUser",
     hasMimeType : 'sss:mimeType',
     hasThumbnail : 'sss:thumb',
     hasLoaded : 'sss:hasLoaded',

@@ -3,10 +3,14 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
         'view/sss/ClusterView', 
         'view/timeline/TimelineView', 
         'view/organize/OrganizeView',
+        'view/organize/OrganizeOverlayView',
         'data/organize/OrganizeData'],
-    function(Logger, Backbone, $, Voc, tracker, _, $, EntityView, ClusterView, TimelineView, OrganizeView, OrganizeData) {
+    function(Logger, Backbone, $, Voc, tracker, _, $, EntityView, ClusterView, TimelineView, OrganizeView, OrganizeOverlayView, OrganizeData) {
         return Backbone.View.extend({
             LOG: Logger.get("WidgetView"),
+            events: {
+                'bnp:enableOrganize' : 'enableOrganize'
+            },
             initialize: function() {
                 this.LOG.debug('el', this.el, this.$el);
                 this.listenTo(this.model, 'destroy', this.remove);
@@ -28,9 +32,17 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
                     this.view = this.createTimeline(body);
                 } else if (this.model.isof( Voc.ORGANIZE )) {
                     this.$el.append('<legend>Organize</legend>');
-                    body = $('<div tabindex="1" style="width:100%; height:400px"></div>');                     
+                    body = $('<div tabindex="1" style="width:100%; height:400px"></div>');
                     this.$el.append(body);
+                    this.$el.addClass('organizeWidget');
                     this.view = this.createOrganize(body);
+
+                    // XXX Determine if it has to be activiated
+                    this.disableOrganizeDroppable();
+                    this.organizeOverlayView = new OrganizeOverlayView({
+                    }).render();
+                    this.$el.append(this.organizeOverlayView.$el);
+
                 } else {
                     this.listenToOnce(this.model, 'change', this.render);
                 }
@@ -97,6 +109,21 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
                 });
                 return organizeView;
             },
+            enableOrganizeDroppable: function() {
+                if ( this.isOrganize() ) {
+                    this.view.$el.droppable('enable');
+                }
+            },
+            disableOrganizeDroppable: function() {
+                if ( this.isOrganize() ) {
+                    this.view.$el.droppable('disable');
+                }
+            },
+            enableOrganize: function(e) {
+                if ( this.isOrganize() ) {
+                    this.enableOrganizeDroppable();
+                }
+            }
         });
 });
 
