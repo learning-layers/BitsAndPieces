@@ -198,6 +198,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                 messagesPromise = this.fetchMessages(),
                 recommendationsPromise = this.fetchRecommendations();
 
+            // XXX Even if one of the call is rejected, nothing will be displayed
+            // Probably need to tune the corresponding calls to always resolve
+            // just resolve with an empty array in case of failure.
             $.when(activitiesPromise, messagesPromise, recommendationsPromise)
                 .done(function(activities, messages, recommendations) {
                     that.LOG.debug('fetchActivityStream', activities, messages, recommendations);

@@ -336,6 +336,12 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'tagFrequsGet' : {
             'resultKey' : 'tagFrequs'
+        },
+        'learnEpLockSet' : {
+            'resultKey' : 'worked'
+        },
+        'learnEpLockRemove' : {
+            'resultKey' : 'worked'
         }
     };
     return m;

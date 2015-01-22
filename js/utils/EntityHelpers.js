@@ -2,14 +2,21 @@ define(['logger','jquery', 'backbone', 'underscore', 'voc', 'userParams'],
 function (Logger, $, Backbone, _, Voc, userParams) {
     return {
         LOG: Logger.get('EntityHelpers'),
-        getEpisodeVisibility: function(episode) {
+        isSharedEpisode: function(episode) {
             var circleTypes = episode.get(Voc.circleTypes);
 
             if ( !_.isEmpty(circleTypes) ) {
                 circleTypes = ( _.isArray(circleTypes) ) ? circleTypes : [circleTypes];
                 if ( _.indexOf(circleTypes, 'group') !== -1 ) {
-                    return 'shared';
+                    return true;
                 }
+            }
+
+            return false;
+        },
+        getEpisodeVisibility: function(episode) {
+            if ( this.isSharedEpisode(episode) ) {
+                return 'shared';
             }
 
             return 'private';

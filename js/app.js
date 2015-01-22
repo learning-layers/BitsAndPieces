@@ -53,6 +53,7 @@ function(module, VIE, Logger, tracker, userParams, UserData, SocialSemanticServi
     Logger.get('ActivityData').setLevel(Logger.OFF);
     Logger.get('CircleRenameModalView').setLevel(Logger.OFF);
     Logger.get('EntityHelpers').setLevel(Logger.OFF);
+    Logger.get('OrganizeOverlayView').setLevel(Logger.OFF);
 
     if ( !userParams.isAuthenticated) {
         var loginView = new LoginFormView({

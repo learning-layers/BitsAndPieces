@@ -9,7 +9,8 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
         return Backbone.View.extend({
             LOG: Logger.get("WidgetView"),
             events: {
-                'bnp:enableOrganize' : 'enableOrganize'
+                'bnp:enableOrganize' : 'enableOrganize',
+                'bnp:disableOrganize' : 'disableOrganize'
             },
             initialize: function() {
                 this.LOG.debug('el', this.el, this.$el);
@@ -37,9 +38,8 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
                     this.$el.addClass('organizeWidget');
                     this.view = this.createOrganize(body);
 
-                    // XXX Determine if it has to be activiated
-                    this.disableOrganizeDroppable();
                     this.organizeOverlayView = new OrganizeOverlayView({
+                        'model' : this.model
                     }).render();
                     this.$el.append(this.organizeOverlayView.$el);
 
@@ -122,6 +122,11 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
             enableOrganize: function(e) {
                 if ( this.isOrganize() ) {
                     this.enableOrganizeDroppable();
+                }
+            },
+            disableOrganize: function(e) {
+                if (this.isOrganize() ) {
+                    this.disableOrganizeDroppable();
                 }
             }
         });

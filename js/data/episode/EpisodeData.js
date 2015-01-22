@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'], function(Logger, Voc, _, Data, VersionData){
+define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData', 'userParams'], function(Logger, Voc, _, Data, VersionData, userParams){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize Episode");
@@ -178,6 +178,54 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                 }).fail(function() {
                     that.LOG.debug('error entityCopy');
                     defer.reject(false);
+                });
+            }
+        );
+
+        return defer.promise();
+    };
+    m.setEpisodeLock = function(model) {
+        var that = this,
+            defer = $.Deferred();
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.save({
+                    'service' : 'learnEpLockSet',
+                    'data' : {
+                        'forUser' : userParams.user,
+                        'learnEp' : modelUri
+                    }
+                }).using('sss').execute().success(function(result){
+                    that.LOG.debug('success learnEpLockSet', result);
+                    defer.resolve(result);
+                }).fail(function(f) {
+                    that.LOG.debug('error learnEpLockSet', f);
+                    defer.reject(f);
+                });
+            }
+        );
+
+        return defer.promise();
+    };
+    m.removeEpisodeLock = function(model) {
+        var that = this,
+            defer = $.Deferred();
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.save({
+                    'service' : 'learnEpLockRemove',
+                    'data' : {
+                        'forUser' : userParams.user,
+                        'learnEp' : modelUri
+                    }
+                }).using('sss').execute().success(function(result){
+                    that.LOG.debug('success learnEpLockRemove', result);
+                    defer.resolve(result);
+                }).fail(function(f) {
+                    that.LOG.debug('error learnEpLockRemove', f);
+                    defer.reject(f);
                 });
             }
         );
