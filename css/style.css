@@ -620,11 +620,9 @@ label.notBoldLabel {
 	/* XXX NEEDS BROWSER SPECIFIC PREFIXES */
 	width: calc(100% - 20px);
 	height: 400px;
-	background-color: gray;
 	position: absolute;
 	top: 19px;
 	left: 0;
-	opacity: .55;
 	margin-left: 10px;
 	padding-right: 10px;
 }
