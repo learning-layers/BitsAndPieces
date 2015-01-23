@@ -48,7 +48,7 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             'sss:discEntry' : 'img/sss/discuss.png',
             'sss:file' : 'img/sss/document.png',
             'sss:filePdf' : 'img/sss/entityFilePdf.png',
-            'sss:filePng' : 'img/sss/entityImageJpg.png',
+            'sss:fileImage' : 'img/sss/entityImage.png',
             'sss:fileDoc' : 'img/sss/entityFileDoc.png',
             'sss:rating' : 'img/sss/rate.png',
             'sss:tag' : 'img/evernote/tag.png',
@@ -274,7 +274,12 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
                             name = 'sss:filePdf';
                             break;
                         case 'image/png':
-                            name = 'sss:filePng';
+                        case 'image/jpeg':
+                        case 'image/x-icon':
+                        case 'image/gif':
+                        case 'image/svg+xml':
+                        case 'image/bmp':
+                            name = 'sss:fileImage';
                             break;
                         case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
                         case 'application/msword':
@@ -290,7 +295,13 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
                                 name = 'sss:filePdf';
                                 break;
                             case '.png':
-                                name = 'sss:filePng';
+                            case '.jpg':
+                            case '.jpeg':
+                            case '.ico':
+                            case '.gif':
+                            case '.svg':
+                            case '.bmp':
+                                name = 'sss:fileImage';
                                 break;
                             case 'docx':
                             case '.doc':
