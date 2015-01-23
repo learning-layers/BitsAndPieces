@@ -45,6 +45,7 @@
 
             <div class="form-group">
                 <textarea class="form-control" name="messageText"></textarea>
+                <p class="help-block"><span class="charactersRemaining"></span> characters remaining</p>
             </div>
 
         </div><!-- .writeMessage -->

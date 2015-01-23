@@ -14,6 +14,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
         },
         LOG: Logger.get('ActivityStreamToolbarView'),
         initialize: function() {
+            this.messageTextCharactersLimit = 300;
             this.activityResultViews = [];
             this.messageResultViews = [];
             this.recommendationsResultViews = [];
@@ -36,6 +37,21 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                     event.preventDefault();
                     that.addSelectedUser(event, ui, this);
                 }
+            });
+
+            this.resetCharactersRemaining();
+            this.$el.find(this.messageTextSelector).on('keyup', function(e) {
+                var thisElem = $(this),
+                    charsRemainingElem = thisElem.next().find('.charactersRemaining'),
+                    remaining = that.messageTextCharactersLimit - thisElem.val().length;
+
+                if ( remaining === 0 ) {
+                    e.preventDefault();
+                } else if ( remaining < 0 ) {
+                    thisElem.val(thisElem.val().substring(0, that.messageTextCharactersLimit));
+                }
+
+                charsRemainingElem.html( ( remaining >= 0 ) ? remaining : 0 );
             });
         },
         updateOnEnter: function(e) {
@@ -137,6 +153,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             // Disable message text input validation temporarily
             this.disableMessageTextValidation = true;
             this.$el.find(this.messageTextSelector).val('');
+
+            this.resetCharactersRemaining();
         },
         validateMessageRecipient: function() {
             var element = this.$el.find(this.messageRecipientSelector),
@@ -327,6 +345,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
         reduceAndUpdateUnreadMessagesCount: function(e) {
             this.unreadMessagesCount -= 1;
             this.addUpdateUnreadMessagesCount();
+        },
+        resetCharactersRemaining: function() {
+            this.$el.find(this.messageTextSelector).next().find('.charactersRemaining').html(this.messageTextCharactersLimit);
         }
     });
 });
