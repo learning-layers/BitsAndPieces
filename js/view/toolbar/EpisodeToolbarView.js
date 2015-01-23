@@ -198,6 +198,15 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 var promise = EpisodeData.shareEpisode(episode, this.selectedUsers, notificationText);
 
                 promise.done(function() {
+                    // Add "group" to circle types. This will enable the overlay
+                    var circleTypes = episode.get(Voc.circleTypes);
+
+                    circleTypes = ( _.isArray(circleTypes) ) ? circleTypes: [circleTypes];
+                    if ( _.indexOf(circleTypes, 'group') === -1 ) {
+                        circleTypes.push('group');
+                        episode.set(Voc.circleTypes, circleTypes);
+                    }
+
                     that._cleanUpAfterSharing();
                     SystemMessages.addSuccessMessage('Your episode has been shared successfully. For co-editing with ' + sharedWithUsernames.join(', '));
                 });

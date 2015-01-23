@@ -11,17 +11,27 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             'click button' : 'disableOverlay'
         },
         initialize: function() {
+            this.isOverlayEnabled = false;
             // Organize Model is provided
             var that = this,
                 episode = this.getEpisode();
 
             if ( _.isEmpty(episode) ) {
-                // XXX ight need to retry until model loaded
-                setTimeout(function () {
+                var version = this.getVersion();
+
+                // XXX Looks like this one is not working, no idea why
+                // version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.setEpisodeModelAndUpdateVisuals, this);
+                // XXX This is pure evil
+                setTimeout(function() {
+                    // XXX This one would have to check
+                    // if model loaded and add one ore timeout if not
                     if ( that.isOverlayNeeded() ) {
                         that.enableOverlayVisuals();
                     }
+                    that.setEpisodeModelAndListeners();
                 }, 1000);
+            } else {
+                this.setEpisodeModelAndListeners();
             }
 
             this.$el.hide();
@@ -35,6 +45,23 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             this.$el.append('<button type="button" class="btn btn-default">Request Editing Lock</button>');
 
             return this;
+        },
+        setEpisodeModelAndListeners: function() {
+            this.episodeModel = this.getEpisode();
+            this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.episodeModelChanged, this);
+            this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.isLocked), this.episodeModelChanged, this);
+            this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.isLockedByUser), this.episodeModelChanged, this);
+        },
+        episodeModelChanged: function() {
+            if ( this.isOverlayNeeded() ) {
+                if ( false === this.isOverlayEnabled ) {
+                    this.enableOverlayVisuals();
+                }
+            } else {
+                if ( true === this.isOverlayEnabled ) {
+                    this.disableOverlayVisuals();
+                }
+            }
         },
         isOverlayNeeded: function() {
             var episode = this.getEpisode();
@@ -58,8 +85,13 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
 
             return false;
         },
+        getVersion: function() {
+            return this.model.get(Voc.belongsToVersion);
+        },
         getEpisode: function() {
-            return this.model.get(Voc.belongsToVersion).get(Voc.belongsToEpisode);
+            var version = this.getVersion();
+
+            return version.get(Voc.belongsToEpisode);
         },
         addAjaxLoader: function(element) {
             if ( !this.spinner ) {
@@ -79,6 +111,11 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             element.find('.ajaxLoaderAbsolute').remove();
         },
         disableOverlayVisuals: function() {
+            if ( false === this.isOverlayEnabled ) {
+                return;
+            }
+
+            this.isOverlayEnabled = false;
             this.$el.hide();
             var ev = $.Event('bnp:enableOrganize', {});
             this.$el.trigger(ev);
@@ -106,6 +143,11 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             });
         },
         enableOverlayVisuals: function() {
+            if ( true === this.isOverlayEnabled ) {
+                return;
+            }
+
+            this.isOverlayEnabled = true;
             this.$el.show();
             var ev = $.Event('bnp:disableOrganize', {});
             this.$el.trigger(ev);
