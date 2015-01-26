@@ -634,6 +634,12 @@ label.notBoldLabel {
 	margin-top: 10px;
 }
 
+.organizeWidget button {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+}
+
 .timelineFrame .jumpToDate input {
 	display: none;
 }
