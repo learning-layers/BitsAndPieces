@@ -121,11 +121,6 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             this.$el.hide();
             var ev = $.Event('bnp:enableOrganize', {});
             this.$el.trigger(ev);
-
-            this.$el.parent().prepend('<button type="button" class="btn btn-default" name="releaseEditingLock">Release Editing Lock</button>');
-            this.$el.parent().find('button[name="releaseEditingLock"]').on('click', function(e) {
-                that.enableOverlay(e);
-            });
         },
         disableOverlay: function(e) {
             var that = this,
@@ -158,8 +153,6 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             this.$el.show();
             var ev = $.Event('bnp:disableOrganize', {});
             this.$el.trigger(ev);
-
-            this.$el.parent().find('button[name="releaseEditingLock"]').off('click').remove();
         },
         enableOverlay: function(e) {
             var that = this,

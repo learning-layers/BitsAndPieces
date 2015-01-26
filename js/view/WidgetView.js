@@ -121,12 +121,19 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
             },
             enableOrganize: function(e) {
                 if ( this.isOrganize() ) {
+                    var that = this;
+
                     this.enableOrganizeDroppable();
+                    this.$el.prepend('<button type="button" class="btn btn-default" name="releaseEditingLock">Release Editing Lock</button>');
+                    this.$el.find('button[name="releaseEditingLock"]').on('click', function(e) {
+                        that.organizeOverlayView.enableOverlay(e);
+                    });
                 }
             },
             disableOrganize: function(e) {
                 if (this.isOrganize() ) {
                     this.disableOrganizeDroppable();
+                    this.$el.find('button[name="releaseEditingLock"]').off('click').remove();
                 }
             }
         });
