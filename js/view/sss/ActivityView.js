@@ -39,12 +39,15 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
                         templateSettings.content = ' shared with me ' + episodeLabel;
                     }
                     break;
-                case 'createLearnEp':
+                /* dtheiler
+                 case 'createLearnEp':
                     var episodeLabel = this.getEpisodeLabel();
 
                     templateSettings.iconClass.push('glyphicon-briefcase');
                     templateSettings.content = ' created an episode ' + episodeLabel;
                     break;
+                    
+                */
                 case 'addEntityToLearnEpVersion':
                     // XXX Labels not set
                     var bitLabel = '',

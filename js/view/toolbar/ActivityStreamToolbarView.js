@@ -180,8 +180,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             var data = {
                 types : [
                     'addCategory',
-                    'removeCategory',
-                    'createLearnEp',
+                    'removeCategories',
+                    //'createLearnEp',
                     'addEntityToLearnEpVersion',
                     'updateLearnEpVersionEntity', // Potential slow-down due to a large number
                     'removeLearnEpVersionEntity',
