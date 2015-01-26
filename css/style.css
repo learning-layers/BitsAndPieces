@@ -5,7 +5,7 @@ div.timeline-event-content {
     overflow: visible;
 }
 div.timelineFrame {
-    height: 200px;
+    height: 225px;
 }
 div.timelineFrame > .user-container {
     width: 5%;
@@ -632,4 +632,17 @@ label.notBoldLabel {
 	margin-right: auto;
 	display: block;
 	margin-top: 10px;
+}
+
+.timelineFrame .jumpToDate input {
+	display: none;
+}
+
+.timelineFrame .jumpToDate img {
+	height: 25px;
+	width: 25px;
+}
+
+.ui-datepicker {
+	z-index: 1500 !important;
 }

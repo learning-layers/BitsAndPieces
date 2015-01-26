@@ -150,6 +150,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             this.renderUser();
             this.renderTimeline();
+            this.renderDatepicker();
 
             var view = this;
             // add entities which are already contained
@@ -226,6 +227,27 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 view.model.save(vals, { 'by' : view, 'calledBy' : 'renderTimeline' });
             });
         },
+        renderDatepicker: function() {
+            var that = this;
+
+            this.$el.prepend('<div class="jumpToDate">Jump To Date: <input type="text" name="jumpToDate" val="" /></div>');
+            this.$el.find('input[name="jumpToDate"]')
+                .datepicker({
+                  minDate : that.timeline.options.min,
+                  maxDate : that.timeline.options.max,
+                  changeMonth: true,
+                  changeYear: true,
+                  showOn : 'button',
+                  buttonImage : 'img/logo.png', // TODO Use correct image
+                  buttonImageOnly : true,
+                  buttonText : 'Jump To Date',
+                  onSelect: function(dateText, ui) {
+                       var date = new Date(dateText);
+                       that.LOG.debug('Jump To Date Selected', dateText, ui, date);
+                       that.browseToDate(date);
+                   }
+                });
+        },
         reclusterByRangeChange: function(prev_start, prev_end, start, end) {
             var prev_range = prev_end - prev_start;
             var range = end - start;
@@ -241,6 +263,20 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         getSelectedItem: function() {
             return this.timeline.getSelection()[0].row;
         },
+        browseToDate: function(date) {
+            this.LOG.debug("browseToDate called with date", date);
+            var range = this.timeline.getVisibleChartRange();
+            var diff = range.end - range.start;
+                vals = {},
+                start = new Date(parseInt(date.getTime() - diff / 2)),
+                end = new Date(parseInt(date.getTime() + diff / 2));
+
+            vals[Voc.start] = start;
+            vals[Voc.end] = end;
+            this.model.save(vals, { 'by' : this, 'calledBy' : 'browseToDate' });
+            this.LOG.debug("start", start, "end", end);
+            this.timeline.setVisibleChartRange(start, end, true);
+        },
         browseTo: function(entity) {
             // wait for the time attribute if not set yet
             if( !entity.get(this.timeAttr) ) {
@@ -248,17 +284,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 return;
             }
             this.LOG.debug("browseTo called with entity", entity, JSON.stringify(entity.attributes));
-            var range = this.timeline.getVisibleChartRange();
-            var diff = range.end - range.start;
-                vals = {},
-                start = new Date(parseInt(entity.get(this.timeAttr) - diff / 2)),
-                end = new Date(parseInt(entity.get(this.timeAttr) + diff / 2));
 
-            vals[Voc.start] = start;
-            vals[Voc.end] = end;
-            this.model.save(vals, { 'by' : this, 'calledBy' : 'browseTo' });
-            this.LOG.debug("start", parseInt(entity.get(this.timeAttr) - diff / 2), start, "end", parseInt(entity.get(this.timeAttr) + diff / 2), end);
-            this.timeline.setVisibleChartRange(start, end, true);
+            var entityDate = new Date(entity.get(this.timeAttr));
+
+            this.browseToDate(entityDate);
         },
         //@unused UI removed
         expand: function(e) {
