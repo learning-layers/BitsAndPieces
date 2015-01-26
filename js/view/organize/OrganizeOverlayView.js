@@ -10,6 +10,23 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
         events:{
             'click button' : 'disableOverlay'
         },
+        _hackEpisodeModelLoadedTimeout: function() {
+            var that = this;
+
+            setTimeout(function() {
+                if ( _.isEmpty(that.getEpisode()) ) {
+                    that._hackEpisodeModelLoadedTimeout();
+                    return;
+                }
+
+                // XXX This one would have to check
+                // if model loaded and add one ore timeout if not
+                if ( that.isOverlayNeeded() ) {
+                    that.enableOverlayVisuals();
+                }
+                that.setEpisodeModelAndListeners();
+            }, 1000);
+        },
         initialize: function() {
             this.isOverlayEnabled = false;
             // Organize Model is provided
@@ -22,14 +39,7 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                 // XXX Looks like this one is not working, no idea why
                 // version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.setEpisodeModelAndUpdateVisuals, this);
                 // XXX This is pure evil
-                setTimeout(function() {
-                    // XXX This one would have to check
-                    // if model loaded and add one ore timeout if not
-                    if ( that.isOverlayNeeded() ) {
-                        that.enableOverlayVisuals();
-                    }
-                    that.setEpisodeModelAndListeners();
-                }, 1000);
+                this._hackEpisodeModelLoadedTimeout();
             } else {
                 this.setEpisodeModelAndListeners();
             }
