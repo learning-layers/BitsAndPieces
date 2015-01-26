@@ -238,7 +238,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                   changeMonth: true,
                   changeYear: true,
                   showOn : 'button',
-                  buttonImage : 'img/logo.png', // TODO Use correct image
+                  buttonImage : 'img/calendar.png',
                   buttonImageOnly : true,
                   buttonText : 'Jump To Date',
                   onSelect: function(dateText, ui) {
