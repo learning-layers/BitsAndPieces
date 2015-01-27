@@ -6,6 +6,7 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
         LOG: Logger.get('ActivityView'),
         events: {
         },
+        labelNotFoundText: 'NOT FOUND',
         initialize: function(options) {
             this.listenTo(this.model, 'change', this.render);
             this.owner = this.model.get(Voc.author);
@@ -28,13 +29,13 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
 
             switch (activityType) {
                 case 'shareLearnEpWithUser':
-                    var episodeLabel = this.getEpisodeLabel(),
+                    var episodeLabel = this.getContainedEntityLabel(),
                         userLabels = this.getUsersLabels();
 
                     templateSettings.iconClass.push('glyphicon-bell');
                     if ( isLoggedInActor ) {
                         // XXX NEED TO REMOVE AUTHOR
-                        templateSettings.content = ' shared episode ' + episodeLabel + ' with ' + userLabels.join(', ');
+                        templateSettings.content = ' shared episode <strong>' + episodeLabel + '</strong> with <strong>' + userLabels.join(', ') + '</strong>';
                     } else {
                         templateSettings.content = ' shared with me ' + episodeLabel;
                     }
@@ -74,24 +75,25 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
                     break;
                 case 'addCircleToLearnEpVersion':
                     // XXX Labels not set
-                    var circleLabel = '',
-                        episodeLabel = this.getEpisodeLabel();
+                    var circleLabel = this.labelNotFoundText,
+                        episodeLabel = this.getContainedEntityLabel();
+
                     templateSettings.iconClass.push('glyphicon-plus-sign');
-                    templateSettings.content = ' added circle ' + circleLabel + ' to episode ' + episodeLabel;
+                    templateSettings.content = ' added circle <strong>' + circleLabel + '</strong> to episode <strong>' + episodeLabel + '</strong>';
                     break;
                 case 'updateLearnEpVersionCircle':
-                    // XXX Labels not set
-                    var circleLabel = '',
-                        episodeLabel = this.getEpisodeLabel();
+                    var circleLabel = this.getContainedEntityLabel(),
+                        episodeLabel = this.labelNotFoundText;
+
                     templateSettings.iconClass.push('glyphicon-info-sign');
-                    templateSettings.content = ' updated circle ' + circleLabel + ' of episode ' + episodeLabel;
+                    templateSettings.content = ' updated circle <strong>' + circleLabel + '</strong> of episode <strong>' + episodeLabel + '</strong>';
                     break;
                 case 'removeLearnEpVersionCircle':
                     // XXX Labels not set
-                    var circleLabel = '',
-                        episodeLabel = this.getEpisodeLabel();
+                    var episodeLabel = this.getContainedEntityLabel();
+
                     templateSettings.iconClass.push('glyphicon-minus-sign');
-                    templateSettings.content = ' removed circle ' + circleLabel + ' from episode ' + episodeLabel;
+                    templateSettings.content = ' removed circle from episode <strong>' + episodeLabel + '</strong>';
                     break;
                 default:
                     templateSettings.iconClass.push('glyphicon-question-sign');
@@ -173,6 +175,36 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
             }
 
             return '';
+        },
+        getContainedEntity: function() {
+            var entity = this.model.get(Voc.hasResource);
+
+            if ( entity && entity.isEntity ) {
+                return entity;
+            }
+
+            return false;
+        },
+        getContainedEntityLabel: function() {
+            var label = this.labelNotFoundText,
+                entity = this.getContainedEntity();
+
+            if ( entity ) {
+                if ( entity.isof(Voc.VERSION) ) {
+                    var episode = version.get(Voc.belongsToEpisode);
+
+                    if ( episode && episode.isEntity ) {
+                        label = episode.get(Voc.label);
+                    } else {
+                        // In case episode not loaded for version, render again once it is loaded
+                        version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.render, this);
+                    }
+                } else {
+                    label = entity.get(Voc.label);
+                }
+            }
+
+            return label;
         }
     });
 });

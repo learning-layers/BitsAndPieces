@@ -322,7 +322,7 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'activitiesGet' : {
             'resultKey' : 'activities',
-            'decoration' : decorations['single_entity'],
+            'decoration' : decorations['single_entity_with_contained'],
             'subResults' : [
                 {
                     'resultKey' : 'users',

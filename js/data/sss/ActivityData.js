@@ -48,6 +48,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
                         _.each(activities, function(activity) {
                             var users = activity[Voc.hasUsers];
                             var entities = activity[Voc.hasEntities];
+                            var containedEntity = activity[Voc.hasResource];
 
                             if ( !_.isEmpty(users) ) {
                                 var userUris = [];
@@ -79,6 +80,16 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
                                     }
                                 });
                                 activity[Voc.hasEntities] = entityUris;
+                            }
+
+                            if ( !_.isEmpty(containedEntity) ) {
+                                var entityUri = containedEntity[that.vie.Entity.prototype.idAttribute];
+
+                                if ( _.indexOf(combinedUrisToBeAdded, entityUri) === -1 ) {
+                                    combinedUrisToBeAdded.push(entityUri);
+                                    combinedToBeAdded.push(containedEntity);
+                                }
+                                activity[Voc.hasResource] = entityUri;
                             }
                         });
 
