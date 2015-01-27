@@ -10,7 +10,8 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
             LOG: Logger.get("WidgetView"),
             events: {
                 'bnp:enableOrganize' : 'enableOrganize',
-                'bnp:disableOrganize' : 'disableOrganize'
+                'bnp:disableOrganize' : 'disableOrganize',
+                'bnp:addReleaseLockButton' : 'addReleaseLockButton'
             },
             initialize: function() {
                 this.LOG.debug('el', this.el, this.$el);
@@ -124,16 +125,23 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
                     var that = this;
 
                     this.enableOrganizeDroppable();
-                    this.$el.prepend('<button type="button" class="btn btn-default" name="releaseEditingLock">Release Editing Lock</button>');
-                    this.$el.find('button[name="releaseEditingLock"]').on('click', function(e) {
-                        that.organizeOverlayView.enableOverlay(e);
-                    });
+                    this.addReleaseLockButton();
                 }
             },
             disableOrganize: function(e) {
                 if (this.isOrganize() ) {
                     this.disableOrganizeDroppable();
                     this.$el.find('button[name="releaseEditingLock"]').off('click').remove();
+                }
+            },
+            addReleaseLockButton: function() {
+                if ( this.isOrganize() ) {
+                    var that = this;
+
+                    this.$el.prepend('<button type="button" class="btn btn-default" name="releaseEditingLock">Release Editing Lock</button>');
+                    this.$el.find('button[name="releaseEditingLock"]').on('click', function(e) {
+                        that.organizeOverlayView.enableOverlay(e);
+                    });
                 }
             }
         });

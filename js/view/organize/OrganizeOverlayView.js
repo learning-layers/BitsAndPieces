@@ -23,6 +23,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                 // if model loaded and add one ore timeout if not
                 if ( that.isOverlayNeeded() ) {
                     that.enableOverlayVisuals();
+                } else if ( that.isLockedByCurrentUser() ) {
+                    that.enableReleaseLockButton();
                 }
                 that.setEpisodeModelAndListeners();
             }, 1000);
@@ -47,6 +49,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             this.$el.hide();
             if ( this.isOverlayNeeded() ) {
                 this.enableOverlayVisuals();
+            } else if ( this.isLockedByCurrentUser() ) {
+                this.enableReleaseLockButton();
             }
         },
         render: function() {
@@ -70,6 +74,9 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             } else {
                 if ( true === this.isOverlayEnabled ) {
                     this.disableOverlayVisuals();
+                } else if ( this.isLockedByCurrentUser() ) {
+                    // TODO Check if this one is needed
+                    this.enableReleaseLockButton();
                 }
             }
         },
@@ -91,6 +98,20 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                 } else {
                     return true;
                 }
+            }
+
+            return false;
+        },
+        isLockedByCurrentUser: function() {
+            var episode = this.getEpisode();
+
+            // Model not loaded yet
+            if ( _.isEmpty(episode) ) {
+                return false;
+            }
+
+            if ( true === episode.get(Voc.isLocked) && true == episode.get(Voc.isLockedByUser) ) {
+                return true;
             }
 
             return false;
@@ -153,6 +174,10 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             }).fail(function(f) {
                 SystemMessages.addDangerMessage('Service error occured while trying to lock an episode.');
             });
+        },
+        enableReleaseLockButton: function() {
+            var ev = $.Event('bnp:addReleaseLockButton', {});
+            this.$el.trigger(ev);
         },
         enableOverlayVisuals: function() {
             if ( true === this.isOverlayEnabled ) {
