@@ -224,12 +224,10 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
 
                             promise.done(function(result, passThrough) {
                                 if ( episode.get(Voc.isLocked) !== passThrough['locked'] ) {
-                                    console.log("isLocked differs", episode.get(Voc.isLocked), passThrough);
                                     episode.set(Voc.isLocked, passThrough['locked']);
                                 }
 
                                 if ( episode.get(Voc.isLockedByUser) !== passThrough['lockedByUser'] ) {
-                                    console.log('isLockedByUser differs', episode.get(Voc.isLockedByUser), passThrough);
                                     episode.set(Voc.isLockedByUser, passThrough['lockedByUser']);
                                 }
 
