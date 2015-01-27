@@ -163,12 +163,17 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                 element.detach();
                 this.widgetFrame.prepend(element);
 
+                var previousVersion = this.model.previous(Voc.currentVersion);
                 // This force redraws current timeline element.
                 // This happends due to elements being hidden initially.
                 _.each(this.widgetViews, function(widget) {
                     if ( widget.model.get(Voc.belongsToVersion) === version ) {
                         if ( widget.isBrowse() && widget.view.timeline ) {
                             widget.view.timeline.redraw();
+                        }
+                    } else if ( widget.model.get(Voc.belongsToVersion) === previousVersion ) {
+                        if ( widget.isOrganize() ) {
+                            widget.removeEpisodeLockIfNeeded();
                         }
                     }
                 });

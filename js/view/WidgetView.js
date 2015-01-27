@@ -143,6 +143,11 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
                         that.organizeOverlayView.enableOverlay(e);
                     });
                 }
+            },
+            removeEpisodeLockIfNeeded: function() {
+                if ( this.isOrganize() ) {
+                    this.organizeOverlayView.removeEpisodeLockIfNeeded();
+                }
             }
         });
 });

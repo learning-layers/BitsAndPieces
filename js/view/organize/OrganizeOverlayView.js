@@ -164,10 +164,10 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                 that.removeAjaxLoader(that.$el);
 
                 if ( result === true ) {
+                    that.disableOverlayVisuals();
+
                     episode.set(Voc.isLocked, true);
                     episode.set(Voc.isLockedByUser, true);
-
-                    that.disableOverlayVisuals();
                 } else {
                     SystemMessages.addWarningMessage('Episode could not be locked for editing. Please try again later.');
                 }
@@ -198,16 +198,21 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             // TODO Consider enabling overlay right away
             promise.done(function(result) {
                 if ( true === result ) {
+                    that.enableOverlayVisuals();
+
                     episode.set(Voc.isLocked, false);
                     episode.set(Voc.isLockedByUser, false);
-
-                    that.enableOverlayVisuals();
                 } else {
                     SystemMessages.addWarningMessage('Episode lock could not be removed. Please try again later.');
                 }
             }).fail(function(f) {
                 SystemMessages.addDangerMessage('Service error occured while trying to release the lock of an episode.');
             });
+        },
+        removeEpisodeLockIfNeeded: function() {
+            if ( this.isLockedByCurrentUser() ) {
+                this.enableOverlay();
+            }
         }
     });
 });
