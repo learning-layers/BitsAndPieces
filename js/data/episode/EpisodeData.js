@@ -232,5 +232,28 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData', 
 
         return defer.promise();
     };
+    m.learnEpLockHold = function(model) {
+        var that = this,
+            defer = $.Deferred();
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.save({
+                    'service' : 'learnEpLockHold',
+                    'data' : {
+                        'learnEp' : modelUri
+                    }
+                }).using('sss').execute().success(function(result, passThrough){
+                    that.LOG.debug('success learnEpLockHold', result, passThrough);
+                    defer.resolve(result, passThrough);
+                }).fail(function(f) {
+                    that.LOG.debug('error learnEpLockHold', f);
+                    defer.reject(f);
+                });
+            }
+        );
+
+        return defer.promise();
+    };
     return m;
 });

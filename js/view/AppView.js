@@ -41,6 +41,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                             SystemMessages.addWarningMessage('You have no episodes. Please open the <strong>Menu</strong> and choose <strong>Create New Episode</strong>!');
                         }
                     },this);
+                this.setUpEpisodeLockHoldInternal();
 
             },
             filter: function(model, collection, options) {
@@ -206,6 +207,40 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                 } else {
                     systemMessages.toggleClass('systemMessagesToolbarOpen', false);
                 }
+            },
+            setUpEpisodeLockHoldInternal: function() {
+                var that = this;
+
+                setInterval(function() {
+                    var version = that.model.get(Voc.currentVersion);
+
+                    if ( version && version.isEntity ) {
+                        var episode = version.get(Voc.belongsToEpisode);
+
+                        if ( episode && episode.isEntity ) {
+                            var promise = EpisodeData.learnEpLockHold(episode);
+
+                            promise.done(function(result, passThrough) {
+                                if ( episode.get(Voc.isLocked) !== passThrough['locked'] ) {
+                                    console.log("isLocked differs", episode.get(Voc.isLocked), passThrough);
+                                    episode.set(Voc.isLocked, passThrough['locked']);
+                                }
+
+                                if ( episode.get(Voc.isLockedByUser) !== passThrough['lockedByUser'] ) {
+                                    console.log('isLockedByUser differs', episode.get(Voc.isLockedByUser), passThrough);
+                                    episode.set(Voc.isLockedByUser, passThrough['lockedByUser']);
+                                }
+
+                            }).fail(function(f) {
+                                AppLog.debug('learnEpLockHold FAILED', f);
+                            });
+                        } else {
+                            AppLog.debug('learnEpLockHold No Episoe For Version', version);
+                        }
+                    } else {
+                        AppLog.debug('learnEpLockHold No Current Version For User', that.model);
+                    }
+                }, 30000);
             }
         });
 });

@@ -342,6 +342,10 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'learnEpLockRemove' : {
             'resultKey' : 'worked'
+        },
+        'learnEpLockHold' : {
+            'resultKey' : 'locked',
+            'passThroughKeys' : ['locked', 'lockedByUser', 'remainingTime']
         }
     };
     return m;
