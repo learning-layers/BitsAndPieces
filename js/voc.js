@@ -72,6 +72,7 @@ define([], {
 
     hasUserEvent : 'sss:hasUserEvent',
     file : 'sss:file',
-    note : 'sss:note'
+    note : 'sss:note',
+    remainingTime : 'sss:remainingTime'
         
 });

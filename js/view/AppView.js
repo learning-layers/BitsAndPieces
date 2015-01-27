@@ -171,6 +171,8 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                     if ( widget.model.get(Voc.belongsToVersion) === version ) {
                         if ( widget.isBrowse() && widget.view.timeline ) {
                             widget.view.timeline.redraw();
+                        } else if ( widget.isOrganize() ) {
+                            // XXX TODO Need to check the lock status
                         }
                     } else if ( widget.model.get(Voc.belongsToVersion) === previousVersion ) {
                         if ( widget.isOrganize() ) {
@@ -231,6 +233,9 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                                     episode.set(Voc.isLockedByUser, passThrough['lockedByUser']);
                                 }
 
+                                if ( episode.get(Voc.remainingTime) !== passThrough['remainingTime'] ) {
+                                    episode.set(Voc.remainingTime, passThrough['remainingTime']);
+                                }
                             }).fail(function(f) {
                                 AppLog.debug('learnEpLockHold FAILED', f);
                             });

@@ -65,6 +65,7 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.episodeModelChanged, this);
             this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.isLocked), this.episodeModelChanged, this);
             this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.isLockedByUser), this.episodeModelChanged, this);
+            this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.remainingTime), this.remainingTimeChanged, this);
         },
         episodeModelChanged: function() {
             if ( this.isOverlayNeeded() ) {
@@ -212,6 +213,23 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
         removeEpisodeLockIfNeeded: function() {
             if ( this.isLockedByCurrentUser() ) {
                 this.enableOverlay();
+            }
+        },
+        remainingTimeChanged: function() {
+            var episode = this.getEpisode(),
+                remainingTime = episode.get(Voc.remainingTime);
+
+            if ( this.isOverlayEnabled ) {
+                this.$el.find('.lockTimeRemaining').remove();
+                if ( remainingTime && episode.get(Voc.isLocked) ) {
+                    var minutesRemaining = Math.floor(remainingTime / ( 1000 * 60 ));
+                    var secondsRemaining = Math.floor(( remainingTime / 1000 ) % 60);
+                    this.$el.find('button').append('<span class="lockTimeRemaining"> in ' + ( ( minutesRemaining > 0 ) ? minutesRemaining + ' minutes ' : '') + ( ( secondsRemaining > 0 ) ? secondsRemaining + ' seconds' : '') + '</span>');
+                }
+            } if ( this.isLockedByCurrentUser() ) {
+                // TODO Need to handle the case of episode being locked by current user
+                // Showing the time left near the release button on within the button
+                // makes sense
             }
         }
     });
