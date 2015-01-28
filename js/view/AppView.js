@@ -172,8 +172,8 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                         if ( widget.isBrowse() && widget.view.timeline ) {
                             widget.view.timeline.redraw();
                         } else if ( widget.isOrganize() ) {
-                            var version = widget.model.get(Voc.belongsToVersion),
-                                episode = version.get(Voc.belongsToEpisode);
+                            var episode = version.get(Voc.belongsToEpisode);
+
                             if ( episode && episode.isEntity ) {
                                 // TODO See if we need to use the promise to handel success/fail
                                 EpisodeData.learnEpLockHold(episode);
