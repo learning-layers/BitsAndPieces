@@ -49,56 +49,49 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
                     
                 */
                 case 'addEntityToLearnEpVersion':
-                    // XXX MISSING
-                    var bitLabel = this.labelNotFoundText,
+                    var bitLabel = this.getContainedEntityLabelByType(Voc.ENTITY),
                         episodeLabel = this.getContainedEntityLabel();
 
                     templateSettings.iconClass.push('glyphicon-plus-sign');
                     templateSettings.content = ' added bit ' + this.encloseLabel(bitLabel) + ' to episode ' + this.encloseLabel(episodeLabel);
                     break;
                 case 'changeEntityForLearnEpVersionEntity':
-                    // XXX MISSING
-                    var bitLabel = this.labelNotFoundText,
+                    var bitLabel = this.getContainedEntityLabelByType(Voc.ENTITY),
                         episodeLabel = this.getContainedEntityLabel();
 
                     templateSettings.iconClass.push('glyphicon-info-sign');
                     templateSettings.content = ' updated bit ' + this.encloseLabel(bitLabel) + ' of episode ' + this.encloseLabel(episodeLabel);
                     break;
                 case 'moveLearnEpVersionEntity':
-                    // XXX MISSING
-                    var bitLabel = this.labelNotFoundText,
+                    var bitLabel = this.getContainedEntityLabelByType(Voc.ENTITY),
                         episodeLabel = this.getContainedEntityLabel();
 
                     templateSettings.iconClass.push('glyphicon-info-sign');
                     templateSettings.content = ' moved bit ' + this.encloseLabel(bitLabel) + ' of episode ' + this.encloseLabel(episodeLabel);
                     break;
                 case 'removeLearnEpVersionEntity':
-                    // XXX MISSING
-                    var bitLabel = this.labelNotFoundText,
+                    var bitLabel = this.getContainedEntityLabelByType(Voc.ENTITY),
                         episodeLabel = this.getContainedEntityLabel();
 
                     templateSettings.iconClass.push('glyphicon-minus-sign');
                     templateSettings.content = ' removed bit ' + this.encloseLabel(bitLabel) + ' from episode ' + this.encloseLabel(episodeLabel);
                     break;
                 case 'addCircleToLearnEpVersion':
-                    // XXX MISSING
-                    var circleLabel = this.labelNotFoundText,
+                    var circleLabel = this.getContainedEntityLabelByType(Voc.CIRCLE),
                         episodeLabel = this.getContainedEntityLabel();
 
                     templateSettings.iconClass.push('glyphicon-plus-sign');
                     templateSettings.content = ' added circle ' + this.encloseLabel(circleLabel) + ' to episode ' + this.encloseLabel(episodeLabel);
                     break;
                 case 'changeLearnEpVersionCircleLabel':
-                    // XXX MISSING
-                    var circleLabel = this.labelNotFoundText,
+                    var circleLabel = this.getContainedEntityLabelByType(Voc.CIRCLE),
                         episodeLabel = this.getContainedEntityLabel();
 
                     templateSettings.iconClass.push('glyphicon-info-sign');
                     templateSettings.content = ' changed label of circle ' + this.encloseLabel(circleLabel) + ' of episode ' + this.encloseLabel(episodeLabel);
                     break;
                 case 'moveLearnEpVersionCircle':
-                    // XXX MISSING
-                    var circleLabel = this.labelNotFoundText,
+                    var circleLabel = this.getContainedEntityLabelByType(Voc.CIRCLE),
                         episodeLabel = this.getContainedEntityLabel();
 
                     templateSettings.iconClass.push('glyphicon-info-sign');
@@ -145,7 +138,9 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
         _getEntitiesArrayFromAttribute: function(attribute) {
             var entities = this.model.get(attribute);
 
-            if ( !_.isArray(entities) ) {
+            if ( _.isEmpty(entities) ) {
+                entities = [];
+            } else if ( !_.isArray(entities) ) {
                 entities = [entities];
             }
 
@@ -196,6 +191,20 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
                 } else {
                     label = entity.get(Voc.label);
                 }
+            }
+
+            return label;
+        },
+        getContainedEntityLabelByType: function(type) {
+            var label = this.labelNotFoundText,
+                entities = this._getEntitiesArrayFromAttribute(Voc.hasEntities);
+
+            if ( entities ) {
+                _.each(entities, function(entity) {
+                    if ( entity && entity.isEntity && entity.isof(type) ) {
+                        label = entity.get(Voc.label);
+                    }
+                });
             }
 
             return label;
