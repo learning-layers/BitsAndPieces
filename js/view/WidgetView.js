@@ -11,7 +11,8 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
             events: {
                 'bnp:enableOrganize' : 'enableOrganize',
                 'bnp:disableOrganize' : 'disableOrganize',
-                'bnp:addReleaseLockButton' : 'addReleaseLockButton'
+                'bnp:addReleaseLockButton' : 'addReleaseLockButton',
+                'bnp:lockTimeRemaining' : 'setLockTimeRemaining'
             },
             initialize: function() {
                 this.LOG.debug('el', this.el, this.$el);
@@ -147,6 +148,12 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
             removeEpisodeLockIfNeeded: function() {
                 if ( this.isOrganize() ) {
                     this.organizeOverlayView.removeEpisodeLockIfNeeded();
+                }
+            },
+            setLockTimeRemaining: function(e) {
+                if ( this.isOrganize() ) {
+                    this.$el.find('.lockTimeRemaining').remove();
+                    this.$el.find('button[name="releaseEditingLock"]').append('<span class="lockTimeRemaining"> in ' + ( ( e.minutesRemaining > 0 ) ? e.minutesRemaining + ' minutes ' : '') + ( ( e.secondsRemaining > 0 ) ? e.secondsRemaining + ' seconds' : '') + '</span>');
                 }
             }
         });

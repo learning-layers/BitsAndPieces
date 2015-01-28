@@ -217,19 +217,25 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
         },
         remainingTimeChanged: function() {
             var episode = this.getEpisode(),
-                remainingTime = episode.get(Voc.remainingTime);
+                remainingTime = episode.get(Voc.remainingTime),
+                minutesRemaining = 0,
+                secondsRemaining = 0;
 
             if ( this.isOverlayEnabled ) {
                 this.$el.find('.lockTimeRemaining').remove();
                 if ( remainingTime && episode.get(Voc.isLocked) ) {
-                    var minutesRemaining = Math.floor(remainingTime / ( 1000 * 60 ));
-                    var secondsRemaining = Math.floor(( remainingTime / 1000 ) % 60);
+                    minutesRemaining = Math.floor(remainingTime / ( 1000 * 60 ));
+                    secondsRemaining = Math.floor(( remainingTime / 1000 ) % 60);
                     this.$el.find('button').append('<span class="lockTimeRemaining"> in ' + ( ( minutesRemaining > 0 ) ? minutesRemaining + ' minutes ' : '') + ( ( secondsRemaining > 0 ) ? secondsRemaining + ' seconds' : '') + '</span>');
                 }
             } if ( this.isLockedByCurrentUser() ) {
-                // TODO Need to handle the case of episode being locked by current user
-                // Showing the time left near the release button on within the button
-                // makes sense
+                minutesRemaining = Math.floor(remainingTime / ( 1000 * 60 ));
+                secondsRemaining = Math.floor(( remainingTime / 1000 ) % 60);
+                var ev = $.Event('bnp:lockTimeRemaining', {
+                    minutesRemaining: minutesRemaining,
+                    secondsRemaining: secondsRemaining
+                });
+                this.$el.trigger(ev);
             }
         }
     });
