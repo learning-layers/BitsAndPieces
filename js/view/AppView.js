@@ -172,7 +172,14 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                         if ( widget.isBrowse() && widget.view.timeline ) {
                             widget.view.timeline.redraw();
                         } else if ( widget.isOrganize() ) {
-                            // XXX TODO Need to check the lock status
+                            var version = widget.model.get(Voc.belongsToVersion),
+                                episode = version.get(Voc.belongsToEpisode);
+                            if ( episode && episode.isEntity ) {
+                                // TODO See if we need to use the promise to handel success/fail
+                                EpisodeData.learnEpLockHold(episode);
+                            } else {
+                                AppLog.debug("Episode Missing From Version, could not check locks", widget.model, version);
+                            }
                         }
                     } else if ( widget.model.get(Voc.belongsToVersion) === previousVersion ) {
                         if ( widget.isOrganize() ) {
@@ -223,19 +230,9 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                             var promise = EpisodeData.learnEpLockHold(episode);
 
                             promise.done(function(result, passThrough) {
-                                if ( episode.get(Voc.isLocked) !== passThrough['locked'] ) {
-                                    episode.set(Voc.isLocked, passThrough['locked']);
-                                }
-
-                                if ( episode.get(Voc.isLockedByUser) !== passThrough['lockedByUser'] ) {
-                                    episode.set(Voc.isLockedByUser, passThrough['lockedByUser']);
-                                }
-
-                                if ( episode.get(Voc.remainingTime) !== passThrough['remainingTime'] ) {
-                                    episode.set(Voc.remainingTime, passThrough['remainingTime']);
-                                }
+                                AppLog.debug('learnEpLockHold Succeeded', result, passThrough);
                             }).fail(function(f) {
-                                AppLog.debug('learnEpLockHold FAILED', f);
+                                AppLog.debug('learnEpLockHold Failed', f);
                             });
                         } else {
                             AppLog.debug('learnEpLockHold No Episoe For Version', version);

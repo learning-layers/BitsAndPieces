@@ -245,6 +245,19 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData', 
                     }
                 }).using('sss').execute().success(function(result, passThrough){
                     that.LOG.debug('success learnEpLockHold', result, passThrough);
+
+                    if ( model.get(Voc.isLocked) !== passThrough['locked'] ) {
+                        model.set(Voc.isLocked, passThrough['locked']);
+                    }
+
+                    if ( model.get(Voc.isLockedByUser) !== passThrough['lockedByUser'] ) {
+                        model.set(Voc.isLockedByUser, passThrough['lockedByUser']);
+                    }
+
+                    if ( model.get(Voc.remainingTime) !== passThrough['remainingTime'] ) {
+                        model.set(Voc.remainingTime, passThrough['remainingTime']);
+                    }
+
                     defer.resolve(result, passThrough);
                 }).fail(function(f) {
                     that.LOG.debug('error learnEpLockHold', f);
