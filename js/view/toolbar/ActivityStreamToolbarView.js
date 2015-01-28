@@ -183,10 +183,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                     'removeCategories',
                     //'createLearnEp',
                     'addEntityToLearnEpVersion',
-                    'updateLearnEpVersionEntity', // Potential slow-down due to a large number
+                    'changeEntityForLearnEpVersionEntity',
+                    'moveLearnEpVersionEntity',
                     'removeLearnEpVersionEntity',
                     'addCircleToLearnEpVersion',
-                    'updateLearnEpVersionCircle', // Petential slow-down due to a large number
+                    'changeLearnEpVersionCircleLabel',
+                    'moveLearnEpVersionCircle',
                     'removeLearnEpVersionCircle',
                     'shareLearnEpWithUser'
                 ]

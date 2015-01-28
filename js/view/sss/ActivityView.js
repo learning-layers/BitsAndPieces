@@ -34,66 +34,81 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
 
                     templateSettings.iconClass.push('glyphicon-bell');
                     if ( isLoggedInActor ) {
-                        // XXX NEED TO REMOVE AUTHOR
-                        templateSettings.content = ' shared episode <strong>' + episodeLabel + '</strong> with <strong>' + userLabels.join(', ') + '</strong>';
+                        templateSettings.content = ' shared episode ' + this.encloseLabel(episodeLabel) + ' with' + this.episodeLabel(userLabels.join(', '));
                     } else {
-                        templateSettings.content = ' shared with me ' + episodeLabel;
+                        templateSettings.content = ' shared with me ' + this.encloseLabel(episodeLabel);
                     }
                     break;
                 /* dtheiler
                  case 'createLearnEp':
-                    var episodeLabel = this.getEpisodeLabel();
+                    var episodeLabel = this.getContainedEntityLabel();
 
                     templateSettings.iconClass.push('glyphicon-briefcase');
-                    templateSettings.content = ' created an episode ' + episodeLabel;
+                    templateSettings.content = ' created an episode ' + this.encloseLabel(episodeLabel);
                     break;
                     
                 */
                 case 'addEntityToLearnEpVersion':
-                    // XXX Labels not set
-                    var bitLabel = '',
-                        episodeLabel = this.getEpisodeLabel();
+                    // XXX MISSING
+                    var bitLabel = this.labelNotFoundText,
+                        episodeLabel = this.getContainedEntityLabel();
 
                     templateSettings.iconClass.push('glyphicon-plus-sign');
-                    templateSettings.content = ' added bit ' + bitLabel + ' to episode ' + episodeLabel;
+                    templateSettings.content = ' added bit ' + this.encloseLabel(bitLabel) + ' to episode ' + this.encloseLabel(episodeLabel);
                     break;
-                case 'updateLearnEpVersionEntity':
-                    // XXX Labels not set
-                    var bitLabel = '',
-                        episodeLabel = this.getEpisodeLabel();
+                case 'changeEntityForLearnEpVersionEntity':
+                    // XXX MISSING
+                    var bitLabel = this.labelNotFoundText,
+                        episodeLabel = this.getContainedEntityLabel();
 
                     templateSettings.iconClass.push('glyphicon-info-sign');
-                    templateSettings.content = ' updated bit ' + bitLabel + ' of episode' + episodeLabel;
+                    templateSettings.content = ' updated bit ' + this.encloseLabel(bitLabel) + ' of episode ' + this.encloseLabel(episodeLabel);
+                    break;
+                case 'moveLearnEpVersionEntity':
+                    // XXX MISSING
+                    var bitLabel = this.labelNotFoundText,
+                        episodeLabel = this.getContainedEntityLabel();
+
+                    templateSettings.iconClass.push('glyphicon-info-sign');
+                    templateSettings.content = ' moved bit ' + this.encloseLabel(bitLabel) + ' of episode ' + this.encloseLabel(episodeLabel);
                     break;
                 case 'removeLearnEpVersionEntity':
-                    // XXX Labels not set
-                    var bitLabel = '',
-                        episodeLabel = this.getEpisodeLabel();
+                    // XXX MISSING
+                    var bitLabel = this.labelNotFoundText,
+                        episodeLabel = this.getContainedEntityLabel();
 
                     templateSettings.iconClass.push('glyphicon-minus-sign');
-                    templateSettings.content = ' removed bit ' + bitLabel + ' from episode' + episodeLabel;
+                    templateSettings.content = ' removed bit ' + this.encloseLabel(bitLabel) + ' from episode ' + this.encloseLabel(episodeLabel);
                     break;
                 case 'addCircleToLearnEpVersion':
-                    // XXX Labels not set
+                    // XXX MISSING
                     var circleLabel = this.labelNotFoundText,
                         episodeLabel = this.getContainedEntityLabel();
 
                     templateSettings.iconClass.push('glyphicon-plus-sign');
-                    templateSettings.content = ' added circle <strong>' + circleLabel + '</strong> to episode <strong>' + episodeLabel + '</strong>';
+                    templateSettings.content = ' added circle ' + this.encloseLabel(circleLabel) + ' to episode ' + this.encloseLabel(episodeLabel);
                     break;
-                case 'updateLearnEpVersionCircle':
-                    var circleLabel = this.getContainedEntityLabel(),
-                        episodeLabel = this.labelNotFoundText;
+                case 'changeLearnEpVersionCircleLabel':
+                    // XXX MISSING
+                    var circleLabel = this.labelNotFoundText,
+                        episodeLabel = this.getContainedEntityLabel();
 
                     templateSettings.iconClass.push('glyphicon-info-sign');
-                    templateSettings.content = ' updated circle <strong>' + circleLabel + '</strong> of episode <strong>' + episodeLabel + '</strong>';
+                    templateSettings.content = ' changed label of circle ' + this.encloseLabel(circleLabel) + ' of episode ' + this.encloseLabel(episodeLabel);
+                    break;
+                case 'moveLearnEpVersionCircle':
+                    // XXX MISSING
+                    var circleLabel = this.labelNotFoundText,
+                        episodeLabel = this.getContainedEntityLabel();
+
+                    templateSettings.iconClass.push('glyphicon-info-sign');
+                    templateSettings.content = ' moved circle ' + this.encloseLabel(circleLabel) + ' of episode ' + this.encloseLabel(episodeLabel);
                     break;
                 case 'removeLearnEpVersionCircle':
-                    // XXX Labels not set
                     var episodeLabel = this.getContainedEntityLabel();
 
                     templateSettings.iconClass.push('glyphicon-minus-sign');
-                    templateSettings.content = ' removed circle from episode <strong>' + episodeLabel + '</strong>';
+                    templateSettings.content = ' removed circle from episode ' + this.encloseLabel(episodeLabel);
                     break;
                 default:
                     templateSettings.iconClass.push('glyphicon-question-sign');
@@ -111,6 +126,9 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
 
             this.$el.html(_.template(ActivityTemplate, templateSettings));
             return this;
+        },
+        encloseLabel: function(label) {
+            return '<strong>' + label + '</strong>';
         },
         getOwnerUri: function() {
             if ( this.owner && this.owner.isEntity ) {
@@ -149,32 +167,8 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
 
             return labels;
         },
-        getEntitiesLabels: function() {
-            return this._getEntitiesLabelsArrayFromAttribute(Voc.hasEntities);
-        },
         getUsersLabels: function() {
             return this._getEntitiesLabelsArrayFromAttribute(Voc.hasUsers, [userParams.user]);
-        },
-        getEpisodeLabel: function() {
-            var entities = this.model.get(Voc.hasEntities);
-            if ( !_.isEmpty(entities) ) {
-                entities = ( _.isArray(entities) ) ? entities : [entities];
-
-                var episode =  _.find(entities, function(entity) {
-                    if ( entity.isEntity ) {
-                        if ( entity.isof(Voc.EPISODE) ) {
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-
-                if ( episode ) {
-                    return episode.get(Voc.label);
-                }
-            }
-
-            return '';
         },
         getContainedEntity: function() {
             var entity = this.model.get(Voc.hasResource);
