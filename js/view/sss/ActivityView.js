@@ -34,7 +34,7 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
 
                     templateSettings.iconClass.push('glyphicon-bell');
                     if ( isLoggedInActor ) {
-                        templateSettings.content = ' shared episode ' + this.encloseLabel(episodeLabel) + ' with' + this.episodeLabel(userLabels.join(', '));
+                        templateSettings.content = ' shared episode ' + this.encloseLabel(episodeLabel) + ' with ' + this.encloseLabel( userLabels.join(', ') );
                     } else {
                         templateSettings.content = ' shared with me ' + this.encloseLabel(episodeLabel);
                     }
