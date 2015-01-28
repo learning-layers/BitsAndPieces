@@ -374,7 +374,7 @@ div#tabs .stream .resultSet .singleEntry {
 div#tabs .stream .resultSet .singleEntry .entryIcon {
 	display: inline-block;
 	vertical-align: top;
-	font-size: 50px;
+	font-size: 45px;
 }
 
 div#tabs .stream .resultSet .singleEntry .entryIcon img {
@@ -388,6 +388,7 @@ div#tabs .stream .resultSet .singleEntry .entryContent {
 	width: 180px;
 	min-height: 70px;
 	padding-left: 10px;
+	font-size: 85%;
 }
 
 div#tabs .stream .resultSet .singleRecommendation label.recommendationLabel {
