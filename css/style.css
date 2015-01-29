@@ -278,7 +278,7 @@ div#tabs {
 	height: 100%;
 }
 
-.ui-widget {
+div#tabs.ui-widget, .ui-datepicker, .ui-autocomplete {
 	font-size: 14px;
 }
 
