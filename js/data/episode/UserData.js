@@ -184,7 +184,8 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
             'data' : {
                 'startTime' : start.getTime(),
                 'endTime' : end.getTime(),
-                'forUser' : forUser
+                'forUser' : forUser,
+                'types' : ['evernoteNotebookCreate', 'evernoteNotebookUpdate', 'evernoteNotebookFollow', 'evernoteNoteCreate', 'evernoteNoteUpdate', 'evernoteNoteDelete', 'evernoteNoteShare', 'evernoteReminderDone', 'evernoteReminderCreate', 'evernoteResourceAdd']
             }
         }).from('sss').execute().success(
             function(entities) {
