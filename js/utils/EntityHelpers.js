@@ -56,12 +56,37 @@ function (Logger, $, Backbone, _, Voc, userParams) {
                     belongsToEpisodeUris.push(single.getSubject());
                 });
 
-                if ( _.indexOf(belongsToEpisodeUris, episodeSubject) === -1 ) {
-                    belongsToEpisodeUris.push(episodeSubject);
-                    entity.set(Voc.belongsToEpisode, belongsToEpisodeUris);
+                belongsToEpisodeUris.push(episodeSubject);
+                entity.set(Voc.belongsToEpisode, belongsToEpisodeUris);
 
-                    return true;
-                }
+                return true;
+            }
+
+            return false;
+        },
+        removeBelongsToEpisode: function(entity, episode) {
+            var belongsToEpisode = entity.get(Voc.belongsToEpisode),
+                episodeSubject = episode.getSubject(),
+                belongsToEpisodeUris = [];
+
+            if ( _.isEmpty(belongsToEpisode) ) {
+                return false;
+            }
+
+            if ( !_.isArray(belongsToEpisode) ) {
+                belongsToEpisode = [belongsToEpisode];
+            }
+
+            _.each(belongsToEpisode, function(single) {
+                belongsToEpisodeUris.push(single.getSubject());
+            });
+
+            var subjectIndex = _.indexOf(belongsToEpisodeUris, episodeSubject);
+            if ( subjectIndex !== -1 ) {
+                belongsToEpisodeUris.splice(subjectIndex, 1);
+                entity.set(belongsToEpisodeUris);
+
+                return true;
             }
 
             return false;
