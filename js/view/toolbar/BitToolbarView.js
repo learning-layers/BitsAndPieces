@@ -133,6 +133,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 'author' : author,
                 'creationTime' : DateHelpers.formatTimestampDateDMY(this.model.get(Voc.creationTime)),
                 'views' : this.model.get(Voc.hasViewCount) || 0,
+                'usedInEpisodes' : this.getBelongsToEpisodeLabels(),
                 'tags' : this.getBitTags(),
                 'predefined' : CategoryData.getPredefinedCategories(),
                 'importance' : this.model.get(Voc.importance),
@@ -200,6 +201,24 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     tagcloud.append(' <span class="badge"><a href="#" data-tag="' + tag.label + '" style="font-size:' + fontSize + 'px">' + tag.label + '</a></span>');
                 });
             }
+        },
+        getBelongsToEpisodeLabels: function() {
+            var belongsToEpisode = this.model.get(Voc.belongsToEpisode);
+
+            if ( !_.isEmpty(belongsToEpisode) ) {
+                if ( !_.isArray(belongsToEpisode) ) {
+                    return belongsToEpisode.get(Voc.label);
+                }
+
+                var labels = [];
+                _.each(_.uniq(belongsToEpisode), function(single) {
+                    labels.push(single.get(Voc.label));
+                });
+
+                return labels.join(', ');
+            }
+
+            return '';
         }
     });
 });

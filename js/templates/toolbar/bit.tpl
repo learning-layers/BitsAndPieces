@@ -33,6 +33,10 @@
                         <td><label>Amount of views:</label></td>
                         <td class="withPadding"><%= entity.views %></td>
                     </tr>
+                    <tr>
+                        <td><label>Used in Episodes:</label></td>
+                        <td class="withPadding"><%= entity.usedInEpisodes %></td>
+                    </tr>
                 </tbody>
             </table>
 
