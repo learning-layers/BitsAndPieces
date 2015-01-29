@@ -206,7 +206,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             var data = {
                     forUser : userParams.user,
                     maxResources : 20,
-                    typesToRecommOnly : ['file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
+                    typesToRecommOnly : ['evernoteResource', 'evernoteNote', 'evernoteNotebook']
                 },
                 promise = EntityData.getRecommResources(data);
 
