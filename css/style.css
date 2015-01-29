@@ -278,7 +278,7 @@ div#tabs {
 	height: 100%;
 }
 
-div#tabs.ui-widget, .ui-autocomplete {
+.ui-widget {
 	font-size: 14px;
 }
 
