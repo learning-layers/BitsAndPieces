@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger, Voc, _, $, Data){
+define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], function(Logger, Voc, _, $, Data, userParams){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize ActivityData");
@@ -43,9 +43,19 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
 
                     if ( !_.isEmpty(activities) ) {
                         var combinedUrisToBeAdded = [];
-                        var combinedToBeAdded = [];
+                            combinedToBeAdded = [],
+                            suitableActivities = [];
 
                         _.each(activities, function(activity) {
+                            // Check if acceptable activity
+                            if ( activity[Voc.author] === userParams.user ) {
+                                if ( activity[Voc.hasActivityType] !== 'shareLearnEpWithUser' ) {
+                                    return;
+                                }
+                            }
+
+                            suitableActivities.push(activity);
+
                             var users = activity[Voc.hasUsers];
                             var entities = activity[Voc.hasEntities];
                             var containedEntity = activity[Voc.hasResource];
@@ -97,10 +107,10 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
                             that.vie.entities.addOrUpdate(combinedToBeAdded);
                         }
 
-                        activities = that.vie.entities.addOrUpdate(activities);
+                        suitableActivities = that.vie.entities.addOrUpdate(suitableActivities);
                     }
 
-                    defer.resolve(activities);
+                    defer.resolve(suitableActivities);
                 }).fail(function(f) {
                     that.LOG.debug('activitiesGet fail', f);
                     defer.reject(f);
