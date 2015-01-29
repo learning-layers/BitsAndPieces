@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData', 'userParams'], function(Logger, Voc, _, Data, VersionData, userParams){
+define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData', 'userParams', 'utils/EntityHelpers'], function(Logger, Voc, _, Data, VersionData, userParams, EntityHelpers){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize Episode");
@@ -102,7 +102,12 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData', 
 
                 // Add or update resources if any
                 if ( resources.length > 0 ) {
-                    em.vie.entities.addOrUpdate(resources);
+                    resources = em.vie.entities.addOrUpdate(resources);
+
+                    // Set resource as belonging to an episode
+                    _.each(resources, function(resource) {
+                        EntityHelpers.addBelongsToEpisode(resource, episode);
+                    });
                 }
             }
         );

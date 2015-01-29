@@ -37,6 +37,34 @@ function (Logger, $, Backbone, _, Voc, userParams) {
             }
 
             return sharedWithNames;
+        },
+        addBelongsToEpisode: function(entity, episode) {
+            var belongsToEpisode = entity.get(Voc.belongsToEpisode),
+                episodeSubject = episode.getSubject(),
+                belongsToEpisodeUris = [];
+
+            if ( _.isEmpty(belongsToEpisode) ) {
+                entity.set(Voc.belongsToEpisode, episodeSubject);
+
+                return true;
+            } else {
+                if ( !_.isArray(belongsToEpisode) ) {
+                    belongsToEpisode = [belongsToEpisode];
+                }
+
+                _.each(belongsToEpisode, function(single) {
+                    belongsToEpisodeUris.push(single.getSubject());
+                });
+
+                if ( _.indexOf(belongsToEpisodeUris, episodeSubject) === -1 ) {
+                    belongsToEpisodeUris.push(episodeSubject);
+                    entity.set(Voc.belongsToEpisode, belongsToEpisodeUris);
+
+                    return true;
+                }
+            }
+
+            return false;
         }
     };
 });
