@@ -82,9 +82,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             var that = this,
                 box = this.$el.find('.belongsToEpisode');
 
-            _.each(this.episodeViews, function(view) {
-                view.remove();
-            });
+            if (this.episodeViews && _.isArray(this.episodeViews) ) {
+                _.each(this.episodeViews, function(view) {
+                    view.remove();
+                });
+            }
 
             this.episodeViews = [];
             _.each(episodes, function(episode) {

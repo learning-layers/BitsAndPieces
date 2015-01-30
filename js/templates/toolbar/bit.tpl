@@ -29,14 +29,17 @@
                         <td><label>Date:</label></td>
                         <td class="withPadding"><%= entity.creationTime %></td>
                     </tr>
-                    <tr>
+                    <!--tr>
                         <td><label>Amount of views:</label></td>
                         <td class="withPadding"><%= entity.views %></td>
-                    </tr>
+                    </tr-->
                 </tbody>
             </table>
 
-            <div class="list-group belongsToEpisode">
+            <div class="form-group">
+                <label class="control-label>">In episodes:</label>
+                <div class="list-group belongsToEpisode">
+                </div>
             </div>
 
             <% if ( entity.thumb ) { %>

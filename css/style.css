@@ -652,3 +652,8 @@ label.notBoldLabel {
 .ui-datepicker {
 	z-index: 1500 !important;
 }
+
+.toolbarContentBit .belongsToEpisode {
+	max-height: 100px;
+	overflow-y: auto;
+}
