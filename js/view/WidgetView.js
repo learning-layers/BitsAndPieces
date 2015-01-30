@@ -139,7 +139,7 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
                 if ( this.isOrganize() ) {
                     var that = this;
 
-                    this.$el.prepend('<button type="button" class="btn btn-default" name="releaseEditingLock">Release Editing Lock</button>');
+                    this.$el.prepend('<button type="button" class="btn btn-info" name="releaseEditingLock">Release Editing Lock</button>');
                     this.$el.find('button[name="releaseEditingLock"]').on('click', function(e) {
                         that.organizeOverlayView.enableOverlay(e);
                     });
@@ -153,7 +153,7 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
             setLockTimeRemaining: function(e) {
                 if ( this.isOrganize() ) {
                     this.$el.find('.lockTimeRemaining').remove();
-                    this.$el.find('button[name="releaseEditingLock"]').append('<span class="lockTimeRemaining"> in ' + ( ( e.minutesRemaining > 0 ) ? e.minutesRemaining + ' minutes ' : '') + ( ( e.secondsRemaining > 0 ) ? e.secondsRemaining + ' seconds' : '') + '</span>');
+                    this.$el.find('button[name="releaseEditingLock"]').append('<span class="lockTimeRemaining"> (' + ( ( e.minutesRemaining > 0 ) ? e.minutesRemaining + ' minutes ' : '') + ( ( e.secondsRemaining > 0 ) ? e.secondsRemaining + ' seconds' : '') + ' left to edit)</span>');
                 }
             }
         });
