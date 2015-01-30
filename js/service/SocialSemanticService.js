@@ -141,7 +141,7 @@ function(Logger, VIE, _, Voc, SSSModel, $, UserAuth) {
                                 if( error ) error(result);
 
                                 // This could trigger a logout
-                                sss.checkErrorAndAct(error);
+                                sss.checkErrorAndAct(result);
 
                                 return;
                             }
@@ -293,8 +293,8 @@ function(Logger, VIE, _, Voc, SSSModel, $, UserAuth) {
             }
         },
 
-        checkErrorAndAct: function(error) {
-            if ( error && error.id === 'authOIDCUserInfoRequestFailed' ) {
+        checkErrorAndAct: function(result) {
+            if ( result.error && result.id === 'authOIDCUserInfoRequestFailed' ) {
                 if ( UserAuth.logout() ) {
                     document.location.reload();
                 }
