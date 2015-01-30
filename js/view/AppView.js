@@ -7,10 +7,11 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
         'view/WidgetView',
         'view/episode/EpisodeManagerView',
         'view/toolbar/ToolbarView',
-        'view/CircleRenameModalView',
+        'view/modal/CircleRenameModalView',
+        'view/modal/OIDCTokenExpiredModalView',
         'utils/SystemMessages',
         'text!templates/navbar.tpl'],
-    function(Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, SystemMessages, NavbarTemplate){
+    function(Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, NavbarTemplate){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {
@@ -42,7 +43,6 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                         }
                     },this);
                 this.setUpEpisodeLockHoldInternal();
-
             },
             filter: function(model, collection, options) {
                 if(model.isof(Voc.VERSION)){
@@ -89,6 +89,10 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                 // Initialize and place the CircleRenameMoval view
                 this.circleRenameModalView = new CircleRenameModalView().render();
                 this.$el.parent().prepend(this.circleRenameModalView.$el);
+
+                // Initialize and place the OIDCTokenExpired view
+                this.oidcTokenExpiredModalView = new OIDCTokenExpiredModalView().render();
+                this.$el.parent().prepend(this.oidcTokenExpiredModalView.$el);
             },
             drawWidget: function(versionElem, widget) {
                 AppLog.debug('drawWidget', widget);

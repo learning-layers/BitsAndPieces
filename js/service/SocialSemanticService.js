@@ -1,7 +1,7 @@
 // The SocialSemanticService wraps the SSS REST API v3.4.0
 
-define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceModel', 'jquery', 'UserAuth'], 
-function(Logger, VIE, _, Voc, SSSModel, $, UserAuth) {
+define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceModel', 'jquery'],
+function(Logger, VIE, _, Voc, SSSModel, $) {
 
 // ## VIE.SocialSemanticService(options)
 // This is the constructor to instantiate a new service.
@@ -295,9 +295,8 @@ function(Logger, VIE, _, Voc, SSSModel, $, UserAuth) {
 
         checkErrorAndAct: function(result) {
             if ( result.error && result.id === 'authOIDCUserInfoRequestFailed' ) {
-                if ( UserAuth.logout() ) {
-                    document.location.reload();
-                }
+                var ev = $.Event('bnp:oidcTokenExpired', {});
+                $(document).trigger(ev);
             }
         }
     };
