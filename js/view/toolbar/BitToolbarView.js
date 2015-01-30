@@ -1,7 +1,8 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'utils/DateHelpers',
         'text!templates/toolbar/bit.tpl', 'text!templates/toolbar/empty.tpl',
-        'data/EntityData', 'data/sss/CategoryData'], function(Logger, tracker, _, $, Backbone, Voc, DateHelpers, BitTemplate, EmptyTemplate, EntityData, CategoryData){
+        'view/toolbar/EpisodeListGroupView',
+        'data/EntityData', 'data/sss/CategoryData'], function(Logger, tracker, _, $, Backbone, Voc, DateHelpers, BitTemplate, EmptyTemplate, EpisodeListGroupView, EntityData, CategoryData){
     return Backbone.View.extend({
         events: {
             'slidechange .slider' : 'setImportance',
@@ -72,6 +73,27 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             var tags = this.model.get(Voc.hasTagRecommendation) || [];
             if (!_.isArray(tags)) tags = [tags];
             this.addOrUpdateRecommendedTags(tags);
+
+            // Deal with episodes
+            var episodes = this.getBelongsToEpisode();
+            this.addOrUpdateEpisodeViews(episodes);
+        },
+        addOrUpdateEpisodeViews: function(episodes) {
+            var that = this,
+                box = this.$el.find('.belongsToEpisode');
+
+            _.each(this.episodeViews, function(view) {
+                view.remove();
+            });
+
+            this.episodeViews = [];
+            _.each(episodes, function(episode) {
+                var view = new EpisodeListGroupView({
+                    model: episode
+                });
+                box.append(view.render().$el);
+                that.episodeViews.push(view);
+            });
         },
         getImportance: function() {
             return this.model.get(Voc.importance) || 1;
@@ -133,7 +155,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 'author' : author,
                 'creationTime' : DateHelpers.formatTimestampDateDMY(this.model.get(Voc.creationTime)),
                 'views' : this.model.get(Voc.hasViewCount) || 0,
-                'usedInEpisodes' : this.getBelongsToEpisodeLabels(),
                 'tags' : this.getBitTags(),
                 'predefined' : CategoryData.getPredefinedCategories(),
                 'importance' : this.model.get(Voc.importance),
@@ -202,23 +223,18 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 });
             }
         },
-        getBelongsToEpisodeLabels: function() {
+        getBelongsToEpisode: function() {
             var belongsToEpisode = this.model.get(Voc.belongsToEpisode);
 
             if ( !_.isEmpty(belongsToEpisode) ) {
                 if ( !_.isArray(belongsToEpisode) ) {
-                    return belongsToEpisode.get(Voc.label);
+                    belongsToEpisode = [belongsToEpisode];
                 }
 
-                var labels = [];
-                _.each(_.uniq(belongsToEpisode), function(single) {
-                    labels.push(single.get(Voc.label));
-                });
-
-                return labels.join(', ');
+                return _.uniq(belongsToEpisode);
             }
 
-            return '';
+            return [];
         }
     });
 });
