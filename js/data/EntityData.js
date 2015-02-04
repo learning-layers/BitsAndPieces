@@ -178,7 +178,8 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
                     'data' : {
                         'entity' : modelUri,
                         'maxTags' : 20,
-                        'forUser' : userParams.user
+                        'forUser' : userParams.user,
+                        'includeOwn' : false
                     }
                 }).using('sss').execute().success(function(result){
                     that.LOG.debug('recommTags', result);
