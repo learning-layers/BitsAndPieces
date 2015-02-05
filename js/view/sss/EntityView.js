@@ -52,6 +52,7 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             'sss:fileDoc' : 'img/sss/entityFileDoc.png',
             'sss:rating' : 'img/sss/rate.png',
             'sss:tag' : 'img/evernote/tag.png',
+            'sss:placeholder' : 'img/sss/entityPlaceholder.png',
             //'sss:userEvent' : 'img/sss/userEvent.png',
             //'sss:learnEp' : 'img/evernote/learnEp.png',
             //'sss:learnEpTimelineState' : 'img/evernote/learnEpTimelineState.png',
@@ -60,7 +61,7 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             //'sss:learnEpEntity' : 'img/evernote/learnEpEntity.png',
 
             'unknown' : 'img/sss/unknown.png',
-            'sss:bnpPlaceholderAdd' : 'img/sss/entityLink.png',
+            'sss:bnpPlaceholderAdd' : 'img/sss/entityPlaceholder.png',
             // EVERNOTE STUFF
             'sss:evernoteNotebook' : 'img/sss/collection.png',
             'sss:evernoteNote' : 'img/sss/evernoteNote.png',

@@ -348,7 +348,7 @@ define(['underscore', 'logger'], function(_, Logger) {
             'passThroughKeys' : ['locked', 'lockedByUser', 'remainingTime']
         },
         'entityAdd' : {
-            'resultKey' : 'worked'
+            'resultKey' : 'entity'
         }
     };
     return m;

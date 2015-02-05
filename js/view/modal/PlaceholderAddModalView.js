@@ -1,11 +1,13 @@
 define(['logger', 'underscore', 'jquery', 'backbone',
         'data/EntityData',
-        'text!templates/modal/placeholder_add_modal.tpl'], function(Logger, _, $, Backbone, EntityData, PlaceholderAddTemplate){
+        'utils/SystemMessages', 'utils/InputValidation',
+        'text!templates/modal/placeholder_add_modal.tpl'], function(Logger, _, $, Backbone, EntityData, SystemMessages, InputValidation, PlaceholderAddTemplate){
     return Backbone.View.extend({
         events: {
             'submit form' : 'submitForm',
             'hide.bs.modal' : 'cleanForm',
-            'click .btn-primary' : 'submitForm'
+            'click .btn-primary' : 'submitForm',
+            'keyup input#placeholderLabel' : 'revalidatePlaceholderLabel',
         },
         LOG: Logger.get('PlaceholderAddModalView'),
         initialize: function() {
@@ -22,11 +24,16 @@ define(['logger', 'underscore', 'jquery', 'backbone',
             this.$el.find(this.placeholderAddModalSelector).modal('show');
         },
         hideModal: function() {
+            console.log("zz", this.$el.find(this.placeholderAddModalSelector));
             this.$el.find(this.placeholderAddModalSelector).modal('hide');
         },
         submitForm: function(e) {
-            // TODO Add validation
             e.preventDefault();
+
+            if ( !this.validatePlaceholderLabel() ) {
+                return false;
+            }
+
             var label = this.$el.find(this.labelInputSelector).val(),
                 description = this.$el.find(this.descriptionSelector).val(),
                 promise = null;
@@ -37,16 +44,30 @@ define(['logger', 'underscore', 'jquery', 'backbone',
                 type: 'placeholder'
             });
 
+            this.hideModal();
+
             promise.done(function(result) {
-                // TODO Clean-up and close the dialog
-                // Probably display the success message
+                SystemMessages.addSuccessMessage('New Placeholder has been added.');
             }).fail(function(f) {
-                // TODO Show error
+                SystemMessages.addDangerMessage('A Placeholder could not be added!');
             });
         },
         cleanForm: function() {
+            var element = this.$el.find(this.labelInputSelector);
+
             this.$el.find(this.labelInputSelector).val('');
             this.$el.find(this.descriptionSelector).val('');
+            InputValidation.removeAlertsFromParent(element);
+            InputValidation.removeValidationStateFromParent(element);
+        },
+        validatePlaceholderLabel: function() {
+            var element = this.$el.find(this.labelInputSelector),
+                alertText = 'Label is required!';
+
+            return InputValidation.validateTextInput(element, alertText);
+        },
+        revalidatePlaceholderLabel: function() {
+            this.validatePlaceholderLabel();
         }
     });
 });

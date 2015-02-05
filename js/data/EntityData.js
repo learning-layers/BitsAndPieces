@@ -128,7 +128,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
     m.search = function(keywords, tags, callback) {
         var that = this,
             serviceData = {
-                'typesToSearchOnlyFor' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook'],
+                'typesToSearchOnlyFor' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook', 'placeholder'],
                 'localSearchOp' : 'or',
                 'globalSearchOp' : 'and'
             };
@@ -316,8 +316,8 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
                 });
             }
         );
-        return defer.promise();
 
+        return defer.promise();
     };
 
     return m;

@@ -1371,6 +1371,24 @@
                 "http://eval.bp/userEvent" 
             ] 
         },
+        "http://eval.bp/bnpPlaceholderAdd" : {
+            "ancestors": [
+                "http://eval.bp/userEvent"
+            ],
+            "comment": "",
+            "comment_plain": "",
+            "id": "http://eval.bp/bnpPlaceholderAdd",
+            "label": "bnpPlaceholderAdd Event",
+            "properties": [
+            ],
+            "specific_properties": [
+            ],
+            "subtypes": [
+            ],
+            "supertypes": [
+                "http://eval.bp/userEvent"
+            ]
+        },
         "http://eval.bp/message" : {
             "ancestors": [
                 "http://eval.bp/Thing"
