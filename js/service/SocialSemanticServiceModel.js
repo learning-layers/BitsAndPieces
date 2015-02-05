@@ -346,6 +346,9 @@ define(['underscore', 'logger'], function(_, Logger) {
         'learnEpLockHold' : {
             'resultKey' : 'locked',
             'passThroughKeys' : ['locked', 'lockedByUser', 'remainingTime']
+        },
+        'entityAdd' : {
+            'resultKey' : 'worked'
         }
     };
     return m;

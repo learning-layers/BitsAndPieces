@@ -60,6 +60,7 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             //'sss:learnEpEntity' : 'img/evernote/learnEpEntity.png',
 
             'unknown' : 'img/sss/unknown.png',
+            'sss:bnpPlaceholderAdd' : 'img/sss/entityLink.png',
             // EVERNOTE STUFF
             'sss:evernoteNotebook' : 'img/sss/collection.png',
             'sss:evernoteNote' : 'img/sss/evernoteNote.png',
@@ -163,6 +164,8 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             } else if ( resource.isof(Voc.FILE) ) {
                 window.open(this.constructFileDownloadUri(resourceUri));
                 return true;
+            } else if ( resource.isof(Voc.PLACEHOLDER) ) {
+                return false;
             }
 
             window.open(resourceUri);

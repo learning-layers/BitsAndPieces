@@ -296,6 +296,29 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
         );
         return defer.promise();
     };
+    m.addEntity = function(data) {
+        var that = this,
+            defer = $.Deferred();
+
+        data = data || {};
+
+        this.vie.onUrisReady(
+            function() {
+                that.vie.analyze({
+                    'service' : 'entityAdd',
+                    'data' : data
+                }).using('sss').execute().success(function(result){
+                    that.LOG.debug('addEntity success', result);
+                    defer.resolve(result);
+                }).fail(function(f) {
+                    that.LOG.debug('addEntity fail', f);
+                    defer.reject(f);
+                });
+            }
+        );
+        return defer.promise();
+
+    };
 
     return m;
 

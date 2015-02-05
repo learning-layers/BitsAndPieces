@@ -185,7 +185,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
                 'startTime' : start.getTime(),
                 'endTime' : end.getTime(),
                 'forUser' : forUser,
-                'types' : ['evernoteNotebookCreate', 'evernoteNotebookUpdate', 'evernoteNotebookFollow', 'evernoteNoteCreate', 'evernoteNoteUpdate', 'evernoteNoteDelete', 'evernoteNoteShare', 'evernoteReminderDone', 'evernoteReminderCreate', 'evernoteResourceAdd']
+                'types' : ['evernoteNotebookCreate', 'evernoteNotebookUpdate', 'evernoteNotebookFollow', 'evernoteNoteCreate', 'evernoteNoteUpdate', 'evernoteNoteDelete', 'evernoteNoteShare', 'evernoteReminderDone', 'evernoteReminderCreate', 'evernoteResourceAdd', 'bnpPlaceholderAdd']
             }
         }).from('sss').execute().success(
             function(entities) {

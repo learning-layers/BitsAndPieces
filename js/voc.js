@@ -9,6 +9,7 @@ define([], {
     ORGAENTITY: "sss:learnEpEntity",
     ENTITY: "sss:entity",
     FILE: "sss:file",
+    PLACEHOLDER: "sss:placeholder",
     EVERNOTE_RESOURCE: "sss:evernoteResource",
     EVERNOTE_NOTE: "sss:evernoteNote",
     EVERNOTE_NOTEBOOK: "sss:evernoteNotebook",

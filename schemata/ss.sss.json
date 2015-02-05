@@ -319,6 +319,23 @@
                 "http://eval.bp/Thing" 
             ] 
         },
+        "http://eval.bp/placeholder" : {
+            "ancestors": [
+                "http://eval.bp/entity"
+            ],
+            "comment": "",
+            "comment_plain": "",
+            "id": "http://eval.bp/placeholder",
+            "label": "placeholder",
+            "properties": [
+            ],
+            "specific_properties": [
+            ],
+            "subtypes": [],
+            "supertypes": [
+                "http://eval.bp/entity"
+            ]
+        },
         "http://eval.bp/evernoteResource" : {
             "ancestors": [
                 "http://eval.bp/entity"
