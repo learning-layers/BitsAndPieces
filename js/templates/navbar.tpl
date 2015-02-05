@@ -18,6 +18,8 @@
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Menu <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
             <li><a href="#" id="createBlank">Create New Episode</a></li>
+            <li><a href="#" id="createPlaceholder">Create New Placeholder</a></li>
+            <li class="divider"></li>
             <li><a href="#" id="logout">Logout</a></li>
             <li class="divider"></li>
           </ul>

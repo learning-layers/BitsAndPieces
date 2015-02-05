@@ -1,6 +1,6 @@
 define(['logger', 'underscore', 'jquery', 'backbone',
         'UserAuth',
-        'text!templates/oidc_token_expired_modal.tpl'], function(Logger, _, $, Backbone, UserAuth, OIDCTokenExpiredTemplate){
+        'text!templates/modal/oidc_token_expired_modal.tpl'], function(Logger, _, $, Backbone, UserAuth, OIDCTokenExpiredTemplate){
     return Backbone.View.extend({
         events: {
             'hide.bs.modal' : 'forceLogout'
@@ -10,7 +10,7 @@ define(['logger', 'underscore', 'jquery', 'backbone',
             var that = this;
 
             this.isShown = false;
-            this.circleRenameModalSelector = '#oidcTokenExpiredModal';
+            this.oidcTokenExpiredModalSelector = '#oidcTokenExpiredModal';
 
             $(document).on('bnp:oidcTokenExpired', function(e) {
                 that.showModal();
@@ -24,11 +24,11 @@ define(['logger', 'underscore', 'jquery', 'backbone',
         showModal: function() {
             if ( this.isShown ) return;
 
-            this.$el.find(this.circleRenameModalSelector).modal('show');
+            this.$el.find(this.oidcTokenExpiredModalSelector).modal('show');
             this.isShown = true;
         },
         hideModal: function() {
-            this.$el.find(this.circleRenameModalSelector).modal('hide');
+            this.$el.find(this.oidcTokenExpiredModalSelector).modal('hide');
             this.isShown = false;
         },
         forceLogout: function(e) {

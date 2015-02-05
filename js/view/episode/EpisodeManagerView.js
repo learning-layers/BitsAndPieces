@@ -1,10 +1,11 @@
 // TODO EpisodeManagerView could be renamed to MenuView
 define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
-        'utils/EntityHelpers'], function(VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers){
+        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView'], function(VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
             'click a#createBlank' : 'createBlank',
+            'click a#createPlaceholder' : 'createPlaceholder',
             //'click button#createFromHere' : 'createFromHere',
             //'click button#createNewVersion' : 'createNewVersion',
             //'click #toggleEpisodes' : 'toggleEpisodes',
@@ -31,6 +32,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
 
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), this.episodeVersionChanged, this);
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEpisode), this.changeEpisodeSet, this);
+
+            this.placeholderAddModalView = new PlaceholderAddModalView().render();
+            $(document).find('body').prepend(this.placeholderAddModalView.$el);
             var view = this;
         },
         toggleEpisodes: function() {
@@ -152,6 +156,11 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             var newEpisode = EpisodeData.newEpisode(this.model);
             var newVersion = newEpisode.get(Voc.hasVersion);
             this.model.save(Voc.currentVersion, newVersion.getSubject());
+        },
+        createPlaceholder: function(e) {
+            e.preventDefault();
+
+            this.placeholderAddModalView.showModal();
         },
         episodeVersionChanged: function() {
             this.render();

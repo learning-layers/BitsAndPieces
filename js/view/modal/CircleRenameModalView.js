@@ -1,6 +1,6 @@
 define(['logger', 'underscore', 'jquery', 'backbone',
         'data/sss/CategoryData', 'data/episode/UserData',
-        'text!templates/circle_rename_modal.tpl'], function(Logger, _, $, Backbone, CategoryData, UserData, CircleRenameModalTemplate){
+        'text!templates/modal/circle_rename_modal.tpl'], function(Logger, _, $, Backbone, CategoryData, UserData, CircleRenameModalTemplate){
     return Backbone.View.extend({
         events: {
             'submit form' : 'submitForm'
