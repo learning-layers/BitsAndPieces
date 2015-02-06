@@ -1,4 +1,4 @@
-define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
+define(['module', 'logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
         'data/timeline/TimelineData', 
         'data/organize/OrganizeData',
         'data/episode/UserData',
@@ -11,7 +11,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
         'view/modal/OIDCTokenExpiredModalView',
         'utils/SystemMessages',
         'text!templates/navbar.tpl'],
-    function(Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, NavbarTemplate){
+    function(module, Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, NavbarTemplate){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {
@@ -33,7 +33,7 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                 this.model.on('change:'
                     + this.vie.namespaces.uri(Voc.label),
                     function(model, value, options) {
-                        that.$el.parent().find('.currentUserLabel > .userLabel').html(model.get(Voc.label));
+                        that.$el.parent().find('.currentUserLabel').html(model.get(Voc.label));
                     },this);
                 this.model.on('change:'
                     + this.vie.namespaces.uri(Voc.hasEpisode),
@@ -64,7 +64,8 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
             },
             render: function() {
                 var navbar = _.template(NavbarTemplate, {
-                    userLabel: this.model.get(Voc.label)
+                    userLabel: this.model.get(Voc.label),
+                    affectUrl: module.config().affectUrl || ''
                 });
                 // Prepend navbar to body
                 this.$el.parent().prepend(navbar);

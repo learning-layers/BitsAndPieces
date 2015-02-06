@@ -2,6 +2,7 @@ var require = (function() {
     var sssHostREST = "http://localhost:8080/ss-adapter-rest/SSAdapterRest/";
     var oidcAuthorizationUrl = "";
     var oidcClientID = "";
+    var affectUrl = "";
     return {
         config: {
             'app' : {
@@ -19,6 +20,9 @@ var require = (function() {
             'view/LoginFormView' : {
                 'oidcAuthorizationUrl' : oidcAuthorizationUrl,
                 'oidcClientID' : oidcClientID
+            },
+            'view/AppView' : {
+                'affectUrl' : affectUrl
             }
         },
         baseUrl: 'js',
