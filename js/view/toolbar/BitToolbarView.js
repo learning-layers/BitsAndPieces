@@ -36,10 +36,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     EntityData.addHasLoaded(this.model, Voc.hasTagRecommendation);
                     EntityData.loadRecommTags(this.model);
                 }
+                /* Disabled loading view count
                 if ( !EntityData.hasLoaded(this.model, Voc.hasViewCount) ) {
                     EntityData.addHasLoaded(this.model, Voc.hasViewCount);
                     EntityData.loadViewCount(this.model);
                 }
+                */
 
                 this.listenTo(this.model, 'change', this.render);
             }
