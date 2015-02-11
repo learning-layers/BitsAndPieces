@@ -85,6 +85,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             if ( !_.isEmpty(this.views) ) {
                 this.organize.clearCanvas();
                 _.each(this.views, function(single) {
+                    if ( single.resourceView ) {
+                        single.resourceView.remove();
+                    }
                     single.remove();
                 });
                 this.views = {};
