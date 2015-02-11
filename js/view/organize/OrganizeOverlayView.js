@@ -30,6 +30,7 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             }, 1000);
         },
         initialize: function() {
+            this.organizeView = this.options.organizeView;
             this.isOverlayEnabled = false;
             // Organize Model is provided
             var that = this,
@@ -162,14 +163,21 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             this.addAjaxLoader(this.$el);
 
             promise.done(function(result) {
-                that.removeAjaxLoader(that.$el);
 
                 if ( result === true ) {
-                    that.disableOverlayVisuals();
+                    that.organizeView.clearOrganizeAndViews();
+                    var versionsPromise = EpisodeData.fetchVersions(episode);
 
-                    episode.set(Voc.isLocked, true);
-                    episode.set(Voc.isLockedByUser, true);
+                    versionsPromise.done(function() {
+                        that.organizeView.reRenderOrganize();
+                        that.removeAjaxLoader(that.$el);
+                        that.disableOverlayVisuals();
+
+                        episode.set(Voc.isLocked, true);
+                        episode.set(Voc.isLockedByUser, true);
+                    });
                 } else {
+                    that.removeAjaxLoader(that.$el);
                     SystemMessages.addWarningMessage('Episode could not be locked for editing. Please try again later.');
                 }
             }).fail(function(f) {

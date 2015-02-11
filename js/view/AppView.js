@@ -10,8 +10,9 @@ define(['module', 'logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
         'view/modal/CircleRenameModalView',
         'view/modal/OIDCTokenExpiredModalView',
         'utils/SystemMessages',
+        'utils/EntityHelpers',
         'text!templates/navbar.tpl'],
-    function(module, Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, NavbarTemplate){
+    function(module, Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, EntityHelpers, NavbarTemplate){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {
@@ -182,6 +183,15 @@ define(['module', 'logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                             if ( episode && episode.isEntity ) {
                                 // TODO See if we need to use the promise to handel success/fail
                                 EpisodeData.learnEpLockHold(episode);
+
+                                if ( EntityHelpers.isSharedEpisode(episode) ) {
+                                    widget.view.clearOrganizeAndViews();
+                                    var versionsPromise = EpisodeData.fetchVersions(episode);
+                                    // XXX Need to run it even if the call fails
+                                    versionsPromise.done(function() {
+                                        widget.view.reRenderOrganize();
+                                    });
+                                }
                             } else {
                                 AppLog.debug("Episode Missing From Version, could not check locks", widget.model, version);
                             }

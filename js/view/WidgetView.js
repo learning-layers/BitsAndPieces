@@ -41,7 +41,8 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
                     this.view = this.createOrganize(body);
 
                     this.organizeOverlayView = new OrganizeOverlayView({
-                        'model' : this.model
+                        'model' : this.model,
+                        'organizeView' : this.view
                     }).render();
                     this.$el.append(this.organizeOverlayView.$el);
 

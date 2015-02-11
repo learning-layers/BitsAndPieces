@@ -24,7 +24,6 @@ define(['logger', 'underscore', 'jquery', 'backbone',
             this.$el.find(this.placeholderAddModalSelector).modal('show');
         },
         hideModal: function() {
-            console.log("zz", this.$el.find(this.placeholderAddModalSelector));
             this.$el.find(this.placeholderAddModalSelector).modal('hide');
         },
         submitForm: function(e) {

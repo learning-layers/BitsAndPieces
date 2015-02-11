@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData', 'userParams', 'utils/EntityHelpers'], function(Logger, Voc, _, Data, VersionData, userParams, EntityHelpers){
+define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/VersionData', 'userParams', 'utils/EntityHelpers'], function(Logger, Voc, _, $, Data, VersionData, userParams, EntityHelpers){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize Episode");
@@ -29,7 +29,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData', 
         } else {
             this.vie.Entity.prototype.sync(method, model, options);
         }
-    },
+    };
     m.createEpisode= function(model, options) {
         this.vie.save({
             service : 'learnEpCreate',
@@ -43,9 +43,10 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData', 
                 options.success(savedEntityUri);
             }
         });
-    },
+    };
     m.fetchVersions= function(episode) {
-        var em = this;
+        var em = this,
+            defer = $.Deferred();
         this.vie.load({
             'service' : 'learnEpVersionsGet',
             'data' : {
@@ -74,7 +75,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData', 
                         circle['@type'] = Voc.CIRCLE;
                     });
                     version[Voc.hasCircle] = circleUris;
-                    em.vie.entities.addOrUpdate(circles);
+                    em.vie.entities.addOrUpdate(circles, {'overrideAttributes': true});
 
                     var entityUris = [];
                     var entities = version[Voc.hasEntity];
@@ -96,9 +97,9 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData', 
                     });
                     version[Voc.hasEntity] = entityUris;
 
-                    em.vie.entities.addOrUpdate(entities);
+                    em.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
                 });
-                em.vie.entities.addOrUpdate(versions);
+                em.vie.entities.addOrUpdate(versions, {'overrideAttributes': true});
 
                 // Add or update resources if any
                 if ( resources.length > 0 ) {
@@ -109,9 +110,12 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData', 
                         EntityHelpers.addBelongsToEpisode(resource, episode);
                     });
                 }
+
+                defer.resolve(true);
             }
         );
 
+        return defer.promise();
     };
     m.newEpisode= function(user, fromVersion) {
         var newEpisode, attr = {};

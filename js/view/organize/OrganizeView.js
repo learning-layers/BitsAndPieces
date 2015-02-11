@@ -27,7 +27,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.organize = new Organize();
 
             this.circleRenameModalView = this.options.circleRenameModalView;
-
         },
         changeStuff: function(model, options) {
             this.LOG.debug('options', options);
@@ -81,6 +80,31 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             }, this);
             this.stealthContainer = $("<div style=\"display:none\">");
             this.$el.append(this.stealthContainer);
+        },
+        clearOrganizeAndViews: function() {
+            if ( !_.isEmpty(this.views) ) {
+                this.organize.clearCanvas();
+                _.each(this.views, function(single) {
+                    single.remove();
+                });
+                this.views = {};
+            }
+        },
+        reRenderOrganize: function() {
+            // Make the view aware of existing entities in collection
+            var view = this;
+            var version = this.model.get(Voc.belongsToVersion);
+            var entities = version.get(Voc.hasEntity) || [];
+            if( !_.isArray(entities)) entities = [entities];
+            _.each(entities, function(entity) {
+                view.addEntity(entity);
+            }, this);
+
+            var circles = version.get(Voc.hasCircle) || [];
+            if( !_.isArray(circles)) circles = [circles];
+            _.each(circles, function(circle) {
+                view.addCircle(circle);
+            }, this);
         },
         remove: function() {
             this.organize.clearCanvas();
