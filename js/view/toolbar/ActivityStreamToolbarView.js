@@ -191,7 +191,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                     'moveLearnEpVersionCircle',
                     'removeLearnEpVersionCircle',
                     'shareLearnEpWithUser'
-                ]
+                ],
+                includeOnlyLastActivities : true
             },
             promise = ActivityData.getActivities(data);
 
