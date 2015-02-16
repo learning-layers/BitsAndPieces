@@ -187,8 +187,9 @@ define(['module', 'logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                                 if ( EntityHelpers.isSharedEpisode(episode) ) {
                                     widget.view.clearOrganizeAndViews();
                                     var versionsPromise = EpisodeData.fetchVersions(episode);
-                                    // XXX Need to run it even if the call fails
                                     versionsPromise.done(function() {
+                                        widget.view.reRenderOrganize();
+                                    }).fail(function() {
                                         widget.view.reRenderOrganize();
                                     });
                                 }

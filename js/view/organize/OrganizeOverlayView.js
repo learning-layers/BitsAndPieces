@@ -67,6 +67,7 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.isLocked), this.episodeModelChanged, this);
             this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.isLockedByUser), this.episodeModelChanged, this);
             this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.remainingTime), this.remainingTimeChanged, this);
+            this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.lockReleasedByOtherTime), this.lockReleasedByOther, this);
         },
         episodeModelChanged: function() {
             if ( this.isOverlayNeeded() ) {
@@ -167,16 +168,30 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                 if ( result === true ) {
                     that.organizeView.clearOrganizeAndViews();
                     var versionsPromise = EpisodeData.fetchVersions(episode);
-
-                    versionsPromise.done(function() {
+                    var versionsCB = function() {
                         that.organizeView.reRenderOrganize();
                         that.removeAjaxLoader(that.$el);
                         that.disableOverlayVisuals();
 
                         episode.set(Voc.isLocked, true);
                         episode.set(Voc.isLockedByUser, true);
+                    };
+
+                    versionsPromise.done(function() {
+                        versionsCB();
+                    }).fail(function() {
+                        versionsCB();
                     });
                 } else {
+                    that.organizeView.clearOrganizeAndViews();
+                    var versionsPromise = EpisodeData.fetchVersions(episode);
+
+                    versionsPromise.done(function() {
+                        that.organizeView.reRenderOrganize();
+                    }).fail(function() {
+                        that.organizeView.reRenderOrganize();
+                    });
+
                     that.removeAjaxLoader(that.$el);
                     SystemMessages.addWarningMessage('Episode could not be locked for editing. Please try again later.');
                 }
@@ -245,6 +260,17 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                 });
                 this.$el.trigger(ev);
             }
+        },
+        lockReleasedByOther: function(episode) {
+            this.organizeView.clearOrganizeAndViews();
+            var that = this;
+            var versionsPromise = EpisodeData.fetchVersions(episode);
+
+            versionsPromise.done(function() {
+                that.organizeView.reRenderOrganize();
+            }).fail(function() {
+                that.organizeView.reRenderOrganize();
+            });
         }
     });
 });

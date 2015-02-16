@@ -113,7 +113,10 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
 
                 defer.resolve(true);
             }
-        );
+        ).fail(function(f) {
+            em.LOG.debug('fail fetchVersions', f);
+            defer.reject(f);
+        });
 
         return defer.promise();
     };
@@ -254,6 +257,12 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                     }
                 }).using('sss').execute().success(function(result, passThrough){
                     that.LOG.debug('success learnEpLockHold', result, passThrough);
+
+                    if ( true === model.get(Voc.isLocked) && false === model.get(Voc.isLockedByUser) ) {
+                        if ( false === passThrough['locked'] ) {
+                            model.set(Voc.lockReleasedByOtherTime, new Date().getTime());
+                        }
+                    }
 
                     if ( model.get(Voc.isLocked) !== passThrough['locked'] ) {
                         model.set(Voc.isLocked, passThrough['locked']);

@@ -29,6 +29,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.circleRenameModalView = this.options.circleRenameModalView;
         },
         changeStuff: function(model, options) {
+            if ( true === this.clearAndUpdateProcedureInProcess ) return;
             this.LOG.debug('options', options);
             if( options && options.by === this ) return;
             this.LOG.debug('filter change of ' + model.getSubject());
@@ -82,6 +83,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.$el.append(this.stealthContainer);
         },
         clearOrganizeAndViews: function() {
+            // This will prevent adding anything to the Organize
+            this.clearAndUpdateProcedureInProcess = true;
+
             if ( !_.isEmpty(this.views) ) {
                 this.organize.clearCanvas();
                 _.each(this.views, function(single) {
@@ -94,7 +98,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             }
         },
         reRenderOrganize: function() {
-            // Make the view aware of existing entities in collection
             var view = this;
             var version = this.model.get(Voc.belongsToVersion);
             var entities = version.get(Voc.hasEntity) || [];
@@ -108,6 +111,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             _.each(circles, function(circle) {
                 view.addCircle(circle);
             }, this);
+
+            // This will enable adding elements to Organize
+            this.clearAndUpdateProcedureInProcess = false;
         },
         remove: function() {
             this.organize.clearCanvas();
