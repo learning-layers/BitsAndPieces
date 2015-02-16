@@ -77,9 +77,6 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             } else {
                 if ( true === this.isOverlayEnabled ) {
                     this.disableOverlayVisuals();
-                } else if ( this.isLockedByCurrentUser() ) {
-                    // TODO Check if this one is needed
-                    this.enableReleaseLockButton();
                 }
             }
         },

@@ -134,6 +134,7 @@ define(['logger', 'backbone', 'jquery', 'voc', 'tracker', 'underscore', 'jquery'
                 if (this.isOrganize() ) {
                     this.disableOrganizeDroppable();
                     this.$el.find('button[name="releaseEditingLock"]').off('click').remove();
+                    this.$el.find('.lockTimeRemaining').remove();
                 }
             },
             addReleaseLockButton: function() {
