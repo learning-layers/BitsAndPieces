@@ -104,10 +104,10 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
                         });
 
                         if ( !_.isEmpty(combinedToBeAdded) ) {
-                            that.vie.entities.addOrUpdate(combinedToBeAdded);
+                            that.vie.entities.addOrUpdate(combinedToBeAdded, {'overrideAttributes': true});
                         }
 
-                        suitableActivities = that.vie.entities.addOrUpdate(suitableActivities);
+                        suitableActivities = that.vie.entities.addOrUpdate(suitableActivities, {'overrideAttributes': true});
                     }
 
                     defer.resolve(suitableActivities);

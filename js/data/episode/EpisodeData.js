@@ -103,7 +103,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
 
                 // Add or update resources if any
                 if ( resources.length > 0 ) {
-                    resources = em.vie.entities.addOrUpdate(resources);
+                    resources = em.vie.entities.addOrUpdate(resources, {'overrideAttributes': true});
 
                     // Set resource as belonging to an episode
                     _.each(resources, function(resource) {

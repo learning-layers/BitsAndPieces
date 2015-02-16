@@ -60,7 +60,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
             }
         }).using('sss').execute().success(function(messages) {
             that.LOG.debug('success messagesGet', messages);
-            messages = that.vie.entities.addOrUpdate(messages);
+            messages = that.vie.entities.addOrUpdate(messages, {'overrideAttributes': true});
             defer.resolve(messages);
         }).fail(function(f) {
             that.LOG.debug('error messagesGet', f);

@@ -122,10 +122,10 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
                 });
 
                 if ( !_.isEmpty(usersToBeAdded) ) {
-                    v.entities.addOrUpdate(usersToBeAdded);
+                    v.entities.addOrUpdate(usersToBeAdded, {'overrideAttributes': true});
                 }
 
-                v.entities.addOrUpdate(episodes);
+                v.entities.addOrUpdate(episodes, {'overrideAttributes': true});
             }
         );
     };
@@ -232,7 +232,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
                 'getFlags' : true  
             }
         }).from('sss').execute().success(function(entities) {
-            that.vie.entities.addOrUpdate(entities);
+            that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
         });
     };
     m.fetchRecommendedTags = function() {

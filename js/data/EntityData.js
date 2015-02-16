@@ -149,7 +149,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
             'data' : serviceData
         }).using('sss').execute().success(function(entities, passThrough){
             that.LOG.debug('search entities', entities, passThrough);
-            entities = that.vie.entities.addOrUpdate(entities);
+            entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
             callback(entities, passThrough);
         });
     };
@@ -163,7 +163,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
             }
         }).using('sss').execute().success(function(entities, passThrough){
             that.LOG.debug('search entities', entities, passThrough);
-            entities = that.vie.entities.addOrUpdate(entities);
+            entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
             callback(entities, passThrough);
         });
     };
@@ -286,7 +286,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
                         entities.push(single.resource);
                     });
                     // TODO Think about adding "likelihood" to an entity
-                    entities = that.vie.entities.addOrUpdate(entities);
+                    entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
                     defer.resolve(entities);
                 }).fail(function(f) {
                     that.LOG.debug('recommTags fail', f);
