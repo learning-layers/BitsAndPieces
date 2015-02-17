@@ -93,6 +93,18 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
                             }
 
                             if ( !_.isEmpty(containedEntity) ) {
+
+                                // IMPORATNT
+                                // This fixes a problem of empty attributes
+                                // overwriting the loaded meaningful values
+                                if (containedEntity['@type'] === Voc.EPISODE ) {
+                                    for ( var key in containedEntity ) {
+                                        if ( _.isEmpty(containedEntity[key]) ) {
+                                            delete containedEntity[key];
+                                        }
+                                    }
+                                }
+
                                 var entityUri = containedEntity[that.vie.Entity.prototype.idAttribute];
 
                                 if ( _.indexOf(combinedUrisToBeAdded, entityUri) === -1 ) {
