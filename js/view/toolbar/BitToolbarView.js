@@ -1,8 +1,8 @@
-define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'utils/DateHelpers',
         'text!templates/toolbar/bit.tpl', 'text!templates/toolbar/empty.tpl',
         'view/toolbar/EpisodeListGroupView',
-        'data/EntityData', 'data/sss/CategoryData'], function(Logger, _, $, Backbone, Voc, DateHelpers, BitTemplate, EmptyTemplate, EpisodeListGroupView, EntityData, CategoryData){
+        'data/EntityData', 'data/sss/CategoryData'], function(Logger, tracker, _, $, Backbone, Voc, DateHelpers, BitTemplate, EmptyTemplate, EpisodeListGroupView, EntityData, CategoryData){
     return Backbone.View.extend({
         events: {
             'slidechange .slider' : 'setImportance',
@@ -107,6 +107,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             this.model.set(Voc.importance, ui.value, {
                 'user_initiated' : true
             });
+            
+            tracker.info(tracker.SETIMPORTANCE, tracker.BITTAB, this.model.getSubject(), ui.value);
         },
         addTag: function(tag) {
             var tags = this.getBitTags();
@@ -121,6 +123,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                 },
                 'user_initiated' : true
             });
+            
+            tracker.info(tracker.ADDTAG, tracker.BITTAB, this.model.getSubject(), tag);
         },
         getBitTags: function() {
             var tags = this.model.get(Voc.hasTag) || [];
@@ -183,6 +187,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                 },
                 'user_initiated' : true
             });
+            
+            tracker.info(tracker.CHANGELABEL, tracker.BITTAB, this.model.getSubject(), label);
         },
         changeDescription: function(e) {
             var that = this,
@@ -198,6 +204,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                 },
                 'user_initiated' : true
             });
+            
+            tracker.info(tracker.CHANGEDESCRIPTION, tracker.BITTAB, this.model.getSubject(), description);
         },
         getEntityThumbnail: function() {
             var thumbnail = this.model.get(Voc.hasThumbnail);
@@ -213,6 +221,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             e.preventDefault();
             var tag = $(e.currentTarget).data('tag');
             this.addTag(tag);
+            
+            tracker.info(tracker.CLICKTAGRECOMMENDATION, tracker.BITTAB, this.model.getSubject(), tag);
         },
         addOrUpdateRecommendedTags: function(tags) {
             var tagcloud = this.$el.find('.recommendedTags .tagcloud'),

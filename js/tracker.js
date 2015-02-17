@@ -52,6 +52,12 @@ define(['module', 'jquery', 'userParams', 'logger'],
         tracker.SEARCHTAB = 'searchTab';
         tracker.CLICKTAG = 'clickTag';
         tracker.SEARCHWITHKEYWORD = 'searchWithKeyword';
+        tracker.BITTAB = 'bitTab';
+        tracker.CHANGELABEL = 'changeLabel';
+        tracker.CHANGEDESCRIPTION = 'changeDescription';
+        tracker.SETIMPORTANCE = 'setImportance';
+        tracker.ADDTAG = 'addTag';
+        tracker.CLICKTAGRECOMMENDATION = 'clickTagRecommendation';
 
         return tracker;
 });
