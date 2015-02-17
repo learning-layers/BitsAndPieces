@@ -49,6 +49,9 @@ define(['module', 'jquery', 'userParams', 'logger'],
         tracker.TIMELINEAREA = 'timelineArea';
         tracker.CLICKJUMPTODATEBUTTON = 'clickJumpToDateButton';
         tracker.CLICKBIT = 'clickBit';
+        tracker.SEARCHTAB = 'searchTab';
+        tracker.CLICKTAG = 'clickTag';
+        tracker.SEARCHWITHKEYWORD = 'searchWithKeyword';
 
         return tracker;
 });

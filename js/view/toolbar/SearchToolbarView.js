@@ -1,6 +1,6 @@
-define(['logger', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
         'text!templates/toolbar/search.tpl',
-        'data/EntityData', 'data/episode/UserData', 'view/sss/EntityView'], function(Logger, _, $, Backbone, Spinner, Voc, SearchTemplate, EntityData, UserData, EntityView){
+        'data/EntityData', 'data/episode/UserData', 'view/sss/EntityView'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, SearchTemplate, EntityData, UserData, EntityView){
     return Backbone.View.extend({
         searchResultSet : [],
         tagCloud: {},
@@ -43,6 +43,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {
                 this.search($(e.currentTarget).val());
+
+                tracker.info(tracker.SEARCHWITHKEYWORD, tracker.SEARCHTAB, null, $(e.currentTarget).val());
             }
         },
         _addToResultSet: function(results) {
@@ -55,6 +57,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
                 });
                 box.append(view.render().$el);
                 that.searchResultSet.push(view);
+
+                view.toolContext = tracker.SEARCHTAB;
             });
         },
         //@unused Probably is unused
@@ -205,6 +209,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
 
             currentTarget.parent().toggleClass('selected');
             this.search( this.$el.find(this.searchInputSelector).val() );
+
+            tracker.info(tracker.CLICKTAG, tracker.SEARCHTAB, null, currentTarget.data('tag'));
         }
     });
 });
