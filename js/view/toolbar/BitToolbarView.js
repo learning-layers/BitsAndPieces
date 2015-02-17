@@ -1,8 +1,8 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
+define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
         'utils/DateHelpers',
         'text!templates/toolbar/bit.tpl', 'text!templates/toolbar/empty.tpl',
         'view/toolbar/EpisodeListGroupView',
-        'data/EntityData', 'data/sss/CategoryData'], function(Logger, tracker, _, $, Backbone, Voc, DateHelpers, BitTemplate, EmptyTemplate, EpisodeListGroupView, EntityData, CategoryData){
+        'data/EntityData', 'data/sss/CategoryData'], function(Logger, _, $, Backbone, Voc, DateHelpers, BitTemplate, EmptyTemplate, EpisodeListGroupView, EntityData, CategoryData){
     return Backbone.View.extend({
         events: {
             'slidechange .slider' : 'setImportance',

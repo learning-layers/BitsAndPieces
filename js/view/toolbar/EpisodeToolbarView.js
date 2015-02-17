@@ -1,8 +1,8 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
+define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
         'userParams', 'utils/SystemMessages', 'utils/InputValidation',
         'text!templates/toolbar/episode.tpl', 'text!templates/toolbar/empty.tpl', 'text!templates/toolbar/components/selected_user.tpl',
         'data/episode/EpisodeData', 'view/toolbar/EpisodeListingView',
-        'utils/SearchHelper', 'utils/EntityHelpers'], function(Logger, tracker, _, $, Backbone, Voc, userParams, SystemMessages, InputValidation, EpisodeTemplate, EmptyTemplate, SelectedUserTemplate, EpisodeData, EpisodeListingView, SearchHelper, EntityHelpers){
+        'utils/SearchHelper', 'utils/EntityHelpers'], function(Logger, _, $, Backbone, Voc, userParams, SystemMessages, InputValidation, EpisodeTemplate, EmptyTemplate, SelectedUserTemplate, EpisodeData, EpisodeListingView, SearchHelper, EntityHelpers){
     return Backbone.View.extend({
         episodeViews: [],
         events: {

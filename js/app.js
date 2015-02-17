@@ -1,9 +1,9 @@
-define(['module', 'vie', 'logger', 'tracker', 'userParams', 'data/episode/UserData', 'service/SocialSemanticService', 'extender', 
+define(['module', 'vie', 'logger', 'userParams', 'data/episode/UserData', 'service/SocialSemanticService', 'extender', 
         'data/AppData', 'underscore',
         'view/AppView', 'view/LoginFormView', 'voc',
         'text!../schemata/ss.sss.json',
         'jquery-cookie', 'bootstrap'],
-function(module, VIE, Logger, tracker, userParams, UserData, SocialSemanticService, extender,
+function(module, VIE, Logger, userParams, UserData, SocialSemanticService, extender,
         AppData, _, AppView, LoginFormView, Voc, schema){
     VIE.Util.useRealUri = true;
     Logger.useDefaults();

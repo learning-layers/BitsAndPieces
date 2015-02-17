@@ -1,4 +1,4 @@
-define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView', 'voc', 'userParams'], function(module, VIE, Logger, tracker, _, $, Backbone, DetailView, Voc, userParams){
+define(['module', 'vie', 'logger', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView', 'voc', 'userParams'], function(module, VIE, Logger, _, $, Backbone, DetailView, Voc, userParams){
     return Backbone.View.extend({
         LOG: Logger.get('EntityView'),
         icons: {
@@ -149,7 +149,6 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             var resourceUri = resource.getSubject();
             var lastChar = resourceUri[resourceUri.length-1];
             if( lastChar === '/') resourceUri = resourceUri.substring(0, resourceUri.length-1);
-            tracker.info(tracker.OPENRESOURCE, resourceUri);
             this.LOG.log('open resourceUri', resourceUri);
 
             // Handle special cases with file download
@@ -206,7 +205,6 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             if( !id ) return;
             this.LOG.debug("id", id);
             if( id != this.model.getSubject() ) return;
-            tracker.info(tracker.VIEWDETAILS, id);
 
             // --- ADD THE DETAIL VIEW --- //
             var detailViewId = "detailView" + id.replace(/[\\/:-\\.#]/g, '');

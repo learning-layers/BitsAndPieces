@@ -1,6 +1,6 @@
 // TODO EpisodeManagerView could be renamed to MenuView
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
-        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView'], function(VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView){
+define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
+        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView'], function(VIE, Logger, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
@@ -40,8 +40,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         toggleEpisodes: function() {
             // TODO Consider removing this method
             var episodes = this.$el.find('#episodes');
-            if( episodes.css('display') == 'none')
-                tracker.info(tracker.OPENEPISODESDIALOG, tracker.NULL);
             episodes.toggle();
         },
         render: function() {
@@ -136,7 +134,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         createNewVersion: function() {
             var version = this.model.get(Voc.currentVersion);
             this.LOG.debug('createNewVersion from', version);
-            tracker.info(tracker.CREATENEWVERSION, version.getSubject());
             var episode = version.get(Voc.belongsToEpisode);
             var newVersion = VersionData.newVersion(episode, version);
             this.model.save(Voc.currentVersion, newVersion.getSubject());
@@ -144,7 +141,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         createFromHere: function() {
             var version = this.model.get(Voc.currentVersion);
             this.LOG.debug('create new episode from version', version);
-            tracker.info(tracker.CREATENEWEPISODEFROMVERSION, version.getSubject());
             var newEpisode = EpisodeData.newEpisode(this.model, version );
             var newVersion = newEpisode.get(Voc.hasVersion);
             this.model.save(Voc.currentVersion, newVersion.getSubject());
@@ -152,7 +148,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         createBlank: function(e) {
             e.preventDefault();
             this.LOG.debug('create new episode from scratch');
-            tracker.info(tracker.CREATENEWEPISODEFROMSCRATCH, tracker.NULL);
             var newEpisode = EpisodeData.newEpisode(this.model);
             var newVersion = newEpisode.get(Voc.hasVersion);
             this.model.save(Voc.currentVersion, newVersion.getSubject());

@@ -1,6 +1,6 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc', 
+define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
         'view/toolbar/BitToolbarView', 'view/toolbar/SearchToolbarView', 'view/toolbar/EpisodeToolbarView', 'view/toolbar/ActivityStreamToolbarView',
-        'text!templates/toolbar/toolbar.tpl'], function(Logger, tracker, _, $, Backbone, Voc, BitToolbarView, SearchToolbarView, EpisodeToolbarView, ActivityStreamToolbarView, ToolbarTemplate){
+        'text!templates/toolbar/toolbar.tpl'], function(Logger, _, $, Backbone, Voc, BitToolbarView, SearchToolbarView, EpisodeToolbarView, ActivityStreamToolbarView, ToolbarTemplate){
     return Backbone.View.extend({
         subViews: {},
         tabMap : {

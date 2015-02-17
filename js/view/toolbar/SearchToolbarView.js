@@ -1,6 +1,6 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
+define(['logger', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
         'text!templates/toolbar/search.tpl',
-        'data/EntityData', 'data/episode/UserData', 'view/sss/EntityView'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, SearchTemplate, EntityData, UserData, EntityView){
+        'data/EntityData', 'data/episode/UserData', 'view/sss/EntityView'], function(Logger, _, $, Backbone, Spinner, Voc, SearchTemplate, EntityData, UserData, EntityView){
     return Backbone.View.extend({
         searchResultSet : [],
         tagCloud: {},

@@ -1,5 +1,5 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'data/timeline/TimelineData', 'view/timeline/ClusterHelper', 'voc'], 
-    function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineData, EntitiesHelper, Voc){
+define(['logger', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'data/timeline/TimelineData', 'view/timeline/ClusterHelper', 'voc'], 
+    function(Logger, _, $, Backbone, UserView, Timeline, TimelineData, EntitiesHelper, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('TimelineView'),
         waitingForLastOne : 0,
@@ -216,7 +216,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             // bind timeline's internal events to model
             links.events.addListener(this.timeline, 'rangechanged', function(range){
                 view.LOG.debug('caught rangechanged: '+ range.start + ' - ' + range.end);
-                //tracker.info(tracker.CHANGETIMELINERANGE, tracker.NULL, range);
                 var vals = {};
                 vals[Voc.start] = range.start;
                 vals[Voc.end] = range.end;

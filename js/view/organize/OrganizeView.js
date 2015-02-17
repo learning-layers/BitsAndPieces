@@ -1,6 +1,6 @@
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
+define(['vie', 'logger', 'underscore', 'jquery', 'backbone',
         'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'data/organize/OrganizeData', 'voc' ],
-    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, Voc){
+    function(VIE, Logger, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('OrganizeView'),
         events:{
@@ -166,7 +166,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             //circle['_organizeId'] = circle['id'];
             // FIXME: check that:
             var id = circle['id'];
-            tracker.info(tracker.CREATEORGANIZECIRCLE, tracker.NULL, circle);
             delete circle['id'];
             var model = OrganizeData.createCircle(this.model, this.mapAttributes(circle), {'by':this});
             this.views[id] = new EntityView({'model' : model});
@@ -184,7 +183,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
               this.LOG.warn("Organize.CollectionView didn't know of this circle!");
               return;
             }
-            tracker.info(tracker.CHANGEORGANIZECIRCLE, view.model.getSubject(), circle);
             //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
             //circle['_organizeId'] = circle['id'];
             delete circle['id'];
@@ -214,7 +212,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
                 circle.Label = that.circleRenameModalView.getRenamedCircleLabel();
                 that.circleRenameModalView.hideModal();
 
-                tracker.info(tracker.CHANGEORGANIZECIRCLE, view.model.getSubject(), circle);
                 //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
                 //circle['_organizeId'] = circle['id'];
                 delete circle['id'];
@@ -235,7 +232,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
               return;
             }
             //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
-            tracker.info(tracker.DELETEORGANIZECIRCLE, view.model.getSubject(), circle);
             view.model.destroy({'by':this});
         },
 
@@ -257,7 +253,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
               this.LOG.warn("Organize.CollectionView didn't know of this orgaEntity!");
               return;
             }
-            tracker.info(tracker.MOVEORGANIZEENTITY, view.model.getSubject(), entity);
             //var eEntity = view.orgaEntityCollection.findWhere({'_organizeId' : entity.id });
             //entity['_organizeId'] = entity['id'];
             delete entity['id'];
@@ -283,7 +278,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             if ( orgaentities.length <= 1 ) {
                 view.resourceView.model.set(Voc.isUsed, false);
             }
-            tracker.info(tracker.DELETEORGANIZEENTITY, view.model.getSubject(), entity);
             //var eEntity = view.orgaEntityCollection.findWhere({'_organizeId' : entity.id });
             view.model.destroy({'by':this});
         }, 

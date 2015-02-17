@@ -1,4 +1,4 @@
-define(['module', 'logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
+define(['module', 'logger', 'backbone', 'jquery', 'voc','underscore',
         'data/timeline/TimelineData', 
         'data/organize/OrganizeData',
         'data/episode/UserData',
@@ -12,7 +12,7 @@ define(['module', 'logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
         'utils/SystemMessages',
         'utils/EntityHelpers',
         'text!templates/navbar.tpl'],
-    function(module, Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, EntityHelpers, NavbarTemplate){
+    function(module, Logger, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, EntityHelpers, NavbarTemplate){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {

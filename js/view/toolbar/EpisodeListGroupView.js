@@ -1,5 +1,5 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
-        'data/episode/EpisodeData'], function(Logger, tracker, _, $, Backbone, Voc, EpisodeData){
+define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
+        'data/episode/EpisodeData'], function(Logger, _, $, Backbone, Voc, EpisodeData){
     return Backbone.View.extend({
         tagName: 'a',
         className: 'list-group-item',
@@ -19,7 +19,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             e.preventDefault();
             var id = EpisodeData.getFirstVersion(this.model);
             if ( !id ) return;
-            tracker.info(tracker.SWITCHEPISODE, id.getSubject());
             this.model.get(Voc.belongsToUser).save( Voc.currentVersion, id.getSubject());
         },
         changeLabel: function(model, value, options) {
