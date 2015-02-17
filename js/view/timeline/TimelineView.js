@@ -1,5 +1,5 @@
-define(['logger', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'data/timeline/TimelineData', 'view/timeline/ClusterHelper', 'voc'], 
-    function(Logger, _, $, Backbone, UserView, Timeline, TimelineData, EntitiesHelper, Voc){
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'data/timeline/TimelineData', 'view/timeline/ClusterHelper', 'voc'], 
+    function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineData, EntitiesHelper, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('TimelineView'),
         waitingForLastOne : 0,
@@ -241,10 +241,16 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap
                   buttonImageOnly : true,
                   buttonText : 'Jump To Date',
                   onSelect: function(dateText, ui) {
-                       var date = new Date(dateText);
-                       that.LOG.debug('Jump To Date Selected', dateText, ui, date);
-                       that.browseToDate(date);
+                      var date = new Date(dateText);
+                      that.LOG.debug('Jump To Date Selected', dateText, ui, date);
+                      that.browseToDate(date);
                    }
+                });
+            this.$el.find('input[name="jumpToDate"]')
+                .parent()
+                .find('img.ui-datepicker-trigger')
+                .on('click', function() {
+                    tracker.info(tracker.CLICKJUMPTODATEBUTTON, tracker.TIMELINEAREA);
                 });
         },
         reclusterByRangeChange: function(prev_start, prev_end, start, end) {

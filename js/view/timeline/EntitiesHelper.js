@@ -1,5 +1,5 @@
-define(['logger'],
-function(Logger){
+define(['logger', 'tracker'],
+function(Logger, tracker){
     function EntitiesHelper(timeAttr, viewType) {
         this.timeAttr = timeAttr;
         this.EntityView = viewType;
@@ -24,6 +24,7 @@ function(Logger){
             if( view ) return view;
 
             view = new this.EntityView({ model: entity });
+            view.toolContext = tracker.TIMELINEAREA;
             this.entityViews.push( view );
 
             var time = entity.get(this.timeAttr);

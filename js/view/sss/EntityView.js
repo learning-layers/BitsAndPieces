@@ -1,4 +1,4 @@
-define(['module', 'vie', 'logger', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView', 'voc', 'userParams'], function(module, VIE, Logger, _, $, Backbone, DetailView, Voc, userParams){
+define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView', 'voc', 'userParams'], function(module, VIE, Logger, tracker, _, $, Backbone, DetailView, Voc, userParams){
     return Backbone.View.extend({
         LOG: Logger.get('EntityView'),
         icons: {
@@ -127,6 +127,11 @@ define(['module', 'vie', 'logger', 'underscore', 'jquery', 'backbone', 'view/det
                         entity : view.model
                     });
                     view.$el.trigger(ev);
+
+                    // Only trigger event if toolContext has been set
+                    if ( view.toolContext ) {
+                        tracker.info(tracker.CLICKBIT, view.toolContext, view.model.getSubject());
+                    }
                 },400); // <-- dblclick tolerance here
             }
             return false;
