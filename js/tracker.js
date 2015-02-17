@@ -58,6 +58,7 @@ define(['module', 'jquery', 'userParams', 'logger'],
         tracker.SETIMPORTANCE = 'setImportance';
         tracker.ADDTAG = 'addTag';
         tracker.CLICKTAGRECOMMENDATION = 'clickTagRecommendation';
+        tracker.CLICKHELPBUTTON = 'clickHelpButton';
 
         return tracker;
 });

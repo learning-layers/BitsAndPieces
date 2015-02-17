@@ -1,6 +1,6 @@
 // TODO EpisodeManagerView could be renamed to MenuView
-define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
-        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView'], function(VIE, Logger, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView){
+define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
+        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView'], function(VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
@@ -10,7 +10,8 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'view/episode/Episo
             //'click button#createNewVersion' : 'createNewVersion',
             //'click #toggleEpisodes' : 'toggleEpisodes',
             //'mouseleave #episodes' : 'toggleEpisodes',
-            'click a#logout' : 'logOut'
+            'click a#logout' : 'logOut',
+            'click a.helpButton' : 'showHelp'
         },
         initialize: function() {
             this.views = {};
@@ -173,6 +174,11 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'view/episode/Episo
             if (UserAuth.logout()) {
                 document.location.reload();
             }
+        },
+        showHelp: function(e) {
+            e.preventDefault();
+
+            tracker.info(tracker.CLICKHELPBUTTON, null);
         }
 
     });

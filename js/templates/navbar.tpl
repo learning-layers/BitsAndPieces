@@ -8,7 +8,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#"><img src="img/logo48.png" width="24" height="24" alt="Learning Layers"/> Bits And Pieces</a>
+      <p class="navbar-brand"><img src="img/logo48.png" width="24" height="24" alt="Learning Layers"/> Bits And Pieces</p>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -36,6 +36,9 @@
         <% } %>
 
         <span class="glyphicon glyphicon-user"></span> <span class="currentUserLabel"><%= userLabel %></span>
+        <a href="#" class="navbar-link helpButton">
+            <span class="glyphicon glyphicon-question-sign"></span>
+        </a>
       </p>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
