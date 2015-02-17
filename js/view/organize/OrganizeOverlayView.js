@@ -57,7 +57,7 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
         render: function() {
             this.LOG.debug('Rendering OrganizeOverlayView', this.el, this.$el);
 
-            this.$el.append('<button type="button" class="btn btn-default">Request Editing Lock</button>');
+            this.$el.append('<button type="button" class="btn btn-info">Request Editing Lock</button>');
 
             return this;
         },

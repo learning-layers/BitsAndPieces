@@ -140,7 +140,7 @@ define(['logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
                 if ( this.isOrganize() ) {
                     var that = this;
 
-                    this.$el.prepend('<button type="button" class="btn btn-info" name="releaseEditingLock">Release Editing Lock</button>');
+                    this.$el.prepend('<button type="button" class="btn btn-primary" name="releaseEditingLock">Release Editing Lock</button>');
                     this.$el.find('button[name="releaseEditingLock"]').on('click', function(e) {
                         that.organizeOverlayView.enableOverlay(e);
                     });
