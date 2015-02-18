@@ -49,7 +49,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
         },
         _addToResultSet: function(results) {
             var that = this;
-                box = that.$el.find(this.resultSetSelector);
+                box = that.$el.find(this.resultSetSelector),
+                combinedSearchTerms = that.searchedTags.concat(that.searchedKeywords),
+                combinedSearchTermsText = combinedSearchTerms.join(', ');
             
             _.each(results, function(result) {
                 var view = new EntityView({
@@ -59,6 +61,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
                 that.searchResultSet.push(view);
 
                 view.toolContext = tracker.SEARCHTAB;
+                view.trackerEvtContent = combinedSearchTermsText;
             });
         },
         //@unused Probably is unused
@@ -131,6 +134,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
             keywords = searchString.split(' ');
 
             EntityData.search(keywords, tags, function(results, passThrough) {
+                that.searchedKeywords = keywords;
+                that.searchedTags = tags;
 
                 that.$el.find(that.loadMoreResultsSelector).hide();
                 that._clearResultSet();

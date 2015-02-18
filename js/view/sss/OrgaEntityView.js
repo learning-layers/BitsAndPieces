@@ -12,6 +12,18 @@ define(['view/sss/EntityView', 'logger', 'jquery', 'voc'], function(EntityView, 
             });
             this.listenTo(resource, 'change', this.render);
             this.resourceView.render();
+
+            var version = this.model.get(Voc.belongsToVersion);
+            var episode = version.get(Voc.belongsToEpisode);
+            if ( episode && episode.isEntity ) {
+                this.resourceView.toolContext = tracker.ORGANIZEAREA;
+                this.resourceView.trackerEvtEntities = [episode.getSubject()];
+            } else {
+                version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), function(model, value, options) {
+                    this.resourceView.toolContext = tracker.ORGANIZEAREA;
+                    this.resourceView.trackerEvtEntities = [value];
+                }, this);
+            }
         },
         getIcon: function() {
             return this.resourceView.getIcon(); 

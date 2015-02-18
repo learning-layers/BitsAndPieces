@@ -130,7 +130,18 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
 
                     // Only trigger event if toolContext has been set
                     if ( view.toolContext ) {
-                        tracker.info(tracker.CLICKBIT, view.toolContext, view.model.getSubject());
+                        var evtContent = null,
+                            evtEntities = [];
+                        
+                        if ( view.trackerEvtContent ) {
+                            evtContent = view.trackerEvtContent;
+                        }
+
+                        if ( view.trackerEvtEntities ) {
+                            evtEntities = view.trackerEvtEntities;
+                        }
+
+                        tracker.info(tracker.CLICKBIT, view.toolContext, view.model.getSubject(), evtContent, evtEntities);
                     }
                 },400); // <-- dblclick tolerance here
             }

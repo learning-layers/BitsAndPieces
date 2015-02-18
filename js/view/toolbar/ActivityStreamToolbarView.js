@@ -128,11 +128,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             InputValidation.removeAlerts(this.$el.find('.writeMessage'));
             this.addAjaxLoader(currentTarget.parent());
 
-            tracker.info(tracker.SENDMESSAGE, tracker.NOTIFICATIONTAB, null, messageText, null, [this.selectedUsers[0]]);
-
             var promise = MessageData.sendMessage(this.selectedUsers[0], messageText);
 
-            promise.done(function() {
+            promise.done(function(messageId) {
+                tracker.info(tracker.SENDMESSAGE, tracker.NOTIFICATIONTAB, messageId, messageText, null, [that.selectedUsers[0]]);
+
                 that.removeAjaxLoader(currentTarget.parent());
                 that.messageBeingSent = false;
                 that._cleanUpAdterSendMessage();
