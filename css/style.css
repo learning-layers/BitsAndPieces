@@ -240,7 +240,7 @@ div.cluster button {
 
 div#myToolbar {
 	position: fixed;
-	top: 0;
+	top: 40px;
 	right: 0;
 	height: 100%;
 	z-index: 999;
