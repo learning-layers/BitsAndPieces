@@ -1,6 +1,6 @@
-define(['vie', 'logger', 'underscore', 'jquery', 'backbone',
+define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
         'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'data/organize/OrganizeData', 'voc' ],
-    function(VIE, Logger, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, Voc){
+    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('OrganizeView'),
         events:{
@@ -169,6 +169,12 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone',
             delete circle['id'];
             var model = OrganizeData.createCircle(this.model, this.mapAttributes(circle), {'by':this});
             this.views[id] = new EntityView({'model' : model});
+
+            var version = this.model.get(Voc.belongsToVersion);
+            var episode = version.get(Voc.belongsToEpisode);
+            model.once('change:'+model.idAttribute, function(model, value, options) {
+                tracker.info(tracker.ADDCIRCLETOLEARNEPVERSION, tracker.ORGANIZEAREA, model.getSubject(), null, [episode.getSubject()]);
+            }, this);
         },
 
         ChangeCircle: function(event){
@@ -217,6 +223,15 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone',
                 delete circle['id'];
                 that.organize.currentLabel.text(circle.Label);
                 view.model.save(that.mapAttributes(circle), {'by': that});
+
+                var version = that.model.get(Voc.belongsToVersion);
+                var episode = version.get(Voc.belongsToEpisode);
+                tracker.info(tracker.CHANGELABEL, tracker.ORGANIZEAREA, view.model.getSubject(), circle.Label, [episode.getSubject()]);
+            });
+            this.circleRenameModalView.setSelectActionHandler(function(event, ui) {
+                var version = that.model.get(Voc.belongsToVersion);
+                var episode = version.get(Voc.belongsToEpisode);
+                tracker.info(tracker.CLICKLABELRECOMMENDATION, tracker.ORGANIZEAREA, view.model.getSubject(), ui.item.value, [episode.getSubject()]);
             });
             this.circleRenameModalView.showModal();
         },
@@ -231,6 +246,11 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone',
               this.LOG.warn("Organize.CollectionView didn't know of this circle!");
               return;
             }
+            
+            var version = this.model.get(Voc.belongsToVersion);
+            var episode = version.get(Voc.belongsToEpisode);
+            tracker.info(tracker.REMOVELEARNEPVERSIONCIRCLE, tracker.ORGANIZEAREA, view.model.getSubject(), null, [episode.getSubject()]);
+
             //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
             view.model.destroy({'by':this});
         },
@@ -279,6 +299,11 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone',
             if ( orgaentities.length <= 1 ) {
                 view.resourceView.model.set(Voc.isUsed, false);
             }
+
+            var version = this.model.get(Voc.belongsToVersion);
+            var episode = version.get(Voc.belongsToEpisode);
+            tracker.info(tracker.REMOVELEARNEPVERSIONENTITY, tracker.ORGANIZEAREA, view.resourceView.model.getSubject(), null, [episode.getSubject()]);
+
             //var eEntity = view.orgaEntityCollection.findWhere({'_organizeId' : entity.id });
             view.model.destroy({'by':this});
         }, 

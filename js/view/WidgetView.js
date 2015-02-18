@@ -107,6 +107,10 @@ define(['logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
                         entity[Voc.y] = ui.offset.top - offset.top;
                         entity[Voc.hasResource] = id;
                         OrganizeData.createEntity(that.model, entity);
+
+                        var version = that.model.get(Voc.belongsToVersion);
+                        var episode = version.get(Voc.belongsToEpisode);
+                        tracker.info(tracker.ADDENTITYTOLEARNEPVERSION, tracker.ORGANIZEAREA, id, null, [episode.getSubject()]);
                     }
                 });
                 return organizeView;

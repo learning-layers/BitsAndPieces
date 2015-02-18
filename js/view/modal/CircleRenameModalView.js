@@ -11,10 +11,15 @@ define(['logger', 'underscore', 'jquery', 'backbone',
             this.renamedCircleLableSelector = '#renamedCircleLabel';
         },
         render: function() {
+            var that = this;
+
             this.$el.html(_.template(CircleRenameModalTemplate));
             
             this.$el.find(this.renamedCircleLableSelector).autocomplete({
-                source: [] // The source data will be set later
+                source: [], // The source data will be set later
+                select: function(event, ui) {
+                    that.callSelectActionCallback(event, ui);
+                }
             }).autocomplete('widget').addClass('circleRenameAutoComplete');
             
             return this;
@@ -42,6 +47,12 @@ define(['logger', 'underscore', 'jquery', 'backbone',
         submitForm: function(e) {
             e.preventDefault();
             this.$el.find('button.btn-primary').trigger('click');
+        },
+        setSelectActionHandler: function(cb) {
+            this.selectActionCallback = cb;
+        },
+        callSelectActionCallback: function(event, ui) {
+            this.selectActionCallback(event, ui);
         }
     });
 });

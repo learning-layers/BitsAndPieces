@@ -132,14 +132,17 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return tags;
         },
         deleteTag: function(e) {
-            var tags = this.getBitTags();
-            this.LOG.debug('deleted tag', $(e.currentTarget).data("tag"));
-            var newTags =_.without(tags, $(e.currentTarget).data("tag")+"");
+            var tags = this.getBitTags(),
+                currentTag = $(e.currentTarget).data("tag");
+            this.LOG.debug('deleted tag', currentTag);
+            var newTags =_.without(tags, currentTag+"");
             this.LOG.debug("array the same", tags === newTags );
             // Make sure to set user_initiated flag
             this.model.set(Voc.hasTag, newTags, {
                 'user_initiated' : true
             });
+
+            tracker.info(tracker.REMOVETAG, tracker.BITTAB, this.model.getSubject(), currentTag);
         },
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {

@@ -46,8 +46,15 @@ define(['module', 'jquery', 'userParams', 'logger'],
             });
         });
 
+        tracker.ORGANIZEAREA = 'organizeArea';
+        tracker.REMOVELEARNEPVERSIONCIRCLE = 'removeLearnEpVersionCircle';
+        tracker.REMOVELEARNEPVERSIONENTITY = 'removeLearnEpVersionEntity';
+        tracker.ADDENTITYTOLEARNEPVERSION = 'addEntityToLearnEpVersion';
+        tracker.ADDCIRCLETOLEARNEPVERSION = 'addCircleToLearnEpVersion';
+        tracker.CLICKLABELRECOMMENDATION = 'clickLabelRecommendation';
         tracker.TIMELINEAREA = 'timelineArea';
         tracker.CLICKJUMPTODATEBUTTON = 'clickJumpToDateButton';
+        tracker.EXECUTEJUMPTODATEBUTTON = 'executeJumpToDateButton';
         tracker.CLICKBIT = 'clickBit';
         tracker.SEARCHTAB = 'searchTab';
         tracker.CLICKTAG = 'clickTag';
@@ -57,6 +64,7 @@ define(['module', 'jquery', 'userParams', 'logger'],
         tracker.CHANGEDESCRIPTION = 'changeDescription';
         tracker.SETIMPORTANCE = 'setImportance';
         tracker.ADDTAG = 'addTag';
+        tracker.REMOVETAG = 'removeTag';
         tracker.CLICKTAGRECOMMENDATION = 'clickTagRecommendation';
         tracker.CLICKHELPBUTTON = 'clickHelpButton';
         tracker.NOTIFICATIONTAB = 'notificationTab';

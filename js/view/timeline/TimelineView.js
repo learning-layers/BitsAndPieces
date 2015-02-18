@@ -244,6 +244,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                       var date = new Date(dateText);
                       that.LOG.debug('Jump To Date Selected', dateText, ui, date);
                       that.browseToDate(date);
+
+                      tracker.info(tracker.EXECUTEJUMPTODATEBUTTON, tracker.TIMELINEAREA, null, date.getTime());
                    }
                 });
             this.$el.find('input[name="jumpToDate"]')
