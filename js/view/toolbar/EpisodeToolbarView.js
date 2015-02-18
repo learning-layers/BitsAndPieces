@@ -1,8 +1,8 @@
-define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'userParams', 'utils/SystemMessages', 'utils/InputValidation',
         'text!templates/toolbar/episode.tpl', 'text!templates/toolbar/empty.tpl', 'text!templates/toolbar/components/selected_user.tpl',
         'data/episode/EpisodeData', 'view/toolbar/EpisodeListingView',
-        'utils/SearchHelper', 'utils/EntityHelpers'], function(Logger, _, $, Backbone, Voc, userParams, SystemMessages, InputValidation, EpisodeTemplate, EmptyTemplate, SelectedUserTemplate, EpisodeData, EpisodeListingView, SearchHelper, EntityHelpers){
+        'utils/SearchHelper', 'utils/EntityHelpers'], function(Logger, tracker, _, $, Backbone, Voc, userParams, SystemMessages, InputValidation, EpisodeTemplate, EmptyTemplate, SelectedUserTemplate, EpisodeData, EpisodeListingView, SearchHelper, EntityHelpers){
     return Backbone.View.extend({
         episodeViews: [],
         events: {
@@ -139,6 +139,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                 },
                 'user_initiated' : true
             });
+
+            tracker.info(tracker.CHANGELABEL, tracker.EPISODETAB, episode.getSubject(), label);
         },
         changeDescription: function(e) {
             var that = this,
@@ -156,6 +158,7 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                 'user_initiated' : true
             });
 
+            tracker.info(tracker.CHANGEDESCRIPTION, tracker.EPISODETAB, episode.getSubject(), description);
         },
         shareTypeChanged: function(e) {
             if ( $(e.currentTarget).val() === 'coediting' ) {
@@ -195,6 +198,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
 
             var sharedWithUsernames = this.getUserNamesFromUris(this.selectedUsers);
             if ( shareType === 'coediting' ) {
+                tracker.info(tracker.SHARELEARNEPWITHUSER, tracker.EPISODETAB, episode.getSubject(), null, [], this.selectedUsers);
+
                 var promise = EpisodeData.shareEpisode(episode, this.selectedUsers, notificationText);
 
                 promise.done(function() {
@@ -216,6 +221,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                 });
 
             } else if ( shareType === 'separatecopy' ) {
+                tracker.info(tracker.COPYLEARNEPFORUSER, tracker.EPISODETAB, episode.getSubject(), null, [], this.selectedUsers);
+
                 // Determine if some bits need to be excluded
                 if ( onlySelected === true ) {
                     this.LOG.debug('Only selected bits');
@@ -349,6 +356,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                     returned.push(episode);
                 }
             });
+
+            tracker.info(tracker.SEARCHWITHKEYWORD, tracker.EPISODETAB, null, searchable);
 
             return returned;
         },

@@ -64,6 +64,10 @@ define(['module', 'jquery', 'userParams', 'logger'],
         tracker.READMESSAGE = 'readMessage';
         tracker.SETFILTER = 'setFilter';
         tracker.REMOVEFILTER = 'removeFilter';
+        tracker.EPISODETAB = 'episodeTab';
+        tracker.SHARELEARNEPWITHUSER = 'shareLearnEpWithUser';
+        tracker.COPYLEARNEPFORUSER = 'copyLearnEpForUser';
+        tracker.SEARCHWITHKEYWORD = 'searchWithKeyword';
 
         return tracker;
 });
