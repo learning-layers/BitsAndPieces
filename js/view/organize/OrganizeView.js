@@ -261,6 +261,7 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone',
         }, 
 
         RemoveEntity: function(event){
+            if ( true === this.clearAndUpdateProcedureInProcess ) return;
             this.LOG.debug('event', event);
             if( !event || !event.detail ) return;
             var entity = event.detail;
