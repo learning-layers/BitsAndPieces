@@ -84,7 +84,7 @@ function (Logger, $, Backbone, _, Voc, userParams) {
             var subjectIndex = _.indexOf(belongsToEpisodeUris, episodeSubject);
             if ( subjectIndex !== -1 ) {
                 belongsToEpisodeUris.splice(subjectIndex, 1);
-                entity.set(belongsToEpisodeUris);
+                entity.set(Voc.belongsToEpisode, belongsToEpisodeUris);
 
                 return true;
             }
