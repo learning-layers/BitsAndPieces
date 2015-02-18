@@ -1,9 +1,9 @@
-define(['logger', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 'userParams',
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 'userParams',
         'utils/InputValidation',
         'text!templates/toolbar/activity_stream.tpl', 'text!templates/toolbar/components/selected_user.tpl',
         'view/sss/MessageView', 'view/sss/ActivityView', 'view/sss/EntityRecommendationView',
         'data/sss/MessageData', 'data/sss/ActivityData', 'data/EntityData',
-        'utils/SearchHelper'], function(Logger, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, ActivityView, EntityRecommendationView, MessageData, ActivityData, EntityData, SearchHelper){
+        'utils/SearchHelper'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, ActivityView, EntityRecommendationView, MessageData, ActivityData, EntityData, SearchHelper){
     return Backbone.View.extend({
         events: {
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
@@ -103,7 +103,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 'userParams
             element.find('.ajaxLoader').remove();
         },
         sendMessage: function(e) {
-            var currentTarget = $(e.currentTarget);
+            var currentTarget = $(e.currentTarget),
+                messageText = this.$el.find(this.messageTextSelector).val();
             if ( this.messageBeingSent === true ) {
                 return false;
             }
@@ -127,7 +128,9 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 'userParams
             InputValidation.removeAlerts(this.$el.find('.writeMessage'));
             this.addAjaxLoader(currentTarget.parent());
 
-            var promise = MessageData.sendMessage(this.selectedUsers[0], this.$el.find(this.messageTextSelector).val());
+            tracker.info(tracker.SENDMESSAGE, tracker.NOTIFICATIONTAB, null, messageText, null, [this.selectedUsers[0]]);
+
+            var promise = MessageData.sendMessage(this.selectedUsers[0], messageText);
 
             promise.done(function() {
                 that.removeAjaxLoader(currentTarget.parent());
@@ -328,6 +331,12 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 'userParams
 
             this._showHideStreamViews(views, isChecked);
             this.$el.find('input[name="showInToolbar[]"]').prop('disabled', false);
+
+            if ( isChecked ) {
+                tracker.info(tracker.SETFILTER, tracker.NOTIFICATIONTAB, null, value);
+            } else {
+                tracker.info(tracker.REMOVEFILTER, tracker.NOTIFICATIONTAB, null, value);
+            }
         },
         addUpdateUnreadMessagesCount: function() {
             var showMessagesLabel = this.$el.find('label[for="showMessages"]'),

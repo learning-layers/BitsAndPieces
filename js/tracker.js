@@ -59,6 +59,11 @@ define(['module', 'jquery', 'userParams', 'logger'],
         tracker.ADDTAG = 'addTag';
         tracker.CLICKTAGRECOMMENDATION = 'clickTagRecommendation';
         tracker.CLICKHELPBUTTON = 'clickHelpButton';
+        tracker.NOTIFICATIONTAB = 'notificationTab';
+        tracker.SENDMESSAGE = 'sendMessage';
+        tracker.READMESSAGE = 'readMessage';
+        tracker.SETFILTER = 'setFilter';
+        tracker.REMOVEFILTER = 'removeFilter';
 
         return tracker;
 });

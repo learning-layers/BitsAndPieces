@@ -1,11 +1,12 @@
-define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
+define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
         'utils/DateHelpers',
         'data/sss/MessageData',
         'text!templates/sss/message.tpl',
-        'view/sss/EntityView'], function(_, Backbone, Logger, $, Voc, DateHelpers, MessageData, MessageTemplate, EntityView) {
+        'view/sss/EntityView'], function(tracker, _, Backbone, Logger, $, Voc, DateHelpers, MessageData, MessageTemplate, EntityView) {
     return Backbone.View.extend({
         LOG: Logger.get('MessageView'),
         events: {
+            'click' : 'messageClicked'
         },
         initialize: function(options) {
             this.listenTo(this.model, 'change', this.render);
@@ -41,6 +42,8 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
                         that.$el.trigger(ev);
                         // View updates automatically when model attribute value changes
                     });
+
+                    tracker.info(tracker.READMESSAGE, tracker.NOTIFICATIONTAB, that.model.getSubject(), that.model.get(Voc.content));
                 });
             } else {
                 this.$el.find('.messageIcon .glyphicon').addClass('streamActionOthers');
@@ -53,6 +56,9 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
                 return this.owner.get(Voc.label);
             }
             return this.owner;
+        },
+        messageClicked: function(e) {
+            tracker.info(tracker.CLICKBIT, tracker.NOTIFICATIONTAB, this.model.getSubject());
         }
     });
 });

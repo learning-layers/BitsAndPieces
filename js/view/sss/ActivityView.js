@@ -1,10 +1,11 @@
-define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
+define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
         'userParams', 'utils/DateHelpers',
         'text!templates/sss/activity.tpl',
-        'view/sss/EntityView'], function(_, Backbone, Logger, $, Voc, userParams, DateHelpers, ActivityTemplate, EntityView) {
+        'view/sss/EntityView'], function(tracker, _, Backbone, Logger, $, Voc, userParams, DateHelpers, ActivityTemplate, EntityView) {
     return Backbone.View.extend({
         LOG: Logger.get('ActivityView'),
         events: {
+            'click' : 'activityClicked'
         },
         labelNotFoundText: 'NOT FOUND',
         initialize: function(options) {
@@ -208,6 +209,9 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
             }
 
             return label;
+        },
+        activityClicked: function(e) {
+            tracker.info(tracker.CLICKBIT, tracker.NOTIFICATIONTAB, this.model.getSubject());
         }
     });
 });
