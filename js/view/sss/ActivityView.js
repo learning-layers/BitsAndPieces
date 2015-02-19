@@ -49,6 +49,16 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
                     break;
                     
                 */
+                case 'messageSend':
+                    var message = this.model.get(Voc.hasResource),
+                        messageText = message.get(Voc.content),
+                        userLabel = this.getUsersLabels().join(', ');
+
+                    messageText = messageText ? messageText : this.labelNotFoundText;
+
+                    templateSettings.iconClass.push('glyphicon-envelope');
+                    templateSettings.content = ' sent message ' + this.encloseLabel(messageText) + ' to ' + this.encloseLabel(userLabel);
+                    break;
                 case 'addEntityToLearnEpVersion':
                     var bitLabel = this.getContainedEntityLabelByType(Voc.ENTITY),
                         episodeLabel = this.getContainedEntityLabel();

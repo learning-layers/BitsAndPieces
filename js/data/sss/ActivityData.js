@@ -49,7 +49,11 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
                         _.each(activities, function(activity) {
                             // Check if acceptable activity
                             if ( activity[Voc.author] === userParams.user ) {
-                                if ( activity[Voc.hasActivityType] !== 'shareLearnEpWithUser' ) {
+                                if ( activity[Voc.hasActivityType] !== 'shareLearnEpWithUser' && activity[Voc.hasActivityType] !== 'messageSend' ) {
+                                    return;
+                                }
+                            } else {
+                                if ( activity[Voc.hasActivityType] === 'messageSend' ) {
                                     return;
                                 }
                             }

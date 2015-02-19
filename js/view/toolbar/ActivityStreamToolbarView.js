@@ -3,7 +3,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
         'text!templates/toolbar/activity_stream.tpl', 'text!templates/toolbar/components/selected_user.tpl',
         'view/sss/MessageView', 'view/sss/ActivityView', 'view/sss/EntityRecommendationView',
         'data/sss/MessageData', 'data/sss/ActivityData', 'data/EntityData',
-        'utils/SearchHelper'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, ActivityView, EntityRecommendationView, MessageData, ActivityData, EntityData, SearchHelper){
+        'utils/SearchHelper', 'utils/SystemMessages'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, ActivityView, EntityRecommendationView, MessageData, ActivityData, EntityData, SearchHelper, SystemMessages){
     return Backbone.View.extend({
         events: {
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
@@ -19,6 +19,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             this.messageResultViews = [];
             this.recommendationsResultViews = [];
             this.selectedUsers = [];
+            this.selectedUsersLabels = [];
             this.unreadMessagesCount = 0;
             this.messageRecipientSelector = 'input[name="messageRecipient"]';
             this.messageTextSelector = 'textarea[name="messageText"]';
@@ -65,6 +66,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             if ( _.indexOf(this.selectedUsers, ui.item.value) === -1 ) {
                 var input = $(autocomplete);
                 this.selectedUsers.push(ui.item.value);
+                this.selectedUsersLabels.push(ui.item.label);
                 input.val('');
                 input.parent().append(_.template(SelectedUserTemplate, {
                     value : ui.item.value,
@@ -79,6 +81,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             var currentTarget = $(e.currentTarget),
                 removable = currentTarget.parent();
             this.selectedUsers = _.without(this.selectedUsers, removable.data('value'));
+            this.selectedUsersLabels = _.without(this.selectedUsersLabels, removable.data('label'));
 
             removable.remove();
             this.validateMessageRecipient();
@@ -133,9 +136,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             promise.done(function(messageId) {
                 tracker.info(tracker.SENDMESSAGE, tracker.NOTIFICATIONTAB, messageId, messageText, null, [that.selectedUsers[0]]);
 
+                SystemMessages.addSuccessMessage('Message successfully sent to ' + that.selectedUsersLabels[0]);
+
                 that.removeAjaxLoader(currentTarget.parent());
                 that.messageBeingSent = false;
-                that._cleanUpAdterSendMessage();
+                that._cleanUpAfterSendMessage();
             });
 
             promise.fail(function() {
@@ -144,12 +149,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                 InputValidation.addAlert(that.$el.find('.writeMessage > label'), 'alert-danger', 'Message could not be sent! Please try again.');
             });
         },
-        _cleanUpAdterSendMessage: function() {
+        _cleanUpAfterSendMessage: function() {
             var that = this;
 
             this.$el.find(this.messageRecipientSelector).val('');
             this.$el.find('.selectedUser').remove();
             this.selectedUsers = [];
+            this.selectedUsersLabels = [];
             // Enable user selector once cleanUp procedure runs
             this.$el.find(this.messageRecipientSelector).prop('disabled', false);
 
@@ -193,7 +199,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                     'changeLearnEpVersionCircleLabel',
                     'moveLearnEpVersionCircle',
                     'removeLearnEpVersionCircle',
-                    'shareLearnEpWithUser'
+                    'shareLearnEpWithUser',
+                    'messageSend'
                 ],
                 includeOnlyLastActivities : true
             },
