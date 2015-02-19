@@ -25,6 +25,7 @@ function(Logger, tracker){
 
             view = new this.EntityView({ model: entity });
             view.toolContext = tracker.TIMELINEAREA;
+            view.trackerEvtContent = entity.get(this.timeAttr);
             this.entityViews.push( view );
 
             var time = entity.get(this.timeAttr);
