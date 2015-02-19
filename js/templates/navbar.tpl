@@ -28,6 +28,7 @@
       <p class="navbar-text currentEpisodeLabel"></p>
       <p class="navbar-text">
           | <span class="currentEpisodeVisibility"></span>
+            <span class="currentEpisodeAuthor"></span>
           | <span class="currentEpisodeSharedWith"></span>
       </p>
       <p class="navbar-text navbar-right">

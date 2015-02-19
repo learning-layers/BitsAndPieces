@@ -59,6 +59,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             var label = this.currentEpisode.get(Voc.label);
             this.renderLabel(this.currentEpisode, label);
             this.renderVisibility(this.currentEpisode, this.currentEpisode.get(Voc.circleTypes));
+            this.renderAuthor(this.currentEpisode);
             this.renderSharedWith(this.currentEpisode, this.currentEpisode.get(Voc.hasUsers));
 
             var prevCurrVersion = this.model.previous(Voc.currentVersion);
@@ -83,9 +84,27 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.LOG.debug('renderVisibility', circleTypes);
             this.$el.find('.currentEpisodeVisibility').html(EntityHelpers.getEpisodeVisibility(episode));
         },
+        renderAuthor: function(episode) {
+            var authorText = '';
+            this.LOG.debug('renderAuthor', episode);
+
+            if ( EntityHelpers.isSharedEpisode(episode) ) {
+                var author = episode.get(Voc.author),
+                    authorLabel = '';
+
+                if ( author && author.isEntity ) {
+                    authorLabel = author.get(Voc.label);
+                }
+                authorText = ' | author: ' + authorLabel;
+            }
+
+            this.$el.find('.currentEpisodeAuthor').html(authorText);
+        },
         renderSharedWith: function(episode, users) {
             this.LOG.debug('renderSharedWith', users);
-            this.$el.find('.currentEpisodeSharedWith').html(EntityHelpers.getSharedWithNames(episode).join(', '));
+            if ( users.length > 0 ) {
+                this.$el.find('.currentEpisodeSharedWith').html('contributors: ' + EntityHelpers.getSharedWithNames(episode).join(', '));
+            }
         },
         changeEpisodeSet: function(model, set, options) {
             this.LOG.debug('changeEpisodeSet', set);  
