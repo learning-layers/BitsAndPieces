@@ -1,4 +1,4 @@
-define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], function(_, Backbone, Logger, $, EntityView) {
+define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc', 'view/sss/EntityView'], function(tracker, _, Backbone, Logger, $, Voc, EntityView) {
     return Backbone.View.extend({
         LOG: Logger.get('ClusterView'),
         events: {
@@ -41,6 +41,9 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
                         'model': entity
                     }).render(),
                         tmpViewWidth = tmpView.$el.outerWidth(true);
+
+                    tmpView.toolContext = tracker.TIMELINEAREA;
+                    tmpView.trackerEvtContent = entity.get(Voc.creationTime);
 
                     contents.append(tmpView.$el);
                     tmpWidth += (tmpViewWidth >= 50) ? tmpViewWidth : 50;
