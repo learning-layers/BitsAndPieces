@@ -3,7 +3,7 @@
 <div class="panel panel-default">
 
     <div class="panel-heading">
-        <h3 class="panel-title">Episode</h3>
+        <h3 class="panel-title">Episode info</h3>
     </div>
 
     <div class="panel-body">
@@ -23,9 +23,22 @@
                 <label class="control-label">Description</label>
                 <textarea class="form-control" name="description"><%= entity.description %></textarea>
             </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="panel panel-default">
+
+    <div class="panel-heading">
+        <h3 class="panel-title">Share Episode</h3>
+    </div>
+
+    <div class="panel-body">
+
+        <div class="toolbarSection">
 
             <div class="shareEpisode">
-                <label>Share Episode:</label>
 
                 <div>
                     <input type="radio" id="coediting" name="sharetype" value="coediting" checked="checked" />
@@ -72,7 +85,7 @@
 <div class="panel panel-default">
 
     <div class="panel-heading">
-        <h3 class="panel-title">Open other episode</h3>
+        <h3 class="panel-title">Open Episode</h3>
     </div>
 
     <div class="panel-body">
