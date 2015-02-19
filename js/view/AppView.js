@@ -40,7 +40,7 @@ define(['module', 'logger', 'backbone', 'jquery', 'voc','underscore',
                     + this.vie.namespaces.uri(Voc.hasEpisode),
                     function(model, value, options) {
                         if ( false === value ) {
-                            SystemMessages.addWarningMessage('You have no episodes. Please open the <strong>Menu</strong> and choose <strong>Create New Episode</strong>!');
+                            SystemMessages.addWarningMessage('You have no episodes. Please open the <strong>Menu</strong> and choose <strong>Create New Episode</strong>!', false);
                         }
                     },this);
                 this.setUpEpisodeLockHoldInternal();
