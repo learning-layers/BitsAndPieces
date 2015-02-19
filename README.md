@@ -11,6 +11,8 @@ You would need to have an instance of the [Social Semantic Server](https://githu
 
 It is also possible to setup authentication with [OpenID Connect](http://openid.net/connect/), provided that [SocialSemanticServer](https://github.com/learning-layers/SocialSemanticServer) is configured accordingly. Layers [OpenID Connect Instance](https://api.learning-layers.eu/o/oauth2/) could be used for that purpose. Please go to `js/main.js` and fill in the `oidcAuthorizationUrl` and `oidcClientID` with appropriate values. This should disable normal authentication, only one authentication scheme could be used at the same time. In case one is using Layers Infrastructure the `oidcAuthorizationUrl` should be https://api.learning-layers.eu/o/oauth2/authorize
 
+Affect button will only be shown in case URL configuration is provided. This is done in `js/main.js` with variable name `affectUrl`.
+
 Now open a web browser (Firefox or Chrome are recommended) and head to the root of the location where you checked out Bits and Pieces. Log in with your user credentials to start using the application, for instance `localhost/BitsAndPieces/`.
 
 If you have not created any Learning Episodes yet, please use the menu on the top left to create at least one. Click the icon and press button `Create new Episode from scratch`. After the first episode has been created, a Timeline and Organize canvas should appear.
