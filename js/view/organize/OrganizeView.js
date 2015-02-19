@@ -215,7 +215,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.circleRenameModalView.resetAutocompleteSource();
             this.circleRenameModalView.setSaveActionHandler(function(e){
                 e.preventDefault();
-                circle.Label = that.circleRenameModalView.getRenamedCircleLabel();
+                var newCircleLabel = that.circleRenameModalView.getRenamedCircleLabel();
+                circle.Label = newCircleLabel;
                 that.circleRenameModalView.hideModal();
 
                 //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
@@ -226,7 +227,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
 
                 var version = that.model.get(Voc.belongsToVersion);
                 var episode = version.get(Voc.belongsToEpisode);
-                tracker.info(tracker.CHANGELABEL, tracker.ORGANIZEAREA, view.model.getSubject(), circle.Label, [episode.getSubject()]);
+                tracker.info(tracker.CHANGELABEL, tracker.ORGANIZEAREA, view.model.getSubject(), newCircleLabel, [episode.getSubject()]);
             });
             this.circleRenameModalView.setSelectActionHandler(function(event, ui) {
                 var version = that.model.get(Voc.belongsToVersion);
