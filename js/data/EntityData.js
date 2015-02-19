@@ -129,7 +129,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
         var that = this,
             serviceData = {
                 'typesToSearchOnlyFor' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook', 'placeholder'],
-                'localSearchOp' : 'or',
+                'localSearchOp' : 'and',
                 'globalSearchOp' : 'and'
             };
 
