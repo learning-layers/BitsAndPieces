@@ -32,7 +32,7 @@
       </p>
       <p class="navbar-text navbar-right">
         <% if ( affectUrl ) { %>
-          <a href="<%= affectUrl %>" title="Affect" target="_blank" class="navbar-link"><span class="glyphicon glyphicon-heart text-danger"></span></a>
+          <a href="<%= affectUrl %>" title="Affect" target="_blank" class="navbar-link affectButton"><span class="glyphicon glyphicon-heart text-danger"></span></a>
         <% } %>
 
         <span class="glyphicon glyphicon-user"></span> <span class="currentUserLabel"><%= userLabel %></span>

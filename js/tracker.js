@@ -67,6 +67,7 @@ define(['module', 'jquery', 'userParams', 'logger'],
         tracker.REMOVETAG = 'removeTag';
         tracker.CLICKTAGRECOMMENDATION = 'clickTagRecommendation';
         tracker.CLICKHELPBUTTON = 'clickHelpButton';
+        tracker.CLICKAFFECTBUTTON = 'clickAffectButton';
         tracker.NOTIFICATIONTAB = 'notificationTab';
         tracker.SENDMESSAGE = 'sendMessage';
         tracker.READMESSAGE = 'readMessage';

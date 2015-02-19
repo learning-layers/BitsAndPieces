@@ -11,7 +11,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             //'click #toggleEpisodes' : 'toggleEpisodes',
             //'mouseleave #episodes' : 'toggleEpisodes',
             'click a#logout' : 'logOut',
-            'click a.helpButton' : 'showHelp'
+            'click a.helpButton' : 'showHelp',
+            'click a.affectButton' : 'handleAffect'
         },
         initialize: function() {
             this.views = {};
@@ -179,7 +180,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             e.preventDefault();
 
             tracker.info(tracker.CLICKHELPBUTTON, null);
+        },
+        handleAffect: function(e) {
+            tracker.info(tracker.CLICKAFFECTBUTTON, null);
         }
-
     });
 });
