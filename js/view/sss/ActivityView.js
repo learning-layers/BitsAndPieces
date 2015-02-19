@@ -50,11 +50,14 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
                     
                 */
                 case 'messageSend':
-                    var message = this.model.get(Voc.hasResource),
-                        messageText = message.get(Voc.content),
+                    var messageText = this.model.get(Voc.contents)
                         userLabel = this.getUsersLabels().join(', ');
 
                     messageText = messageText ? messageText : this.labelNotFoundText;
+
+                    if ( _.isArray(messageText) ) {
+                        messageText = messageText.toString();
+                    }
 
                     templateSettings.iconClass.push('glyphicon-envelope');
                     templateSettings.content = ' sent message ' + this.encloseLabel(messageText) + ' to ' + this.encloseLabel(userLabel);
