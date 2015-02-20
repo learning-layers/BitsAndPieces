@@ -1,4 +1,5 @@
 var require = (function() {
+    var appVersion = '3.0-pre';
     var sssHostREST = "http://localhost:8080/ss-adapter-rest/SSAdapterRest/";
     var oidcAuthorizationUrl = "";
     var oidcClientID = "";
@@ -22,7 +23,8 @@ var require = (function() {
                 'oidcClientID' : oidcClientID
             },
             'view/AppView' : {
-                'affectUrl' : affectUrl
+                'affectUrl' : affectUrl,
+                'appVersion' : appVersion
             }
         },
         baseUrl: 'js',
