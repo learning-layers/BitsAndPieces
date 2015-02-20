@@ -221,7 +221,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 });
 
             } else if ( shareType === 'separatecopy' ) {
-                tracker.info(tracker.COPYLEARNEPFORUSER, tracker.EPISODETAB, episode.getSubject(), null, [], this.selectedUsers);
+                var included = [];
 
                 // Determine if some bits need to be excluded
                 if ( onlySelected === true ) {
@@ -229,7 +229,29 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     _.each(this.$el.find(this.onlySelector + ':not(:checked)'), function(element) {
                         excluded.push($(element).val());
                     });
+
+                    _.each(this.$el.find(this.onlySelector + ':checked'), function(element) {
+                        if ( 'circle' === $(element).data('type') ) {
+                            included.push($(element).val());
+                        } else if ( 'entity' === $(element).data('type') ) {
+                            included.push($(element).data('contained-entity'));
+                        }
+                    });
+                } else {
+                    var tmpCirclesAndEntities = this.getCurrentEntitiesAndCircles();
+                    if ( !_.isEmpty(tmpCirclesAndEntities.circles) ) {
+                        _.each(tmpCirclesAndEntities.circles, function(single) {
+                            included.push(single.getSubject());
+                        });
+                    }
+                    if ( !_.isEmpty(tmpCirclesAndEntities.entities) ) {
+                        _.each(tmpCirclesAndEntities.entities, function(single) {
+                            included.push(single.get(Voc.hasResource).getSubject());
+                        });
+                    }
                 }
+
+                tracker.info(tracker.COPYLEARNEPFORUSER, tracker.EPISODETAB, episode.getSubject(), null, included, this.selectedUsers);
 
                 var promise = EpisodeData.copyEpisode(episode, this.selectedUsers, excluded, notificationText);
 
@@ -305,7 +327,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                         + circleElemId
                         + '" name="only[]" value="'
                         + circleSubect
-                        + '" /><label for="'
+                        + '" data-type="circle" /><label for="'
                         + circleElemId
                         + '" class="selectable">'
                         + circle.get(Voc.label)
@@ -320,7 +342,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                         '<div><input type="checkbox" id="'
                         + orgaEntityElemId
                         + '" name="only[]" value="'
-                        + orgaEntitySubject + '" /><label for="'
+                        + orgaEntitySubject + '" data-type="entity" data-contained-entity="' + entity.getSubject() + '" /><label for="'
                         + orgaEntityElemId
                         + '" class="selectable">'
                         + entity.get(Voc.label)
