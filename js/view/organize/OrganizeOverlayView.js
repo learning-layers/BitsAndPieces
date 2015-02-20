@@ -1,8 +1,8 @@
-define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'spin',
         'data/episode/EpisodeData',
         'utils/SystemMessages', 'utils/EntityHelpers'],
-    function(Logger, _, $, Backbone, Voc, Spinner, EpisodeData, SystemMessages, EntityHelpers){
+    function(Logger, tracker, _, $, Backbone, Voc, Spinner, EpisodeData, SystemMessages, EntityHelpers){
     return Backbone.View.extend({
         LOG: Logger.get('OrganizeOverlayView'),
         tagName: 'div',
@@ -179,6 +179,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                     }).fail(function() {
                         versionsCB();
                     });
+
+                    tracker.info(tracker.REQUESTEDITBUTTON, tracker.ORGANIZEAREA, episode.getSubject(), 'success');
                 } else {
                     that.organizeView.clearOrganizeAndViews();
                     var versionsPromise = EpisodeData.fetchVersions(episode);
@@ -191,9 +193,13 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
 
                     that.removeAjaxLoader(that.$el);
                     SystemMessages.addWarningMessage('Episode could not be locked for editing. Please try again later.');
+
+                    tracker.info(tracker.REQUESTEDITBUTTON, tracker.ORGANIZEAREA, episode.getSubject(), 'fail');
                 }
             }).fail(function(f) {
                 SystemMessages.addDangerMessage('Service error occured while trying to lock an episode.');
+
+                tracker.info(tracker.REQUESTEDITBUTTON, tracker.ORGANIZEAREA, episode.getSubject(), 'error');
             });
         },
         enableReleaseLockButton: function() {
@@ -223,11 +229,17 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
 
                     episode.set(Voc.isLocked, false);
                     episode.set(Voc.isLockedByUser, false);
+
+                    tracker.info(tracker.RELEASEEDITBUTTON, tracker.ORGANIZEAREA, episode.getSubject(), 'success');
                 } else {
                     SystemMessages.addWarningMessage('Episode lock could not be removed. Please try again later.');
+
+                    tracker.info(tracker.RELEASEEDITBUTTON, tracker.ORGANIZEAREA, episode.getSubject(), 'fail');
                 }
             }).fail(function(f) {
                 SystemMessages.addDangerMessage('Service error occured while trying to release the lock of an episode.');
+
+                tracker.info(tracker.RELEASEEDITBUTTON, tracker.ORGANIZEAREA, episode.getSubject(), 'error');
             });
         },
         removeEpisodeLockIfNeeded: function() {

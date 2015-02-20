@@ -52,6 +52,8 @@ define(['module', 'jquery', 'userParams', 'logger'],
         tracker.ADDENTITYTOLEARNEPVERSION = 'addEntityToLearnEpVersion';
         tracker.ADDCIRCLETOLEARNEPVERSION = 'addCircleToLearnEpVersion';
         tracker.CLICKLABELRECOMMENDATION = 'clickLabelRecommendation';
+        tracker.REQUESTEDITBUTTON = 'requestEditButton';
+        tracker.RELEASEEDITBUTTON = 'releaseEditButton';
         tracker.TIMELINEAREA = 'timelineArea';
         tracker.CLICKJUMPTODATEBUTTON = 'clickJumpToDateButton';
         tracker.EXECUTEJUMPTODATEBUTTON = 'executeJumpToDateButton';
