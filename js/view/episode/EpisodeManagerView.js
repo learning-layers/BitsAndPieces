@@ -183,12 +183,17 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         logOut: function(e) {
             e.preventDefault();
-            var version = this.model.get(Voc.currentVersion),
-                episode = version.get(Voc.belongsToEpisode);
+            var version = this.model.get(Voc.currentVersion);
 
-            // Release episode lock if needed
-            if ( true === episode.get(Voc.isLocked) && true == episode.get(Voc.isLockedByUser) ) {
-                EpisodeData.removeEpisodeLock(episode);
+            if ( version && version.isEntity ) {
+                var episode = episode = version.get(Voc.belongsToEpisode);
+
+                if ( episode && episode.isEntity ) {
+                    // Release episode lock if needed
+                    if ( true === episode.get(Voc.isLocked) && true == episode.get(Voc.isLockedByUser) ) {
+                        EpisodeData.removeEpisodeLock(episode);
+                    }
+                }
             }
 
             if (UserAuth.logout()) {
