@@ -194,7 +194,7 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
 
             if ( entity ) {
                 if ( entity.isof(Voc.VERSION) ) {
-                    var episode = version.get(Voc.belongsToEpisode);
+                    var episode = entity.get(Voc.belongsToEpisode);
 
                     if ( episode && episode.isEntity ) {
                         label = episode.get(Voc.label);
