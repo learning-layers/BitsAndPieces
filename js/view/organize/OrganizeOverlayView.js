@@ -211,6 +211,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             // TODO Consider enabling overlay right away
             promise.done(function(result) {
                 if ( true === result ) {
+                    // Clear auto release timeout if set
+                    if ( that.autoLockReleaseTimeout ) {
+                        clearTimeout(that.autoLockReleaseTimeout);
+                    }
+
                     that.enableOverlayVisuals();
 
                     episode.set(Voc.isLocked, false);
@@ -246,7 +251,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     secondsRemaining = Math.floor(( remainingTime / 1000 ) % 60);
                     this.$el.find('button').append('<span class="lockTimeRemaining"> in ' + ( ( minutesRemaining > 0 ) ? minutesRemaining + ' minutes ' : '') + ( ( secondsRemaining > 0 ) ? secondsRemaining + ' seconds' : '') + '</span>');
                 }
-            } if ( this.isLockedByCurrentUser() ) {
+            }
+            if ( this.isLockedByCurrentUser() ) {
                 minutesRemaining = Math.floor(remainingTime / ( 1000 * 60 ));
                 secondsRemaining = Math.floor(( remainingTime / 1000 ) % 60);
                 var ev = $.Event('bnp:lockTimeRemaining', {
@@ -254,6 +260,16 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     secondsRemaining: secondsRemaining
                 });
                 this.$el.trigger(ev);
+
+                // Set timeout to enable overlay early in case less or equal to 30 seconds are left
+                if ( remainingTime > 0 && remainingTime <= 30000 ) {
+                    var that = this;
+                    that.autoLockReleaseTimeout = setTimeout(function() {
+                        that.enableOverlayVisuals();
+                        episode.set(Voc.isLocked, false);
+                        episode.set(Voc.isLockedByUser, false);
+                    }, remainingTime);
+                }
             }
         },
         lockReleasedByOther: function(episode) {
