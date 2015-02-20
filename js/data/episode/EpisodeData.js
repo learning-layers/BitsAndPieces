@@ -63,6 +63,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 }
                 var resourceUris = [];
                 var resources = [];
+                var resourceUriTimes = {};
                 // put uris of circles/entities into version
                 // and create circle/entity entities 
                 _.each(versions, function(version) {
@@ -88,6 +89,9 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                             if ( resourceUris.indexOf(resource[em.vie.Entity.prototype.idAttribute]) === -1 ) {
                                 resources.push(resource);
                                 resourceUris.push(resource[em.vie.Entity.prototype.idAttribute]);
+                                resourceUriTimes[resource[em.vie.Entity.prototype.idAttribute]] = 1;
+                            } else {
+                                resourceUriTimes[resource[em.vie.Entity.prototype.idAttribute]] += 1;
                             }
                             entity[Voc.hasResource] = resource[em.vie.Entity.prototype.idAttribute];
                         }
@@ -107,7 +111,8 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
 
                     // Set resource as belonging to an episode
                     _.each(resources, function(resource) {
-                        EntityHelpers.addBelongsToEpisode(resource, episode);
+                        EntityHelpers.removeBelongsToEpisode(resource, episode, true);
+                        EntityHelpers.addBelongsToEpisode(resource, episode, resourceUriTimes[resource.getSubject()]);
                     });
                 }
 

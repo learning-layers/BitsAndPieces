@@ -38,13 +38,26 @@ function (Logger, $, Backbone, _, Voc, userParams) {
 
             return sharedWithNames;
         },
-        addBelongsToEpisode: function(entity, episode) {
+        addBelongsToEpisode: function(entity, episode, addTimes) {
             var belongsToEpisode = entity.get(Voc.belongsToEpisode),
                 episodeSubject = episode.getSubject(),
                 belongsToEpisodeUris = [];
 
+            if ( !addTimes ) {
+                addTimes = 1;
+            }
+
+            var addedEpisodeSubjects = [];
+            if ( addTimes === 1 ) {
+                addedEpisodeSubjects.push(episodeSubject);
+            } else {
+                for ( var i = 0; i < addTimes; i++ ) {
+                    addedEpisodeSubjects.push(episodeSubject);
+                }
+            }
+
             if ( _.isEmpty(belongsToEpisode) ) {
-                entity.set(Voc.belongsToEpisode, episodeSubject);
+                entity.set(Voc.belongsToEpisode, addedEpisodeSubjects);
 
                 return true;
             } else {
@@ -56,18 +69,21 @@ function (Logger, $, Backbone, _, Voc, userParams) {
                     belongsToEpisodeUris.push(single.getSubject());
                 });
 
-                belongsToEpisodeUris.push(episodeSubject);
-                entity.set(Voc.belongsToEpisode, belongsToEpisodeUris);
+                entity.set(Voc.belongsToEpisode, belongsToEpisodeUris.concat(addedEpisodeSubjects));
 
                 return true;
             }
 
             return false;
         },
-        removeBelongsToEpisode: function(entity, episode) {
+        removeBelongsToEpisode: function(entity, episode, removeAll) {
             var belongsToEpisode = entity.get(Voc.belongsToEpisode),
                 episodeSubject = episode.getSubject(),
                 belongsToEpisodeUris = [];
+
+            if ( !removeAll ) {
+                removeAll = false;
+            }
 
             if ( _.isEmpty(belongsToEpisode) ) {
                 return false;
@@ -83,7 +99,12 @@ function (Logger, $, Backbone, _, Voc, userParams) {
 
             var subjectIndex = _.indexOf(belongsToEpisodeUris, episodeSubject);
             if ( subjectIndex !== -1 ) {
-                belongsToEpisodeUris.splice(subjectIndex, 1);
+                if ( removeAll === true ) {
+                    belongsToEpisodeUris = _.without(belongsToEpisodeUris, episodeSubject);
+                } else {
+                    belongsToEpisodeUris.splice(subjectIndex, 1);
+                }
+
                 entity.set(Voc.belongsToEpisode, belongsToEpisodeUris);
 
                 return true;
