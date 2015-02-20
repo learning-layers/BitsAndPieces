@@ -68,6 +68,7 @@ define([], {
     isLockedByUser : "sss:lockedByUser",
     hasMimeType : 'sss:mimeType',
     hasThumbnail : 'sss:thumb',
+    hasThumbnailCache: 'sss:thumbCache',
     hasLoaded : 'sss:hasLoaded',
     hasViewCount : 'sss:viewEntity',
     hasTagRecommendation : 'sss:tagRecommendation',

@@ -211,7 +211,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             tracker.info(tracker.CHANGEDESCRIPTION, tracker.BITTAB, this.model.getSubject(), description);
         },
         getEntityThumbnail: function() {
-            var thumbnail = this.model.get(Voc.hasThumbnail);
+            var thumbnail = this.model.get(Voc.hasThumbnailCache);
             // XXX This is a quick fix for case when entity is loaded
             // without thumbnail first and then the thumbnail is loaded
             // For some reason null seems to be become the second parameter of an array.

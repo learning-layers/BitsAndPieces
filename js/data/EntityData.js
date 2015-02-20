@@ -20,6 +20,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
             model.on('change:'+this.vie.namespaces.uri(Voc.author), this.initUser, this); 
             model.on('change:'+this.vie.namespaces.uri(Voc.hasTag), this.changedTags, this);
             model.on('change:'+this.vie.namespaces.uri(Voc.importance), this.setImportance, this);
+            model.on('change:'+this.vie.namespaces.uri(Voc.hasThumbnail), this.setThumbnail, this);
         }
     };
     m.initUser = function(model, value, options) {
@@ -235,6 +236,11 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
                 });
             }
         );
+    };
+    m.setThumbnail = function(model, thumbnail, options) {
+        if ( !_.isEmpty(thumbnail) ) {
+            model.set(Voc.hasThumbnailCache, thumbnail);
+        }
     };
     m.hasLoaded = function(model, attributeUri) {
         var loaded = model.get(Voc.hasLoaded);
