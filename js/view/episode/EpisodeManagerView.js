@@ -102,6 +102,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         renderSharedWith: function(episode, users) {
             this.LOG.debug('renderSharedWith', users);
+            if ( !EntityHelpers.isSharedEpisode(episode) ) {
+                return;
+            }
             if ( _.isEmpty(users) ) {
                 users = [];
             }
