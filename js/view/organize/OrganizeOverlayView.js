@@ -10,25 +10,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         events:{
             'click button' : 'disableOverlay'
         },
-        _hackEpisodeModelLoadedTimeout: function() {
-            var that = this;
-
-            setTimeout(function() {
-                if ( _.isEmpty(that.getEpisode()) ) {
-                    that._hackEpisodeModelLoadedTimeout();
-                    return;
-                }
-
-                // XXX This one would have to check
-                // if model loaded and add one ore timeout if not
-                if ( that.isOverlayNeeded() ) {
-                    that.enableOverlayVisuals();
-                } else if ( that.isLockedByCurrentUser() ) {
-                    that.enableReleaseLockButton();
-                }
-                that.setEpisodeModelAndListeners();
-            }, 1000);
-        },
         initialize: function() {
             this.organizeView = this.options.organizeView;
             this.isOverlayEnabled = false;
@@ -39,30 +20,36 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if ( _.isEmpty(episode) ) {
                 var version = this.getVersion();
 
-                // XXX Looks like this one is not working, no idea why
-                // version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.setEpisodeModelAndUpdateVisuals, this);
-                // XXX This is pure evil
-                this._hackEpisodeModelLoadedTimeout();
+                version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.setEpisodeModelAndListeners, this);
             } else {
                 this.setEpisodeModelAndListeners();
-            }
-
-            this.$el.hide();
-            if ( this.isOverlayNeeded() ) {
-                this.enableOverlayVisuals();
-            } else if ( this.isLockedByCurrentUser() ) {
-                this.enableReleaseLockButton();
             }
         },
         render: function() {
             this.LOG.debug('Rendering OrganizeOverlayView', this.el, this.$el);
 
             this.$el.append('<button type="button" class="btn btn-info">Request Editing Lock</button>');
+            if ( !this.episodeModel ) {
+                this.$el.find('button').hide();
+                this.$el.append('<span class="episodeLoading">Loading ...</span>');
+            }
 
             return this;
         },
         setEpisodeModelAndListeners: function() {
             this.episodeModel = this.getEpisode();
+
+            this.$el.find('span.episodeLoading').remove();
+            this.$el.find('button').show();
+
+            if ( this.isOverlayNeeded() ) {
+                this.enableOverlayVisuals();
+            } else if ( this.isLockedByCurrentUser() ) {
+                this.enableReleaseLockButton();
+            } else {
+                this.$el.hide();
+            }
+
             this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.episodeModelChanged, this);
             this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.isLocked), this.episodeModelChanged, this);
             this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.isLockedByUser), this.episodeModelChanged, this);
