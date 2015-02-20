@@ -41,13 +41,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
             this.$el.find('span.episodeLoading').remove();
             this.$el.find('button').show();
+            this.$el.hide();
 
             if ( this.isOverlayNeeded() ) {
                 this.enableOverlayVisuals();
             } else if ( this.isLockedByCurrentUser() ) {
                 this.enableReleaseLockButton();
-            } else {
-                this.$el.hide();
             }
 
             this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.episodeModelChanged, this);
