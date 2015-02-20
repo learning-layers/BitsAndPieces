@@ -102,6 +102,14 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         renderSharedWith: function(episode, users) {
             this.LOG.debug('renderSharedWith', users);
+            if ( _.isEmpty(users) ) {
+                users = [];
+            }
+
+            if ( !_.isArray(users) ) {
+                users = [users];
+            }
+
             if ( users.length > 0 ) {
                 this.$el.find('.currentEpisodeSharedWith').html('contributors: ' + EntityHelpers.getSharedWithNames(episode).join(', '));
             }
