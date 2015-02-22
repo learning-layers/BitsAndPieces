@@ -54,6 +54,7 @@ function(module, VIE, Logger, userParams, UserData, SocialSemanticService, exten
     Logger.get('CircleRenameModalView').setLevel(Logger.OFF);
     Logger.get('EntityHelpers').setLevel(Logger.OFF);
     Logger.get('OrganizeOverlayView').setLevel(Logger.OFF);
+    Logger.get('BitThumbnailModalView').setLevel(Logger.OFF);
 
     if ( !userParams.isAuthenticated) {
         var loginView = new LoginFormView({

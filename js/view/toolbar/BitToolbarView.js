@@ -1,8 +1,8 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'utils/DateHelpers',
         'text!templates/toolbar/bit.tpl', 'text!templates/toolbar/empty.tpl',
-        'view/toolbar/EpisodeListGroupView',
-        'data/EntityData', 'data/sss/CategoryData'], function(Logger, tracker, _, $, Backbone, Voc, DateHelpers, BitTemplate, EmptyTemplate, EpisodeListGroupView, EntityData, CategoryData){
+        'view/toolbar/EpisodeListGroupView', 'view/modal/BitThumbnailModalView',
+        'data/EntityData', 'data/sss/CategoryData'], function(Logger, tracker, _, $, Backbone, Voc, DateHelpers, BitTemplate, EmptyTemplate, EpisodeListGroupView, BitThumbnailModalView, EntityData, CategoryData){
     return Backbone.View.extend({
         events: {
             'slidechange .slider' : 'setImportance',
@@ -13,10 +13,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'keypress textarea[name="description"]' : 'updateOnEnter',
             'blur input[name="title"]' : 'changeLabel',
             'blur textarea[name="description"]' : 'changeDescription',
-            'click .recommendedTags .tagcloud a' : 'clickRecommendedTag'
+            'click .recommendedTags .tagcloud a' : 'clickRecommendedTag',
+            'click .thumbnail > img' : 'clickThumbnail'
         },
         LOG: Logger.get('BitToolbarView'),
         initialize: function() {
+            this.bitThumbnailModalView = new BitThumbnailModalView({}).render();
         },
         setEntity: function(entity) {
             var that = this;
@@ -252,6 +254,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             }
 
             return [];
+        },
+        clickThumbnail: function(e) {
+            this.LOG.debug('Thumbnail clicked');
+            this.bitThumbnailModalView.removeThumbnails();
+            this.bitThumbnailModalView.addThumbnail(this.getEntityThumbnail());
+            this.bitThumbnailModalView.showModal();
         }
     });
 });

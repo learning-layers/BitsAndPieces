@@ -460,6 +460,7 @@ div#tabs .thumbnail img {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
+	cursor: pointer;
 }
 
 div.tags div.tag {
@@ -664,4 +665,9 @@ label.notBoldLabel {
 
 .ui-datepicker-month, .ui-datepicker-year  {
 	color: #111111;
+}
+
+img.bitModalThumbnail {
+	margin-left: auto;
+	margin-right: auto;
 }
