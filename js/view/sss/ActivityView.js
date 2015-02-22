@@ -123,12 +123,12 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
                     templateSettings.content = 'Unhandled activity type: ' + activityType;
             }
 
+            templateSettings.iconClass.push(activityType);
+
             if ( isLoggedInActor ) {
                 templateSettings.author = 'I';
-                templateSettings.iconClass.push('streamActionMine');
             } else {
                 templateSettings.author = this.getOwnerName();
-                templateSettings.iconClass.push('streamActionOthers');
             }
 
             this.$el.html(_.template(ActivityTemplate, templateSettings));

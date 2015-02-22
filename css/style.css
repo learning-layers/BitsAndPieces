@@ -378,7 +378,7 @@ div#tabs .stream .resultSet .singleEntry {
 div#tabs .stream .resultSet .singleEntry .entryIcon {
 	display: inline-block;
 	vertical-align: top;
-	font-size: 45px;
+	font-size: 35px;
 }
 
 div#tabs .stream .resultSet .singleEntry .entryIcon img {
@@ -399,7 +399,7 @@ div#tabs .stream .resultSet .singleRecommendation label.recommendationLabel {
 	display: none;
 }
 
-.streamActionOthers {
+.messageIcon span {
 	color: #48a2c5;
 }
 
@@ -671,3 +671,20 @@ img.bitModalThumbnail {
 	margin-left: auto;
 	margin-right: auto;
 }
+
+.shareLearnEpWithUser, .messageSend {
+	color: #555;
+}
+
+.activityIcon .addEntityToLearnEpVersion, .activityIcon .addCircleToLearnEpVersion {
+	color: #5ba74a;
+}
+
+.activityIcon .removeLearnEpVersionEntity, .activityIcon .removeLearnEpVersionCircle {
+	color: #f6a551;
+}
+
+.activityIcon .moveLearnEpVersionCircle, .activityIcon .changeLearnEpVersionCircleLabel, .activityIcon .moveLearnEpVersionEntity, .activityIcon .changeEntityForLearnEpVersionEntity {
+	color: #48a2c5;
+}
+

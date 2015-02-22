@@ -45,8 +45,6 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
 
                     tracker.info(tracker.READMESSAGE, tracker.NOTIFICATIONTAB, that.model.getSubject(), that.model.get(Voc.content));
                 });
-            } else {
-                this.$el.find('.messageIcon .glyphicon').addClass('streamActionOthers');
             }
 
             return this;
