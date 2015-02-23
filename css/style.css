@@ -693,3 +693,8 @@ button.activityStreamRefresh {
 	margin-left: 210px;
 }
 
+button.activityStreamRefresh span.glyphicon {
+	color: #555;
+}
+
+
