@@ -212,8 +212,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             }
         },
         showHelp: function(e) {
-            e.preventDefault();
-
             tracker.info(tracker.CLICKHELPBUTTON, null);
         },
         handleAffect: function(e) {

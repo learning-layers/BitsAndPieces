@@ -37,7 +37,7 @@
         <% } %>
 
         <span class="glyphicon glyphicon-user"></span> <span class="currentUserLabel"><%= userLabel %></span>
-        <a href="#" class="navbar-link helpButton">
+        <a href="<%= helpUrl %>" class="navbar-link helpButton" target="_blank">
             <span class="glyphicon glyphicon-question-sign"></span>
         </a>
       </p>

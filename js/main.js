@@ -4,6 +4,7 @@ var require = (function() {
     var oidcAuthorizationUrl = "";
     var oidcClientID = "";
     var affectUrl = "";
+    var helpUrl = "http://foti.ee/bits_and_pieces_manual/BnP_usermanual.html";
     return {
         config: {
             'app' : {
@@ -24,7 +25,8 @@ var require = (function() {
             },
             'view/AppView' : {
                 'affectUrl' : affectUrl,
-                'appVersion' : appVersion
+                'appVersion' : appVersion,
+                'helpUrl' : helpUrl
             }
         },
         baseUrl: 'js',

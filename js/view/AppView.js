@@ -69,7 +69,8 @@ define(['module', 'logger', 'backbone', 'jquery', 'voc','underscore',
                     documentTitleElement = documentHeadElement.find('title'),
                     navbar = _.template(NavbarTemplate, {
                         userLabel: this.model.get(Voc.label),
-                        affectUrl: module.config().affectUrl || ''
+                        affectUrl: module.config().affectUrl || '',
+                        helpUrl: module.config().helpUrl || '#'
                     });
 
                 $('<meta name="version" content="' + appVersion + '">')
