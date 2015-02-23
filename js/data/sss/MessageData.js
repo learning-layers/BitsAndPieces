@@ -50,13 +50,14 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
         );
         return defer.promise();
     };
-    m.getMessages = function(includeRead) {
+    m.getMessages = function(includeRead, startTime) {
         var that = this,
             defer = $.Deferred();
         this.vie.load({
             'service' : 'messagesGet',
             'data' : {
-                'includeRead' : includeRead
+                'includeRead' : includeRead,
+                'startTime' : startTime
             }
         }).using('sss').execute().success(function(messages) {
             that.LOG.debug('success messagesGet', messages);

@@ -41,10 +41,11 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
                 }).using('sss').execute().success(function(activities){
                     that.LOG.debug('activitiesGet success', activities);
 
+                    var suitableActivities = [];
+
                     if ( !_.isEmpty(activities) ) {
                         var combinedUrisToBeAdded = [];
-                            combinedToBeAdded = [],
-                            suitableActivities = [];
+                            combinedToBeAdded = [];
 
                         _.each(activities, function(activity) {
                             // Check if acceptable activity

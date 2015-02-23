@@ -33,6 +33,9 @@
 
         <div class="form-group stream">
             <label class="control-label">Stream:</label>
+            <button class="btn btn-default activityStreamRefresh">
+                <span class="glyphicon glyphicon-refresh"></span>
+            </button>
             <div class="resultSet"></div>
         </div><!-- .stream -->
 

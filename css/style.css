@@ -688,3 +688,8 @@ img.bitModalThumbnail {
 	color: #48a2c5;
 }
 
+button.activityStreamRefresh {
+	padding: 2px 4px;
+	margin-left: 210px;
+}
+

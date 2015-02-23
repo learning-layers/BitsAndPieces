@@ -10,7 +10,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             'keyup textarea[name="messageText"]' : 'revalidateMessageText',
             'click .selectedUser > span' : 'removeSelectedUser',
             'change input[name="showInToolbar[]"]' : 'filterStream',
-            'bnp:markMessageAsRead' : 'reduceAndUpdateUnreadMessagesCount'
+            'bnp:markMessageAsRead' : 'reduceAndUpdateUnreadMessagesCount',
+            'click .activityStreamRefresh' : 'fetchRefreshActivityStream'
         },
         LOG: Logger.get('ActivityStreamToolbarView'),
         initialize: function() {
@@ -202,14 +203,20 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                     'shareLearnEpWithUser',
                     'messageSend'
                 ],
-                includeOnlyLastActivities : true
+                includeOnlyLastActivities : true,
+                startTime: this.activitiesFetchTime ? this.activitiesFetchTime : null
             },
             promise = ActivityData.getActivities(data);
+
+            this.activitiesFetchTime = new Date().getTime();
 
             return promise;
         },
         fetchMessages: function() {
-            var promise = MessageData.getMessages(true);
+            var startTime = this.messagesFetchTime ? this.messagesFetchTime : null,
+                promise = MessageData.getMessages(true, startTime);
+
+            this.messagesFetchTime = new Date().getTime();
 
             return promise;
         },
@@ -283,10 +290,85 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                         that.recommendationsResultViews.push(view);
                     });
 
+                    that.displayActivityStream();
+                }).fail(function() {
+                    that.LOG.debug('fetchActivityStream Failed');
+                    // TODO Check if fail handler is also needed
+                });
+        },
+        fetchRefreshActivityStream: function(e) {
+            var that = this,
+                currentTarget = $(e.currentTarget),
+                activitiesPromise = this.fetchActivities(),
+                messagesPromise = this.fetchMessages();
+
+            currentTarget.prop('disabled', true);
+
+            $.when(activitiesPromise, messagesPromise)
+                .done(function(activities, messages) {
+                    that.LOG.debug('fetchRefreshActivityStream', activities, messages);
+
+                    // Remove extsting views
+                    // Deal with activities
+                    if ( !_.isEmpty(that.activityResultViews) ) {
+                        _.each(that.activityResultViews, function(view) {
+                            view.remove();
+                        });
+                    }
+
+                    // Deal with messages
+                    if ( !_.isEmpty(that.messageResultViews) ) {
+                        _.each(that.messageResultViews, function(view) {
+                            view.remove();
+                        });
+                    }
+
+                    // Deal with recommendations
+                    if ( !_.isEmpty(that.recommendationsResultViews) ) {
+                        _.each(that.recommendationsResultViews, function(view) {
+                            view.remove();
+                        });
+                    }
+
+                    // Deal with activities
+                    _.each(activities, function(activity) {
+                        // TODO Check if already present, just in case
+                        var view = new ActivityView({
+                            model : activity
+                        });
+
+                        if ( !that.$el.find('#showActivities').is(':checked') ) {
+                            view.$el.hide();
+                        }
+
+                        that.activityResultViews.push(view);
+                    });
+
+                    // Deal with messages
+                    _.each(messages, function(message) {
+                        // TODO Check if already present, just in case
+                        var view = new MessageView({
+                            model : message
+                        });
+
+                        if ( !that.$el.find('#showActivities').is(':checked') ) {
+                            view.$el.hide();
+                        }
+
+                        that.messageResultViews.push(view);
+
+                        if ( view.model.get(Voc.isRead) !== true ) {
+                            that.unreadMessagesCount += 1;
+                        }
+                    });
+                    that.addUpdateUnreadMessagesCount();
 
                     that.displayActivityStream();
+
+                    currentTarget.prop('disabled', false);
+                }).fail(function() {
+                    currentTarget.prop('disabled', false);
                 });
-            // TODO Check if fail handler is also needed
         },
         displayActivityStream: function() {
             var resultSet = this.$el.find('.stream .resultSet');
