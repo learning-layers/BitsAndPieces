@@ -81,7 +81,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.episodeViews = [];
             _.each(episodes, function(episode) {
                 var view = new EpisodeListingView({
-                    model: episode
+                    model: episode,
+                    toolContext: tracker.EPISODETAB,
+                    trackerEvtContent: that.$el.find('input[name="search"]').val()
                 });
                 box.append(view.render().$el);
                 that.episodeViews.push(view);
@@ -378,8 +380,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     returned.push(episode);
                 }
             });
-
-            tracker.info(tracker.SEARCHWITHKEYWORD, tracker.EPISODETAB, null, searchable);
 
             return returned;
         },
