@@ -22,7 +22,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if ( !id ) return;
             this.model.get(Voc.belongsToUser).save( Voc.currentVersion, id.getSubject());
 
-            if ( this.options.toolContext ) {
+            if ( this.options.toolContext && !_.isEmpty(this.options.trackerEvtContent) ) {
                 tracker.info(tracker.CLICKBIT, this.options.toolContext, this.model.getSubject(), this.options.trackerEvtContent);
             }
         },
