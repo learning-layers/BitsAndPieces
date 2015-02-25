@@ -257,11 +257,18 @@ div#myToolbar .toolbar-handle {
 	cursor: pointer;
 	height: 50px;
 	width: 30px;
+	font-size: 24px;
+	color: #d79634;
 }
 
 div#myToolbar.toolbarHidden .toolbar-handle span {
 	position: relative;
-	left: -15px;
+	left: -22px;
+}
+
+div#myToolbar.toolbarShown .toolbar-handle span {
+	position: relative;
+	left: -6px;
 }
 
 div.toolbarShown {
