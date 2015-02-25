@@ -1,5 +1,5 @@
 var require = (function() {
-    var appVersion = '3.0';
+    var appVersion = '3.0.0';
     var sssHostREST = "http://localhost:8080/ss-adapter-rest/SSAdapterRest/";
     var oidcAuthorizationUrl = "";
     var oidcClientID = "";
