@@ -59,10 +59,10 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
                 'includeRead' : includeRead,
                 'startTime' : startTime
             }
-        }).using('sss').execute().success(function(messages) {
-            that.LOG.debug('success messagesGet', messages);
+        }).using('sss').execute().success(function(messages, passThrough) {
+            that.LOG.debug('success messagesGet', messages, passThrough);
             messages = that.vie.entities.addOrUpdate(messages, {'overrideAttributes': true});
-            defer.resolve(messages);
+            defer.resolve(messages, passThrough);
         }).fail(function(f) {
             that.LOG.debug('error messagesGet', f);
             defer.reject(f);

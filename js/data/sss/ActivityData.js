@@ -38,8 +38,8 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
                 that.vie.analyze({
                     'service' : 'activitiesGet',
                     'data' : data
-                }).using('sss').execute().success(function(activities){
-                    that.LOG.debug('activitiesGet success', activities);
+                }).using('sss').execute().success(function(activities, passThrough){
+                    that.LOG.debug('activitiesGet success', activities, passThrough);
 
                     var suitableActivities = [];
 
@@ -127,7 +127,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
                         suitableActivities = that.vie.entities.addOrUpdate(suitableActivities, {'overrideAttributes': true});
                     }
 
-                    defer.resolve(suitableActivities);
+                    defer.resolve(suitableActivities, passThrough);
                 }).fail(function(f) {
                     that.LOG.debug('activitiesGet fail', f);
                     defer.reject(f);

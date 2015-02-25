@@ -187,7 +187,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             }
         },
         fetchActivities: function() {
-            var data = {
+            var that = this,
+                data = {
                 types : [
                     'addCategory',
                     'removeCategories',
@@ -208,15 +209,20 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             },
             promise = ActivityData.getActivities(data);
 
-            this.activitiesFetchTime = new Date().getTime();
+            promise.done(function(activities, passThrough) {
+                that.activitiesFetchTime = passThrough['queryTime'];
+            });
 
             return promise;
         },
         fetchMessages: function() {
-            var startTime = this.messagesFetchTime ? this.messagesFetchTime : null,
+            var that = this,
+                startTime = this.messagesFetchTime ? this.messagesFetchTime : null,
                 promise = MessageData.getMessages(true, startTime);
 
-            this.messagesFetchTime = new Date().getTime();
+            promise.done(function(messages, passThrough) {
+                that.messagesFetchTime = passThrough['queryTime'];
+            });
 
             return promise;
         },
@@ -240,7 +246,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             // Probably need to tune the corresponding calls to always resolve
             // just resolve with an empty array in case of failure.
             $.when(activitiesPromise, messagesPromise, recommendationsPromise)
-                .done(function(activities, messages, recommendations) {
+                .done(function(activitiesData, messagesData, recommendations) {
+                    var activities = activitiesData[0],
+                        messages = messagesData[0];
                     that.LOG.debug('fetchActivityStream', activities, messages, recommendations);
 
                     // Deal with activities
@@ -305,7 +313,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             currentTarget.prop('disabled', true);
 
             $.when(activitiesPromise, messagesPromise)
-                .done(function(activities, messages) {
+                .done(function(activitiesData, messagesData) {
+                    var activities = activitiesData[0],
+                        messages = messagesData[0];
                     that.LOG.debug('fetchRefreshActivityStream', activities, messages);
 
                     // Remove extsting views
@@ -351,7 +361,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                             model : message
                         });
 
-                        if ( !that.$el.find('#showActivities').is(':checked') ) {
+                        if ( !that.$el.find('#showMessages').is(':checked') ) {
                             view.$el.hide();
                         }
 

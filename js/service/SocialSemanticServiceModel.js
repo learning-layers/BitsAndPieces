@@ -309,7 +309,8 @@ define(['underscore', 'logger'], function(_, Logger) {
                 'includeRead' : { 'default' : false }
             },
             'preparation' : preparations['scrubParams'],
-            'decoration' : decorations['single_entity']
+            'decoration' : decorations['single_entity'],
+            'passThroughKeys' : ['queryTime']
         },
         'recommResources' : {
             'resultKey' : 'resources',
@@ -332,7 +333,8 @@ define(['underscore', 'logger'], function(_, Logger) {
                     'resultKey' : 'entities',
                     'decoration' : decorations['single_entity']
                 }
-            ]
+            ],
+            'passThroughKeys' : ['queryTime']
         },
         'tagFrequsGet' : {
             'resultKey' : 'tagFrequs'
