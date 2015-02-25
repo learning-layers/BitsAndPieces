@@ -15,6 +15,7 @@
                     <div class="form-group">
                         <label for="placeholderDescription">Description:</label>
                         <textarea class="form-control" id="placeholderDescription"></textarea>
+                        <p class="help-block">Allows input of up to 5.000 characters. </p>
                     </div>
                 </form>
             </div>
