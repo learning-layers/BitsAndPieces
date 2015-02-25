@@ -102,7 +102,11 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         renderSharedWith: function(episode, users) {
             this.LOG.debug('renderSharedWith', users);
+
+            var sharedWithText = '';
+
             if ( !EntityHelpers.isSharedEpisode(episode) ) {
+                this.$el.find('.currentEpisodeSharedWith').html(sharedWithText);
                 return;
             }
             if ( _.isEmpty(users) ) {
@@ -113,9 +117,12 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
                 users = [users];
             }
 
+
             if ( users.length > 0 ) {
-                this.$el.find('.currentEpisodeSharedWith').html('contributors: ' + EntityHelpers.getSharedWithNames(episode).join(', '));
+                sharedWithText = 'contributors: ' + EntityHelpers.getSharedWithNames(episode).join(', ');
             }
+
+            this.$el.find('.currentEpisodeSharedWith').html(sharedWithText);
         },
         changeEpisodeSet: function(model, set, options) {
             this.LOG.debug('changeEpisodeSet', set);  
