@@ -167,7 +167,6 @@ define(['underscore', 'logger'], function(_, Logger) {
             'resultKey' : 'entities',
             'passThroughKeys' : ['pageNumber', 'pageNumbers', 'pagesID'],
             'params' : {
-                'keywordsToSearchFor' : {'type' : 'array'},
                 'wordsToSearchFor' : {'type' : 'array'},
                 'tagsToSearchFor' : {'type' : 'array'},
                 'misToSearchFor' : {'type' : 'array'},
@@ -199,7 +198,13 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'learnEpsGet' : {
             'resultKey' : 'learnEps',
-            'decoration' : decorations['single_entity']
+            'decoration' : decorations['single_entity'],
+            'subResults' : [
+                {
+                    'resultKey' : 'users',
+                    'decoration' : decorations['single_entity']
+                }
+            ]
         },
         'learnEpVersionsGet' : {
             'resultKey' : 'learnEpVersions',
@@ -261,7 +266,7 @@ define(['underscore', 'logger'], function(_, Logger) {
             },
             'preparation' : preparations['scrubParams']
         },
-        'entityShare' : {
+        'circleEntityShare' : {
             'resultKey' : 'worked',
             'params' : {
                 'users' : { 'type' : 'array' },
@@ -304,7 +309,8 @@ define(['underscore', 'logger'], function(_, Logger) {
                 'includeRead' : { 'default' : false }
             },
             'preparation' : preparations['scrubParams'],
-            'decoration' : decorations['single_entity']
+            'decoration' : decorations['single_entity'],
+            'passThroughKeys' : ['queryTime']
         },
         'recommResources' : {
             'resultKey' : 'resources',
@@ -317,7 +323,34 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'activitiesGet' : {
             'resultKey' : 'activities',
-            'decoration' : decorations['single_entity']
+            'decoration' : decorations['single_entity_with_contained'],
+            'subResults' : [
+                {
+                    'resultKey' : 'users',
+                    'decoration' : decorations['single_entity']
+                },
+                {
+                    'resultKey' : 'entities',
+                    'decoration' : decorations['single_entity']
+                }
+            ],
+            'passThroughKeys' : ['queryTime']
+        },
+        'tagFrequsGet' : {
+            'resultKey' : 'tagFrequs'
+        },
+        'learnEpLockSet' : {
+            'resultKey' : 'worked'
+        },
+        'learnEpLockRemove' : {
+            'resultKey' : 'worked'
+        },
+        'learnEpLockHold' : {
+            'resultKey' : 'locked',
+            'passThroughKeys' : ['locked', 'lockedByUser', 'remainingTime']
+        },
+        'entityAdd' : {
+            'resultKey' : 'entity'
         }
     };
     return m;

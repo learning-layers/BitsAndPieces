@@ -1,4 +1,4 @@
-define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
+define(['module', 'logger', 'backbone', 'jquery', 'voc','underscore',
         'data/timeline/TimelineData', 
         'data/organize/OrganizeData',
         'data/episode/UserData',
@@ -7,10 +7,12 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
         'view/WidgetView',
         'view/episode/EpisodeManagerView',
         'view/toolbar/ToolbarView',
-        'view/CircleRenameModalView',
+        'view/modal/CircleRenameModalView',
+        'view/modal/OIDCTokenExpiredModalView',
         'utils/SystemMessages',
+        'utils/EntityHelpers',
         'text!templates/navbar.tpl'],
-    function(Logger, tracker, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, SystemMessages, NavbarTemplate){
+    function(module, Logger, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, EntityHelpers, NavbarTemplate){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {
@@ -32,16 +34,16 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                 this.model.on('change:'
                     + this.vie.namespaces.uri(Voc.label),
                     function(model, value, options) {
-                        that.$el.parent().find('.currentUserLabel > .userLabel').html(model.get(Voc.label));
+                        that.$el.parent().find('.currentUserLabel').html(model.get(Voc.label));
                     },this);
                 this.model.on('change:'
                     + this.vie.namespaces.uri(Voc.hasEpisode),
                     function(model, value, options) {
                         if ( false === value ) {
-                            SystemMessages.addWarningMessage('You have no episodes. Please open the <strong>Menu</strong> and choose <strong>Create New Episode</strong>!');
+                            SystemMessages.addWarningMessage('You have no episodes. Please open the <strong>Menu</strong> and choose <strong>Create New Episode</strong>!', false);
                         }
                     },this);
-
+                this.setUpEpisodeLockHoldInternal();
             },
             filter: function(model, collection, options) {
                 if(model.isof(Voc.VERSION)){
@@ -62,9 +64,18 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                 }
             },
             render: function() {
-                var navbar = _.template(NavbarTemplate, {
-                    userLabel: this.model.get(Voc.label)
-                });
+                var appVersion = module.config().appVersion || '',
+                    documentHeadElement = $(document).find('head'),
+                    documentTitleElement = documentHeadElement.find('title'),
+                    navbar = _.template(NavbarTemplate, {
+                        userLabel: this.model.get(Voc.label),
+                        affectUrl: module.config().affectUrl || '',
+                        helpUrl: module.config().helpUrl || '#'
+                    });
+
+                $('<meta name="version" content="' + appVersion + '">')
+                    .insertAfter(documentHeadElement.find('title'));
+                documentTitleElement.html(documentTitleElement.html() + ' (' + appVersion + ')');
                 // Prepend navbar to body
                 this.$el.parent().prepend(navbar);
 
@@ -88,13 +99,17 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                 // Initialize and place the CircleRenameMoval view
                 this.circleRenameModalView = new CircleRenameModalView().render();
                 this.$el.parent().prepend(this.circleRenameModalView.$el);
+
+                // Initialize and place the OIDCTokenExpired view
+                this.oidcTokenExpiredModalView = new OIDCTokenExpiredModalView().render();
+                this.$el.parent().prepend(this.oidcTokenExpiredModalView.$el);
             },
             drawWidget: function(versionElem, widget) {
                 AppLog.debug('drawWidget', widget);
                 if( !widget.isEntity )
                     widget =  this.vie.entities.get(widget);
                 if( !widget ) {
-                    console.error("drawWidget of inexistent widget called");
+                    AppLog.debug("drawWidget of inexistent widget called");
                     return;
                 }
 
@@ -163,12 +178,36 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                 element.detach();
                 this.widgetFrame.prepend(element);
 
+                var previousVersion = this.model.previous(Voc.currentVersion);
                 // This force redraws current timeline element.
                 // This happends due to elements being hidden initially.
                 _.each(this.widgetViews, function(widget) {
                     if ( widget.model.get(Voc.belongsToVersion) === version ) {
                         if ( widget.isBrowse() && widget.view.timeline ) {
                             widget.view.timeline.redraw();
+                        } else if ( widget.isOrganize() ) {
+                            var episode = version.get(Voc.belongsToEpisode);
+
+                            if ( episode && episode.isEntity ) {
+                                // TODO See if we need to use the promise to handel success/fail
+                                EpisodeData.learnEpLockHold(episode);
+
+                                if ( EntityHelpers.isSharedEpisode(episode) ) {
+                                    widget.view.clearOrganizeAndViews();
+                                    var versionsPromise = EpisodeData.fetchVersions(episode);
+                                    versionsPromise.done(function() {
+                                        widget.view.reRenderOrganize();
+                                    }).fail(function() {
+                                        widget.view.reRenderOrganize();
+                                    });
+                                }
+                            } else {
+                                AppLog.debug("Episode Missing From Version, could not check locks", widget.model, version);
+                            }
+                        }
+                    } else if ( widget.model.get(Voc.belongsToVersion) === previousVersion ) {
+                        if ( widget.isOrganize() ) {
+                            widget.removeEpisodeLockIfNeeded();
                         }
                     }
                 });
@@ -201,6 +240,31 @@ define(['logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
                 } else {
                     systemMessages.toggleClass('systemMessagesToolbarOpen', false);
                 }
+            },
+            setUpEpisodeLockHoldInternal: function() {
+                var that = this;
+
+                setInterval(function() {
+                    var version = that.model.get(Voc.currentVersion);
+
+                    if ( version && version.isEntity ) {
+                        var episode = version.get(Voc.belongsToEpisode);
+
+                        if ( episode && episode.isEntity ) {
+                            var promise = EpisodeData.learnEpLockHold(episode);
+
+                            promise.done(function(result, passThrough) {
+                                AppLog.debug('learnEpLockHold Succeeded', result, passThrough);
+                            }).fail(function(f) {
+                                AppLog.debug('learnEpLockHold Failed', f);
+                            });
+                        } else {
+                            AppLog.debug('learnEpLockHold No Episoe For Version', version);
+                        }
+                    } else {
+                        AppLog.debug('learnEpLockHold No Current Version For User', that.model);
+                    }
+                }, 30000);
             }
         });
 });

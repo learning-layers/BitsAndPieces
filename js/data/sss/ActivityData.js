@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger, Voc, _, $, Data){
+define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], function(Logger, Voc, _, $, Data, userParams){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize ActivityData");
@@ -38,10 +38,96 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
                 that.vie.analyze({
                     'service' : 'activitiesGet',
                     'data' : data
-                }).using('sss').execute().success(function(activities){
-                    that.LOG.debug('activitiesGet success', activities);
-                    activities = that.vie.entities.addOrUpdate(activities);
-                    defer.resolve(activities);
+                }).using('sss').execute().success(function(activities, passThrough){
+                    that.LOG.debug('activitiesGet success', activities, passThrough);
+
+                    var suitableActivities = [];
+
+                    if ( !_.isEmpty(activities) ) {
+                        var combinedUrisToBeAdded = [];
+                            combinedToBeAdded = [];
+
+                        _.each(activities, function(activity) {
+                            // Check if acceptable activity
+                            if ( activity[Voc.author] === userParams.user ) {
+                                if ( activity[Voc.hasActivityType] !== 'shareLearnEpWithUser' && activity[Voc.hasActivityType] !== 'messageSend' ) {
+                                    return;
+                                }
+                            } else {
+                                if ( activity[Voc.hasActivityType] === 'messageSend' ) {
+                                    return;
+                                }
+                            }
+
+                            suitableActivities.push(activity);
+
+                            var users = activity[Voc.hasUsers];
+                            var entities = activity[Voc.hasEntities];
+                            var containedEntity = activity[Voc.hasResource];
+
+                            if ( !_.isEmpty(users) ) {
+                                var userUris = [];
+
+                                _.each(users, function(user) {
+                                    var userUri = user[that.vie.Entity.prototype.idAttribute];
+
+                                    userUris.push(userUri);
+                                    
+                                    if ( _.indexOf(combinedUrisToBeAdded, userUri) === -1 ) {
+                                        combinedUrisToBeAdded.push(userUri);
+                                        combinedToBeAdded.push(user);
+                                    }
+                                });
+                                activity[Voc.hasUsers] = userUris;
+                            }
+
+                            if ( !_.isEmpty(entities) ) {
+                                var entityUris = [];
+
+                                _.each(entities, function(entity) {
+                                    var entityUri = entity[that.vie.Entity.prototype.idAttribute];
+
+                                    entityUris.push(entityUri);
+
+                                    if ( _.indexOf(combinedUrisToBeAdded, entityUri) === -1 ) {
+                                        combinedUrisToBeAdded.push(entityUri);
+                                        combinedToBeAdded.push(entity);
+                                    }
+                                });
+                                activity[Voc.hasEntities] = entityUris;
+                            }
+
+                            if ( !_.isEmpty(containedEntity) ) {
+
+                                // IMPORATNT
+                                // This fixes a problem of empty attributes
+                                // overwriting the loaded meaningful values
+                                if (containedEntity['@type'] === Voc.EPISODE ) {
+                                    for ( var key in containedEntity ) {
+                                        if ( _.isEmpty(containedEntity[key]) ) {
+                                            delete containedEntity[key];
+                                        }
+                                    }
+                                }
+
+                                var entityUri = containedEntity[that.vie.Entity.prototype.idAttribute];
+
+                                if ( _.indexOf(combinedUrisToBeAdded, entityUri) === -1 ) {
+                                    combinedUrisToBeAdded.push(entityUri);
+                                    combinedToBeAdded.push(containedEntity);
+                                }
+                                activity[Voc.hasResource] = entityUri;
+                            }
+                        });
+
+                        if ( !_.isEmpty(combinedToBeAdded) ) {
+                            that.vie.entities.addOrUpdate(combinedToBeAdded, {'overrideAttributes': true});
+                        }
+
+                        suitableActivities = that.vie.entities.addOrUpdate(suitableActivities, {'overrideAttributes': true});
+                    }
+
+                    defer.resolve(suitableActivities, passThrough);
                 }).fail(function(f) {
                     that.LOG.debug('activitiesGet fail', f);
                     defer.reject(f);

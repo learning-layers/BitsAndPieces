@@ -50,20 +50,41 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
         );
         return defer.promise();
     };
-    m.getMessages = function(includeRead) {
+    m.getMessages = function(includeRead, startTime) {
         var that = this,
             defer = $.Deferred();
         this.vie.load({
             'service' : 'messagesGet',
             'data' : {
-                'includeRead' : includeRead
+                'includeRead' : includeRead,
+                'startTime' : startTime
             }
-        }).using('sss').execute().success(function(messages) {
-            that.LOG.debug('success messagesGet', messages);
-            messages = that.vie.entities.addOrUpdate(messages);
-            defer.resolve(messages);
+        }).using('sss').execute().success(function(messages, passThrough) {
+            that.LOG.debug('success messagesGet', messages, passThrough);
+            messages = that.vie.entities.addOrUpdate(messages, {'overrideAttributes': true});
+            defer.resolve(messages, passThrough);
         }).fail(function(f) {
             that.LOG.debug('error messagesGet', f);
+            defer.reject(f);
+        });
+
+        return defer.promise();
+    };
+    m.markAsRead = function(model) {
+        var that = this,
+            defer = $.Deferred();
+        this.vie.load({
+            'service' : 'entityUpdate',
+            'data' : {
+                'entity' : model.getSubject(),
+                'read' : true
+            }
+        }).using('sss').execute().success(function(data) {
+            that.LOG.debug('success markAsRead', data);
+            model.set(Voc.isRead, true);
+            defer.resolve(data);
+        }).fail(function(f) {
+            that.LOG.debug('error markAsRead', f);
             defer.reject(f);
         });
 

@@ -3,20 +3,25 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
         'text!templates/toolbar/activity_stream.tpl', 'text!templates/toolbar/components/selected_user.tpl',
         'view/sss/MessageView', 'view/sss/ActivityView', 'view/sss/EntityRecommendationView',
         'data/sss/MessageData', 'data/sss/ActivityData', 'data/EntityData',
-        'utils/SearchHelper'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, ActivityView, EntityRecommendationView, MessageData, ActivityData, EntityData, SearchHelper){
+        'utils/SearchHelper', 'utils/SystemMessages'], function(Logger, tracker, _, $, Backbone, Spinner, Voc, userParams, InputValidation, ActivityStreamTemplate, SelectedUserTemplate, MessageView, ActivityView, EntityRecommendationView, MessageData, ActivityData, EntityData, SearchHelper, SystemMessages){
     return Backbone.View.extend({
         events: {
             'keypress textarea[name="messageText"]' : 'updateOnEnter',
             'keyup textarea[name="messageText"]' : 'revalidateMessageText',
             'click .selectedUser > span' : 'removeSelectedUser',
-            'change input[name="showInToolbar[]"]' : 'filterStream'
+            'change input[name="showInToolbar[]"]' : 'filterStream',
+            'bnp:markMessageAsRead' : 'reduceAndUpdateUnreadMessagesCount',
+            'click .activityStreamRefresh' : 'fetchRefreshActivityStream'
         },
         LOG: Logger.get('ActivityStreamToolbarView'),
         initialize: function() {
+            this.messageTextCharactersLimit = 300;
             this.activityResultViews = [];
             this.messageResultViews = [];
             this.recommendationsResultViews = [];
             this.selectedUsers = [];
+            this.selectedUsersLabels = [];
+            this.unreadMessagesCount = 0;
             this.messageRecipientSelector = 'input[name="messageRecipient"]';
             this.messageTextSelector = 'textarea[name="messageText"]';
 
@@ -35,6 +40,21 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                     that.addSelectedUser(event, ui, this);
                 }
             });
+
+            this.resetCharactersRemaining();
+            this.$el.find(this.messageTextSelector).on('keyup', function(e) {
+                var thisElem = $(this),
+                    charsRemainingElem = thisElem.next().find('.charactersRemaining'),
+                    remaining = that.messageTextCharactersLimit - thisElem.val().length;
+
+                if ( remaining === 0 ) {
+                    e.preventDefault();
+                } else if ( remaining < 0 ) {
+                    thisElem.val(thisElem.val().substring(0, that.messageTextCharactersLimit));
+                }
+
+                charsRemainingElem.html( ( remaining >= 0 ) ? remaining : 0 );
+            });
         },
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {
@@ -47,6 +67,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             if ( _.indexOf(this.selectedUsers, ui.item.value) === -1 ) {
                 var input = $(autocomplete);
                 this.selectedUsers.push(ui.item.value);
+                this.selectedUsersLabels.push(ui.item.label);
                 input.val('');
                 input.parent().append(_.template(SelectedUserTemplate, {
                     value : ui.item.value,
@@ -61,6 +82,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             var currentTarget = $(e.currentTarget),
                 removable = currentTarget.parent();
             this.selectedUsers = _.without(this.selectedUsers, removable.data('value'));
+            this.selectedUsersLabels = _.without(this.selectedUsersLabels, removable.data('label'));
 
             removable.remove();
             this.validateMessageRecipient();
@@ -85,7 +107,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             element.find('.ajaxLoader').remove();
         },
         sendMessage: function(e) {
-            var currentTarget = $(e.currentTarget);
+            var currentTarget = $(e.currentTarget),
+                messageText = this.$el.find(this.messageTextSelector).val();
             if ( this.messageBeingSent === true ) {
                 return false;
             }
@@ -109,12 +132,16 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             InputValidation.removeAlerts(this.$el.find('.writeMessage'));
             this.addAjaxLoader(currentTarget.parent());
 
-            var promise = MessageData.sendMessage(this.selectedUsers[0], this.$el.find(this.messageTextSelector).val());
+            var promise = MessageData.sendMessage(this.selectedUsers[0], messageText);
 
-            promise.done(function() {
+            promise.done(function(messageId) {
+                tracker.info(tracker.SENDMESSAGE, tracker.NOTIFICATIONTAB, messageId, messageText, null, [that.selectedUsers[0]]);
+
+                SystemMessages.addSuccessMessage('Message successfully sent to ' + that.selectedUsersLabels[0]);
+
                 that.removeAjaxLoader(currentTarget.parent());
                 that.messageBeingSent = false;
-                that._cleanUpAdterSendMessage();
+                that._cleanUpAfterSendMessage();
             });
 
             promise.fail(function() {
@@ -123,18 +150,21 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                 InputValidation.addAlert(that.$el.find('.writeMessage > label'), 'alert-danger', 'Message could not be sent! Please try again.');
             });
         },
-        _cleanUpAdterSendMessage: function() {
+        _cleanUpAfterSendMessage: function() {
             var that = this;
 
             this.$el.find(this.messageRecipientSelector).val('');
             this.$el.find('.selectedUser').remove();
             this.selectedUsers = [];
+            this.selectedUsersLabels = [];
             // Enable user selector once cleanUp procedure runs
             this.$el.find(this.messageRecipientSelector).prop('disabled', false);
 
             // Disable message text input validation temporarily
             this.disableMessageTextValidation = true;
             this.$el.find(this.messageTextSelector).val('');
+
+            this.resetCharactersRemaining();
         },
         validateMessageRecipient: function() {
             var element = this.$el.find(this.messageRecipientSelector),
@@ -157,15 +187,42 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             }
         },
         fetchActivities: function() {
-            var data = {
-                types : ['shareLearnEpWithUser']
+            var that = this,
+                data = {
+                types : [
+                    'addCategory',
+                    'removeCategories',
+                    //'createLearnEp',
+                    'addEntityToLearnEpVersion',
+                    'changeEntityForLearnEpVersionEntity',
+                    'moveLearnEpVersionEntity',
+                    'removeLearnEpVersionEntity',
+                    'addCircleToLearnEpVersion',
+                    'changeLearnEpVersionCircleLabel',
+                    'moveLearnEpVersionCircle',
+                    'removeLearnEpVersionCircle',
+                    'shareLearnEpWithUser',
+                    'messageSend'
+                ],
+                includeOnlyLastActivities : true,
+                startTime: this.activitiesFetchTime ? this.activitiesFetchTime : null
             },
             promise = ActivityData.getActivities(data);
+
+            promise.done(function(activities, passThrough) {
+                that.activitiesFetchTime = passThrough['queryTime'];
+            });
 
             return promise;
         },
         fetchMessages: function() {
-            var promise = MessageData.getMessages(true);
+            var that = this,
+                startTime = this.messagesFetchTime ? this.messagesFetchTime : null,
+                promise = MessageData.getMessages(true, startTime);
+
+            promise.done(function(messages, passThrough) {
+                that.messagesFetchTime = passThrough['queryTime'];
+            });
 
             return promise;
         },
@@ -173,7 +230,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             var data = {
                     forUser : userParams.user,
                     maxResources : 20,
-                    typesToRecommOnly : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
+                    typesToRecommOnly : ['evernoteResource', 'evernoteNote', 'evernoteNotebook']
                 },
                 promise = EntityData.getRecommResources(data);
 
@@ -185,8 +242,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                 messagesPromise = this.fetchMessages(),
                 recommendationsPromise = this.fetchRecommendations();
 
+            // XXX Even if one of the call is rejected, nothing will be displayed
+            // Probably need to tune the corresponding calls to always resolve
+            // just resolve with an empty array in case of failure.
             $.when(activitiesPromise, messagesPromise, recommendationsPromise)
-                .done(function(activities, messages, recommendations) {
+                .done(function(activitiesData, messagesData, recommendations) {
+                    var activities = activitiesData[0],
+                        messages = messagesData[0];
                     that.LOG.debug('fetchActivityStream', activities, messages, recommendations);
 
                     // Deal with activities
@@ -209,13 +271,18 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                             view.remove();
                         });
                         that.messageResultViews = [];
+                        that.unreadMessagesCount = 0;
                     }
                     _.each(messages, function(message) {
                         var view = new MessageView({
                             model : message
                         });
                         that.messageResultViews.push(view);
+                        if ( view.model.get(Voc.isRead) !== true ) {
+                            that.unreadMessagesCount += 1;
+                        }
                     });
+                    that.addUpdateUnreadMessagesCount();
 
                     // Deal with recommendations
                     if ( !_.isEmpty(that.recommendationsResultViews) ) {
@@ -231,10 +298,87 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                         that.recommendationsResultViews.push(view);
                     });
 
+                    that.displayActivityStream();
+                }).fail(function() {
+                    that.LOG.debug('fetchActivityStream Failed');
+                    // TODO Check if fail handler is also needed
+                });
+        },
+        fetchRefreshActivityStream: function(e) {
+            var that = this,
+                currentTarget = $(e.currentTarget),
+                activitiesPromise = this.fetchActivities(),
+                messagesPromise = this.fetchMessages();
+
+            currentTarget.prop('disabled', true);
+
+            $.when(activitiesPromise, messagesPromise)
+                .done(function(activitiesData, messagesData) {
+                    var activities = activitiesData[0],
+                        messages = messagesData[0];
+                    that.LOG.debug('fetchRefreshActivityStream', activities, messages);
+
+                    // Remove extsting views
+                    // Deal with activities
+                    if ( !_.isEmpty(that.activityResultViews) ) {
+                        _.each(that.activityResultViews, function(view) {
+                            view.remove();
+                        });
+                    }
+
+                    // Deal with messages
+                    if ( !_.isEmpty(that.messageResultViews) ) {
+                        _.each(that.messageResultViews, function(view) {
+                            view.remove();
+                        });
+                    }
+
+                    // Deal with recommendations
+                    if ( !_.isEmpty(that.recommendationsResultViews) ) {
+                        _.each(that.recommendationsResultViews, function(view) {
+                            view.remove();
+                        });
+                    }
+
+                    // Deal with activities
+                    _.each(activities, function(activity) {
+                        // TODO Check if already present, just in case
+                        var view = new ActivityView({
+                            model : activity
+                        });
+
+                        if ( !that.$el.find('#showActivities').is(':checked') ) {
+                            view.$el.hide();
+                        }
+
+                        that.activityResultViews.push(view);
+                    });
+
+                    // Deal with messages
+                    _.each(messages, function(message) {
+                        // TODO Check if already present, just in case
+                        var view = new MessageView({
+                            model : message
+                        });
+
+                        if ( !that.$el.find('#showMessages').is(':checked') ) {
+                            view.$el.hide();
+                        }
+
+                        that.messageResultViews.push(view);
+
+                        if ( view.model.get(Voc.isRead) !== true ) {
+                            that.unreadMessagesCount += 1;
+                        }
+                    });
+                    that.addUpdateUnreadMessagesCount();
 
                     that.displayActivityStream();
+
+                    currentTarget.prop('disabled', false);
+                }).fail(function() {
+                    currentTarget.prop('disabled', false);
                 });
-            // TODO Check if fail handler is also needed
         },
         displayActivityStream: function() {
             var resultSet = this.$el.find('.stream .resultSet');
@@ -286,6 +430,35 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
 
             this._showHideStreamViews(views, isChecked);
             this.$el.find('input[name="showInToolbar[]"]').prop('disabled', false);
+
+            if ( isChecked ) {
+                tracker.info(tracker.SETFILTER, tracker.NOTIFICATIONTAB, null, value);
+            } else {
+                tracker.info(tracker.REMOVEFILTER, tracker.NOTIFICATIONTAB, null, value);
+            }
+        },
+        addUpdateUnreadMessagesCount: function() {
+            var showMessagesLabel = this.$el.find('label[for="showMessages"]'),
+                theCountBadge = showMessagesLabel.find('span.badge');
+
+            if ( this.unreadMessagesCount > 0) {
+                if ( theCountBadge.length > 0 ) {
+                    theCountBadge.html(this.unreadMessagesCount);
+                } else {
+                    showMessagesLabel.append(' <span class="badge">' + this.unreadMessagesCount + '</span>');
+                }
+            } else {
+                if ( theCountBadge.length > 0 ) {
+                    theCountBadge.remove();
+                }
+            }
+        },
+        reduceAndUpdateUnreadMessagesCount: function(e) {
+            this.unreadMessagesCount -= 1;
+            this.addUpdateUnreadMessagesCount();
+        },
+        resetCharactersRemaining: function() {
+            this.$el.find(this.messageTextSelector).next().find('.charactersRemaining').html(this.messageTextCharactersLimit);
         }
     });
 });

@@ -1,4 +1,4 @@
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','data/episode/EpisodeData'], function(VIE, Logger, tracker, _, $, Backbone, Voc, EpisodeData){
+define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode/EpisodeData'], function(VIE, Logger, _, $, Backbone, Voc, EpisodeData){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeView'),
         tagName: 'a',
@@ -47,7 +47,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','d
             if( !event || !event.currentTarget ) return;
             var id = $(event.currentTarget).attr('about');
             this.LOG.debug('EpisodeView changeCurrentVersion ' + id);
-            tracker.info(tracker.SWITCHVERSION, id);
             if( !id ) return;
             this.model.get(Voc.belongsToUser).save( Voc.currentVersion, id);
         },
@@ -57,7 +56,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc','d
             var id = EpisodeData.getFirstVersion(this.model);
             if( !id ) return;
             this.LOG.debug('EpisodeView changeCurrentEpisode, version = ' + id.getSubject());
-            tracker.info(tracker.SWITCHEPISODE, id.getSubject());
             this.model.get(Voc.belongsToUser).save( Voc.currentVersion, id.getSubject());
         },
         highlight: function(versionId) {

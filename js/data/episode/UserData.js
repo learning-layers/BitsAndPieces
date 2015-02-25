@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 'userParams', 'view/sss/EntityView'], function(Logger, Voc, _, Data, EpisodeData, userParams, EntityView){
+define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/EpisodeData', 'userParams', 'view/sss/EntityView'], function(Logger, Voc, _, $, Data, EpisodeData, userParams, EntityView){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize UserData");
@@ -9,6 +9,8 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
         this.setIntegrityCheck(Voc.hasEpisode, Voc.EPISODE, Voc.belongsToUser);
         this.setIntegrityCheck(Voc.currentVersion, Voc.VERSION);
         this.fetchAllUsers();
+        this.recommendedTags = [];
+        this.fetchRecommendedTags();
     };
     m.LOG = Logger.get('UserData');
     /** 
@@ -95,10 +97,35 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
                     user.set(Voc.hasEpisode, false);
                     return;
                 }
+
+                var userUrisToBeAdded = [];
+                var usersToBeAdded = [];
                 _.each(episodes, function(episode) {
                     episode['@type'] = Voc.EPISODE;
+
+                    var users = episode[Voc.hasUsers];
+                    if ( !_.isEmpty(users) ) {
+                        var userUris = [];
+                        _.each(users, function(user) {
+                            var userUri = user[v.Entity.prototype.idAttribute];
+
+                            user['@type'] = Voc.USER;
+                            userUris.push(userUri);
+
+                            if ( _.indexOf(userUrisToBeAdded, userUri) === -1 ) {
+                                userUrisToBeAdded.push(userUri);
+                                usersToBeAdded.push(user);
+                            }
+                        });
+                        episode[Voc.hasUsers] = userUris;
+                    }
                 });
-                v.entities.addOrUpdate(episodes);
+
+                if ( !_.isEmpty(usersToBeAdded) ) {
+                    v.entities.addOrUpdate(usersToBeAdded, {'overrideAttributes': true});
+                }
+
+                v.entities.addOrUpdate(episodes, {'overrideAttributes': true});
             }
         );
     };
@@ -157,7 +184,8 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
             'data' : {
                 'startTime' : start.getTime(),
                 'endTime' : end.getTime(),
-                'forUser' : forUser
+                'forUser' : forUser,
+                'types' : ['evernoteNotebookCreate', 'evernoteNotebookUpdate', 'evernoteNotebookFollow', 'evernoteNoteCreate', 'evernoteNoteUpdate', 'evernoteNoteDelete', 'evernoteNoteShare', 'evernoteReminderDone', 'evernoteReminderCreate', 'evernoteResourceAdd', 'bnpPlaceholderAdd']
             }
         }).from('sss').execute().success(
             function(entities) {
@@ -204,8 +232,48 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/EpisodeData', 
                 'getFlags' : true  
             }
         }).from('sss').execute().success(function(entities) {
-            that.vie.entities.addOrUpdate(entities);
+            that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
         });
+    };
+    m.fetchRecommendedTags = function() {
+        var that = this;
+        this.vie.load({
+            'service' : 'recommTags',
+            'data' : {
+                'forUser' : userParams.user,
+                'maxTags' : 20
+            }
+        }).using('sss').execute().success(function(tags) {
+            if ( tags && _.isArray(tags) && !_.isEmpty(tags) ) {
+                var tagsLabels;
+                tagsLabels = _.map(tags, function(tag) {
+                    return tag.label;
+                });
+                that.recommendedTags = tagsLabels;
+            }
+        });
+    };
+    m.getRecommendedTags = function() {
+        return _.clone(this.recommendedTags);
+    };
+    m.getCurrentUserTagFrequencies = function() {
+        var that = this,
+            defer = $.Deferred();
+        this.vie.load({
+            'service' : 'tagFrequsGet',
+            'data' : {
+                'forUser' : userParams.user,
+                'useUsersEntities' : true
+            }
+        }).using('sss').execute().success(function(data) {
+            that.LOG.debug('success tagFrequsGet', data);
+            defer.resolve(data);
+        }).fail(function(f) {
+            that.LOG.debug('error tagFrequsGet', f);
+            defer.reject(f);
+        });
+
+        return defer.promise();
     };
     return m;
 });

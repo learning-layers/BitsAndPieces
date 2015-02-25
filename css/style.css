@@ -5,7 +5,7 @@ div.timeline-event-content {
     overflow: visible;
 }
 div.timelineFrame {
-    height: 200px;
+    height: 225px;
 }
 div.timelineFrame > .user-container {
     width: 5%;
@@ -15,8 +15,9 @@ div.timelineFrame > .user-container {
 }
 div.timelineFrame > .timeline {
     height: 100%;
-    width: 90%;
-    margin-left: 10%;
+	width: 100%;
+    /*width: 90%;
+    margin-left: 10%;*/
 }
 
 div.timelineFrame > .timeline .timeline-cluster {
@@ -239,7 +240,7 @@ div.cluster button {
 
 div#myToolbar {
 	position: fixed;
-	top: 0;
+	top: 40px;
 	right: 0;
 	height: 100%;
 	z-index: 999;
@@ -256,11 +257,18 @@ div#myToolbar .toolbar-handle {
 	cursor: pointer;
 	height: 50px;
 	width: 30px;
+	font-size: 24px;
+	color: #d79634;
 }
 
 div#myToolbar.toolbarHidden .toolbar-handle span {
 	position: relative;
-	left: -15px;
+	left: -22px;
+}
+
+div#myToolbar.toolbarShown .toolbar-handle span {
+	position: relative;
+	left: -6px;
 }
 
 div.toolbarShown {
@@ -277,7 +285,7 @@ div#tabs {
 	height: 100%;
 }
 
-div#tabs.ui-widget {
+div#tabs.ui-widget, .ui-datepicker, .ui-autocomplete {
 	font-size: 14px;
 }
 
@@ -358,14 +366,18 @@ div#tabs .results .resultSet .entity .labelable label.withlabel {
 	max-width: 50px;
 }
 
+.singleRecommendation .recommendationIcon {
+	cursor: pointer;
+}
+
 div#tabs .stream .resultSet {
 	border: 1px solid rgb(221, 221, 221);
-	max-height: 200px;
+	max-height: 300px;
 	overflow-y: auto;
 }
 
 div#tabs .stream .resultSet .singleEntry {
-	margin: 10px;
+	padding: 10px;
 	min-height: 50px;
 	border-bottom: 1px solid rgb(221, 221, 221);
 }
@@ -373,7 +385,7 @@ div#tabs .stream .resultSet .singleEntry {
 div#tabs .stream .resultSet .singleEntry .entryIcon {
 	display: inline-block;
 	vertical-align: top;
-	font-size: 50px;
+	font-size: 35px;
 }
 
 div#tabs .stream .resultSet .singleEntry .entryIcon img {
@@ -387,14 +399,24 @@ div#tabs .stream .resultSet .singleEntry .entryContent {
 	width: 180px;
 	min-height: 70px;
 	padding-left: 10px;
+	font-size: 85%;
 }
 
 div#tabs .stream .resultSet .singleRecommendation label.recommendationLabel {
 	display: none;
 }
 
-.streamActionOthers {
+.messageIcon span {
 	color: #48a2c5;
+}
+
+.unreadMessage .messageIcon span {
+	color: #f6a551;
+	cursor: pointer;
+}
+
+.unreadMessage {
+	background-color: #fef3e9;
 }
 
 div#tabs .importance .ui-slider-horizontal {
@@ -445,6 +467,7 @@ div#tabs .thumbnail img {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
+	cursor: pointer;
 }
 
 div.tags div.tag {
@@ -520,7 +543,22 @@ form.loginForm {
 }
 
 .shareBitsOnly {
-	max-width: 250px;
+	width: 100%;
+	max-height: 150px;
+	overflow-y: auto;
+	margin-bottom: 0;
+}
+
+.shareBitsOnly input[type="checkbox"] {
+	display: none;
+}
+
+.shareBitsOnly label.selectable {
+	font-weight: normal;
+}
+
+.shareBitsOnly label.selected {
+	color: #5BA74A;
 }
 
 ul.episodeListing {
@@ -580,4 +618,90 @@ label.notBoldLabel {
 .widgetHidden {
 	display: none;
 }
+
+.circleRenameAutoComplete {
+	max-height: 250px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.organizeWidget {
+	position: relative;
+}
+
+.organizeOverlay {
+	/* XXX NEEDS BROWSER SPECIFIC PREFIXES */
+	width: calc(100% - 20px);
+	height: 400px;
+	position: absolute;
+	top: 19px;
+	left: 0;
+	margin-left: 10px;
+	padding-right: 10px;
+}
+
+.organizeOverlay button {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	margin-top: 10px;
+}
+
+.organizeWidget button {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+}
+
+.timelineFrame .jumpToDate input {
+	display: none;
+}
+
+.timelineFrame .jumpToDate img {
+	cursor: pointer;
+}
+
+.ui-datepicker {
+	z-index: 1500 !important;
+}
+
+.toolbarContentBit .belongsToEpisode {
+	max-height: 100px;
+	overflow-y: auto;
+}
+
+.ui-datepicker-month, .ui-datepicker-year  {
+	color: #111111;
+}
+
+img.bitModalThumbnail {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.shareLearnEpWithUser, .messageSend {
+	color: #555;
+}
+
+.activityIcon .addEntityToLearnEpVersion, .activityIcon .addCircleToLearnEpVersion {
+	color: #5ba74a;
+}
+
+.activityIcon .removeLearnEpVersionEntity, .activityIcon .removeLearnEpVersionCircle {
+	color: #f6a551;
+}
+
+.activityIcon .moveLearnEpVersionCircle, .activityIcon .changeLearnEpVersionCircleLabel, .activityIcon .moveLearnEpVersionEntity, .activityIcon .changeEntityForLearnEpVersionEntity {
+	color: #48a2c5;
+}
+
+button.activityStreamRefresh {
+	padding: 2px 4px;
+	margin-left: 210px;
+}
+
+button.activityStreamRefresh span.glyphicon {
+	color: #555;
+}
+
 

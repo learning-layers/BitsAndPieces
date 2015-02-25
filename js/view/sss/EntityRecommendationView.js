@@ -1,9 +1,10 @@
-define(['view/sss/EntityView', 'logger', 'underscore', 'jquery', 'voc',
+define(['view/sss/EntityView', 'logger', 'tracker', 'underscore', 'jquery', 'voc',
         'utils/DateHelpers',
-        'text!templates/sss/entity_recommendation.tpl'], function(EntityView, Logger, _, $, Voc, DateHelpers, EntityRecommendationTemplate){
+        'text!templates/sss/entity_recommendation.tpl'], function(EntityView, Logger, tracker, _, $, Voc, DateHelpers, EntityRecommendationTemplate){
     return EntityView.extend({
         LOG: Logger.get('EntityRecommendationView'),
         render: function() {
+            this.toolContext = tracker.NOTIFICATIONTAB;
             var label,
                 iconClass = '',
                 type = this.getRecommendationEntityType();

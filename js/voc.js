@@ -9,6 +9,7 @@ define([], {
     ORGAENTITY: "sss:learnEpEntity",
     ENTITY: "sss:entity",
     FILE: "sss:file",
+    PLACEHOLDER: "sss:placeholder",
     EVERNOTE_RESOURCE: "sss:evernoteResource",
     EVERNOTE_NOTE: "sss:evernoteNote",
     EVERNOTE_NOTEBOOK: "sss:evernoteNotebook",
@@ -36,6 +37,7 @@ define([], {
     creationTime : 'sss:creationTime',
     timeAttr : 'sss:timeAttr',
     circleType: 'sss:circleType', 
+    circleTypes : 'sss:circleTypes',
     orgaEntityType: 'sss:orgaEntityType',
     belongsToUser: 'sss:user',
     start: 'sss:startTime',
@@ -43,6 +45,7 @@ define([], {
 
     label : 'sss:label',
     content : 'sss:content',
+    contents : 'sss:contents',
     description : 'sss:description',
 
     xLabel : 'sss:xLabel',
@@ -60,14 +63,20 @@ define([], {
     hasTag : 'sss:tags',
     importance : 'sss:importance',
     isUsed : 'sss:isUsed',
+    isRead : "sss:read",
+    isLocked : "sss:locked",
+    isLockedByUser : "sss:lockedByUser",
     hasMimeType : 'sss:mimeType',
     hasThumbnail : 'sss:thumb',
+    hasThumbnailCache: 'sss:thumbCache',
     hasLoaded : 'sss:hasLoaded',
     hasViewCount : 'sss:viewEntity',
     hasTagRecommendation : 'sss:tagRecommendation',
 
     hasUserEvent : 'sss:hasUserEvent',
     file : 'sss:file',
-    note : 'sss:note'
+    note : 'sss:note',
+    remainingTime : 'sss:remainingTime',
+    lockReleasedByOtherTime : 'sss:lockedReleasedByOtherTime'
         
 });

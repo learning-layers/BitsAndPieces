@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, Data){
+define(['logger', 'voc', 'underscore', 'data/Data', 'utils/EntityHelpers'], function(Logger, Voc, _, Data, EntityHelpers){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize OrgaEntityData");
@@ -54,6 +54,10 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                     }),
                 }).to('sss').execute().success(function(savedEntityUri) {
                     model.set(model.idAttribute, savedEntityUri, options);
+
+                    // Add belongsToEpisode on entity
+                    EntityHelpers.addBelongsToEpisode(resource, version.get(Voc.belongsToEpisode));
+
                     if(options.success) {
                         options.success(savedEntityUri);
                     }
@@ -85,6 +89,8 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         );
     };
     m.removeEntity = function(model, options) {
+        var version = model.get(Voc.belongsToVersion);
+        var resource = model.get(Voc.hasResource);
         options = options || {};
         var that = this;
         this.vie.onUrisReady(
@@ -96,6 +102,10 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
                         'learnEpEntity' : modelUri
                     }
                 }).using('sss').execute().success(function(result) {
+
+                    // Remove belongsToEpisode from entity
+                    EntityHelpers.removeBelongsToEpisode(resource, version.get(Voc.belongsToEpisode));
+
                     if(options.success) {
                         options.success(result);
                     }

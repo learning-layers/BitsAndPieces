@@ -14,6 +14,12 @@
                 <input type="text" class="form-control" name="title" value="<%= entity.label %>" />
             </div>
 
+            <div class="form-group">
+                <label class="control-label">Description</label>
+                <textarea class="form-control" name="description"><%= entity.description %></textarea>
+                <p class="help-block">Allows input of up to 5.000 characters. </p>
+            </div>
+
             <table>
                 <tbody>
                     <tr>
@@ -24,12 +30,18 @@
                         <td><label>Date:</label></td>
                         <td class="withPadding"><%= entity.creationTime %></td>
                     </tr>
-                    <tr>
+                    <!--tr>
                         <td><label>Amount of views:</label></td>
                         <td class="withPadding"><%= entity.views %></td>
-                    </tr>
+                    </tr-->
                 </tbody>
             </table>
+
+            <div class="form-group">
+                <label class="control-label>">In episodes:</label>
+                <div class="list-group belongsToEpisode">
+                </div>
+            </div>
 
             <% if ( entity.thumb ) { %>
             <div>
@@ -84,7 +96,7 @@
 
         <br />
 
-        <div class="form-group predefinedTags">
+        <div class="form-group predefinedTags" style="display:none;">
             <label class="subsectionLabel">Predefined tags:</label>
             <select class="form-control" disabled>
             <% _.each(entity.predefined, function(predefined) { %>

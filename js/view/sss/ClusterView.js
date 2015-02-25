@@ -1,4 +1,4 @@
-define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], function(_, Backbone, Logger, $, EntityView) {
+define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc', 'view/sss/EntityView'], function(tracker, _, Backbone, Logger, $, Voc, EntityView) {
     return Backbone.View.extend({
         LOG: Logger.get('ClusterView'),
         events: {
@@ -7,7 +7,7 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
             //'mouseover .expandable' : 'expand', 
             //'mouseleave .expanded' : 'close',
             'click .expanded .closeCluster' : 'close',
-            'click .expanded .zoomCluster' : 'zoom'
+            'click .expanded .zoomCluster' : 'zoom' //@unused UI removed
         },
         initialize: function(options) {
             this.model.on('change:entities', this.render, this);
@@ -31,13 +31,19 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
             if( this.expanded ) {
                 var tmpWidth = 0;
                 contents.addClass("expanded");
-                contents.append("<div class=\"buttons\"><button class=\"closeCluster\" title=\"Close\">X</button><button class=\"zoomCluster\" title=\"Fit to Timeline\">&lt;&gt;</button></div>");
+                contents.append("<div class=\"buttons\"></div>")
+                    .find('.buttons')
+                    .append("<button class=\"closeCluster\" title=\"Close\">X</button>");
+                    //@unused .append("<button class=\"zoomCluster\" title=\"Fit to Timeline\">&lt;&gt;</button>");
                 tmpWidth += contents.find('.buttons').outerWidth(true) + 5;
                 _.each(entities, function(entity) {
                     var tmpView =  new EntityView({
                         'model': entity
                     }).render(),
                         tmpViewWidth = tmpView.$el.outerWidth(true);
+
+                    tmpView.toolContext = tracker.TIMELINEAREA;
+                    tmpView.trackerEvtContent = entity.get(Voc.creationTime);
 
                     contents.append(tmpView.$el);
                     tmpWidth += (tmpViewWidth >= 50) ? tmpViewWidth : 50;
@@ -69,6 +75,7 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'view/sss/EntityView'], fu
             }));
 
         },
+        //@unused UI removed
         zoom: function(e) {
             this.$el.trigger($.Event('bnp:zoomCluster', {
                 originalEvent : e,

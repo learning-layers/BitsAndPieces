@@ -1,9 +1,9 @@
-define(['module', 'vie', 'logger', 'tracker', 'userParams', 'data/episode/UserData', 'service/SocialSemanticService', 'extender', 
+define(['module', 'vie', 'logger', 'userParams', 'data/episode/UserData', 'service/SocialSemanticService', 'extender', 
         'data/AppData', 'underscore',
         'view/AppView', 'view/LoginFormView', 'voc',
         'text!../schemata/ss.sss.json',
         'jquery-cookie', 'bootstrap'],
-function(module, VIE, Logger, tracker, userParams, UserData, SocialSemanticService, extender,
+function(module, VIE, Logger, userParams, UserData, SocialSemanticService, extender,
         AppData, _, AppView, LoginFormView, Voc, schema){
     VIE.Util.useRealUri = true;
     Logger.useDefaults();
@@ -52,6 +52,9 @@ function(module, VIE, Logger, tracker, userParams, UserData, SocialSemanticServi
     Logger.get('MessageData').setLevel(Logger.OFF);
     Logger.get('ActivityData').setLevel(Logger.OFF);
     Logger.get('CircleRenameModalView').setLevel(Logger.OFF);
+    Logger.get('EntityHelpers').setLevel(Logger.OFF);
+    Logger.get('OrganizeOverlayView').setLevel(Logger.OFF);
+    Logger.get('BitThumbnailModalView').setLevel(Logger.OFF);
 
     if ( !userParams.isAuthenticated) {
         var loginView = new LoginFormView({

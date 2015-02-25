@@ -48,10 +48,11 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             'sss:discEntry' : 'img/sss/discuss.png',
             'sss:file' : 'img/sss/document.png',
             'sss:filePdf' : 'img/sss/entityFilePdf.png',
-            'sss:filePng' : 'img/sss/entityImageJpg.png',
+            'sss:fileImage' : 'img/sss/entityImage.png',
             'sss:fileDoc' : 'img/sss/entityFileDoc.png',
             'sss:rating' : 'img/sss/rate.png',
             'sss:tag' : 'img/evernote/tag.png',
+            'sss:placeholder' : 'img/sss/entityPlaceholder.png',
             //'sss:userEvent' : 'img/sss/userEvent.png',
             //'sss:learnEp' : 'img/evernote/learnEp.png',
             //'sss:learnEpTimelineState' : 'img/evernote/learnEpTimelineState.png',
@@ -60,6 +61,7 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             //'sss:learnEpEntity' : 'img/evernote/learnEpEntity.png',
 
             'unknown' : 'img/sss/unknown.png',
+            'sss:bnpPlaceholderAdd' : 'img/sss/entityPlaceholder.png',
             // EVERNOTE STUFF
             'sss:evernoteNotebook' : 'img/sss/collection.png',
             'sss:evernoteNote' : 'img/sss/evernoteNote.png',
@@ -125,6 +127,22 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
                         entity : view.model
                     });
                     view.$el.trigger(ev);
+
+                    // Only trigger event if toolContext has been set
+                    if ( view.toolContext ) {
+                        var evtContent = null,
+                            evtEntities = [];
+                        
+                        if ( view.trackerEvtContent ) {
+                            evtContent = view.trackerEvtContent;
+                        }
+
+                        if ( view.trackerEvtEntities ) {
+                            evtEntities = view.trackerEvtEntities;
+                        }
+
+                        tracker.info(tracker.CLICKBIT, view.toolContext, view.model.getSubject(), evtContent, evtEntities);
+                    }
                 },400); // <-- dblclick tolerance here
             }
             return false;
@@ -147,7 +165,6 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             var resourceUri = resource.getSubject();
             var lastChar = resourceUri[resourceUri.length-1];
             if( lastChar === '/') resourceUri = resourceUri.substring(0, resourceUri.length-1);
-            tracker.info(tracker.OPENRESOURCE, resourceUri);
             this.LOG.log('open resourceUri', resourceUri);
 
             // Handle special cases with file download
@@ -163,6 +180,8 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             } else if ( resource.isof(Voc.FILE) ) {
                 window.open(this.constructFileDownloadUri(resourceUri));
                 return true;
+            } else if ( resource.isof(Voc.PLACEHOLDER) ) {
+                return false;
             }
 
             window.open(resourceUri);
@@ -202,7 +221,6 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             if( !id ) return;
             this.LOG.debug("id", id);
             if( id != this.model.getSubject() ) return;
-            tracker.info(tracker.VIEWDETAILS, id);
 
             // --- ADD THE DETAIL VIEW --- //
             var detailViewId = "detailView" + id.replace(/[\\/:-\\.#]/g, '');
@@ -274,7 +292,12 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
                             name = 'sss:filePdf';
                             break;
                         case 'image/png':
-                            name = 'sss:filePng';
+                        case 'image/jpeg':
+                        case 'image/x-icon':
+                        case 'image/gif':
+                        case 'image/svg+xml':
+                        case 'image/bmp':
+                            name = 'sss:fileImage';
                             break;
                         case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
                         case 'application/msword':
@@ -290,7 +313,13 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
                                 name = 'sss:filePdf';
                                 break;
                             case '.png':
-                                name = 'sss:filePng';
+                            case '.jpg':
+                            case '.jpeg':
+                            case '.ico':
+                            case '.gif':
+                            case '.svg':
+                            case '.bmp':
+                                name = 'sss:fileImage';
                                 break;
                             case 'docx':
                             case '.doc':

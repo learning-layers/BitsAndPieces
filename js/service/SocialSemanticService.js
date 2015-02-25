@@ -1,6 +1,6 @@
 // The SocialSemanticService wraps the SSS REST API v3.4.0
 
-define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceModel', 'jquery'], 
+define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceModel', 'jquery'],
 function(Logger, VIE, _, Voc, SSSModel, $) {
 
 // ## VIE.SocialSemanticService(options)
@@ -122,7 +122,6 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                         'url' : sss.hostREST + op + "/",
                         'type': "POST",
                         'data' : JSON.stringify(_.extend(par, {
-                            'op': op,
                             'user' : userUri || "mailto:dummyUser",
                             'key' : sss.userKey || "someKey"
                         })),
@@ -140,6 +139,10 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
 
                             if( result.error ) {
                                 if( error ) error(result);
+
+                                // This could trigger a logout
+                                sss.checkErrorAndAct(result);
+
                                 return;
                             }
                             success(result[op]);
@@ -287,6 +290,13 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                 return;
             }catch(e) {
                 this.LOG.error(e);
+            }
+        },
+
+        checkErrorAndAct: function(result) {
+            if ( result.error && result.id === 'authOIDCUserInfoRequestFailed' ) {
+                var ev = $.Event('bnp:oidcTokenExpired', {});
+                $(document).trigger(ev);
             }
         }
     };

@@ -4,7 +4,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         LOG: Logger.get('TimelineView'),
         waitingForLastOne : 0,
         events: {
-            'bnp:zoomCluster' : 'expand',
+            'bnp:zoomCluster' : 'expand', //@unused UI removed
             'bnp:expanded' : 'redraw',
             'bnp:unexpanded' : 'redraw'
         },
@@ -150,6 +150,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             this.renderUser();
             this.renderTimeline();
+            this.renderDatepicker();
 
             var view = this;
             // add entities which are already contained
@@ -159,6 +160,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             return this;
         },
         renderUser: function () {
+            //@unused This functionality has been disabled for now
+            return false;
             if( this.user && this.user.isEntity) {
                 var par = $('<div class="user-container">');
                 this.userDOM = $('<div class="user">');
@@ -201,8 +204,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 'end' : end,
                 'min' : new Date('2013-01-01'),
                 'max' : new Date('2016-01-01'),
-                'zoomMin' : 300000, // 5 minute
-                'zoomMax' : 4320000000 // 5 days
+                'zoomMin' : 28800000, // 8 hours
+                'zoomMax' : 31556940000 // 1 year
             }));
             this.timeline.deleteItem(0); // remove dummy node
             this.LOG.debug('timeline', this.timeline);
@@ -213,7 +216,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             // bind timeline's internal events to model
             links.events.addListener(this.timeline, 'rangechanged', function(range){
                 view.LOG.debug('caught rangechanged: '+ range.start + ' - ' + range.end);
-                //tracker.info(tracker.CHANGETIMELINERANGE, tracker.NULL, range);
                 var vals = {};
                 vals[Voc.start] = range.start;
                 vals[Voc.end] = range.end;
@@ -223,6 +225,35 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
                 view.model.save(vals, { 'by' : view, 'calledBy' : 'renderTimeline' });
             });
+        },
+        renderDatepicker: function() {
+            var that = this;
+
+            this.$el.prepend('<div class="jumpToDate">Jump To Date: <input type="text" name="jumpToDate" val="" /></div>');
+            this.$el.find('input[name="jumpToDate"]')
+                .datepicker({
+                  minDate : that.timeline.options.min,
+                  maxDate : that.timeline.options.max,
+                  changeMonth: true,
+                  changeYear: true,
+                  showOn : 'button',
+                  buttonImage : 'img/calendar.png',
+                  buttonImageOnly : true,
+                  buttonText : 'Jump To Date',
+                  onSelect: function(dateText, ui) {
+                      var date = new Date(dateText);
+                      that.LOG.debug('Jump To Date Selected', dateText, ui, date);
+                      that.browseToDate(date);
+
+                      tracker.info(tracker.EXECUTEJUMPTODATEBUTTON, tracker.TIMELINEAREA, null, date.getTime());
+                   }
+                });
+            this.$el.find('input[name="jumpToDate"]')
+                .parent()
+                .find('img.ui-datepicker-trigger')
+                .on('click', function() {
+                    tracker.info(tracker.CLICKJUMPTODATEBUTTON, tracker.TIMELINEAREA);
+                });
         },
         reclusterByRangeChange: function(prev_start, prev_end, start, end) {
             var prev_range = prev_end - prev_start;
@@ -239,6 +270,20 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         getSelectedItem: function() {
             return this.timeline.getSelection()[0].row;
         },
+        browseToDate: function(date) {
+            this.LOG.debug("browseToDate called with date", date);
+            var range = this.timeline.getVisibleChartRange();
+            var diff = range.end - range.start;
+                vals = {},
+                start = new Date(parseInt(date.getTime() - diff / 2)),
+                end = new Date(parseInt(date.getTime() + diff / 2));
+
+            vals[Voc.start] = start;
+            vals[Voc.end] = end;
+            this.model.save(vals, { 'by' : this, 'calledBy' : 'browseToDate' });
+            this.LOG.debug("start", start, "end", end);
+            this.timeline.setVisibleChartRange(start, end, true);
+        },
         browseTo: function(entity) {
             // wait for the time attribute if not set yet
             if( !entity.get(this.timeAttr) ) {
@@ -246,18 +291,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 return;
             }
             this.LOG.debug("browseTo called with entity", entity, JSON.stringify(entity.attributes));
-            var range = this.timeline.getVisibleChartRange();
-            var diff = range.end - range.start;
-                vals = {},
-                start = new Date(parseInt(entity.get(this.timeAttr) - diff / 2)),
-                end = new Date(parseInt(entity.get(this.timeAttr) + diff / 2));
 
-            vals[Voc.start] = start;
-            vals[Voc.end] = end;
-            this.model.save(vals, { 'by' : this, 'calledBy' : 'browseTo' });
-            this.LOG.debug("start", parseInt(entity.get(this.timeAttr) - diff / 2), start, "end", parseInt(entity.get(this.timeAttr) + diff / 2), end);
-            this.timeline.setVisibleChartRange(start, end, true);
+            var entityDate = new Date(entity.get(this.timeAttr));
+
+            this.browseToDate(entityDate);
         },
+        //@unused UI removed
         expand: function(e) {
             this.LOG.debug('clickCluster event', e);
             var entities = e.cluster.get('entities');

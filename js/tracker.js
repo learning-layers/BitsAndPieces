@@ -3,17 +3,24 @@ define(['module', 'jquery', 'userParams', 'logger'],
         tracker = Logger.get('Tracker');
         tracker.setLevel(Logger.INFO);
         tracker.setHandler(function(messages, context){
-            var op = "uEAdd";
-            var params = {
-                    'op': op,
+            var typeParam = messages[0],
+                toolContextParam = messages[1],
+                entityParam = messages[2] ? messages[2] : null,
+                contentParam = messages[3] ? messages[3] : null,
+                entitiesParam = messages[4] ? messages[4] : [],
+                usersParam = messages[5] ? messages[5] : [],
+                op = "evalLog"
+                params = {
                     'user' : userParams.user,
                     'key' : userParams.userKey,
-                    'type' : messages[0],
-                    'content' : (new Date()).getTime()+(messages[2] ? ";"+JSON.stringify(messages[2]): "")
+                    'type' : typeParam,
+                    'toolContext' : toolContextParam,
+                    'forUser' : userParams.user,
+                    'entity' : entityParam,
+                    'content' : contentParam,
+                    'entities' : entitiesParam,
+                    'users' : usersParam
                 };
-            if( messages[1] ) {
-                params['entity'] = messages[1];
-            }
             $.ajax({
                 'url' : module.config().sssHostREST + op + "/",
                 'type': "POST",
@@ -38,28 +45,39 @@ define(['module', 'jquery', 'userParams', 'logger'],
                 }
             });
         });
-         
 
-
-
-        tracker.OPENEPISODESDIALOG = "learnEpOpenEpisodesDialog";
-        tracker.SWITCHEPISODE = "learnEpSwitchEpisode";
-        tracker.SWITCHVERSION = "learnEpSwitchVersion";
-        tracker.RENAMEEPISODE = "learnEpRenameEpisode";
-        tracker.CREATENEWEPISODEFROMSCRATCH = "learnEpCreateNewEpisodeFromScratch";
-        tracker.CREATENEWEPISODEFROMVERSION = "learnEpCreateNewEpisodeFromVersion";
-        tracker.CREATENEWVERSION = "learnEpCreateNewVersion";
-        tracker.CHANGETIMELINERANGE = "timelineChangeTimelineRange";
-        tracker.VIEWDETAILS = "learnEpViewEntityDetails";
-        tracker.OPENRESOURCE = "viewEntity";
-        tracker.DROPORGANIZEENTITY = "learnEpDropOrganizeEntity";
-        tracker.MOVEORGANIZEENTITY = "learnEpMoveOrganizeEntity";
-        tracker.DELETEORGANIZEENTITY = "learnEpDeleteOrganizeEntity";
-        tracker.CREATEORGANIZECIRCLE = "learnEpCreateOrganizeCircle";
-        tracker.CHANGEORGANIZECIRCLE = "learnEpChangeOrganizeCircle";
-        tracker.RENAMEORGANIZECIRCLE = "learnEpRenameOrganizeCircle";
-        tracker.DELETEORGANIZECIRCLE = "learnEpDeleteOrganizeCircle";
-        tracker.NULL = 'http://dummy.dm/';
+        tracker.ORGANIZEAREA = 'organizeArea';
+        tracker.REMOVELEARNEPVERSIONCIRCLE = 'removeLearnEpVersionCircle';
+        tracker.REMOVELEARNEPVERSIONENTITY = 'removeLearnEpVersionEntity';
+        tracker.ADDENTITYTOLEARNEPVERSION = 'addEntityToLearnEpVersion';
+        tracker.ADDCIRCLETOLEARNEPVERSION = 'addCircleToLearnEpVersion';
+        tracker.CLICKLABELRECOMMENDATION = 'clickLabelRecommendation';
+        tracker.REQUESTEDITBUTTON = 'requestEditButton';
+        tracker.RELEASEEDITBUTTON = 'releaseEditButton';
+        tracker.TIMELINEAREA = 'timelineArea';
+        tracker.CLICKJUMPTODATEBUTTON = 'clickJumpToDateButton';
+        tracker.EXECUTEJUMPTODATEBUTTON = 'executeJumpToDateButton';
+        tracker.CLICKBIT = 'clickBit';
+        tracker.SEARCHTAB = 'searchTab';
+        tracker.CLICKTAG = 'clickTag';
+        tracker.BITTAB = 'bitTab';
+        tracker.CHANGELABEL = 'changeLabel';
+        tracker.CHANGEDESCRIPTION = 'changeDescription';
+        tracker.SETIMPORTANCE = 'setImportance';
+        tracker.ADDTAG = 'addTag';
+        tracker.REMOVETAG = 'removeTag';
+        tracker.CLICKTAGRECOMMENDATION = 'clickTagRecommendation';
+        tracker.CLICKHELPBUTTON = 'clickHelpButton';
+        tracker.CLICKAFFECTBUTTON = 'clickAffectButton';
+        tracker.NOTIFICATIONTAB = 'notificationTab';
+        tracker.SENDMESSAGE = 'sendMessage';
+        tracker.READMESSAGE = 'readMessage';
+        tracker.SETFILTER = 'setFilter';
+        tracker.REMOVEFILTER = 'removeFilter';
+        tracker.EPISODETAB = 'episodeTab';
+        tracker.SHARELEARNEPWITHUSER = 'shareLearnEpWithUser';
+        tracker.COPYLEARNEPFORUSER = 'copyLearnEpForUser';
+        tracker.SEARCHWITHKEYWORD = 'searchWithKeyword';
 
         return tracker;
 });

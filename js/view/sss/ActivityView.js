@@ -1,11 +1,13 @@
-define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
+define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
         'userParams', 'utils/DateHelpers',
         'text!templates/sss/activity.tpl',
-        'view/sss/EntityView'], function(_, Backbone, Logger, $, Voc, userParams, DateHelpers, ActivityTemplate, EntityView) {
+        'view/sss/EntityView'], function(tracker, _, Backbone, Logger, $, Voc, userParams, DateHelpers, ActivityTemplate, EntityView) {
     return Backbone.View.extend({
         LOG: Logger.get('ActivityView'),
         events: {
+            'click' : 'activityClicked'
         },
+        labelNotFoundText: 'NOT FOUND',
         initialize: function(options) {
             this.listenTo(this.model, 'change', this.render);
             this.owner = this.model.get(Voc.author);
@@ -28,15 +30,92 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
 
             switch (activityType) {
                 case 'shareLearnEpWithUser':
-                    var episodeLabel = this.getEntitiesLabels()[0];
+                    var episodeLabel = this.getContainedEntityLabel(),
+                        userLabels = this.getUsersLabels();
+
                     templateSettings.iconClass.push('glyphicon-bell');
                     if ( isLoggedInActor ) {
-                        templateSettings.content = 'I shared episode ' + episodeLabel;
-                        // TODO Missing information about whome the episode was shared with
+                        templateSettings.content = ' shared episode ' + this.encloseLabel(episodeLabel) + ' with ' + this.encloseLabel( userLabels.join(', ') );
                     } else {
-                        templateSettings.author = this.getOwnerName();
-                        templateSettings.content = ' shared with me ' + episodeLabel;
+                        templateSettings.content = ' shared with me ' + this.encloseLabel(episodeLabel);
                     }
+                    break;
+                /* dtheiler
+                 case 'createLearnEp':
+                    var episodeLabel = this.getContainedEntityLabel();
+
+                    templateSettings.iconClass.push('glyphicon-briefcase');
+                    templateSettings.content = ' created an episode ' + this.encloseLabel(episodeLabel);
+                    break;
+                    
+                */
+                case 'messageSend':
+                    var messageText = this.model.get(Voc.contents)
+                        userLabel = this.getUsersLabels().join(', ');
+
+                    messageText = messageText ? messageText : this.labelNotFoundText;
+
+                    if ( _.isArray(messageText) ) {
+                        messageText = messageText.toString();
+                    }
+
+                    templateSettings.iconClass.push('glyphicon-envelope');
+                    templateSettings.content = ' sent message ' + this.encloseLabel(messageText) + ' to ' + this.encloseLabel(userLabel);
+                    break;
+                case 'addEntityToLearnEpVersion':
+                    var bitLabel = this.getContainedEntityLabelByType(Voc.ENTITY),
+                        episodeLabel = this.getContainedEntityLabel();
+
+                    templateSettings.iconClass.push('glyphicon-plus-sign');
+                    templateSettings.content = ' added bit ' + this.encloseLabel(bitLabel) + ' to episode ' + this.encloseLabel(episodeLabel);
+                    break;
+                case 'changeEntityForLearnEpVersionEntity':
+                    var bitLabel = this.getContainedEntityLabelByType(Voc.ENTITY),
+                        episodeLabel = this.getContainedEntityLabel();
+
+                    templateSettings.iconClass.push('glyphicon-info-sign');
+                    templateSettings.content = ' updated bit ' + this.encloseLabel(bitLabel) + ' of episode ' + this.encloseLabel(episodeLabel);
+                    break;
+                case 'moveLearnEpVersionEntity':
+                    var bitLabel = this.getContainedEntityLabelByType(Voc.ENTITY),
+                        episodeLabel = this.getContainedEntityLabel();
+
+                    templateSettings.iconClass.push('glyphicon-info-sign');
+                    templateSettings.content = ' moved bit ' + this.encloseLabel(bitLabel) + ' of episode ' + this.encloseLabel(episodeLabel);
+                    break;
+                case 'removeLearnEpVersionEntity':
+                    var bitLabel = this.getContainedEntityLabelByType(Voc.ENTITY),
+                        episodeLabel = this.getContainedEntityLabel();
+
+                    templateSettings.iconClass.push('glyphicon-minus-sign');
+                    templateSettings.content = ' removed bit ' + this.encloseLabel(bitLabel) + ' from episode ' + this.encloseLabel(episodeLabel);
+                    break;
+                case 'addCircleToLearnEpVersion':
+                    var circleLabel = this.getContainedEntityLabelByType(Voc.CIRCLE),
+                        episodeLabel = this.getContainedEntityLabel();
+
+                    templateSettings.iconClass.push('glyphicon-plus-sign');
+                    templateSettings.content = ' added circle ' + this.encloseLabel(circleLabel) + ' to episode ' + this.encloseLabel(episodeLabel);
+                    break;
+                case 'changeLearnEpVersionCircleLabel':
+                    var circleLabel = this.getContainedEntityLabelByType(Voc.CIRCLE),
+                        episodeLabel = this.getContainedEntityLabel();
+
+                    templateSettings.iconClass.push('glyphicon-info-sign');
+                    templateSettings.content = ' changed label of circle ' + this.encloseLabel(circleLabel) + ' of episode ' + this.encloseLabel(episodeLabel);
+                    break;
+                case 'moveLearnEpVersionCircle':
+                    var circleLabel = this.getContainedEntityLabelByType(Voc.CIRCLE),
+                        episodeLabel = this.getContainedEntityLabel();
+
+                    templateSettings.iconClass.push('glyphicon-info-sign');
+                    templateSettings.content = ' moved circle ' + this.encloseLabel(circleLabel) + ' of episode ' + this.encloseLabel(episodeLabel);
+                    break;
+                case 'removeLearnEpVersionCircle':
+                    var episodeLabel = this.getContainedEntityLabel();
+
+                    templateSettings.iconClass.push('glyphicon-minus-sign');
+                    templateSettings.content = ' removed circle from episode ' + this.encloseLabel(episodeLabel);
                     break;
                 default:
                     templateSettings.iconClass.push('glyphicon-question-sign');
@@ -44,14 +123,19 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
                     templateSettings.content = 'Unhandled activity type: ' + activityType;
             }
 
+            templateSettings.iconClass.push(activityType);
+
             if ( isLoggedInActor ) {
-                templateSettings.iconClass.push('streamActionMine');
+                templateSettings.author = 'I';
             } else {
-                templateSettings.iconClass.push('streamActionOthers');
+                templateSettings.author = this.getOwnerName();
             }
 
             this.$el.html(_.template(ActivityTemplate, templateSettings));
             return this;
+        },
+        encloseLabel: function(label) {
+            return '<strong>' + label + '</strong>';
         },
         getOwnerUri: function() {
             if ( this.owner && this.owner.isEntity ) {
@@ -68,33 +152,79 @@ define(['underscore', 'backbone', 'logger', 'jquery', 'voc',
         _getEntitiesArrayFromAttribute: function(attribute) {
             var entities = this.model.get(attribute);
 
-            if ( !_.isArray(entities) ) {
+            if ( _.isEmpty(entities) ) {
+                entities = [];
+            } else if ( !_.isArray(entities) ) {
                 entities = [entities];
             }
 
             return entities;
         },
-        _getEntitiesLabelsArrayFromAttribute: function(attribute) {
+        _getEntitiesLabelsArrayFromAttribute: function(attribute, ignored) {
             var labels = [],
                 entities = this._getEntitiesArrayFromAttribute(attribute);
 
+            if ( _.isEmpty(ignored) || !_.isArray(ignored) ) {
+                ignored = [];
+            }
+
             _.each(entities, function(entity) {
-                // XXX There is no guarantee that an entity has already been loaded
-                // Need to make sure that all is loaded (checks on the whole batch is probably needed)
-                if ( entity && entity.isEntity ) {
+                if ( entity && entity.isEntity && _.indexOf(ignored, entity.getSubject()) === -1 ) {
                     labels.push(entity.get(Voc.label));
-                } else {
-                    labels.push(entity);
                 }
             });
 
             return labels;
         },
-        getEntitiesLabels: function() {
-            return this._getEntitiesLabelsArrayFromAttribute(Voc.hasEntities);
-        },
         getUsersLabels: function() {
-            return this._getEntitiesLabelsArrayFromAttribute(Voc.hasUsers);
+            return this._getEntitiesLabelsArrayFromAttribute(Voc.hasUsers, [userParams.user]);
+        },
+        getContainedEntity: function() {
+            var entity = this.model.get(Voc.hasResource);
+
+            if ( entity && entity.isEntity ) {
+                return entity;
+            }
+
+            return false;
+        },
+        getContainedEntityLabel: function() {
+            var label = this.labelNotFoundText,
+                entity = this.getContainedEntity();
+
+            if ( entity ) {
+                if ( entity.isof(Voc.VERSION) ) {
+                    var episode = entity.get(Voc.belongsToEpisode);
+
+                    if ( episode && episode.isEntity ) {
+                        label = episode.get(Voc.label);
+                    } else {
+                        // In case episode not loaded for version, render again once it is loaded
+                        version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.render, this);
+                    }
+                } else {
+                    label = entity.get(Voc.label);
+                }
+            }
+
+            return label;
+        },
+        getContainedEntityLabelByType: function(type) {
+            var label = this.labelNotFoundText,
+                entities = this._getEntitiesArrayFromAttribute(Voc.hasEntities);
+
+            if ( entities ) {
+                _.each(entities, function(entity) {
+                    if ( entity && entity.isEntity && entity.isof(type) ) {
+                        label = entity.get(Voc.label);
+                    }
+                });
+            }
+
+            return label;
+        },
+        activityClicked: function(e) {
+            tracker.info(tracker.CLICKBIT, tracker.NOTIFICATIONTAB, this.model.getSubject());
         }
     });
 });

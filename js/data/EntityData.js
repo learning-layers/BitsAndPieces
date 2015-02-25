@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger, Voc, _, $, Data){
+define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], function(Logger, Voc, _, $, Data, userParams){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize EntityData");
@@ -20,6 +20,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
             model.on('change:'+this.vie.namespaces.uri(Voc.author), this.initUser, this); 
             model.on('change:'+this.vie.namespaces.uri(Voc.hasTag), this.changedTags, this);
             model.on('change:'+this.vie.namespaces.uri(Voc.importance), this.setImportance, this);
+            model.on('change:'+this.vie.namespaces.uri(Voc.hasThumbnail), this.setThumbnail, this);
         }
     };
     m.initUser = function(model, value, options) {
@@ -104,19 +105,52 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
             }
         });
     };
-    m.search = function(tags, callback) {
+    m.setDescription = function(model, description, options) {
         var that = this;
+        options = options || {};
+        // Only change if user_initiated flag is set to true
+        if ( options.user_initiated !== true ) return;
+        if ( model.previous(Voc.description) === description ) return;
+        model.save(Voc.description, description, {
+            'success' : function(result) {
+                that.LOG.debug('success setDescription', result);
+                if(options.success) {
+                    options.success(result);
+                }
+            },
+            'error' : function(result) {
+                that.LOG.debug('fail setDescription', result);
+                if( options.error ) {
+                    options.error(result);
+                }
+            }
+        });
+    };
+    m.search = function(keywords, tags, callback) {
+        var that = this,
+            serviceData = {
+                'typesToSearchOnlyFor' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook', 'placeholder'],
+                'localSearchOp' : 'and',
+                'globalSearchOp' : 'and'
+            };
+
+        if ( !_.isEmpty(keywords) ) {
+            serviceData.includeLabel = true;
+            serviceData.labelsToSearchFor = keywords;
+            serviceData.includeDescription = true;
+            serviceData.descriptionsToSearchFor = keywords;
+        }
+        if ( !_.isEmpty(tags) ) {
+            serviceData.includeTags = true;
+            serviceData.tagsToSearchFor = tags;
+        }
+
         this.vie.load({
             'service' : 'search',
-            'data' : {
-                'keywordsToSearchFor' : tags,
-                'includeTags' : true,
-                'includeLabel' : true,
-                'typesToSearchOnlyFor' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook']
-            }
+            'data' : serviceData
         }).using('sss').execute().success(function(entities, passThrough){
             that.LOG.debug('search entities', entities, passThrough);
-            entities = that.vie.entities.addOrUpdate(entities);
+            entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
             callback(entities, passThrough);
         });
     };
@@ -130,7 +164,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
             }
         }).using('sss').execute().success(function(entities, passThrough){
             that.LOG.debug('search entities', entities, passThrough);
-            entities = that.vie.entities.addOrUpdate(entities);
+            entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
             callback(entities, passThrough);
         });
     };
@@ -144,7 +178,9 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
                     'service' : 'recommTags',
                     'data' : {
                         'entity' : modelUri,
-                        'maxTags' : 20
+                        'maxTags' : 20,
+                        'forUser' : userParams.user,
+                        'includeOwn' : false
                     }
                 }).using('sss').execute().success(function(result){
                     that.LOG.debug('recommTags', result);
@@ -201,6 +237,11 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
             }
         );
     };
+    m.setThumbnail = function(model, thumbnail, options) {
+        if ( !_.isEmpty(thumbnail) ) {
+            model.set(Voc.hasThumbnailCache, thumbnail);
+        }
+    };
     m.hasLoaded = function(model, attributeUri) {
         var loaded = model.get(Voc.hasLoaded);
         if ( _.isUndefined(loaded) ) {
@@ -251,7 +292,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
                         entities.push(single.resource);
                     });
                     // TODO Think about adding "likelihood" to an entity
-                    entities = that.vie.entities.addOrUpdate(entities);
+                    entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
                     defer.resolve(entities);
                 }).fail(function(f) {
                     that.LOG.debug('recommTags fail', f);
@@ -259,6 +300,29 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
                 });
             }
         );
+        return defer.promise();
+    };
+    m.addEntity = function(data) {
+        var that = this,
+            defer = $.Deferred();
+
+        data = data || {};
+
+        this.vie.onUrisReady(
+            function() {
+                that.vie.analyze({
+                    'service' : 'entityAdd',
+                    'data' : data
+                }).using('sss').execute().success(function(result){
+                    that.LOG.debug('addEntity success', result);
+                    defer.resolve(result);
+                }).fail(function(f) {
+                    that.LOG.debug('addEntity fail', f);
+                    defer.reject(f);
+                });
+            }
+        );
+
         return defer.promise();
     };
 

@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'], function(Logger, Voc, _, Data, VersionData){
+define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/VersionData', 'userParams', 'utils/EntityHelpers'], function(Logger, Voc, _, $, Data, VersionData, userParams, EntityHelpers){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize Episode");
@@ -29,7 +29,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
         } else {
             this.vie.Entity.prototype.sync(method, model, options);
         }
-    },
+    };
     m.createEpisode= function(model, options) {
         this.vie.save({
             service : 'learnEpCreate',
@@ -43,9 +43,10 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                 options.success(savedEntityUri);
             }
         });
-    },
+    };
     m.fetchVersions= function(episode) {
-        var em = this;
+        var em = this,
+            defer = $.Deferred();
         this.vie.load({
             'service' : 'learnEpVersionsGet',
             'data' : {
@@ -62,6 +63,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                 }
                 var resourceUris = [];
                 var resources = [];
+                var resourceUriTimes = {};
                 // put uris of circles/entities into version
                 // and create circle/entity entities 
                 _.each(versions, function(version) {
@@ -74,7 +76,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                         circle['@type'] = Voc.CIRCLE;
                     });
                     version[Voc.hasCircle] = circleUris;
-                    em.vie.entities.addOrUpdate(circles);
+                    em.vie.entities.addOrUpdate(circles, {'overrideAttributes': true});
 
                     var entityUris = [];
                     var entities = version[Voc.hasEntity];
@@ -87,6 +89,9 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                             if ( resourceUris.indexOf(resource[em.vie.Entity.prototype.idAttribute]) === -1 ) {
                                 resources.push(resource);
                                 resourceUris.push(resource[em.vie.Entity.prototype.idAttribute]);
+                                resourceUriTimes[resource[em.vie.Entity.prototype.idAttribute]] = 1;
+                            } else {
+                                resourceUriTimes[resource[em.vie.Entity.prototype.idAttribute]] += 1;
                             }
                             entity[Voc.hasResource] = resource[em.vie.Entity.prototype.idAttribute];
                         }
@@ -96,17 +101,29 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                     });
                     version[Voc.hasEntity] = entityUris;
 
-                    em.vie.entities.addOrUpdate(entities);
+                    em.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
                 });
-                em.vie.entities.addOrUpdate(versions);
+                em.vie.entities.addOrUpdate(versions, {'overrideAttributes': true});
 
                 // Add or update resources if any
                 if ( resources.length > 0 ) {
-                    em.vie.entities.addOrUpdate(resources);
-                }
-            }
-        );
+                    resources = em.vie.entities.addOrUpdate(resources, {'overrideAttributes': true});
 
+                    // Set resource as belonging to an episode
+                    _.each(resources, function(resource) {
+                        EntityHelpers.removeBelongsToEpisode(resource, episode, true);
+                        EntityHelpers.addBelongsToEpisode(resource, episode, resourceUriTimes[resource.getSubject()]);
+                    });
+                }
+
+                defer.resolve(true);
+            }
+        ).fail(function(f) {
+            em.LOG.debug('fail fetchVersions', f);
+            defer.reject(f);
+        });
+
+        return defer.promise();
     };
     m.newEpisode= function(user, fromVersion) {
         var newEpisode, attr = {};
@@ -140,17 +157,17 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
             model.getSubject(),
             function(modelUri) {
                 that.vie.save({
-                    'service' : 'entityShare',
+                    'service' : 'circleEntityShare',
                     'data' : {
                         'entity' : modelUri,
                         'users' : users,
                         'comment' : comment
                     }
                 }).using('sss').execute().success(function(){
-                    that.LOG.debug('success entityShare');
+                    that.LOG.debug('success circleEntityShare');
                     defer.resolve(true);
                 }).fail(function() {
-                    that.LOG.debug('error entityShare');
+                    that.LOG.debug('error circleEntityShare');
                     defer.reject(false);
                 });
             }
@@ -178,6 +195,96 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/VersionData'],
                 }).fail(function() {
                     that.LOG.debug('error entityCopy');
                     defer.reject(false);
+                });
+            }
+        );
+
+        return defer.promise();
+    };
+    m.setEpisodeLock = function(model) {
+        var that = this,
+            defer = $.Deferred();
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.save({
+                    'service' : 'learnEpLockSet',
+                    'data' : {
+                        'forUser' : userParams.user,
+                        'learnEp' : modelUri
+                    }
+                }).using('sss').execute().success(function(result){
+                    that.LOG.debug('success learnEpLockSet', result);
+                    defer.resolve(result);
+                }).fail(function(f) {
+                    that.LOG.debug('error learnEpLockSet', f);
+                    defer.reject(f);
+                });
+            }
+        );
+
+        return defer.promise();
+    };
+    m.removeEpisodeLock = function(model) {
+        var that = this,
+            defer = $.Deferred();
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.save({
+                    'service' : 'learnEpLockRemove',
+                    'data' : {
+                        'forUser' : userParams.user,
+                        'learnEp' : modelUri
+                    }
+                }).using('sss').execute().success(function(result){
+                    that.LOG.debug('success learnEpLockRemove', result);
+                    defer.resolve(result);
+                }).fail(function(f) {
+                    that.LOG.debug('error learnEpLockRemove', f);
+                    defer.reject(f);
+                });
+            }
+        );
+
+        return defer.promise();
+    };
+    m.learnEpLockHold = function(model) {
+        var that = this,
+            defer = $.Deferred();
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.save({
+                    'service' : 'learnEpLockHold',
+                    'data' : {
+                        'learnEp' : modelUri
+                    }
+                }).using('sss').execute().success(function(result, passThrough){
+                    that.LOG.debug('success learnEpLockHold', result, passThrough);
+
+                    if ( true === model.get(Voc.isLocked) && false === model.get(Voc.isLockedByUser) ) {
+                        if ( false === passThrough['locked'] ) {
+                            model.set(Voc.lockReleasedByOtherTime, new Date().getTime());
+                        }
+                    }
+
+                    if ( model.get(Voc.isLocked) !== passThrough['locked'] ) {
+                        model.set(Voc.isLocked, passThrough['locked']);
+                    }
+
+                    if ( model.get(Voc.isLockedByUser) !== passThrough['lockedByUser'] ) {
+                        model.set(Voc.isLockedByUser, passThrough['lockedByUser']);
+                    }
+
+                    if ( model.get(Voc.remainingTime) !== passThrough['remainingTime'] ) {
+                        model.set(Voc.remainingTime, passThrough['remainingTime']);
+                    }
+
+                    defer.resolve(result, passThrough);
+                }).fail(function(f) {
+                    that.LOG.debug('error learnEpLockHold', f);
+                    defer.reject(f);
                 });
             }
         );

@@ -1,6 +1,6 @@
 define(['logger', 'underscore', 'jquery', 'backbone',
-        'data/sss/CategoryData',
-        'text!templates/circle_rename_modal.tpl'], function(Logger, _, $, Backbone, CategoryData, CircleRenameModalTemplate){
+        'data/sss/CategoryData', 'data/episode/UserData',
+        'text!templates/modal/circle_rename_modal.tpl'], function(Logger, _, $, Backbone, CategoryData, UserData, CircleRenameModalTemplate){
     return Backbone.View.extend({
         events: {
             'submit form' : 'submitForm'
@@ -11,11 +11,16 @@ define(['logger', 'underscore', 'jquery', 'backbone',
             this.renamedCircleLableSelector = '#renamedCircleLabel';
         },
         render: function() {
+            var that = this;
+
             this.$el.html(_.template(CircleRenameModalTemplate));
             
             this.$el.find(this.renamedCircleLableSelector).autocomplete({
-                source: [] // The source data will be set later
-            });
+                source: [], // The source data will be set later
+                select: function(event, ui) {
+                    that.callSelectActionCallback(event, ui);
+                }
+            }).autocomplete('widget').addClass('circleRenameAutoComplete');
             
             return this;
         },
@@ -26,7 +31,7 @@ define(['logger', 'underscore', 'jquery', 'backbone',
             this.$el.find(this.renamedCircleLableSelector).val(value);
         },
         resetAutocompleteSource: function() {
-            this.$el.find(this.renamedCircleLableSelector).autocomplete('option', 'source', CategoryData.getPredefinedCategories());
+            this.$el.find(this.renamedCircleLableSelector).autocomplete('option', 'source', _.union(CategoryData.getPredefinedCategories(), UserData.getRecommendedTags()));
         },
         showModal: function() {
             this.$el.find(this.circleRenameModalSelector).modal('show');
@@ -42,6 +47,12 @@ define(['logger', 'underscore', 'jquery', 'backbone',
         submitForm: function(e) {
             e.preventDefault();
             this.$el.find('button.btn-primary').trigger('click');
+        },
+        setSelectActionHandler: function(cb) {
+            this.selectActionCallback = cb;
+        },
+        callSelectActionCallback: function(event, ui) {
+            this.selectActionCallback(event, ui);
         }
     });
 });

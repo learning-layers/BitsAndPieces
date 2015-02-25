@@ -73,7 +73,7 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
                 'entities' : entityUris
             }
         }).from('sss').execute().success(function(entities) {
-            that.vie.entities.addOrUpdate(entities);
+            that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
         });
     };
     return m;

@@ -1,6 +1,6 @@
-define(['require', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 
+define(['require', 'vie', 'logger', 'underscore', 'jquery', 'backbone',
         'view/sss/EntityView', 'jquery-ui' ], 
-function(require, VIE, Logger, tracker, _, $, Backbone, EntityView){
+function(require, VIE, Logger, _, $, Backbone, EntityView){
     return Backbone.View.extend({
         LOG: Logger.get('DetailView'),
         events: { 
