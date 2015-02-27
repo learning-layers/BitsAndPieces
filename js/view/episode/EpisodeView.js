@@ -1,4 +1,4 @@
-define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode/EpisodeData'], function(VIE, Logger, _, $, Backbone, Voc, EpisodeData){
+define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode/EpisodeData', 'utils/SystemMessages'], function(VIE, Logger, _, $, Backbone, Voc, EpisodeData, SystemMessages){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeView'),
         tagName: 'a',
@@ -79,30 +79,41 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode
             var confirmDelete = confirm('Are you sure you want to remove this Episode? This can not be undone!');
 
             if ( true === confirmDelete ) {
-                // TODO Check if is currenly visible episode
-                // Make sure the user model is changed
-                var episode = this.model,
-                    version = EpisodeData.getFirstVersion(episode),
-                    user = episode.get(Voc.belongsToUser),
-                    currentVersion = user.get(Voc.currentVersion);
 
-                if ( currentVersion && currentVersion.getSubject() === version.getSubject() ) {
-                    user.save(Voc.currentVersion, null);
-                }
-                var episodes = user.get(Voc.hasEpisode);
-                if ( _.isArray(episodes) ) {
-                    var episodeURIs = [];
-                    _.each(episodes, function(single) {
-                        if ( single.getSubject() !== episode.getSubject() ) {
-                            episodeURIs.push(single.getSubject());
-                        }
-                    });
-                    user.save(Voc.hasEpisode, episodeURIs);
-                }
+                var that = this,
+                    promise = EpisodeData.removeEpisode(this.model);
 
-                episode.destroy();
-                version.destroy();
-            }
+                promise.done(function(response) {
+                    var episode = that.model,
+                        episodeLabel = episode.get(Voc.label),
+                        version = EpisodeData.getFirstVersion(episode),
+                        user = episode.get(Voc.belongsToUser),
+                        currentVersion = user.get(Voc.currentVersion);
+                    // Make sure to unset the user current episode if it is removed
+                    if ( currentVersion && currentVersion.getSubject() === version.getSubject() ) {
+                        user.save(Voc.currentVersion, null);
+                    }
+
+                    var episodes = user.get(Voc.hasEpisode);
+                    if ( _.isArray(episodes) ) {
+                        var episodeURIs = [];
+                        _.each(episodes, function(single) {
+                            if ( single.getSubject() !== episode.getSubject() ) {
+                                episodeURIs.push(single.getSubject());
+                            }
+                        });
+                        user.save(Voc.hasEpisode, episodeURIs);
+                    }
+
+                    episode.destroy();
+                    version.destroy();
+
+                    SystemMessages.addSuccessMessage('Episode <strong>' + episodeLabel + '</strong> successfully removed.');
+                }).fail(function(f) {
+                    SystemMessages.addDangerMessage('Error! Could not delete episode <strong>' + that.model.get(Voc.label) + '</strong>.');
+                });
+
+                            }
         }
     });
 });

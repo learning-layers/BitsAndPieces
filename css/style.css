@@ -705,6 +705,8 @@ button.activityStreamRefresh span.glyphicon {
 }
 
 .episode button.deleteEpisode {
-	padding: 2px 4px;
+	padding: 1px 2px;
+	padding-bottom: 0px;
+	font-size: 65%;
 }
 
