@@ -48,7 +48,10 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.LOG.debug('EpisodeManager render');
             var version = this.model.get(Voc.currentVersion);
             this.LOG.debug('version', _.clone(version));
-            if( !version || !version.isEntity ) return;
+            if( !version || !version.isEntity ) {
+                this.clearAllEpisodeVisuals();
+                return;
+            }
             this.currentEpisode = version.get(Voc.belongsToEpisode);
             this.LOG.debug('currentEpisode', _.clone(this.currentEpisode));
             if( !this.currentEpisode ) {
@@ -223,6 +226,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         handleAffect: function(e) {
             tracker.info(tracker.CLICKAFFECTBUTTON, null);
+        },
+        clearAllEpisodeVisuals: function() {
+            this.LOG.debug('clearAllEpisodeVisuals called');
+            this.$el.find('.currentEpisodeLabel').html('');
+            this.$el.find('.currentEpisodeVisibility').html('');
+            this.$el.find('.currentEpisodeAuthor').html('');
+            this.$el.find('.currentEpisodeSharedWith').html('');
         }
     });
 });
