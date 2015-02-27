@@ -69,10 +69,12 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             var prevCurrEpisode, epView;
             if( prevCurrVersion ) {
                 prevCurrEpisode = prevCurrVersion.get(Voc.belongsToEpisode);
-                if(epView = this.views[prevCurrEpisode.cid]) {
-                    epView.unhighlight();
+                if ( prevCurrEpisode ) {
+                    if(epView = this.views[prevCurrEpisode.cid]) {
+                        epView.unhighlight();
+                    }
+                    prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
                 }
-                prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
             }
             if(epView = this.views[this.currentEpisode.cid]) {
                 epView.highlight(version.getSubject());
