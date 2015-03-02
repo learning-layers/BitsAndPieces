@@ -167,7 +167,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
                 });
             }
             li.append(view.render().$el);
-            this.$el.find('ul.dropdown-menu').find('li.divider:last').after(li);
+            this.$el.find('ul.dropdown-menu').append(li);
             this.views[model.cid] = view;
             if( model === this.currentEpisode ) { view.highlight();}
             return this;
