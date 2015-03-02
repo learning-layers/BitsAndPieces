@@ -291,5 +291,29 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
 
         return defer.promise();
     };
+    m.removeEpisode = function(model, options) {
+        options = options || {};
+        var that = this,
+            defer = $.Deferred();
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.remove({
+                    'service' : 'learnEpRemove',
+                    'data' : {
+                        'learnEp' : modelUri
+                    }
+                }).using('sss').execute().success(function(result) {
+                    that.LOG.debug('success learnEpRemove', result);
+                    defer.resolve(true);
+                }).fail(function(f) {
+                    that.LOG.debug('error learnEpRemove', f);
+                    defer.reject(f);
+                });
+            }
+        );
+
+        return defer.promise();
+    };
     return m;
 });

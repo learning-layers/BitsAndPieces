@@ -66,7 +66,9 @@ function (Logger, $, Backbone, _, Voc, userParams) {
                 }
 
                 _.each(belongsToEpisode, function(single) {
-                    belongsToEpisodeUris.push(single.getSubject());
+                    if ( single && single.isEntity ) {
+                        belongsToEpisodeUris.push(single.getSubject());
+                    }
                 });
 
                 entity.set(Voc.belongsToEpisode, belongsToEpisodeUris.concat(addedEpisodeSubjects));
@@ -94,7 +96,9 @@ function (Logger, $, Backbone, _, Voc, userParams) {
             }
 
             _.each(belongsToEpisode, function(single) {
-                belongsToEpisodeUris.push(single.getSubject());
+                if ( single && single.isEntity ) {
+                    belongsToEpisodeUris.push(single.getSubject());
+                }
             });
 
             var subjectIndex = _.indexOf(belongsToEpisodeUris, episodeSubject);

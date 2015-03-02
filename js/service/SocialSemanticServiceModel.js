@@ -351,6 +351,9 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'entityAdd' : {
             'resultKey' : 'entity'
+        },
+        'learnEpRemove' : {
+            'resultKey' : 'worked'
         }
     };
     return m;

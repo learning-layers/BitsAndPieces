@@ -27,6 +27,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.organize = new Organize();
 
             this.circleRenameModalView = this.options.circleRenameModalView;
+            version.on('destroy', function(model, collection, options) {
+                this.remove();
+            }, this);
         },
         changeStuff: function(model, options) {
             if ( true === this.clearAndUpdateProcedureInProcess ) return;
@@ -116,6 +119,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.clearAndUpdateProcedureInProcess = false;
         },
         remove: function() {
+            this.clearOrganizeAndViews();
             this.organize.clearCanvas();
             this.undelegateEvents();
             this.stopListening();

@@ -29,7 +29,7 @@ define(['module', 'logger', 'backbone', 'jquery', 'voc','underscore',
                     + this.vie.namespaces.uri(Voc.currentVersion), 
                     function(model, value, options) {
                         version = model.get(Voc.currentVersion);
-                        if( version.isEntity) that.show(version);
+                        if( version && version.isEntity) that.show(version);
                     }, this);
                 this.model.on('change:'
                     + this.vie.namespaces.uri(Voc.label),

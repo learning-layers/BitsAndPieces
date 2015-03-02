@@ -9,6 +9,9 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
         LOG: Logger.get('EpisodeListGroupView'),
         initialize: function() {
             this.model.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.changeLabel, this);
+            this.model.on('destroy', function(model, collection, options) {
+                this.remove();
+            }, this);
         },
         render: function() {
             this.$el.attr('href', '#');
