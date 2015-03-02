@@ -74,11 +74,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
                         epView.unhighlight();
                     }
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
+                    prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
                 }
             }
             if(epView = this.views[this.currentEpisode.cid]) {
                 epView.highlight(version.getSubject());
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
+                this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
             }
         },
         renderLabel: function(episode, label) {

@@ -23,14 +23,29 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         LOG: Logger.get('EpisodeToolbarView'),
         initialize: function() {
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), this.episodeVersionChanged, this);
-            this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEpisode), this.changeEpisodeSet, this);
             this.selectedUsers = [];
             this.shareBitsOnlySelector = '.shareBitsOnly';
             this.onlySelector = 'input[name="only[]"]';
             this.onlySelectedSelector = 'input[name="onlyselected"]';
         },
         episodeVersionChanged: function() {
+            var previousVersion = this.model.previous(Voc.currentVersion);
+            if ( previousVersion && previousVersion.isEntity ) {
+                var previousEpisode = previousVersion.get(Voc.belongsToEpisode);
+                if ( previousEpisode && previousEpisode.isEntity ) {
+                    previousEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
+                }
+            }
+
             this.render();
+
+            var currentVersion = this.getCurrentVersion();
+            if ( currentVersion && currentVersion.isEntity ) {
+                var currentEpisode = this.getCurrentEpisode();
+                if ( currentEpisode && currentEpisode.isEntity ) {
+                    currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
+                }
+            }
         },
         getCurrentVersion: function() {
             return this.model.get(Voc.currentVersion);
@@ -68,6 +83,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             });
 
             this.addOrUpdateEpisodeViews();
+        },
+        renderVisibility: function(model, value, options) {
+            this.$el.find('.episodeVisibility').html(EntityHelpers.getEpisodeVisibility(model));
         },
         addOrUpdateEpisodeViews: function(episodes) {
             var that = this,
@@ -208,7 +226,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     // Add "group" to circle types. This will enable the overlay
                     var circleTypes = episode.get(Voc.circleTypes);
 
-                    circleTypes = ( _.isArray(circleTypes) ) ? circleTypes: [circleTypes];
+                    if ( _.isEmpty(circleTypes) ) {
+                        circleTypes = ['priv'];
+                    } else if ( !_.isArray(circleTypes) ) {
+                        circleTypes = [circleTypes];
+                    }
+
                     if ( _.indexOf(circleTypes, 'group') === -1 ) {
                         circleTypes.push('group');
                         episode.set(Voc.circleTypes, circleTypes);
