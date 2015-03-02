@@ -29,21 +29,33 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.onlySelectedSelector = 'input[name="onlyselected"]';
         },
         episodeVersionChanged: function() {
+            this.render();
+
+            // Remove chnage listeners if previous version and episode exist
             var previousVersion = this.model.previous(Voc.currentVersion);
             if ( previousVersion && previousVersion.isEntity ) {
                 var previousEpisode = previousVersion.get(Voc.belongsToEpisode);
                 if ( previousEpisode && previousEpisode.isEntity ) {
                     previousEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
+                    previousEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
                 }
             }
 
-            this.render();
-
+            // Add listeners if version and episode set
             var currentVersion = this.getCurrentVersion();
             if ( currentVersion && currentVersion.isEntity ) {
                 var currentEpisode = this.getCurrentEpisode();
                 if ( currentEpisode && currentEpisode.isEntity ) {
                     currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
+                    currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
+                } else {
+                    // Deal with situation when episode is not there yet
+                    currentVersion.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), function(model, value, options) {
+                        var currentEpisode = this.getCurrentEpisode();
+
+                        currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
+                        currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
+                    }, this);
                 }
             }
         },
@@ -86,6 +98,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         renderVisibility: function(model, value, options) {
             this.$el.find('.episodeVisibility').html(EntityHelpers.getEpisodeVisibility(model));
+        },
+        renderSharedWith: function(model, value, options) {
+            this.$el.find('.episodeSharedWith').html(EntityHelpers.getSharedWithNames(model).join(', '));
         },
         addOrUpdateEpisodeViews: function(episodes) {
             var that = this,
@@ -236,6 +251,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                         circleTypes.push('group');
                         episode.set(Voc.circleTypes, circleTypes);
                     }
+
+                    EntityHelpers.addSharedWith(episode, that.selectedUsers);
 
                     that._cleanUpAfterSharing();
                     SystemMessages.addSuccessMessage('Your episode has been shared successfully. For co-editing with ' + sharedWithUsernames.join(', '));

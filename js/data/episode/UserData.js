@@ -130,12 +130,21 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
         );
     };
     m.fetchAllUsers = function() {
-        var that = this;
+        var that = this,
+            v = this.vie;
         this.vie.load({
             'service' : 'userAll',
         }).using('sss').execute().success(function(users){
             that.LOG.debug('user entities', users);
-            that.allUsers = users;
+            var addedUsers = v.entities.addOrUpdate(users, {'overrideAttributes': true});
+
+            that.allUsers = [];
+            _.each(addedUsers, function(single) {
+                that.allUsers.push({
+                    id: single.getSubject(),
+                    label : single.get(Voc.label)
+                });
+            });
         });
     };
     m.getAllUsers = function() {
@@ -149,7 +158,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
             // Make sure to remove the currently logged in user
             // Sharing with self is not allowed
             // Also remove 'system' user
-            if ( user.id !== userParams.user && user.id.indexOf('user/system', user.id.length - 'user/system'.length) === -1 ) {
+            if ( user.id !== userParams.user && user.id.indexOf('/system', user.id.length - '/system'.length) === -1 ) {
                 searchableUsers.push({
                     label: user.label,
                     value: user.id

@@ -180,6 +180,7 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'userAll' : {
             'resultKey' : 'users',
+            'decoration': decorations['single_entity']
         },
         'entityDescsGet' : {
             'resultKey' : 'descs', 
