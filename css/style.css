@@ -710,3 +710,11 @@ button.activityStreamRefresh span.glyphicon {
 	font-size: 65%;
 }
 
+ul.dropdown-menu li.episode a {
+	color: #777;
+}
+
+ul.dropdown-menu li.episode a.highlight {
+	color: #333;
+}
+

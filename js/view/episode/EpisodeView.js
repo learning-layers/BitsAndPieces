@@ -20,31 +20,7 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode
         },
         render: function() {
             this.$el.attr('href', '#');
-            //this.$el.html('<h2>' + this.model.get(Voc.label) + '</h2><ul rel="'+this.model.vie.namespaces.uri(Voc.hasVersion)+'"></ul>');
             this.$el.html('<button class="btn btn-danger deleteEpisode" title="Delete Episode"><span class="glyphicon glyphicon-remove"></span></button> <span class="episodeLabel">' + this.model.get(Voc.label) + '</span>');
-            /*
-            var ul = this.$el.find('ul');
-            this.LOG.debug("this.model", this.model, this.highlit);
-            var view = this;
-            var versionCollection = new Backbone.Collection;
-            versionCollection.comparator = this.model.vie.namespaces.uri(Voc.timestamp);
-            versionCollection.add(this.model.get(Voc.hasVersion));
-            versionCollection.each(function(version){
-                var highlit = "";
-                view.LOG.debug('version', version.getSubject());
-                if( view.highlit && version.getSubject() === view.highlit ) 
-                    highlit = 'highlight';
-                var versionElem = $('<li class="version '+highlit+'" about="'+version.getSubject()+'">Version<div class="timestamp">' + new Date(version.get(Voc.timestamp)-0) + '</div></li>');
-                if( version.isNew() ) {
-                    version.once('change:'+version.idAttribute, 
-                        function(model, value) {
-                            versionElem.attr('about', value );
-                    });
-
-                }
-                ul.append(versionElem);
-            });
-            */
             return this;
         },
         changeCurrentVersion: function(event) {
@@ -62,15 +38,11 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode
             this.LOG.debug('EpisodeView changeCurrentEpisode, version = ' + id.getSubject());
             this.model.get(Voc.belongsToUser).save( Voc.currentVersion, id.getSubject());
         },
-        highlight: function(versionId) {
+        highlight: function() {
             this.$el.addClass('highlight');
-            this.$el.find('li[about="'+versionId+'"]').addClass('highlight');
-            this.highlit = versionId;
         },
         unhighlight: function() {
             this.$el.removeClass('highlight');
-            this.$el.find('li').removeClass('highlight');
-            this.highlit = "";
         },
         deleteEpisode: function(e) {
             e.preventDefault();
