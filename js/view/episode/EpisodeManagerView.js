@@ -8,8 +8,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             'click a#createPlaceholder' : 'createPlaceholder',
             //'click button#createFromHere' : 'createFromHere',
             //'click button#createNewVersion' : 'createNewVersion',
-            //'click #toggleEpisodes' : 'toggleEpisodes',
-            //'mouseleave #episodes' : 'toggleEpisodes',
             'click a#logout' : 'logOut',
             'click a.helpButton' : 'showHelp',
             'click a.affectButton' : 'handleAffect'
@@ -18,19 +16,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.views = {};
             this.LOG.debug('options', this.options);
             this.vie = this.options.vie;
-            // TODO "createFromHere" button should only be visible if there are versions and a version is selected
-            /*
-            this.$el.html('<img src="css/img/menu_small.png" id="toggleEpisodes"/><h1></h1>' + 
-
-                    '<div id="episodes">' +
-                    '<div class="btn-group">' +
-                    '<button id="logout" class="btn btn-danger" >Logout</button>' + 
-                    //'<button id="createNewVersion">New Version</button>'+
-                    '<button id="createBlank" class="btn btn-success">Create New Episode</button>'+
-                    //'<button id="createFromHere">Create new Episode from here</button>'+
-                    '</div>' +
-                    '<div class="note">(For a new import from Evernote contact dtheiler@tugraz.at)</div><ul></ul></div>');
-                    */
 
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.currentVersion), this.episodeVersionChanged, this);
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.hasEpisode), this.changeEpisodeSet, this);
@@ -38,11 +23,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.placeholderAddModalView = new PlaceholderAddModalView().render();
             $(document).find('body').prepend(this.placeholderAddModalView.$el);
             var view = this;
-        },
-        toggleEpisodes: function() {
-            // TODO Consider removing this method
-            var episodes = this.$el.find('#episodes');
-            episodes.toggle();
         },
         render: function() {
             this.LOG.debug('EpisodeManager render');
@@ -79,7 +59,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
                 }
             }
             if(epView = this.views[this.currentEpisode.cid]) {
-                epView.highlight(version.getSubject());
+                epView.highlight();
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
@@ -179,6 +159,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         removeEpisode: function(model) {
             this.LOG.debug('removeEpisode', model);
         },
+        // @unused Only one version allowed
         createNewVersion: function() {
             var version = this.model.get(Voc.currentVersion);
             this.LOG.debug('createNewVersion from', version);
@@ -186,6 +167,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             var newVersion = VersionData.newVersion(episode, version);
             this.model.save(Voc.currentVersion, newVersion.getSubject());
         },
+        // @unused Creating episode from version removed
         createFromHere: function() {
             var version = this.model.get(Voc.currentVersion);
             this.LOG.debug('create new episode from version', version);

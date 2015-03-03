@@ -50,6 +50,8 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             'sss:filePdf' : 'img/sss/entityFilePdf.png',
             'sss:fileImage' : 'img/sss/entityImage.png',
             'sss:fileDoc' : 'img/sss/entityFileDoc.png',
+            'sss:fileSpreadsheet' : 'img/sss/entitySpreadsheet.png',
+            'sss:filePresentation' : 'img/sss/entityPresentation.png',
             'sss:rating' : 'img/sss/rate.png',
             'sss:tag' : 'img/evernote/tag.png',
             'sss:placeholder' : 'img/sss/entityPlaceholder.png',
@@ -303,6 +305,14 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
                         case 'application/msword':
                             name = 'sss:fileDoc';
                             break;
+                        case 'application/vnd.ms-excel':
+                        case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                            name = 'sss:fileSpreadsheet';
+                            break;
+                        case 'application/vnd.ms-powerpoint':
+                        case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+                            name = 'sss:filePresentation';
+                            break;
                     }
                 } else {
                     file = this.model.get(Voc.file);
@@ -324,6 +334,14 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
                             case 'docx':
                             case '.doc':
                                 name = 'sss:fileDoc';
+                                break;
+                            case '.xls':
+                            case 'xlsx':
+                                name = 'sss:fileSpreadsheet';
+                                break;
+                            case '.ppt':
+                            case 'pptx':
+                                name = 'sss:filePresentation';
                                 break;
                         }
                     }
