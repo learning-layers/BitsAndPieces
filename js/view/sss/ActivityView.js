@@ -200,7 +200,7 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
                         label = episode.get(Voc.label);
                     } else {
                         // In case episode not loaded for version, render again once it is loaded
-                        version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.render, this);
+                        entity.once('change:'+entity.vie.namespaces.uri(Voc.belongsToEpisode), this.render, this);
                     }
                 } else {
                     label = entity.get(Voc.label);

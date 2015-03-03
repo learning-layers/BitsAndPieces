@@ -48,7 +48,10 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.LOG.debug('EpisodeManager render');
             var version = this.model.get(Voc.currentVersion);
             this.LOG.debug('version', _.clone(version));
-            if( !version || !version.isEntity ) return;
+            if( !version || !version.isEntity ) {
+                this.clearAllEpisodeVisuals();
+                return;
+            }
             this.currentEpisode = version.get(Voc.belongsToEpisode);
             this.LOG.debug('currentEpisode', _.clone(this.currentEpisode));
             if( !this.currentEpisode ) {
@@ -66,14 +69,20 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             var prevCurrEpisode, epView;
             if( prevCurrVersion ) {
                 prevCurrEpisode = prevCurrVersion.get(Voc.belongsToEpisode);
-                if(epView = this.views[prevCurrEpisode.cid]) {
-                    epView.unhighlight();
+                if ( prevCurrEpisode ) {
+                    if(epView = this.views[prevCurrEpisode.cid]) {
+                        epView.unhighlight();
+                    }
+                    prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
+                    prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
+                    prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
                 }
-                prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
             }
             if(epView = this.views[this.currentEpisode.cid]) {
                 epView.highlight(version.getSubject());
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
+                this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
+                this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
             }
         },
         renderLabel: function(episode, label) {
@@ -223,6 +232,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         handleAffect: function(e) {
             tracker.info(tracker.CLICKAFFECTBUTTON, null);
+        },
+        clearAllEpisodeVisuals: function() {
+            this.LOG.debug('clearAllEpisodeVisuals called');
+            this.$el.find('.currentEpisodeLabel').html('');
+            this.$el.find('.currentEpisodeVisibility').html('');
+            this.$el.find('.currentEpisodeAuthor').html('');
+            this.$el.find('.currentEpisodeSharedWith').html('');
         }
     });
 });

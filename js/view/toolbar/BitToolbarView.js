@@ -94,6 +94,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
             this.episodeViews = [];
             _.each(episodes, function(episode) {
+                if ( !( episode && episode.isEntity ) ) {
+                    return;
+                }
+
                 var view = new EpisodeListGroupView({
                     model: episode
                 });

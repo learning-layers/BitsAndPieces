@@ -23,6 +23,7 @@ define(['logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
             },
             remove: function() {
                 if( this.view ) { this.view.remove(); }
+                if( this.organizeOverlayView ) { this.organizeOverlayView.remove(); }
                 Backbone.View.prototype.remove.call(this);
             },
             render: function() {

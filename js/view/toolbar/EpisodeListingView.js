@@ -9,6 +9,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         LOG: Logger.get('EpisodeListingView'),
         initialize: function() {
             this.model.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.changeLabel, this);
+            this.model.on('destroy', function(model, collection, options) {
+                this.remove();
+            }, this);
         },
         render: function() {
             this.$el.attr({

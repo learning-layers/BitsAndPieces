@@ -38,6 +38,18 @@ function (Logger, $, Backbone, _, Voc, userParams) {
 
             return sharedWithNames;
         },
+        addSharedWith: function(episode, userUris) {
+            var sharedWithUris = Backbone.Model.prototype.get.call(episode, episode.vie.namespaces.uri(Voc.hasUsers));
+            if ( _.isEmpty(sharedWithUris) ) {
+                sharedWithUris = [];
+            } else if ( !_.isArray(sharedWithUris) ) {
+                sharedWithUris = [sharedWithUris];
+            }
+
+            sharedWithUris = _.uniq(sharedWithUris.concat(userUris));
+
+            episode.set(Voc.hasUsers, sharedWithUris);
+        },
         addBelongsToEpisode: function(entity, episode, addTimes) {
             var belongsToEpisode = entity.get(Voc.belongsToEpisode),
                 episodeSubject = episode.getSubject(),
@@ -66,7 +78,9 @@ function (Logger, $, Backbone, _, Voc, userParams) {
                 }
 
                 _.each(belongsToEpisode, function(single) {
-                    belongsToEpisodeUris.push(single.getSubject());
+                    if ( single && single.isEntity ) {
+                        belongsToEpisodeUris.push(single.getSubject());
+                    }
                 });
 
                 entity.set(Voc.belongsToEpisode, belongsToEpisodeUris.concat(addedEpisodeSubjects));
@@ -94,7 +108,9 @@ function (Logger, $, Backbone, _, Voc, userParams) {
             }
 
             _.each(belongsToEpisode, function(single) {
-                belongsToEpisodeUris.push(single.getSubject());
+                if ( single && single.isEntity ) {
+                    belongsToEpisodeUris.push(single.getSubject());
+                }
             });
 
             var subjectIndex = _.indexOf(belongsToEpisodeUris, episodeSubject);
