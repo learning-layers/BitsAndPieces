@@ -297,13 +297,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
               this.LOG.warn("Organize.CollectionView didn't know of this orgaEntity!");
               return;
             }
-            var that = this;
-            var orgaentities = that.model.vie.entities.filter(function(entity) {
-                return entity.attributes['@type'] === Voc.ORGAENTITY && entity.get(that.model.vie.namespaces.uri(Voc.ENTITY)) === view.resourceView.model;
-            });
-            if ( orgaentities.length <= 1 ) {
-                view.resourceView.model.set(Voc.isUsed, false);
-            }
 
             var version = this.model.get(Voc.belongsToVersion);
             var episode = version.get(Voc.belongsToEpisode);
@@ -384,9 +377,6 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.LOG.debug("id in organize = " + id);
             //entity.set('_organizeId', id);
             this.views[id] = view;
-
-            // Setting entity as used
-            view.resourceView.model.set(Voc.isUsed, true);
         },
         changeEntity: function(entity, collection, options) {
             options = options || {};

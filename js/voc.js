@@ -62,7 +62,6 @@ define([], {
     author: 'sss:author',
     hasTag : 'sss:tags',
     importance : 'sss:importance',
-    isUsed : 'sss:isUsed',
     isRead : "sss:read",
     isLocked : "sss:locked",
     isLockedByUser : "sss:lockedByUser",

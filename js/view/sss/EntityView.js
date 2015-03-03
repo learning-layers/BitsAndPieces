@@ -199,7 +199,7 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             label = this.model.get(Voc.label) || "";
             view_class = 'labelable';
 
-            if( true === this.model.get(Voc.isUsed) ) {
+            if( true === this.isUsedInCurrentEpisode() ) {
                 view_class += ' used';
             }
 
@@ -357,6 +357,34 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
          */
         getWidth: function() {
             return 40;
+        },
+        isUsedInCurrentEpisode: function() {
+            var currentUser = this.model.vie.entities.get(userParams.user),
+                currentVersion = currentUser.get(Voc.currentVersion);
+            
+            if ( !(currentVersion && currentVersion.isEntity) ) {
+                return false;
+            }
+
+            var currentEpisode = currentVersion.get(Voc.belongsToEpisode);
+            
+            if ( !(currentEpisode && currentEpisode.isEntity) ) {
+                return false;
+            }
+            
+            var belongsToEpisodeUris = Backbone.Model.prototype.get.call(this.model, this.model.vie.namespaces.uri(Voc.belongsToEpisode));
+
+            if ( !_.isEmpty(belongsToEpisodeUris) ) {
+                if ( !_.isArray(belongsToEpisodeUris) ) {
+                    belongsToEpisodeUris = [belongsToEpisodeUris];
+                }
+
+                if ( _.indexOf(belongsToEpisodeUris, currentEpisode.getSubject()) !== -1 ) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     });
 });

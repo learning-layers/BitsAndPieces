@@ -16,7 +16,7 @@ define(['view/sss/EntityView', 'logger', 'tracker', 'underscore', 'jquery', 'voc
             
             label = this.model.get(Voc.label) || "";
 
-            if( true === this.model.get(Voc.isUsed) ) {
+            if( true === this.isUsedInCurrentEpisode() ) {
                 iconClass = 'used';
             }
             if( label && label.isEntity ) label = label.getSubject();
