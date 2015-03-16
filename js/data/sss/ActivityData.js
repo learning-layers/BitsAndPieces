@@ -87,6 +87,11 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
                                 _.each(entities, function(entity) {
                                     var entityUri = entity[that.vie.Entity.prototype.idAttribute];
 
+                                    // IMPORATNT
+                                    // This fixes a problem of empty attributes
+                                    // overwriting the loaded meaningful values
+                                    that.__fixEpisodeByRemovingEmptyAttributes(entity);
+
                                     entityUris.push(entityUri);
 
                                     if ( _.indexOf(combinedUrisToBeAdded, entityUri) === -1 ) {
@@ -102,13 +107,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
                                 // IMPORATNT
                                 // This fixes a problem of empty attributes
                                 // overwriting the loaded meaningful values
-                                if (containedEntity['@type'] === Voc.EPISODE ) {
-                                    for ( var key in containedEntity ) {
-                                        if ( _.isEmpty(containedEntity[key]) ) {
-                                            delete containedEntity[key];
-                                        }
-                                    }
-                                }
+                                that.__fixEpisodeByRemovingEmptyAttributes(containedEntity);
 
                                 var entityUri = containedEntity[that.vie.Entity.prototype.idAttribute];
 
@@ -135,6 +134,15 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
             }
         );
         return defer.promise();
+    };
+    m.__fixEpisodeByRemovingEmptyAttributes = function(entity) {
+        if (entity['@type'] === Voc.EPISODE ) {
+            for ( var key in entity ) {
+                if ( _.isEmpty(entity[key]) ) {
+                    delete entity[key];
+                }
+            }
+        }
     };
 
     return m;
