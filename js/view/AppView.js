@@ -1,4 +1,4 @@
-define(['module', 'logger', 'backbone', 'jquery', 'voc','underscore',
+define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
         'data/timeline/TimelineData', 
         'data/organize/OrganizeData',
         'data/episode/UserData',
@@ -12,7 +12,7 @@ define(['module', 'logger', 'backbone', 'jquery', 'voc','underscore',
         'utils/SystemMessages',
         'utils/EntityHelpers',
         'text!templates/navbar.tpl'],
-    function(module, Logger, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, EntityHelpers, NavbarTemplate){
+    function(appConfig, Logger, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, EntityHelpers, NavbarTemplate){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {
@@ -64,13 +64,13 @@ define(['module', 'logger', 'backbone', 'jquery', 'voc','underscore',
                 }
             },
             render: function() {
-                var appVersion = module.config().appVersion || '',
+                var appVersion = appConfig.appVersion || '',
                     documentHeadElement = $(document).find('head'),
                     documentTitleElement = documentHeadElement.find('title'),
                     navbar = _.template(NavbarTemplate, {
                         userLabel: this.model.get(Voc.label),
-                        affectUrl: module.config().affectUrl || '',
-                        helpUrl: module.config().helpUrl || '#'
+                        affectUrl: appConfig.affectUrl || '',
+                        helpUrl: appConfig.helpUrl || '#'
                     });
 
                 $('<meta name="version" content="' + appVersion + '">')

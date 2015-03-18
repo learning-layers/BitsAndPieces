@@ -7,17 +7,17 @@ Bits and Pieces is a user interface framework for sensemaking based on a design 
 Getting it to run
 -----------------
 
-You would need to have an instance of the [Social Semantic Server](https://github.com/learning-layers/SocialSemanticServer) running. In order to be able to use the Service API one would need to deploy the Social Semantic Server REST Adapter onto the server, [Apache Tomcat](http://tomcat.apache.org/) is assumed by the installation instructions. After having all of the required components running you need to adapt the `sssHostREST` variable in `js/main.js` to match your installation location.
+You would need to have an instance of the [Social Semantic Server](https://github.com/learning-layers/SocialSemanticServer) running. In order to be able to use the Service API one would need to deploy the Social Semantic Server REST Adapter onto the server, [Apache Tomcat](http://tomcat.apache.org/) is assumed by the installation instructions. After having all of the required components running you need to adapt the value of `sssHostREST` key  in `js/config/config.json` to match your installation location.
 
-It is also possible to setup authentication with [OpenID Connect](http://openid.net/connect/), provided that [SocialSemanticServer](https://github.com/learning-layers/SocialSemanticServer) is configured accordingly. Layers [OpenID Connect Instance](https://api.learning-layers.eu/o/oauth2/) could be used for that purpose. Please go to `js/main.js` and fill in the `oidcAuthorizationUrl` and `oidcClientID` with appropriate values. This should disable normal authentication, only one authentication scheme could be used at the same time. In case one is using Layers Infrastructure the `oidcAuthorizationUrl` should be https://api.learning-layers.eu/o/oauth2/authorize
+It is also possible to setup authentication with [OpenID Connect](http://openid.net/connect/), provided that [SocialSemanticServer](https://github.com/learning-layers/SocialSemanticServer) is configured accordingly. Layers [OpenID Connect Instance](https://api.learning-layers.eu/o/oauth2/) could be used for that purpose. Please go to `js/config/config.json` and fill in the `oidcAuthorizationUrl` and `oidcClientID` with appropriate values. This should disable normal authentication, only one authentication scheme could be used at the same time. In case one is using Layers Infrastructure the `oidcAuthorizationUrl` should be https://api.learning-layers.eu/o/oauth2/authorize
 
-Affect button will only be shown in case URL configuration is provided. This is done in `js/main.js` with variable name `affectUrl`.
+Affect button will only be shown in case URL configuration is provided. This is done in `js/config/config.json` with key named `affectUrl`.
 
-A URL for Help Manual will always be provided, although you could chnage it using `js/main.js` with variable name `helpUrl`.
+A URL for Help Manual will always be provided, although you could change it using `js/config/config.json` with key named `helpUrl`.
 
-Now open a web browser (Firefox or Chrome are recommended) and head to the root of the location where you checked out Bits and Pieces. Log in with your user credentials to start using the application, for instance `localhost/BitsAndPieces/`.
+Now open a web browser (Firefox or Chrome are recommended, Internet Explorer should be at least version 9.0 and latest is prefferable) and head to the root of the location where you checked out Bits and Pieces. Log in with your user credentials to start using the application, for instance `localhost/BitsAndPieces/`, the last part of the URL in the browser depends on the catalog name you put the application into.
 
-If you have not created any Learning Episodes yet, please use the menu on the top left to create at least one. Click the icon and press button `Create new Episode from scratch`. After the first episode has been created, a Timeline and Organize canvas should appear.
+If you have not created any Learning Episodes yet, please use the menu on the top left to create at least one. Click the `Menu` and choose `Create new Episode`. After the first episode has been created, a Timeline and Organize canvas should appear.
 
 Service version requirements
 ----------------------------
@@ -28,4 +28,3 @@ General Information
 -------------------
 
 If at any time there is a need to determine the version of current BitsAndPieces instance it could be found either from `js/main.js`, variable `appVersion`. Or one could check the Title of the page that should have the needed information appended to the end, or see the **version META TAG** from the page source.
-

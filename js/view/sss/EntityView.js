@@ -1,4 +1,4 @@
-define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView', 'voc', 'userParams'], function(module, VIE, Logger, tracker, _, $, Backbone, DetailView, Voc, userParams){
+define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView', 'voc', 'userParams'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, DetailView, Voc, userParams){
     return Backbone.View.extend({
         LOG: Logger.get('EntityView'),
         icons: {
@@ -153,7 +153,7 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             this.defer();
         },
         constructFileDownloadUri: function(fileUri) {
-            return module.config().sssHostRESTFileDownload
+            return appConfig.sssHostRESTFileDownload
                 + 'fileDownloadGET?user=' + encodeURIComponent(userParams.user)
                 + '&key=' + encodeURIComponent(userParams.userKey)
                 + '&file=' + encodeURIComponent(fileUri);

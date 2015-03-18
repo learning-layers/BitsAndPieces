@@ -1,5 +1,5 @@
-define(['module', 'logger','jquery', 'jquery-cookie'],
-function (module, Logger, $) {
+define(['config/config', 'logger','jquery', 'jquery-cookie'],
+function (appConfig, Logger, $) {
     $.cookie.json = true;
     return {
         LOG: Logger.get('UserAuth'),
@@ -38,7 +38,7 @@ function (module, Logger, $) {
                     'password' : password
                 },
                 ajaxSettings = {
-                    'url' : module.config().sssHostREST + op + "/",
+                    'url' : appConfig.sssHostREST + op + "/",
                     'type': "POST",
                     'data' : JSON.stringify(params),
                     'contentType' : "application/json",
