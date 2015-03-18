@@ -64,18 +64,12 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                 }
             },
             render: function() {
-                var appVersion = appConfig.appVersion || '',
-                    documentHeadElement = $(document).find('head'),
-                    documentTitleElement = documentHeadElement.find('title'),
-                    navbar = _.template(NavbarTemplate, {
-                        userLabel: this.model.get(Voc.label),
-                        affectUrl: appConfig.affectUrl || '',
-                        helpUrl: appConfig.helpUrl || '#'
-                    });
+                var navbar = _.template(NavbarTemplate, {
+                    userLabel: this.model.get(Voc.label),
+                    affectUrl: appConfig.affectUrl || '',
+                    helpUrl: appConfig.helpUrl || '#'
+                });
 
-                $('<meta name="version" content="' + appVersion + '">')
-                    .insertAfter(documentHeadElement.find('title'));
-                documentTitleElement.html(documentTitleElement.html() + ' (' + appVersion + ')');
                 // Prepend navbar to body
                 this.$el.parent().prepend(navbar);
 

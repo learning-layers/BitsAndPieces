@@ -56,6 +56,16 @@ function(appConfig, VIE, Logger, userParams, UserData, SocialSemanticService, ex
     Logger.get('OrganizeOverlayView').setLevel(Logger.OFF);
     Logger.get('BitThumbnailModalView').setLevel(Logger.OFF);
 
+    // Add app version
+    var appVersion = appConfig.appVersion || '',
+        documentHeadElement = $(document).find('head'),
+        documentTitleElement = documentHeadElement.find('title');
+
+    $('<meta name="version" content="' + appVersion + '">')
+        .insertAfter(documentHeadElement.find('title'));
+    documentTitleElement.html(documentTitleElement.html() + ' (' + appVersion + ')');
+
+    // Show login form if not ahthenticated
     if ( !userParams.isAuthenticated) {
         var loginView = new LoginFormView({
             'el' : 'body .container-fluid'
