@@ -172,7 +172,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             // Handle special cases with file download
             if ( resource.isof(Voc.EVERNOTE_NOTE) || resource.isof(Voc.EVERNOTE_RESOURCE) ) {
                 var file = resource.get(Voc.file);
-                if ( file.isEntity ) {
+                if ( file && file.isEntity ) {
                     file = file.getSubject();
                 }
                 if ( file ) {
