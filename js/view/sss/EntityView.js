@@ -299,6 +299,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                         case 'image/gif':
                         case 'image/svg+xml':
                         case 'image/bmp':
+                        case 'image/tiff':
                             name = 'sss:fileImage';
                             break;
                         case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
@@ -318,17 +319,19 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                     file = this.model.get(Voc.file);
                     if( file && file.isEntity ) file = file.getSubject();
                     if( file ) {
-                        switch(file.substring(file.length-4) ) {
+                        switch(file.substring(file.length-4).toLowerCase() ) {
                             case '.pdf':
                                 name = 'sss:filePdf';
                                 break;
                             case '.png':
                             case '.jpg':
-                            case '.jpeg':
+                            case 'jpeg':
                             case '.ico':
                             case '.gif':
                             case '.svg':
                             case '.bmp':
+                            case '.tif':
+                            case 'tiff':
                                 name = 'sss:fileImage';
                                 break;
                             case 'docx':
