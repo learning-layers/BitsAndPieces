@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], function(Logger, Voc, _, $, Data, userParams){
+define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], function(appConfig, Logger, Voc, _, $, Data, userParams){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize EntityData");
@@ -130,8 +130,8 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
         var that = this,
             serviceData = {
                 'typesToSearchOnlyFor' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook', 'placeholder'],
-                'localSearchOp' : 'and',
-                'globalSearchOp' : 'and'
+                'localSearchOp' : appConfig.localSearchOp,
+                'globalSearchOp' : appConfig.globalSearchOp
             };
 
         if ( !_.isEmpty(keywords) ) {

@@ -15,6 +15,8 @@ Affect button will only be shown in case URL configuration is provided. This is 
 
 A URL for Help Manual will always be provided, although you could change it using `js/config/config.json` with key named `helpUrl`.
 
+Search for bits/pieces could be configured from `js/config/config.json` with keys `localSearchOp` and `globalSearchOp`. The first one controls operator used within keywrds and tags groups, the second one defined the operator used between those groups. An example would be `(kw1 AND kw2) AND (tag1 AND tag2)`. Please note that acceptable values are `and` and `or`. Configuration default to using `and`, it is also used in case no configuration provided.
+
 Now open a web browser (Firefox or Chrome are recommended, Internet Explorer should be at least version 9.0 and latest is prefferable) and head to the root of the location where you checked out Bits and Pieces. Log in with your user credentials to start using the application, for instance `localhost/BitsAndPieces/`, the last part of the URL in the browser depends on the catalog name you put the application into.
 
 If you have not created any Learning Episodes yet, please use the menu on the top left to create at least one. Click the `Menu` and choose `Create new Episode`. After the first episode has been created, a Timeline and Organize canvas should appear.

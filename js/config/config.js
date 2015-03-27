@@ -9,7 +9,9 @@ function(module, config){
         'oidcAuthorizationUrl' : appConfig.oidcAuthorizationUrl,
         'oidcClientID' : appConfig.oidcClientID,
         'affectUrl' : appConfig.affectUrl,
-        'helpUrl' : appConfig.helpUrl
+        'helpUrl' : appConfig.helpUrl,
+        'localSearchOp' : appConfig.search.localSearchOp || 'and',
+        'globalSearchOp' : appConfig.search.globalSearchOp || 'and'
     };
 });
 
