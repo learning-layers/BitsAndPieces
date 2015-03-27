@@ -50,7 +50,7 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
                         'data' : {
                             'entity' : modelUri,
                             'label' : tag,
-                            'space' : 'privateSpace'
+                            'space' : 'sharedSpace'
                         }
                     }).to('sss').execute().success(function(s){
                         that.LOG.debug('success addTag', s);
