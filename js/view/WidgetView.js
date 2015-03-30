@@ -45,7 +45,7 @@ define(['logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
                         'model' : this.model,
                         'organizeView' : this.view
                     }).render();
-                    this.$el.append(this.organizeOverlayView.$el);
+                    this.$el.find('legend').after(this.organizeOverlayView.$el);
 
                 } else {
                     this.listenToOnce(this.model, 'change', this.render);

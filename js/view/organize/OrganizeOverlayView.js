@@ -37,6 +37,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return this;
         },
         setEpisodeModelAndListeners: function() {
+            var that = this;
             this.episodeModel = this.getEpisode();
 
             this.$el.find('span.episodeLoading').remove();
@@ -45,6 +46,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
             if ( this.isOverlayNeeded() ) {
                 this.enableOverlayVisuals();
+                // Disable organize, clear and re-render
+                // Re-render is needed because of drag/drop
+                that.organizeView.clearOrganizeAndViews();
+                that.organizeView.organize.setChangesDisabled();
+                that.organizeView.reRenderOrganize();
             } else if ( this.isLockedByCurrentUser() ) {
                 this.enableReleaseLockButton();
             }
@@ -59,10 +65,16 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             if ( this.isOverlayNeeded() ) {
                 if ( false === this.isOverlayEnabled ) {
                     this.enableOverlayVisuals();
+                    this.organizeView.clearOrganizeAndViews();
+                    this.organizeView.organize.setChangesDisabled();
+                    this.organizeView.reRenderOrganize();
                 }
             } else {
                 if ( true === this.isOverlayEnabled ) {
                     this.disableOverlayVisuals();
+                    this.organizeView.clearOrganizeAndViews();
+                    this.organizeView.organize.setChangesEnabled();
+                    this.organizeView.reRenderOrganize();
                 }
             }
         },
@@ -152,6 +164,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     that.organizeView.clearOrganizeAndViews();
                     var versionsPromise = EpisodeData.fetchVersions(episode);
                     var versionsCB = function() {
+                        that.organizeView.organize.setChangesEnabled();
                         that.organizeView.reRenderOrganize();
                         that.removeAjaxLoader(that.$el);
                         that.disableOverlayVisuals();
@@ -217,6 +230,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     }
 
                     that.enableOverlayVisuals();
+
+                    that.organizeView.clearOrganizeAndViews();
+                    that.organizeView.organize.setChangesDisabled();
+                    that.organizeView.reRenderOrganize();
 
                     episode.set(Voc.isLocked, false);
                     episode.set(Voc.isLockedByUser, false);
