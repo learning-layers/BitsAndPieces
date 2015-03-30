@@ -1,5 +1,5 @@
-define(['module', 'jquery', 'userParams', 'logger'],
-    function(module, $, userParams, Logger) {
+define(['config/config', 'jquery', 'userParams', 'logger'],
+    function(appConfig, $, userParams, Logger) {
         tracker = Logger.get('Tracker');
         tracker.setLevel(Logger.INFO);
         tracker.setHandler(function(messages, context){
@@ -22,7 +22,7 @@ define(['module', 'jquery', 'userParams', 'logger'],
                     'users' : usersParam
                 };
             $.ajax({
-                'url' : module.config().sssHostREST + op + "/",
+                'url' : appConfig.sssHostREST + op + "/",
                 'type': "POST",
                 'data' : JSON.stringify(params),
                 'contentType' : "application/json",

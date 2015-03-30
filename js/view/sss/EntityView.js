@@ -1,4 +1,4 @@
-define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView', 'voc', 'userParams'], function(module, VIE, Logger, tracker, _, $, Backbone, DetailView, Voc, userParams){
+define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView', 'voc', 'userParams'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, DetailView, Voc, userParams){
     return Backbone.View.extend({
         LOG: Logger.get('EntityView'),
         icons: {
@@ -153,7 +153,7 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             this.defer();
         },
         constructFileDownloadUri: function(fileUri) {
-            return module.config().sssHostRESTFileDownload
+            return appConfig.sssHostRESTFileDownload
                 + 'fileDownloadGET?user=' + encodeURIComponent(userParams.user)
                 + '&key=' + encodeURIComponent(userParams.userKey)
                 + '&file=' + encodeURIComponent(fileUri);
@@ -172,7 +172,7 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             // Handle special cases with file download
             if ( resource.isof(Voc.EVERNOTE_NOTE) || resource.isof(Voc.EVERNOTE_RESOURCE) ) {
                 var file = resource.get(Voc.file);
-                if ( file.isEntity ) {
+                if ( file && file.isEntity ) {
                     file = file.getSubject();
                 }
                 if ( file ) {
@@ -299,6 +299,7 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
                         case 'image/gif':
                         case 'image/svg+xml':
                         case 'image/bmp':
+                        case 'image/tiff':
                             name = 'sss:fileImage';
                             break;
                         case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
@@ -318,17 +319,19 @@ define(['module', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
                     file = this.model.get(Voc.file);
                     if( file && file.isEntity ) file = file.getSubject();
                     if( file ) {
-                        switch(file.substring(file.length-4) ) {
+                        switch(file.substring(file.length-4).toLowerCase() ) {
                             case '.pdf':
                                 name = 'sss:filePdf';
                                 break;
                             case '.png':
                             case '.jpg':
-                            case '.jpeg':
+                            case 'jpeg':
                             case '.ico':
                             case '.gif':
                             case '.svg':
                             case '.bmp':
+                            case '.tif':
+                            case 'tiff':
                                 name = 'sss:fileImage';
                                 break;
                             case 'docx':

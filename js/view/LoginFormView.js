@@ -1,5 +1,5 @@
-define(['module', 'logger', 'underscore', 'jquery', 'backbone', 'voc', 'UserAuth',
-        'text!templates/login.tpl', 'text!templates/oidc_login.tpl'], function(module, Logger, _, $, Backbone, Voc, UserAuth, LoginTemplate, OIDCLoginTemplate){
+define(['config/config', 'logger', 'underscore', 'jquery', 'backbone', 'voc', 'UserAuth',
+        'text!templates/login.tpl', 'text!templates/oidc_login.tpl'], function(appConfig, Logger, _, $, Backbone, Voc, UserAuth, LoginTemplate, OIDCLoginTemplate){
     return Backbone.View.extend({
         events: {
             'submit form[name="login"]' : 'login',
@@ -9,8 +9,8 @@ define(['module', 'logger', 'underscore', 'jquery', 'backbone', 'voc', 'UserAuth
         initialize: function() {
         },
         render: function() {
-            var oidcAuthorizationUrl = module.config().oidcAuthorizationUrl,
-                oidcClientID = module.config().oidcClientID;
+            var oidcAuthorizationUrl = appConfig.oidcAuthorizationUrl,
+                oidcClientID = appConfig.oidcClientID;
             
             this.$el.empty();
             if ( oidcAuthorizationUrl && oidcClientID ) {

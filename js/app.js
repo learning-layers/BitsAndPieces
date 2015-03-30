@@ -1,9 +1,9 @@
-define(['module', 'vie', 'logger', 'userParams', 'data/episode/UserData', 'service/SocialSemanticService', 'extender', 
+define(['config/config', 'vie', 'logger', 'userParams', 'data/episode/UserData', 'service/SocialSemanticService', 'extender', 
         'data/AppData', 'underscore',
         'view/AppView', 'view/LoginFormView', 'voc',
         'text!../schemata/ss.sss.json',
         'jquery-cookie', 'bootstrap'],
-function(module, VIE, Logger, userParams, UserData, SocialSemanticService, extender,
+function(appConfig, VIE, Logger, userParams, UserData, SocialSemanticService, extender,
         AppData, _, AppView, LoginFormView, Voc, schema){
     VIE.Util.useRealUri = true;
     Logger.useDefaults();
@@ -56,6 +56,16 @@ function(module, VIE, Logger, userParams, UserData, SocialSemanticService, exten
     Logger.get('OrganizeOverlayView').setLevel(Logger.OFF);
     Logger.get('BitThumbnailModalView').setLevel(Logger.OFF);
 
+    // Add app version
+    var appVersion = appConfig.appVersion || '',
+        documentHeadElement = $(document).find('head'),
+        documentTitleElement = documentHeadElement.find('title');
+
+    $('<meta name="version" content="' + appVersion + '">')
+        .insertAfter(documentHeadElement.find('title'));
+    documentTitleElement.html(documentTitleElement.html() + ' (' + appVersion + ')');
+
+    // Show login form if not ahthenticated
     if ( !userParams.isAuthenticated) {
         var loginView = new LoginFormView({
             'el' : 'body .container-fluid'
@@ -74,7 +84,7 @@ function(module, VIE, Logger, userParams, UserData, SocialSemanticService, exten
         'namespaces': {
             'sss': namespace
         },
-        'hostREST' : module.config().sssHostREST
+        'hostREST' : appConfig.sssHostREST
     }, userParams));
     v.use(sss, 'sss');
     //v.namespaces.base(namespace);
