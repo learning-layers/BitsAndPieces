@@ -516,11 +516,11 @@ label.notBoldLabel {
 	position: relative;
 }
 
-.organizeOverlay {
+.organizeLockBar {
 	width: 100%;
 }
 
-.organizeOverlay button {
+.organizeLockBar button {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;

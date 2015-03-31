@@ -4,9 +4,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'utils/SystemMessages', 'utils/EntityHelpers'],
     function(Logger, tracker, _, $, Backbone, Voc, Spinner, EpisodeData, SystemMessages, EntityHelpers){
     return Backbone.View.extend({
-        LOG: Logger.get('OrganizeOverlayView'),
+        LOG: Logger.get('OrganizeLockBarView'),
         tagName: 'div',
-        className: 'organizeOverlay',
+        className: 'organizeLockBar',
         events:{
             'click button' : 'disableOverlay'
         },
