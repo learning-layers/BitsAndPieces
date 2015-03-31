@@ -1,5 +1,5 @@
 var require = (function() {
-    var appVersion = '3.2.0';
+    var appVersion = '3.3.0-pre';
     return {
         config: {
             'config/config': {
