@@ -61,7 +61,12 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.remainingTime), this.remainingTimeChanged, this);
             this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.lockReleasedByOtherTime), this.lockReleasedByOther, this);
         },
-        episodeModelChanged: function() {
+        episodeModelChanged: function(model, value, options) {
+            if ( options && _.isObject(options) && options.hasOwnProperty('bnpPreventChanged') ) {
+                if ( options.bnpPreventChanged === true ) {
+                    return;
+                }
+            }
             if ( this.isOverlayNeeded() ) {
                 if ( false === this.isOverlayEnabled ) {
                     this.enableOverlayVisuals();
@@ -161,6 +166,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             promise.done(function(result) {
 
                 if ( result === true ) {
+                    that.clearAutoLockReleaseTimeout();
+
                     that.organizeView.clearOrganizeAndViews();
                     var versionsPromise = EpisodeData.fetchVersions(episode);
                     var versionsCB = function() {
@@ -169,8 +176,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                         that.removeAjaxLoader(that.$el);
                         that.disableOverlayVisuals();
 
-                        episode.set(Voc.isLocked, true);
-                        episode.set(Voc.isLockedByUser, true);
+                        episode.set(Voc.isLocked, true, { bnpPreventChanged: true });
+                        episode.set(Voc.isLockedByUser, true, { bnpPreventChanged: true });
                     };
 
                     versionsPromise.done(function() {
@@ -224,10 +231,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             // TODO Consider enabling overlay right away
             promise.done(function(result) {
                 if ( true === result ) {
-                    // Clear auto release timeout if set
-                    if ( that.autoLockReleaseTimeout ) {
-                        clearTimeout(that.autoLockReleaseTimeout);
-                    }
+                    that.clearAutoLockReleaseTimeout();
 
                     that.enableOverlayVisuals();
 
@@ -235,8 +239,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     that.organizeView.organize.setChangesDisabled();
                     that.organizeView.reRenderOrganize();
 
-                    episode.set(Voc.isLocked, false);
-                    episode.set(Voc.isLockedByUser, false);
+                    episode.set(Voc.isLocked, false, { bnpPreventChanged: true });
+                    episode.set(Voc.isLockedByUser, false, { bnpPreventChanged: true });
 
                     tracker.info(tracker.RELEASEEDITBUTTON, tracker.ORGANIZEAREA, episode.getSubject(), 'success');
                 } else {
@@ -282,7 +286,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 if ( remainingTime > 0 && remainingTime <= 30000 ) {
                     var that = this;
                     that.autoLockReleaseTimeout = setTimeout(function() {
-                        that.enableOverlayVisuals();
                         episode.set(Voc.isLocked, false);
                         episode.set(Voc.isLockedByUser, false);
                     }, remainingTime);
@@ -299,6 +302,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             }).fail(function() {
                 that.organizeView.reRenderOrganize();
             });
+        },
+        clearAutoLockReleaseTimeout: function() {
+            // Clear auto release timeout if set
+            if ( this.autoLockReleaseTimeout ) {
+                clearTimeout(this.autoLockReleaseTimeout);
+                this.autoLockReleaseTimeout = null;
+            }
         }
     });
 });
