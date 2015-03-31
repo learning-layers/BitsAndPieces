@@ -14,7 +14,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
         LOG: Logger.get('SearchToolbarView'),
         initialize: function() {
             var that = this,
-                promise = UserData.getCurrentUserTagFrequencies();
+                promise = UserData.getTagFrequencies();
             this.loadMoreResultsSelector = '.results button';
             this.resultsSelector = '.results';
             this.resultSetSelector = '.results .resultSet';

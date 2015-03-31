@@ -265,15 +265,20 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
     m.getRecommendedTags = function() {
         return _.clone(this.recommendedTags);
     };
-    m.getCurrentUserTagFrequencies = function() {
+    m.getTagFrequencies = function(currentUserOnly) {
         var that = this,
-            defer = $.Deferred();
+            defer = $.Deferred(),
+            callData = {
+                'useUsersEntities' : true
+            };
+
+        if ( true === currentUserOnly ) {
+            callData['forUser'] = userParams.user;
+        }
+
         this.vie.load({
             'service' : 'tagFrequsGet',
-            'data' : {
-                'forUser' : userParams.user,
-                'useUsersEntities' : true
-            }
+            'data' : callData
         }).using('sss').execute().success(function(data) {
             that.LOG.debug('success tagFrequsGet', data);
             defer.resolve(data);
