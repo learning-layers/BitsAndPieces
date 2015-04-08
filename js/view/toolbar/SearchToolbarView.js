@@ -68,6 +68,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
         _resetTagCloud: function() {
             this.tagCloud = {};
         },
+        _sortTagCloud: function() {
+          this.tagCloud = _.sortBy(this.tagCloud, function(tag) {
+              return tag.label;
+          });
+        },
         _clearResultSet: function() {
            _.each(this.searchResultSet, function(view) {
                view.remove();
@@ -199,6 +204,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
 
             frequMin = _.min(that.tagCloud, function(tag) { return tag.frequ; }).frequ;
             frequMax = _.max(that.tagCloud, function(tag) { return tag.frequ; }).frequ;
+
+            this._sortTagCloud();
 
             _.each(that.tagCloud, function(single) {
                 var tag = single.label,
