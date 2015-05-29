@@ -1,5 +1,6 @@
 {
-  "sssHostREST" : "http://localhost:8080/ss-adapter-rest/SSAdapterRest/",
+  "sssHostREST" : "http://localhost:8080/ss-adapter-rest-v1/SSAdapterRest/",
+  "sssHostRESTV2" : "http://localhost:8080/ss-adapter-rest-v2/",
   "oidcAuthorizationUrl" : "",
   "oidcClientID" : "",
   "affectUrl" : "",

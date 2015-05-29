@@ -60,11 +60,12 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                 this.vie.namespaces.add(key, val);
             }
             this.hostREST = this.options.hostREST;
-            if( !this.hostREST) {
+            this.hostRESTV2 = this.options.hostRESTV2;
+            if( !(this.hostREST && this.hostRESTV2) ) {
                 throw new Error("no REST endpoint for SocialSemanticService defined");
             }
         },
-        resolve: function(serviceCall, resultHandler, errorHandler, params) {
+        resolve: function(serviceCall, service, resultHandler, errorHandler, params) {
             this.LOG.debug('resolve', this);
             var i = 0;
             var that = this;
@@ -88,7 +89,7 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
             var pos = this.pendingCallsCount++;
             this.pendingCalls[serviceCall][pos] = p;
             this.LOG.debug('resolve pos', pos);
-            this.send(serviceCall, params || {},
+            this.send(serviceCall, service, params || {},
                     function(result) {
                         delete that.pendingCalls[serviceCall][pos];
                         that.LOG.debug("resolve resultHandlers", p);
@@ -112,31 +113,45 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
             }
         }, 
         /* AJAX request wrapper */
-        send : function(op, par, success, error ){
+        send : function(op, service, par, success, error ){
             this.LOG.debug('par', par);
             var sss = this;
             this.vie.onUrisReady(
                 this.user, 
                 function(userUri) {
+                    var data = JSON.stringify(_.extend(par, {
+                        'user' : userUri || "mailto:dummyUser",
+                        'key' : sss.userKey || "someKey"
+                    }));
+                    var serviceUrl = sss.hostREST;
+                    var serviceHeaders = {};
+                    if ( service.reqPath ) {
+                        data = '';
+                        serviceUrl = sss.hostRESTV2;
+                        serviceHeaders = { 'Authorization' : "Bearer " + sss.userKey };
+                    }
                     $.ajax({
-                        'url' : sss.hostREST + op + "/",
-                        'type': "POST",
-                        'data' : JSON.stringify(_.extend(par, {
-                            'user' : userUri || "mailto:dummyUser",
-                            'key' : sss.userKey || "someKey"
-                        })),
+                        'url' : serviceUrl + ( (service.reqPath) ? service.reqPath : op ) + "/",
+                        'type': (service.reqType) ? service.reqType : 'POST',
+                        'data' : data,
                         'contentType' : "application/json",
                         'async' : true,
                         'dataType': "application/json",
+                        'headers': serviceHeaders,
                         'complete' : function(jqXHR, textStatus) {
 
                             if( jqXHR.readyState !== 4 || jqXHR.status !== 200){
                                 sss.LOG.error("sss json request failed");
+                                // XXX This might not be enough for the new API
+                                if ( sss.reqPath ) {
+                                    if ( error ) error(result);
+                                }
                                 return;
                             }
 
                             var result = $.parseJSON(jqXHR.responseText); 
 
+                            // XXX This will not work for the new API
                             if( result.error ) {
                                 if( error ) error(result);
 
@@ -145,7 +160,12 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
 
                                 return;
                             }
-                            success(result[op]);
+
+                            if ( service.reqPath ) {
+                              success(result);
+                            } else {
+                              success(result[op]);
+                            }
                         }
                     });
                 }
@@ -205,7 +225,7 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                 });
             }
             this.LOG.debug('params', params);
-            this.resolve(serviceName,
+            this.resolve(serviceName, service,
                 function(result) {
                     sss.LOG.debug('result', result);
                     // TODO change to call in context of service, not able
