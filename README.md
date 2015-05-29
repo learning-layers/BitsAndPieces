@@ -9,6 +9,8 @@ Getting it to run
 
 You would need to have an instance of the [Social Semantic Server](https://github.com/learning-layers/SocialSemanticServer) running. In order to be able to use the Service API one would need to deploy the Social Semantic Server REST Adapter onto the server, [Apache Tomcat](http://tomcat.apache.org/) is assumed by the installation instructions. After having all of the required components running you need to adapt the value of `sssHostREST` key  in `js/config/config.json` to match your installation location.
 
+**Please note that it is currently required to run REST Adapters for both API versions V1 and V2. Please use the `sssHostRESTV2` to configure the location of the V2.**
+
 It is also possible to setup authentication with [OpenID Connect](http://openid.net/connect/), provided that [SocialSemanticServer](https://github.com/learning-layers/SocialSemanticServer) is configured accordingly. Layers [OpenID Connect Instance](https://api.learning-layers.eu/o/oauth2/) could be used for that purpose. Please go to `js/config/config.json` and fill in the `oidcAuthorizationUrl` and `oidcClientID` with appropriate values. This should disable normal authentication, only one authentication scheme could be used at the same time. In case one is using Layers Infrastructure the `oidcAuthorizationUrl` should be https://api.learning-layers.eu/o/oauth2/authorize
 
 Affect button will only be shown in case URL configuration is provided. This is done in `js/config/config.json` with key named `affectUrl`.
@@ -24,7 +26,7 @@ If you have not created any Learning Episodes yet, please use the menu on the to
 Service version requirements
 ----------------------------
 
-* SocialSemanticServer: v8.2.5-alpha
+* SocialSemanticServer: v9.0.0-alpha (or newer)
 
 General Information
 -------------------
