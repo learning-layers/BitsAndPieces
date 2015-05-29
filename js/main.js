@@ -1,5 +1,5 @@
 var require = (function() {
-    var appVersion = '3.2.2';
+    var appVersion = '3.2.2-post-api-v2';
     return {
         config: {
             'config/config': {
