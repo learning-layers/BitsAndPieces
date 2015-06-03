@@ -168,9 +168,13 @@ define(['underscore', 'logger'], function(_, Logger) {
             'decoration' : decorations['single_desc_entity']
         },
         'categoriesPredefinedGet' : {
+            'reqType' : 'GET',
+            'reqPath' : 'categories/categories/predefined',
             'resultKey' : 'categories'
         },
         'search' : {
+            'reqType' : 'POST',
+            'reqPath' : 'search/search',
             'resultKey' : 'entities',
             'passThroughKeys' : ['pageNumber', 'pageNumbers', 'pagesID'],
             'params' : {
@@ -235,6 +239,8 @@ define(['underscore', 'logger'], function(_, Logger) {
             'decoration' : decorations['single_entity']
         },
         'uEsGet' : {
+            'reqType' : 'POST',
+            'reqPath' : 'ues/ues',
             'resultKey' : 'uEs',
             'decoration' : decorations['fixForVIE_only'],
             '@type': 'ueType'
@@ -292,6 +298,8 @@ define(['underscore', 'logger'], function(_, Logger) {
             'preparation' : preparations['scrubParams']
         },
         'recommTags' : {
+            'reqType' : 'POST',
+            'reqPath' : 'recomm/recomm/tags',
             'resultKey' : 'tags',
             'params' : {
                 'maxTags' : { 'default' : 20 }
@@ -311,9 +319,14 @@ define(['underscore', 'logger'], function(_, Logger) {
             'resultKey' : 'worked'
         },
         'messageSend' : {
-            'resultKey' : 'message'
+            'reqType' : 'POST',
+            'reqPath' : 'messages/messages/users/:forUser',
+            'resultKey' : 'message',
+            'injectVariable' : 'forUser'
         },
         'messagesGet' : {
+            'reqType' : 'POST',
+            'reqPath' : 'messages/messages',
             'resultKey' : 'messages',
             'params' : {
                 'includeRead' : { 'default' : false }
@@ -323,6 +336,8 @@ define(['underscore', 'logger'], function(_, Logger) {
             'passThroughKeys' : ['queryTime']
         },
         'recommResources' : {
+            'reqType' : 'POST',
+            'reqPath' : 'recomm/recomm/resources',
             'resultKey' : 'resources',
             'params' : {
                 'maxResources' : { 'default' : 20 }
@@ -347,6 +362,8 @@ define(['underscore', 'logger'], function(_, Logger) {
             'passThroughKeys' : ['queryTime']
         },
         'tagFrequsGet' : {
+            'reqType' : 'POST',
+            'reqPath' : 'tags/tags/frequs',
             'resultKey' : 'tagFrequs'
         },
         'learnEpLockSet' : {
