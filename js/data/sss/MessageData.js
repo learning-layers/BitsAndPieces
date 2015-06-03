@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger, Voc, _, $, Data){
+define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'utils/EntityHelpers' ], function(Logger, Voc, _, $, Data, EntityHelpers){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize MessageData");
@@ -36,7 +36,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data' ], function(Logger,
                 that.vie.save({
                     'service' : 'messageSend',
                     'data' : {
-                        'forUser' : forUser,
+                        'forUser' : EntityHelpers.getIdFromUri(forUser),
                         'message' : message
                     }
                 }).to('sss').execute().success(function(s){

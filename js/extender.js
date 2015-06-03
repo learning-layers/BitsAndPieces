@@ -1,4 +1,4 @@
-define(['logger', 'underscore', 'voc', 'vie'], function(Logger, _, Voc, VIE){
+define(['logger', 'underscore', 'voc', 'vie', 'utils/EntityHelpers'], function(Logger, _, Voc, VIE, EntityHelpers){
     AppLog = Logger.get('App');
     AddLog = Logger.get('Add');
     return {
@@ -43,7 +43,7 @@ define(['logger', 'underscore', 'voc', 'vie'], function(Logger, _, Voc, VIE){
                                 that.vie.save({
                                     'service': 'entityUpdate',
                                     'data' : _.extend(options.data || {}, {
-                                        'entity' : modelUri,
+                                        'entity' : EntityHelpers.getIdFromUri(modelUri),
                                         'label' : model.get(Voc.label),
                                         'description' : model.get(Voc.description)
                                     })

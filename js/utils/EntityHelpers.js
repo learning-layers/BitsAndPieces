@@ -127,6 +127,13 @@ function (Logger, $, Backbone, _, Voc, userParams) {
             }
 
             return false;
+        },
+        getIdFromUri: function(uri) {
+            if ( uri.substr(uri.length - 1) === '/' ) {
+                url = uri.substr(0, uri.length - 1);
+            }
+            var tmp = uri.split('/');
+            return tmp[tmp.length - 1];
         }
     };
 });
