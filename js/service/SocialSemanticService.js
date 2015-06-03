@@ -119,17 +119,18 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
             this.vie.onUrisReady(
                 this.user, 
                 function(userUri) {
-                    var data = JSON.stringify(_.extend(par, {
-                        'user' : userUri || "mailto:dummyUser",
-                        'key' : sss.userKey || "someKey"
-                    }));
                     var serviceUrl = sss.hostREST;
                     var serviceHeaders = {};
+                    var dataAddition = {
+                        'user' : userUri || "mailto:dummyUser",
+                        'key' : sss.userKey || "someKey"
+                    };
                     if ( service.reqPath ) {
-                        data = '';
                         serviceUrl = sss.hostRESTV2;
                         serviceHeaders = { 'Authorization' : "Bearer " + sss.userKey };
+                        dataAddition = {};
                     }
+                    var data = JSON.stringify(_.extend(par, dataAddition));
                     $.ajax({
                         'url' : serviceUrl + ( (service.reqPath) ? service.reqPath : op ) + "/",
                         'type': (service.reqType) ? service.reqType : 'POST',
