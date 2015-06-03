@@ -125,14 +125,21 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                         'user' : userUri || "mailto:dummyUser",
                         'key' : sss.userKey || "someKey"
                     };
+                    var serviceReqPath = service.reqPath;
                     if ( service.reqPath ) {
                         serviceUrl = sss.hostRESTV2;
                         serviceHeaders = { 'Authorization' : "Bearer " + sss.userKey };
                         dataAddition = {};
+
+                        // Deal with cases of URI including a variable
+                        if ( service.injectVariable ) {
+                            serviceReqPath = serviceReqPath.replace(':' + service.injectVariable, encodeURIComponent(par[service.injectVariable]));
+                            delete par[service.injectVariable];
+                        }
                     }
                     var data = JSON.stringify(_.extend(par, dataAddition));
                     $.ajax({
-                        'url' : serviceUrl + ( (service.reqPath) ? service.reqPath : op ) + "/",
+                        'url' : serviceUrl + ( (service.reqPath) ? serviceReqPath : op ) + "/",
                         'type': (service.reqType) ? service.reqType : 'POST',
                         'data' : data,
                         'contentType' : "application/json",
@@ -144,7 +151,7 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                             if( jqXHR.readyState !== 4 || jqXHR.status !== 200){
                                 sss.LOG.error("sss json request failed");
                                 // XXX This might not be enough for the new API
-                                if ( sss.reqPath ) {
+                                if ( service.reqPath ) {
                                     if ( error ) error(result);
                                 }
                                 return;
