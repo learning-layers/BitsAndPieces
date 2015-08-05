@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], function(Logger, Voc, _, Data, UserData){
+define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData', 'utils/EntityHelpers' ], function(Logger, Voc, _, Data, UserData, EntityHelpers){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize TimelineData");
@@ -74,7 +74,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
                 that.vie.load({
                     'service' : 'learnEpVersionGetTimelineState',
                     'data' : {
-                        'learnEpVersion' : versionUri
+                        'learnEpVersionId' : EntityHelpers.getIdFromUri(versionUri)
                     }
                 }).from('sss').execute().success(function(state) {
                     var type = null;

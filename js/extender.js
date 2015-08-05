@@ -20,10 +20,10 @@ define(['logger', 'underscore', 'voc', 'vie', 'utils/EntityHelpers'], function(L
                                 that.vie.load({
                                     'service' : 'entityDescGet',
                                     'data' : _.extend(options.data || {}, {
-                                        'entity' : modelUri,
-                                        'getTags' : true,
-                                        'getThumb' : true,
-                                        'getFlags' : true
+                                        'entityId': EntityHelpers.getIdFromUri(modelUri),
+                                        'setTags' : true,
+                                        'setThumb' : true,
+                                        'setFlags' : true
                                     })
                                 }).from('sss').execute().success(function(readEntity){
                                     AppLog.debug("entity was read");

@@ -167,8 +167,11 @@ define(['underscore', 'logger'], function(_, Logger) {
             'injectVariable' : 'entity'
         },
         'entityDescGet' : {
+            'reqType': 'POST',
+            'reqPath': 'entities/entities/filtered/:entityId',
             'resultKey' : 'desc',
-            'decoration' : decorations['single_desc_entity']
+            'decoration' : decorations['single_desc_entity'],
+            'injectVariable': 'entityId'
         },
         'categoriesPredefinedGet' : {
             'reqType' : 'GET',
@@ -208,12 +211,19 @@ define(['underscore', 'logger'], function(_, Logger) {
             'decoration' : decorations['single_desc_entity']
         },
         'learnEpVersionCurrentGet' : {
+            'reqType': 'GET',
+            'reqPath': 'learneps/learneps/versions/current',
             'resultKey' : 'learnEpVersion'
         },
         'learnEpVersionCurrentSet' : {
-            'resultKey' : 'learnEpVersion'
+            'reqType': 'POST',
+            'reqPath': 'learneps/learneps/versions/current/:learnEpVersion',
+            'resultKey' : 'learnEpVersion',
+            'injectVariable': 'learnEpVersion'
         },
         'learnEpsGet' : {
+            'reqType': 'GET',
+            'reqPath': 'learneps/learneps',
             'resultKey' : 'learnEps',
             'decoration' : decorations['single_entity'],
             'subResults' : [
@@ -224,6 +234,8 @@ define(['underscore', 'logger'], function(_, Logger) {
             ]
         },
         'learnEpVersionsGet' : {
+            'reqType': 'GET',
+            'reqPath': 'learneps/learneps/:learnEpId/versions',
             'resultKey' : 'learnEpVersions',
             'decoration' : decorations['single_entity'],
             'subResults' : [
@@ -235,15 +247,19 @@ define(['underscore', 'logger'], function(_, Logger) {
                     'resultKey' : 'learnEpEntities',
                     'decoration' : decorations['single_entity_with_contained']
                 }
-            ]
+            ],
+            'injectVariable': 'learnEpId'
         },
         'learnEpVersionGetTimelineState' : {
+            'reqType': 'GET',
+            'reqPath': 'learneps/learneps/versions/:learnEpVersionId/timeline/state',
             'resultKey' : 'learnEpTimelineState',
-            'decoration' : decorations['single_entity']
+            'decoration' : decorations['single_entity'],
+            'injectVariable': 'learnEpVersionId'
         },
         'uEsGet' : {
             'reqType' : 'POST',
-            'reqPath' : 'ues/ues',
+            'reqPath' : 'ues/ues/filtered',
             'resultKey' : 'uEs',
             'decoration' : decorations['fixForVIE_only'],
             '@type': 'ueType'
@@ -302,7 +318,7 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'recommTags' : {
             'reqType' : 'POST',
-            'reqPath' : 'recomm/recomm/tags',
+            'reqPath' : 'recomm/recomm/filtered/tags',
             'resultKey' : 'tags',
             'params' : {
                 'maxTags' : { 'default' : 20 }
@@ -323,13 +339,12 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'messageSend' : {
             'reqType' : 'POST',
-            'reqPath' : 'messages/messages/users/:forUser',
-            'resultKey' : 'message',
-            'injectVariable' : 'forUser'
+            'reqPath' : 'messages/messages',
+            'resultKey' : 'message'
         },
         'messagesGet' : {
             'reqType' : 'POST',
-            'reqPath' : 'messages/messages',
+            'reqPath' : 'messages/messages/filtered',
             'resultKey' : 'messages',
             'params' : {
                 'includeRead' : { 'default' : false }
@@ -340,7 +355,7 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'recommResources' : {
             'reqType' : 'POST',
-            'reqPath' : 'recomm/recomm/resources',
+            'reqPath' : 'recomm/recomm/filtered/resources',
             'resultKey' : 'resources',
             'params' : {
                 'maxResources' : { 'default' : 20 }
@@ -350,6 +365,8 @@ define(['underscore', 'logger'], function(_, Logger) {
             '@resourceKey' : 'resource'
         },
         'activitiesGet' : {
+            'reqType': 'POST',
+            'reqPath': 'activities/activities/filtered',
             'resultKey' : 'activities',
             'decoration' : decorations['single_entity_with_contained'],
             'subResults' : [
@@ -366,7 +383,7 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'tagFrequsGet' : {
             'reqType' : 'POST',
-            'reqPath' : 'tags/tags/frequs',
+            'reqPath' : 'tags/tags/filtered/frequs',
             'resultKey' : 'tagFrequs'
         },
         'learnEpLockSet' : {

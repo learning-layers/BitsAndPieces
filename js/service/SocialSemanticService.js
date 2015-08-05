@@ -137,7 +137,16 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                             delete par[service.injectVariable];
                         }
                     }
-                    var data = JSON.stringify(_.extend(par, dataAddition));
+                    var data = _.extend(par, dataAddition);
+                    if ( service.reqType && service.reqType.toUpperCase() === 'GET' ) {
+                        if ( _.isEmpty(data) ) {
+                            data = '';
+                        } else {
+                            data = JSON.stringify(data);
+                        }
+                    } else {
+                        data = JSON.stringify(data);
+                    }
                     $.ajax({
                         'url' : serviceUrl + ( (service.reqPath) ? serviceReqPath : op ) + "/",
                         'type': (service.reqType) ? service.reqType : 'POST',

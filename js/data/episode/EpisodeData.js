@@ -50,7 +50,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
         this.vie.load({
             'service' : 'learnEpVersionsGet',
             'data' : {
-                'learnEp' : episode.getSubject(),
+                'learnEpId' : EntityHelpers.getIdFromUri(episode.getSubject()),
             }
         }).from('sss').execute().success(
             function(versions) {
