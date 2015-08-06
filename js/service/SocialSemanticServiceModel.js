@@ -260,9 +260,8 @@ define(['underscore', 'logger'], function(_, Logger) {
         'uEsGet' : {
             'reqType' : 'POST',
             'reqPath' : 'ues/ues/filtered',
-            'resultKey' : 'uEs',
-            'decoration' : decorations['fixForVIE_only'],
-            '@type': 'ueType'
+            'resultKey' : 'userEvents',
+            'decoration' : decorations['fixForVIE_only']
         },
         'learnEpVersionSetTimelineState' : {
             'resultKey' : 'learnEpTimelineState', 

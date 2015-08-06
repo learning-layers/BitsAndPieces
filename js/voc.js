@@ -39,7 +39,7 @@ define([], {
     circleType: 'sss:circleType', 
     circleTypes : 'sss:circleTypes',
     orgaEntityType: 'sss:orgaEntityType',
-    belongsToUser: 'sss:user',
+    belongsToUser: 'sss:author',
     start: 'sss:startTime',
     end: 'sss:endTime',
 
