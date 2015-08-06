@@ -9,7 +9,6 @@ define(['config/config', 'jquery', 'userParams', 'logger'],
                 contentParam = messages[3] ? messages[3] : null,
                 entitiesParam = messages[4] ? messages[4] : [],
                 usersParam = messages[5] ? messages[5] : [],
-                op = "evalLog"
                 params = {
                     'user' : userParams.user,
                     'key' : userParams.userKey,
@@ -22,7 +21,7 @@ define(['config/config', 'jquery', 'userParams', 'logger'],
                     'users' : usersParam
                 };
             $.ajax({
-                'url' : appConfig.sssHostREST + op + "/",
+                'url' : appConfig.sssHostRESTV2 + 'eval/eval/log/',
                 'type': "POST",
                 'data' : JSON.stringify(params),
                 'contentType' : "application/json",

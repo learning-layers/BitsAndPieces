@@ -51,7 +51,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData', 'ut
                 that.vie.save({
                     service : 'learnEpVersionSetTimelineState',
                     data : {
-                        'learnEpVersion' : versionUri,
+                        'learnEpVersionId' : EntityHelpers.getIdFromUri(versionUri),
                         'startTime' : model.get(Voc.start),
                         'endTime' : model.get(Voc.end)
                     }

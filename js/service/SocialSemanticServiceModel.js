@@ -264,12 +264,15 @@ define(['underscore', 'logger'], function(_, Logger) {
             'decoration' : decorations['fixForVIE_only']
         },
         'learnEpVersionSetTimelineState' : {
+            'reqType': 'POST',
+            'reqPath': 'learneps/learneps/versions/:learnEpVersionId/timeline/state',
             'resultKey' : 'learnEpTimelineState', 
             'params' : {
                 'startTime' : { 'type' : 'number' },
                 'endTime' : { 'type' : 'number' }
             },
-            'preparation' : preparations['scrubParams']
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEpVersionId'
         },
         'learnEpVersionAddCircle' : {
             'resultKey' : 'learnEpCircle'
