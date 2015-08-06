@@ -217,9 +217,9 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'learnEpVersionCurrentSet' : {
             'reqType': 'POST',
-            'reqPath': 'learneps/learneps/versions/current/:learnEpVersion',
+            'reqPath': 'learneps/learneps/versions/current/:learnEpVersionId',
             'resultKey' : 'learnEpVersion',
-            'injectVariable': 'learnEpVersion'
+            'injectVariable': 'learnEpVersionId'
         },
         'learnEpsGet' : {
             'reqType': 'GET',
@@ -275,22 +275,33 @@ define(['underscore', 'logger'], function(_, Logger) {
             'injectVariable': 'learnEpVersionId'
         },
         'learnEpVersionAddCircle' : {
-            'resultKey' : 'learnEpCircle'
+            'reqType': 'POST',
+            'reqPath': 'learneps/learneps/versions/:learnEpVersionId/circles',
+            'resultKey' : 'learnEpCircle',
+            'injectVariable': 'learnEpVersionId'
         },
         'learnEpVersionAddEntity' : {
             'resultKey' : 'learnEpEntity'
         },
         'learnEpVersionUpdateCircle' : {
-            'resultKey' : 'worked'
+            'reqType': 'PUT',
+            'reqPath': 'learneps/learneps/circles/:learnEpCircleId',
+            'resultKey' : 'worked',
+            'injectVariable': 'learnEpCircleId'
         },
         'learnEpVersionUpdateEntity' : {
             'resultKey' : 'worked'
         },
         'learnEpCreate' : {
+            'reqType': 'POST',
+            'reqPath': 'learneps/learneps',
             'resultKey' : 'learnEp'
         },
         'learnEpVersionCreate' : {
-            'resultKey' : 'learnEpVersion'
+            'reqType': 'POST',
+            'reqPath': 'learneps/learneps/:learnEpId/versions',
+            'resultKey' : 'learnEpVersion',
+            'injectVariable': 'learnEpId'
         },
         'tagAdd' : {
             'resultKey' : 'tag'
@@ -331,7 +342,10 @@ define(['underscore', 'logger'], function(_, Logger) {
             'resultKey' : 'count'
         },
         'learnEpVersionRemoveCircle' : {
-            'resultKey' : 'worked'
+            'reqType': 'DELETE',
+            'reqPath': 'learneps/learneps/circles/:learnEpCircleId',
+            'resultKey' : 'worked',
+            'injectVariable': 'learnEpCircleId'
         },
         'learnEpVersionRemoveEntity' : {
             'resultKey' : 'worked'

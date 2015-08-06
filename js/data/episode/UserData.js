@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/EpisodeData', 'userParams', 'view/sss/EntityView'], function(Logger, Voc, _, $, Data, EpisodeData, userParams, EntityView){
+define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/EpisodeData', 'userParams', 'view/sss/EntityView', 'utils/EntityHelpers' ], function(Logger, Voc, _, $, Data, EpisodeData, userParams, EntityView, EntityHelpers){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize UserData");
@@ -62,7 +62,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
                 that.vie.save({
                     service : 'learnEpVersionCurrentSet',
                     data : {
-                        'learnEpVersion' : versionUri
+                        'learnEpVersionId' : EntityHelpers.getIdFromUri(versionUri)
                     }
                 }).to('sss').execute().success(function(result) {
                     if( options.success) {

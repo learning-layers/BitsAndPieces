@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], function(Logger, Voc, _, CopyMachine, Data){
+define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data', 'utils/EntityHelpers' ], function(Logger, Voc, _, CopyMachine, Data, EntityHelpers){
     var m = Object.create(Data);
     m.LOG = Logger.get('VersionData');
     m.init = function(vie) {
@@ -34,7 +34,7 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
                 that.vie.save({
                     service : 'learnEpVersionCreate',
                     data : {
-                        'learnEp' : episodeUri
+                        'learnEpId' : EntityHelpers.getIdFromUri(episodeUri)
                     }
                 }).to('sss').execute().success(function(savedEntityUri) {
                     model.set(model.idAttribute, savedEntityUri, options);
