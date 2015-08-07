@@ -135,9 +135,7 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
             };
 
         if ( !_.isEmpty(keywords) ) {
-            serviceData.includeLabel = true;
             serviceData.labelsToSearchFor = keywords;
-            serviceData.includeDescription = true;
             serviceData.descriptionsToSearchFor = keywords;
         }
         if ( !_.isEmpty(tags) ) {

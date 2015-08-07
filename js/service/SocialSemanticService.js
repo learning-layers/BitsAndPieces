@@ -161,6 +161,7 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                                 sss.LOG.error("sss json request failed");
                                 // XXX This might not be enough for the new API
                                 if ( service.reqPath ) {
+                                    // XXX There is no result and it does not carry any information
                                     if ( error ) error(result);
                                 }
                                 return;

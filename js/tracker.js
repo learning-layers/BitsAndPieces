@@ -3,6 +3,7 @@ define(['config/config', 'jquery', 'userParams', 'logger'],
         tracker = Logger.get('Tracker');
         tracker.setLevel(Logger.INFO);
         tracker.setHandler(function(messages, context){
+            return;// XXX disabled
             var typeParam = messages[0],
                 toolContextParam = messages[1],
                 entityParam = messages[2] ? messages[2] : null,

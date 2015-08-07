@@ -162,7 +162,7 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'entityUpdate' : {
             'reqType' : 'PUT',
-            'reqPath' : 'entities/entities/:entity/update',
+            'reqPath' : 'entities/entities/:entity',
             'resultKey' : 'entity',
             'injectVariable' : 'entity'
         },
@@ -180,7 +180,7 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'search' : {
             'reqType' : 'POST',
-            'reqPath' : 'search/search',
+            'reqPath' : 'search/search/filtered',
             'resultKey' : 'entities',
             'passThroughKeys' : ['pageNumber', 'pageNumbers', 'pagesID'],
             'params' : {
@@ -413,6 +413,8 @@ define(['underscore', 'logger'], function(_, Logger) {
             'passThroughKeys' : ['locked', 'lockedByUser', 'remainingTime']
         },
         'entityAdd' : {
+            'reqType': 'POST',
+            'reqPath': 'entities/entities',
             'resultKey' : 'entity'
         },
         'learnEpRemove' : {
