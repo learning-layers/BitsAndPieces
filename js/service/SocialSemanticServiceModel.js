@@ -281,7 +281,10 @@ define(['underscore', 'logger'], function(_, Logger) {
             'injectVariable': 'learnEpVersionId'
         },
         'learnEpVersionAddEntity' : {
-            'resultKey' : 'learnEpEntity'
+            'reqType': 'POST',
+            'reqPath': 'learneps/learneps/versions/:learnEpVersionId/entities',
+            'resultKey' : 'learnEpEntity',
+            'injectVariable': 'learnEpVersionId'
         },
         'learnEpVersionUpdateCircle' : {
             'reqType': 'PUT',
@@ -290,7 +293,10 @@ define(['underscore', 'logger'], function(_, Logger) {
             'injectVariable': 'learnEpCircleId'
         },
         'learnEpVersionUpdateEntity' : {
-            'resultKey' : 'worked'
+            'reqType': 'PUT',
+            'reqPath': 'learneps/learneps/entities/:learnEpEntityId',
+            'resultKey' : 'worked',
+            'injectVariable': 'learnEpEntityId'
         },
         'learnEpCreate' : {
             'reqType': 'POST',
@@ -348,7 +354,10 @@ define(['underscore', 'logger'], function(_, Logger) {
             'injectVariable': 'learnEpCircleId'
         },
         'learnEpVersionRemoveEntity' : {
-            'resultKey' : 'worked'
+            'reqType': 'DELETE',
+            'reqPath': 'learneps/learneps/entities/:learnEpEntityId',
+            'resultKey' : 'worked',
+            'injectVariable': 'learnEpEntityId'
         },
         'tagsRemove' : {
             'resultKey' : 'worked'
