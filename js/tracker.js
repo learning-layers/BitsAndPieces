@@ -10,8 +10,6 @@ define(['config/config', 'jquery', 'userParams', 'logger'],
                 entitiesParam = messages[4] ? messages[4] : [],
                 usersParam = messages[5] ? messages[5] : [],
                 params = {
-                    'user' : userParams.user,
-                    'key' : userParams.userKey,
                     'type' : typeParam,
                     'toolContext' : toolContextParam,
                     'forUser' : userParams.user,
