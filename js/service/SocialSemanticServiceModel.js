@@ -315,9 +315,13 @@ define(['underscore', 'logger'], function(_, Logger) {
             'injectVariable': 'learnEpId'
         },
         'tagAdd' : {
+            'reqType': 'POST',
+            'reqPath': 'tags/tags',
             'resultKey' : 'tag'
         },
         'flagsSet' : {
+            'reqType': 'POST',
+            'reqPath': 'flags/flags',
             'resultKey' : 'worked',
             'params' : {
                 'entities' : { 'type' : 'array' },
@@ -365,7 +369,10 @@ define(['underscore', 'logger'], function(_, Logger) {
             'injectVariable': 'learnEpEntityId'
         },
         'tagsRemove' : {
-            'resultKey' : 'worked'
+            'reqType': 'DELETE',
+            'reqPath': 'tags/tags/:entityId',
+            'resultKey' : 'worked',
+            'injectVariable': 'entityId'
         },
         'messageSend' : {
             'reqType' : 'POST',

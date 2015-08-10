@@ -1,4 +1,4 @@
-define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], function(appConfig, Logger, Voc, _, $, Data, userParams){
+define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams', 'utils/EntityHelpers' ], function(appConfig, Logger, Voc, _, $, Data, userParams, EntityHelpers){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize EntityData");
@@ -74,7 +74,7 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
                     that.vie.remove({
                         'service' : 'tagsRemove',
                         'data' : {
-                            'entity' : modelUri,
+                            'entityId' : EntityHelpers.getIdFromUri(modelUri),
                             'label' : tag
                         }
                     }).from('sss').execute().success(function(s){
