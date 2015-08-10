@@ -427,7 +427,10 @@ define(['underscore', 'logger'], function(_, Logger) {
             'resultKey' : 'entity'
         },
         'learnEpRemove' : {
-            'resultKey' : 'worked'
+            'reqType': 'DELETE',
+            'reqPath': 'learneps/learneps/:learnEpId',
+            'resultKey' : 'worked',
+            'injectVariable': 'learnEpId'
         }
     };
     return m;

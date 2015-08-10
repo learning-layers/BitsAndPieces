@@ -301,7 +301,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 that.vie.remove({
                     'service' : 'learnEpRemove',
                     'data' : {
-                        'learnEp' : modelUri
+                        'learnEpId' : EntityHelpers.getIdFromUri(modelUri)
                     }
                 }).using('sss').execute().success(function(result) {
                     that.LOG.debug('success learnEpRemove', result);
