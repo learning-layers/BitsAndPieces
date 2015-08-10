@@ -361,6 +361,8 @@ define(['underscore', 'logger'], function(_, Logger) {
             'preparation' : preparations['scrubParams']
         },
         'uECountGet' : {
+            'reqType' : 'POST',
+            'reqPath' : 'ues/ues/filtered/count',
             'resultKey' : 'count'
         },
         'learnEpVersionRemoveCircle' : {
