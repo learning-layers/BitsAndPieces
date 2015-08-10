@@ -204,25 +204,39 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
                 that.LOG.debug('success fetchRange: ', _.clone(entities), 'user: ', user);
                 var keys = _.keys(EntityView.prototype.icons);
                 entities = _.filter(entities, function(entity) {
-                    return _.contains( keys, entity['@type'] );
+                    // XXX Determine if this is suitable or should be done as part of the
+                    // general model fixing process
+                    return _.contains( keys, 'sss:'+entity[Voc.userEventType] );
+                });
+                var resources = [];
+                var resourceUris = [];
+                _.each(entities, function(entity) {
+                    var resource = entity[Voc.hasResource];
+                    if (_.isObject(resource)) {
+                        if ( resourceUris.indexOf(resource[that.vie.Entity.prototype.idAttribute]) === -1 ) {
+                            resources.push(resource);
+                            resourceUris.push(resource[that.vie.Entity.prototype.idAttribute]);
+                        }
+                        entity[Voc.hasResource] = resource[that.vie.Entity.prototype.idAttribute];
+                    }
                 });
                 that.LOG.debug('filtered entities', entities);
                 entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
+                that.LOG.debug('attached resources', resources, resourceUris);
+                if ( resources.length > 0 ) {
+                    that.vie.entities.addOrUpdate(resources, { 'overrideAttributes': true });
+                }
 
                 var currentEvents = user.get(Voc.hasUserEvent) || [];
                 if( !_.isArray(currentEvents)) currentEvents = [currentEvents];
                 currentEvents = _.union(currentEvents, entities);
-                var entityUris = [];
                 var uris = _.map(currentEvents, function(userEvent){
                     var entity = userEvent.get(Voc.hasResource);
                     if( entity.isEntity) entity = entity.getSubject();
-                    entityUris.push(entity);
                     return userEvent.getSubject();
                 });
                 user.set(Voc.hasUserEvent, uris);
-                if ( entityUris.length > 0 ) {
-                    that.fetchData(user, entityUris);
-                }
+
                 if( callbacks && _.isFunction(callbacks.success) ) {
                     callbacks.success(entities);
                 }

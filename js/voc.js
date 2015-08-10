@@ -74,6 +74,7 @@ define([], {
     hasTagRecommendation : 'sss:tagRecommendation',
 
     hasUserEvent : 'sss:hasUserEvent',
+    userEventType: 'sss:userEventType',
     file : 'sss:file',
     note : 'sss:note',
     remainingTime : 'sss:remainingTime',

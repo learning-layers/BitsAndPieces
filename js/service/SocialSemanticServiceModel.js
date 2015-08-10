@@ -87,7 +87,7 @@ define(['underscore', 'logger'], function(_, Logger) {
             fixable['sss:'+prop] = fixable[prop];
             // XXX Deal with author, force it to be URI not Object
             // This is not a permanent solution, just a quick fix
-            if (prop === 'author') {
+            if ( prop === 'author' ) {
                 if ( _.isObject(fixable['sss:'+prop]) ) {
                     fixable['sss:'+prop] = fixable['sss:' + prop].id;
                 }
@@ -261,7 +261,7 @@ define(['underscore', 'logger'], function(_, Logger) {
             'reqType' : 'POST',
             'reqPath' : 'ues/ues/filtered',
             'resultKey' : 'userEvents',
-            'decoration' : decorations['fixForVIE_only']
+            'decoration' : decorations['single_entity_with_contained']
         },
         'learnEpVersionSetTimelineState' : {
             'reqType': 'POST',
