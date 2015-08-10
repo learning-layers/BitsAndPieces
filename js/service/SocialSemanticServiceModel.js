@@ -156,10 +156,6 @@ define(['underscore', 'logger'], function(_, Logger) {
     };
 
     var m = {
-        'entityGet' : {
-            'resultKey' : 'entity',
-            'decoration' : decorations['single_entity']
-        },
         'entityUpdate' : {
             'reqType' : 'PUT',
             'reqPath' : 'entities/entities/:entity',
