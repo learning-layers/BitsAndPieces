@@ -1,5 +1,5 @@
-define(['config/config', 'jquery', 'logger'],
-    function(appConfig, $, Logger) {
+define(['config/config', 'jquery', 'logger', 'userParams'],
+    function(appConfig, $, Logger, userParams) {
         tracker = Logger.get('Tracker');
         tracker.setLevel(Logger.INFO);
         tracker.setHandler(function(messages, context){
@@ -24,6 +24,7 @@ define(['config/config', 'jquery', 'logger'],
                 'contentType' : "application/json",
                 'async' : true,
                 'dataType': "application/json",
+                'headers': { 'Authorization' : "Bearer " + userParams.userKey },
                 'complete' : function(jqXHR, textStatus) {
 
                     if( jqXHR.readyState !== 4 || jqXHR.status !== 200){
