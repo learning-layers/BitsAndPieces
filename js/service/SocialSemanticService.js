@@ -121,15 +121,10 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                 function(userUri) {
                     var serviceUrl = sss.hostREST;
                     var serviceHeaders = {};
-                    var dataAddition = {
-                        'user' : userUri || "mailto:dummyUser",
-                        'key' : sss.userKey || "someKey"
-                    };
                     var serviceReqPath = service.reqPath;
                     if ( service.reqPath ) {
                         serviceUrl = sss.hostRESTV2;
                         serviceHeaders = { 'Authorization' : "Bearer " + sss.userKey };
-                        dataAddition = {};
 
                         // Deal with cases of URI including a variable
                         if ( service.injectVariable ) {
@@ -137,7 +132,7 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                             delete par[service.injectVariable];
                         }
                     }
-                    var data = _.extend(par, dataAddition);
+                    var data = par;
                     if ( service.reqType && service.reqType.toUpperCase() === 'GET' ) {
                         if ( _.isEmpty(data) ) {
                             data = '';
