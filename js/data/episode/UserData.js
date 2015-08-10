@@ -243,21 +243,6 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
             }
         );
     };
-    m.fetchData = function(user, entityUris) {
-        var that = this;
-        this.LOG.debug("UserData", this);
-        this.vie.load({
-            'service' : 'entityDescsGet',
-            'data' : {
-                'entities' : entityUris,
-                'getTags' : true,
-                'getThumb' : true, 
-                'getFlags' : true  
-            }
-        }).from('sss').execute().success(function(entities) {
-            that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
-        });
-    };
     m.fetchRecommendedTags = function() {
         var that = this;
         this.vie.load({

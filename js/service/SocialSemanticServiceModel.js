@@ -198,13 +198,17 @@ define(['underscore', 'logger'], function(_, Logger) {
             'decoration': decorations['single_entity']
         },
         'entityDescsGet' : {
-            'resultKey' : 'descs', 
+            'reqType': 'POST',
+            'reqPath': 'entities/entities/filtered/:entities',
+            'resultKey' : 'entities',
             'params' : {
-                'entities' : { 'type' : 'array' },
-                'types' : { 'type' : 'array' },
+                'entities' : { 'type' : 'csv' },
+                'setTags': { 'default' : true },
+                'setFlags': { 'default' : true }
             },
             'preparation' : preparations['scrubParams'],
-            'decoration' : decorations['single_desc_entity']
+            'decoration' : decorations['single_desc_entity'],
+            'injectVariable': 'entities'
         },
         'learnEpVersionCurrentGet' : {
             'reqType': 'GET',
@@ -326,19 +330,25 @@ define(['underscore', 'logger'], function(_, Logger) {
             'preparation' : preparations['scrubParams']
         },
         'circleEntityShare' : {
+            'reqType': 'PUT',
+            'reqPath': 'entities/entities/:entityId/share',
             'resultKey' : 'worked',
             'params' : {
                 'users' : { 'type' : 'array' },
             },
-            'preparation' : preparations['scrubParams']
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'entityId'
         },
         'entityCopy' : {
+            'reqType': 'PUT',
+            'reqPath': 'entities/entities/:entityId/copy',
             'resultKey' : 'worked',
             'params' : {
-                'users' : { 'type' : 'array' },
+                'forUsers' : { 'type' : 'array' },
                 'entitiesToExclude' : { 'type' : 'array' },
             },
-            'preparation' : preparations['scrubParams']
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'entityId'
         },
         'recommTags' : {
             'reqType' : 'POST',

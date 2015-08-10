@@ -159,7 +159,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 that.vie.save({
                     'service' : 'circleEntityShare',
                     'data' : {
-                        'entity' : modelUri,
+                        'entityId' : EntityHelpers.getIdFromUri(modelUri),
                         'users' : users,
                         'comment' : comment
                     }
@@ -184,8 +184,8 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 that.vie.save({
                     'service' : 'entityCopy',
                     'data' : {
-                        'entity' : modelUri,
-                        'users' : users,
+                        'entityId' : EntityHelpers.getIdFromUri(modelUri),
+                        'forUsers' : users,
                         'entitiesToExclude' : exclude,
                         'comment' : comment
                     }
