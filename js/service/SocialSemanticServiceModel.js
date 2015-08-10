@@ -1,4 +1,4 @@
-// works with SSS Rest API 4.1.0
+// works with SSS REST API V2 v11.0.0
 define(['underscore', 'logger'], function(_, Logger) {
     // to be called with a deferred object as context (eg. loadable)
     var LOG = Logger.get('SSSModel');

@@ -1,4 +1,4 @@
-// The SocialSemanticService wraps the SSS REST API v3.4.0
+// The SocialSemanticService wraps the SSS REST API V2 v11.0.0
 
 define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceModel', 'jquery'],
 function(Logger, VIE, _, Voc, SSSModel, $) {
