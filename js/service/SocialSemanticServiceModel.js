@@ -261,6 +261,11 @@ define(['underscore', 'logger'], function(_, Logger) {
             'reqType' : 'POST',
             'reqPath' : 'ues/ues/filtered',
             'resultKey' : 'userEvents',
+            'params' : {
+                'setTags' : { 'default' : true },
+                'setFlags' : { 'default' : true }
+            },
+            'preparation' : preparations['scrubParams'],
             'decoration' : decorations['single_entity_with_contained']
         },
         'learnEpVersionSetTimelineState' : {
