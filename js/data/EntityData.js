@@ -139,7 +139,6 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
             serviceData.descriptionsToSearchFor = keywords;
         }
         if ( !_.isEmpty(tags) ) {
-            serviceData.includeTags = true;
             serviceData.tagsToSearchFor = tags;
         }
 
