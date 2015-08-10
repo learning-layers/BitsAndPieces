@@ -346,6 +346,7 @@ define(['underscore', 'logger'], function(_, Logger) {
             'params' : {
                 'forUsers' : { 'type' : 'array' },
                 'entitiesToExclude' : { 'type' : 'array' },
+                'includeEntities' : { 'default' : true }
             },
             'preparation' : preparations['scrubParams'],
             'injectVariable': 'entityId'
