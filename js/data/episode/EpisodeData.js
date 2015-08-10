@@ -210,8 +210,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 that.vie.save({
                     'service' : 'learnEpLockSet',
                     'data' : {
-                        'forUser' : userParams.user,
-                        'learnEp' : modelUri
+                        'learnEpId' : EntityHelpers.getIdFromUri(modelUri)
                     }
                 }).using('sss').execute().success(function(result){
                     that.LOG.debug('success learnEpLockSet', result);
@@ -234,8 +233,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 that.vie.save({
                     'service' : 'learnEpLockRemove',
                     'data' : {
-                        'forUser' : userParams.user,
-                        'learnEp' : modelUri
+                        'learnEpId' : EntityHelpers.getIdFromUri(modelUri)
                     }
                 }).using('sss').execute().success(function(result){
                     that.LOG.debug('success learnEpLockRemove', result);
@@ -258,7 +256,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 that.vie.save({
                     'service' : 'learnEpLockHold',
                     'data' : {
-                        'learnEp' : modelUri
+                        'learnEpId' : EntityHelpers.getIdFromUri(modelUri)
                     }
                 }).using('sss').execute().success(function(result, passThrough){
                     that.LOG.debug('success learnEpLockHold', result, passThrough);

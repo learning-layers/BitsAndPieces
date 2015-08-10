@@ -424,14 +424,23 @@ define(['underscore', 'logger'], function(_, Logger) {
             'resultKey' : 'tagFrequs'
         },
         'learnEpLockSet' : {
-            'resultKey' : 'worked'
+            'reqType': 'POST',
+            'reqPath': 'learneps/learneps/:learnEpId/locks',
+            'resultKey' : 'worked',
+            'injectVariable': 'learnEpId'
         },
         'learnEpLockRemove' : {
-            'resultKey' : 'worked'
+            'reqType': 'DELETE',
+            'reqPath': 'learneps/learneps/:learnEpId/locks',
+            'resultKey' : 'worked',
+            'injectVariable': 'learnEpId'
         },
         'learnEpLockHold' : {
-            'resultKey' : 'locked',
-            'passThroughKeys' : ['locked', 'lockedByUser', 'remainingTime']
+            'reqType': 'GET',
+            'reqPath': 'learneps/learneps/:learnEpId/locks',
+            'resultKey' : 'learnEpLocks',
+            'passThroughKeys' : ['locked', 'lockedByUser', 'remainingTime'],
+            'injectVariable': 'learnEpId'
         },
         'entityAdd' : {
             'reqType': 'POST',
