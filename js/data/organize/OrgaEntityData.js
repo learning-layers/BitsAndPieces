@@ -49,7 +49,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'utils/EntityHelpers'], func
                 that.vie.save({
                     'service' : 'learnEpVersionAddEntity',
                     'data' : _.extend( data, {
-                        learnEpVersionId : EntityHelpers.getIdFromUri(versionUri),
+                        learnEpVersion : versionUri,
                         entity : resourceUri
                     }),
                 }).to('sss').execute().success(function(savedEntityUri) {
@@ -77,7 +77,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'utils/EntityHelpers'], func
                 that.vie.save({
                     'service' : 'learnEpVersionUpdateEntity',
                     'data' : _.extend( data, {
-                        learnEpEntityId : EntityHelpers.getIdFromUri(modelUri),
+                        learnEpEntity : modelUri,
                         entity : resourceUri
                     }),
                 }).to('sss').execute().success(function(result) {
@@ -99,7 +99,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'utils/EntityHelpers'], func
                 that.vie.remove({
                     'service' : 'learnEpVersionRemoveEntity',
                     'data' : {
-                        'learnEpEntityId' : EntityHelpers.getIdFromUri(modelUri)
+                        'learnEpEntity' : modelUri
                     }
                 }).using('sss').execute().success(function(result) {
 

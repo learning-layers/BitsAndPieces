@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data', 'utils/EntityHelpers' ], function(Logger, Voc, _, Data, EntityHelpers){
+define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, Data){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize OrgaEntityData");
@@ -50,7 +50,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'utils/EntityHelpers' ], fun
             function(versionUri) {
                 that.vie.save({
                     'service' : 'learnEpVersionAddCircle',
-                    'data' : _.extend( data, { learnEpVersionId : EntityHelpers.getIdFromUri(versionUri) }),
+                    'data' : _.extend( data, { learnEpVersion : versionUri }),
                 }).to('sss').execute().success(function(savedEntityUri) {
                     model.set(model.idAttribute, savedEntityUri, options);
                     if(options.success) {
@@ -69,7 +69,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'utils/EntityHelpers' ], fun
             function(modelUri) {
                 that.vie.save({
                     'service' : 'learnEpVersionUpdateCircle',
-                    'data' : _.extend( data, { learnEpCircleId : EntityHelpers.getIdFromUri(modelUri) }),
+                    'data' : _.extend( data, { learnEpCircle : modelUri }),
                 }).to('sss').execute().success(function(result) {
                     if(options.success) {
                         options.success(result);
@@ -87,7 +87,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'utils/EntityHelpers' ], fun
                 that.vie.remove({
                     'service' : 'learnEpVersionRemoveCircle',
                     'data' : {
-                        'learnEpCircleId' : EntityHelpers.getIdFromUri(modelUri)
+                        'learnEpCircle' : modelUri
                     }
                 }).using('sss').execute().success(function(result) {
                     if(options.success) {

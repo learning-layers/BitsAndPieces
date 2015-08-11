@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData', 'utils/EntityHelpers' ], function(Logger, Voc, _, Data, UserData, EntityHelpers){
+define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], function(Logger, Voc, _, Data, UserData){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize TimelineData");
@@ -51,7 +51,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData', 'ut
                 that.vie.save({
                     service : 'learnEpVersionSetTimelineState',
                     data : {
-                        'learnEpVersionId' : EntityHelpers.getIdFromUri(versionUri),
+                        'learnEpVersion' : versionUri,
                         'startTime' : model.get(Voc.start),
                         'endTime' : model.get(Voc.end)
                     }
@@ -74,7 +74,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData', 'ut
                 that.vie.load({
                     'service' : 'learnEpVersionGetTimelineState',
                     'data' : {
-                        'learnEpVersionId' : EntityHelpers.getIdFromUri(versionUri)
+                        'learnEpVersion' : versionUri
                     }
                 }).from('sss').execute().success(function(state) {
                     var type = null;

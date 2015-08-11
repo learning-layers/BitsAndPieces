@@ -50,7 +50,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
         this.vie.load({
             'service' : 'learnEpVersionsGet',
             'data' : {
-                'learnEpId' : EntityHelpers.getIdFromUri(episode.getSubject()),
+                'learnEp' : episode.getSubject(),
             }
         }).from('sss').execute().success(
             function(versions) {
@@ -159,7 +159,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 that.vie.save({
                     'service' : 'circleEntityShare',
                     'data' : {
-                        'entityId' : EntityHelpers.getIdFromUri(modelUri),
+                        'entity' : modelUri,
                         'users' : users,
                         'comment' : comment
                     }
@@ -184,7 +184,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 that.vie.save({
                     'service' : 'entityCopy',
                     'data' : {
-                        'entityId' : EntityHelpers.getIdFromUri(modelUri),
+                        'entity' : modelUri,
                         'forUsers' : users,
                         'entitiesToExclude' : exclude,
                         'comment' : comment
@@ -210,7 +210,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 that.vie.save({
                     'service' : 'learnEpLockSet',
                     'data' : {
-                        'learnEpId' : EntityHelpers.getIdFromUri(modelUri)
+                        'learnEp' : modelUri
                     }
                 }).using('sss').execute().success(function(result){
                     that.LOG.debug('success learnEpLockSet', result);
@@ -233,7 +233,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 that.vie.save({
                     'service' : 'learnEpLockRemove',
                     'data' : {
-                        'learnEpId' : EntityHelpers.getIdFromUri(modelUri)
+                        'learnEp' : modelUri
                     }
                 }).using('sss').execute().success(function(result){
                     that.LOG.debug('success learnEpLockRemove', result);
@@ -256,7 +256,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 that.vie.save({
                     'service' : 'learnEpLockHold',
                     'data' : {
-                        'learnEpId' : EntityHelpers.getIdFromUri(modelUri)
+                        'learnEp' : modelUri
                     }
                 }).using('sss').execute().success(function(result, passThrough){
                     that.LOG.debug('success learnEpLockHold', result, passThrough);
@@ -299,7 +299,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 that.vie.remove({
                     'service' : 'learnEpRemove',
                     'data' : {
-                        'learnEpId' : EntityHelpers.getIdFromUri(modelUri)
+                        'learnEp' : modelUri
                     }
                 }).using('sss').execute().success(function(result) {
                     that.LOG.debug('success learnEpRemove', result);

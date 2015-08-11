@@ -74,7 +74,7 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
                     that.vie.remove({
                         'service' : 'tagsRemove',
                         'data' : {
-                            'entityId' : EntityHelpers.getIdFromUri(modelUri),
+                            'entity' : modelUri,
                             'label' : tag
                         }
                     }).from('sss').execute().success(function(s){
