@@ -4,9 +4,7 @@ function(module, config){
 
     return {
         'appVersion' : module.config().appVersion,
-        'sssHostREST' : appConfig.sssHostREST,
-        'sssHostRESTFileDownload' : appConfig.sssHostREST.replace(/SSAdapterRest/, 'SSAdapterRESTFileDownload'),
-        'sssHostRESTV2': appConfig.sssHostRESTV2,
+        'sssHostREST': appConfig.sssHostREST,
         'oidcAuthorizationUrl' : appConfig.oidcAuthorizationUrl,
         'oidcClientID' : appConfig.oidcClientID,
         'affectUrl' : appConfig.affectUrl,

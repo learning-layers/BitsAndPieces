@@ -84,8 +84,7 @@ function(appConfig, VIE, Logger, userParams, UserData, SocialSemanticService, ex
         'namespaces': {
             'sss': namespace
         },
-        'hostREST' : appConfig.sssHostREST,
-        'hostRESTV2' : appConfig.sssHostRESTV2
+        'hostREST' : appConfig.sssHostREST
     }, userParams));
     v.use(sss, 'sss');
     //v.namespaces.base(namespace);

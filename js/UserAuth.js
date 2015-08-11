@@ -37,7 +37,7 @@ function (appConfig, Logger, $) {
                     'password' : password
                 },
                 ajaxSettings = {
-                    'url' : appConfig.sssHostRESTV2 + 'auth/auth/',
+                    'url' : appConfig.sssHostREST + 'auth/auth/',
                     'type': "POST",
                     'data' : JSON.stringify(params),
                     'contentType' : "application/json",

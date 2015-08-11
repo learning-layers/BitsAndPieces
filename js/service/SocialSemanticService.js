@@ -60,8 +60,7 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                 this.vie.namespaces.add(key, val);
             }
             this.hostREST = this.options.hostREST;
-            this.hostRESTV2 = this.options.hostRESTV2;
-            if( !(this.hostREST && this.hostRESTV2) ) {
+            if( !(this.hostREST) ) {
                 throw new Error("no REST endpoint for SocialSemanticService defined");
             }
         },
@@ -120,18 +119,15 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                 this.user, 
                 function(userUri) {
                     var serviceUrl = sss.hostREST;
-                    var serviceHeaders = {};
+                    var serviceHeaders = { 'Authorization' : "Bearer " + sss.userKey };
                     var serviceReqPath = service.reqPath;
-                    if ( service.reqPath ) {
-                        serviceUrl = sss.hostRESTV2;
-                        serviceHeaders = { 'Authorization' : "Bearer " + sss.userKey };
+                    var serviceReqType = service.reqType || 'GET';
 
-                        // Deal with cases of URI including a variable
-                        if ( service.injectVariable ) {
-                            serviceReqPath = serviceReqPath.replace(':' + service.injectVariable, encodeURIComponent(par[service.injectVariable]));
-                            delete par[service.injectVariable];
-                        }
+                    if ( service.injectVariable ) {
+                        serviceReqPath = serviceReqPath.replace(':' + service.injectVariable, encodeURIComponent(par[service.injectVariable]));
+                        delete par[service.injectVariable];
                     }
+
                     var data = par;
                     if ( service.reqType && service.reqType.toUpperCase() === 'GET' ) {
                         if ( _.isEmpty(data) ) {
@@ -143,8 +139,8 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                         data = JSON.stringify(data);
                     }
                     $.ajax({
-                        'url' : serviceUrl + ( (service.reqPath) ? serviceReqPath : op ) + "/",
-                        'type': (service.reqType) ? service.reqType : 'POST',
+                        'url' : serviceUrl + serviceReqPath + "/",
+                        'type': serviceReqType,
                         'data' : data,
                         'contentType' : "application/json",
                         'async' : true,
@@ -174,11 +170,7 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                                 return;
                             }
 
-                            if ( service.reqPath ) {
-                              success(result);
-                            } else {
-                              success(result[op]);
-                            }
+                            success(result);
                         }
                     });
                 }
