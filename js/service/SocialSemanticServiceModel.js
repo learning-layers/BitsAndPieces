@@ -35,6 +35,21 @@ define(['underscore', 'logger'], function(_, Logger) {
         return true;
     };
 
+    var fixTags = function(object) {
+        if ( _.isArray(object['tags']) ) {
+            if ( !_.isEmpty(object['tags']) ) {
+                var fixedTags = _.map(object['tags'], function(tag) {
+                    if ( _.isObject(tag) ) {
+                        return tag.label;
+                    }
+                    return tag;
+                });
+                object['tags'] = fixedTags;
+            }
+        }
+        return true;
+    };
+
     /**
      * Fix in case object contains real entity data instead of URI.
      * Applies fixForVIE to the attribute named 'entity', uses default
@@ -152,7 +167,7 @@ define(['underscore', 'logger'], function(_, Logger) {
     }
 
     var decorations = {
-        'single_desc_entity' : [checkEmpty, fixEntityDesc, fixForVIE],
+        'single_desc_entity' : [checkEmpty, fixEntityDesc, fixTags, fixForVIE],
         'single_entity' : [checkEmpty, fixForVIE],
         'single_entity_with_contained' : [checkEmpty, fixForContainedEntity, fixForVIE],
         'fixForVIE_only' : [fixForVIE]
@@ -438,7 +453,7 @@ define(['underscore', 'logger'], function(_, Logger) {
         },
         'tagsRemove' : {
             'reqType': 'DELETE',
-            'reqPath': 'tags/tags/:entity',
+            'reqPath': 'tags/tags/entities/:entity',
             'resultKey' : 'worked',
             'params' : {
                 'entity' : { 'type' : 'encodedComponent' }
