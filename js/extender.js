@@ -25,12 +25,15 @@ define(['logger', 'underscore', 'voc', 'vie'], function(Logger, _, Voc, VIE){
                                         'setThumb' : true,
                                         'setFlags' : true
                                     })
-                                }).from('sss').execute().success(function(readEntity){
+                                }).from('sss').execute().success(function(data){
+                                    var readEntity = data[0];
                                     AppLog.debug("entity was read");
                                     AppLog.debug("readEntity", readEntity);
                                     model.set(readEntity)
                                     if(options.success) 
                                         options.success(readEntity);
+                                }).fail(function(response) {
+                                    All.debug("faild to load", modelUri, response);
                                 });
                             }
                         );

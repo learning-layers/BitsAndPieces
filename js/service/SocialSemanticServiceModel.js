@@ -177,7 +177,7 @@ define(['underscore', 'logger'], function(_, Logger) {
         'entityDescGet' : {
             'reqType' : 'POST',
             'reqPath' : 'entities/entities/filtered/:entity',
-            'resultKey' : 'desc',
+            'resultKey' : 'entities',
             'params' : {
                 'entity': { 'type' : 'encodedComponent' }
             },
