@@ -4,7 +4,8 @@ function(module, config){
 
     return {
         'appVersion' : module.config().appVersion,
-        'sssHostREST': appConfig.sssHostREST,
+        'sssHostREST' : appConfig.sssHostREST,
+        'sssHostRESTFileDownload' : appConfig.sssHostREST + 'files/files/download/',
         'oidcAuthorizationUrl' : appConfig.oidcAuthorizationUrl,
         'oidcClientID' : appConfig.oidcClientID,
         'affectUrl' : appConfig.affectUrl,
