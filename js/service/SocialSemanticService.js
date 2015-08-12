@@ -147,30 +147,19 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                         'dataType': "application/json",
                         'headers': serviceHeaders,
                         'complete' : function(jqXHR, textStatus) {
+                            var result = $.parseJSON(jqXHR.responseText);
 
                             if( jqXHR.readyState !== 4 || jqXHR.status !== 200){
                                 sss.LOG.error("sss json request failed");
-                                // XXX This might not be enough for the new API
-                                if ( service.reqPath ) {
-                                    // XXX There is no result and it does not carry any information
-                                    if ( error ) error(result);
-                                }
-                                return;
-                            }
 
-                            var result = $.parseJSON(jqXHR.responseText); 
-
-                            // XXX This will not work for the new API
-                            if( result.error ) {
-                                if( error ) error(result);
+                                if (error) error(result);
 
                                 // This could trigger a logout
-                                sss.checkErrorAndAct(result);
-
+                                sss.checkErrorAndAct(jqXHR);
                                 return;
                             }
 
-                            success(result);
+                            if (success) success(result);
                         }
                     });
                 }
@@ -318,10 +307,17 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
             }
         },
 
-        checkErrorAndAct: function(result) {
-            if ( result.error && result.id === 'authOIDCUserInfoRequestFailed' ) {
-                var ev = $.Event('bnp:oidcTokenExpired', {});
-                $(document).trigger(ev);
+        checkErrorAndAct: function(jqXHR) {
+            if ( jqXHR.status === 500 ) {
+                var oidcErrors = [
+                    'authCouldntConnectToOIDC',
+                    'authCouldntParseOIDCUserInfoResponse',
+                    'authOIDCUserInfoRequestFailed'
+                ];
+                if ( _.indexOf(oidcErrors, jqXHR.statusText) !== -1 ) {
+                    var ev = $.Event('bnp:oidcTokenExpired', {});
+                    $(document).trigger(ev);
+                }
             }
         }
     };
