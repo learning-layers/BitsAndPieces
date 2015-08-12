@@ -58,7 +58,10 @@ define(['underscore', 'logger'], function(_, Logger) {
      * @retrun {undefined}
      */
     var fixForContainedEntity = function(object) {
-        return fixForVIE(object['entity']);
+        if ( !_.isEmpty(object['entity']) ) {
+            return fixForVIE(object['entity']);
+        }
+        return object;
     };
 
     /**
