@@ -52,16 +52,27 @@ define(['underscore', 'logger'], function(_, Logger) {
 
     /**
      * Fix in case object contains real entity data instead of URI.
-     * Applies fixForVIE to the attribute named 'entity', uses default
-     * idAttr and typeAttr.
+     * Applies fixForVIE to the provided key.
+     * Makes sure that fixable is not empty and is an object
+     * @param {object} object
+     * @param {string} containedKey The name of the key to fix
+     * @retrun {undefined}
+     */
+    var fixForContained = function(object, containedKey) {
+        if ( !_.isEmpty(object[containedKey]) && _.isObject(object[containedKey]) ) {
+            return fixForVIE(object[containedKey]);
+        }
+        return object;
+    };
+
+    /**
+     * Fix in case object contains real entity data instead of URI.
+     * Calls the fixForContained internally.
      * @param {object} object
      * @retrun {undefined}
      */
     var fixForContainedEntity = function(object) {
-        if ( !_.isEmpty(object['entity']) ) {
-            return fixForVIE(object['entity']);
-        }
-        return object;
+        return fixForContained(object, 'entity');
     };
 
     /**
@@ -97,6 +108,9 @@ define(['underscore', 'logger'], function(_, Logger) {
             fixable['@type'] = fixable[typeAttr].indexOf('sss:') === 0 ? fixable[typeAttr] : "sss:"+fixable[typeAttr];
             delete fixable[typeAttr];
         }
+
+        // General fixes applied to any entity
+        fixTags(fixable);
 
         for( var prop in fixable ) {
             if( prop.indexOf('@') === 0 ) continue;
@@ -170,7 +184,7 @@ define(['underscore', 'logger'], function(_, Logger) {
     }
 
     var decorations = {
-        'single_desc_entity' : [checkEmpty, fixEntityDesc, fixTags, fixForVIE],
+        'single_desc_entity' : [checkEmpty, fixEntityDesc, fixForVIE],
         'single_entity' : [checkEmpty, fixForVIE],
         'single_entity_with_contained' : [checkEmpty, fixForContainedEntity, fixForVIE],
         'fixForVIE_only' : [fixForVIE]
