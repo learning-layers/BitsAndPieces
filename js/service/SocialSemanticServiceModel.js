@@ -119,7 +119,8 @@ define(['underscore', 'logger'], function(_, Logger) {
             fixable['sss:'+prop] = fixable[prop];
             // XXX Deal with author, force it to be URI not Object
             // This is not a permanent solution, just a quick fix
-            if ( prop === 'author' ) {
+            // XXX This also deals with file object
+            if ( prop === 'author' || prop === 'file' ) {
                 if ( _.isObject(fixable['sss:'+prop]) ) {
                     fixable['sss:'+prop] = fixable['sss:' + prop].id;
                 }
