@@ -255,32 +255,34 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
             model.getSubject(),
             function(modelUri) {
                 that.vie.save({
-                    'service' : 'learnEpLockHold',
+                    'service' : 'learnEpsLockHold',
                     'data' : {
                         'learnEp' : modelUri
                     }
-                }).using('sss').execute().success(function(result, passThrough){
-                    that.LOG.debug('success learnEpLockHold', result, passThrough);
+                }).using('sss').execute().success(function(result){
+                    that.LOG.debug('success learnEpsLockHold', result);
+
+                    var lockData = result[0];
 
                     if ( true === model.get(Voc.isLocked) && false === model.get(Voc.isLockedByUser) ) {
-                        if ( false === passThrough['locked'] ) {
+                        if ( false === lockData['locked'] ) {
                             model.set(Voc.lockReleasedByOtherTime, new Date().getTime());
                         }
                     }
 
-                    if ( model.get(Voc.isLocked) !== passThrough['locked'] ) {
-                        model.set(Voc.isLocked, passThrough['locked']);
+                    if ( model.get(Voc.isLocked) !== lockData['locked'] ) {
+                        model.set(Voc.isLocked, lockData['locked']);
                     }
 
-                    if ( model.get(Voc.isLockedByUser) !== passThrough['lockedByUser'] ) {
-                        model.set(Voc.isLockedByUser, passThrough['lockedByUser']);
+                    if ( model.get(Voc.isLockedByUser) !== lockData['lockedByUser'] ) {
+                        model.set(Voc.isLockedByUser, lockData['lockedByUser']);
                     }
 
-                    if ( model.get(Voc.remainingTime) !== passThrough['remainingTime'] ) {
-                        model.set(Voc.remainingTime, passThrough['remainingTime']);
+                    if ( model.get(Voc.remainingTime) !== lockData['remainingTime'] ) {
+                        model.set(Voc.remainingTime, lockData['remainingTime']);
                     }
 
-                    defer.resolve(result, passThrough);
+                    defer.resolve(result, lockData);
                 }).fail(function(f) {
                     that.LOG.debug('error learnEpLockHold', f);
                     defer.reject(f);

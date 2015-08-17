@@ -247,8 +247,8 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                         if ( episode && episode.isEntity ) {
                             var promise = EpisodeData.learnEpLockHold(episode);
 
-                            promise.done(function(result, passThrough) {
-                                AppLog.debug('learnEpLockHold Succeeded', result, passThrough);
+                            promise.done(function(result, lockData) {
+                                AppLog.debug('learnEpLockHold Succeeded', result, lockData);
                             }).fail(function(f) {
                                 AppLog.debug('learnEpLockHold Failed', f);
                             });

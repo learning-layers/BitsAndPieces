@@ -548,7 +548,7 @@ define(['underscore', 'logger'], function(_, Logger) {
             'preparation' : preparations['scrubParams'],
             'injectVariable': 'learnEp'
         },
-        'learnEpLockHold' : {
+        'learnEpsLockHold' : {
             'reqType': 'GET',
             'reqPath': 'learneps/learneps/:learnEp/locks',
             'resultKey' : 'learnEpLocks',
@@ -556,7 +556,6 @@ define(['underscore', 'logger'], function(_, Logger) {
                 'learnEp' : { 'type' : 'encodedComponent' }
             },
             'preparation' : preparations['scrubParams'],
-            'passThroughKeys' : ['locked', 'lockedByUser', 'remainingTime'],
             'injectVariable': 'learnEp'
         },
         'entityAdd' : {
