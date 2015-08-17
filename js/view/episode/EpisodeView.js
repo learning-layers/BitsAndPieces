@@ -1,4 +1,4 @@
-define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode/EpisodeData', 'utils/SystemMessages'], function(VIE, Logger, _, $, Backbone, Voc, EpisodeData, SystemMessages){
+define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode/EpisodeData', 'utils/SystemMessages', 'userParams'], function(VIE, Logger, _, $, Backbone, Voc, EpisodeData, SystemMessages, UserParams){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeView'),
         tagName: 'a',
@@ -28,7 +28,7 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode
             var id = $(event.currentTarget).attr('about');
             this.LOG.debug('EpisodeView changeCurrentVersion ' + id);
             if( !id ) return;
-            this.model.get(Voc.belongsToUser).save( Voc.currentVersion, id);
+            this.__getCurrentUserEntity().save( Voc.currentVersion, id);
         },
         changeCurrentEpisode: function(event) {
             event.preventDefault();
@@ -36,7 +36,7 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode
             var id = EpisodeData.getFirstVersion(this.model);
             if( !id ) return;
             this.LOG.debug('EpisodeView changeCurrentEpisode, version = ' + id.getSubject());
-            this.model.get(Voc.belongsToUser).save( Voc.currentVersion, id.getSubject());
+            this.__getCurrentUserEntity().save( Voc.currentVersion, id.getSubject());
         },
         highlight: function() {
             this.$el.addClass('highlight');
@@ -59,14 +59,14 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode
                     var episode = that.model,
                         episodeLabel = episode.get(Voc.label),
                         version = EpisodeData.getFirstVersion(episode),
-                        user = episode.get(Voc.belongsToUser),
-                        currentVersion = user.get(Voc.currentVersion);
+                        currentUser = that.__getCurrentUserEntity(),
+                        currentVersion = currentUser.get(Voc.currentVersion);
                     // Make sure to unset the user current episode if it is removed
                     if ( currentVersion && currentVersion.getSubject() === version.getSubject() ) {
-                        user.save(Voc.currentVersion, null);
+                        currentUser.save(Voc.currentVersion, null);
                     }
 
-                    var episodes = user.get(Voc.hasEpisode);
+                    var episodes = currentUser.get(Voc.hasEpisode);
                     if ( _.isArray(episodes) ) {
                         var episodeURIs = [];
                         _.each(episodes, function(single) {
@@ -74,7 +74,7 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode
                                 episodeURIs.push(single.getSubject());
                             }
                         });
-                        user.save(Voc.hasEpisode, episodeURIs);
+                        currentUser.save(Voc.hasEpisode, episodeURIs);
                     }
 
                     episode.destroy();
@@ -86,6 +86,9 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode
                 });
 
                             }
+        },
+        __getCurrentUserEntity: function() {
+            return this.model.collection.get(UserParams.user);
         }
     });
 });
