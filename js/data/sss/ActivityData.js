@@ -140,6 +140,8 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
             for ( var key in entity ) {
                 if ( _.isEmpty(entity[key]) ) {
                     delete entity[key];
+                } else if ( key === Voc.hasUsers ) {
+                    delete entity[key];
                 }
             }
         }
