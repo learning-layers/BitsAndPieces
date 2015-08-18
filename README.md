@@ -24,7 +24,7 @@ If you have not created any Learning Episodes yet, please use the menu on the to
 Service version requirements
 ----------------------------
 
-* SocialSemanticServer: v11.0.0-alpha (or newer)
+* SocialSemanticServer: v11.2.0-alpha (or newer)
 
 General Information
 -------------------
