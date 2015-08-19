@@ -3,9 +3,9 @@ define(['logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
         'view/sss/ClusterView', 
         'view/timeline/TimelineView', 
         'view/organize/OrganizeView',
-        'view/organize/OrganizeOverlayView',
+        'view/organize/OrganizeLockBarView',
         'data/organize/OrganizeData'],
-    function(Logger, Backbone, $, Voc, _, $, EntityView, ClusterView, TimelineView, OrganizeView, OrganizeOverlayView, OrganizeData) {
+    function(Logger, Backbone, $, Voc, _, $, EntityView, ClusterView, TimelineView, OrganizeView, OrganizeLockBarView, OrganizeData) {
         return Backbone.View.extend({
             LOG: Logger.get("WidgetView"),
             events: {
@@ -23,7 +23,7 @@ define(['logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
             },
             remove: function() {
                 if( this.view ) { this.view.remove(); }
-                if( this.organizeOverlayView ) { this.organizeOverlayView.remove(); }
+                if( this.organizeLockBarView ) { this.organizeLockBarView.remove(); }
                 Backbone.View.prototype.remove.call(this);
             },
             render: function() {
@@ -41,11 +41,11 @@ define(['logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
                     this.$el.addClass('organizeWidget');
                     this.view = this.createOrganize(body);
 
-                    this.organizeOverlayView = new OrganizeOverlayView({
+                    this.organizeLockBarView = new OrganizeLockBarView({
                         'model' : this.model,
                         'organizeView' : this.view
                     }).render();
-                    this.$el.append(this.organizeOverlayView.$el);
+                    this.$el.find('legend').after(this.organizeLockBarView.$el);
 
                 } else {
                     this.listenToOnce(this.model, 'change', this.render);
@@ -147,13 +147,13 @@ define(['logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
 
                     this.$el.prepend('<button type="button" class="btn btn-info" name="releaseEditingLock">Release Editing Lock</button>');
                     this.$el.find('button[name="releaseEditingLock"]').on('click', function(e) {
-                        that.organizeOverlayView.enableOverlay(e);
+                        that.organizeLockBarView.enableOverlay(e);
                     });
                 }
             },
             removeEpisodeLockIfNeeded: function() {
                 if ( this.isOrganize() ) {
-                    this.organizeOverlayView.removeEpisodeLockIfNeeded();
+                    this.organizeLockBarView.removeEpisodeLockIfNeeded();
                 }
             },
             setLockTimeRemaining: function(e) {

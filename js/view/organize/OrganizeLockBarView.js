@@ -4,9 +4,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'utils/SystemMessages', 'utils/EntityHelpers'],
     function(Logger, tracker, _, $, Backbone, Voc, Spinner, EpisodeData, SystemMessages, EntityHelpers){
     return Backbone.View.extend({
-        LOG: Logger.get('OrganizeOverlayView'),
+        LOG: Logger.get('OrganizeLockBarView'),
         tagName: 'div',
-        className: 'organizeOverlay',
+        className: 'organizeLockBar',
         events:{
             'click button' : 'disableOverlay'
         },
@@ -37,6 +37,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return this;
         },
         setEpisodeModelAndListeners: function() {
+            var that = this;
             this.episodeModel = this.getEpisode();
 
             this.$el.find('span.episodeLoading').remove();
@@ -45,6 +46,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
             if ( this.isOverlayNeeded() ) {
                 this.enableOverlayVisuals();
+                // Disable organize, clear and re-render
+                // Re-render is needed because of drag/drop
+                that.organizeView.clearOrganizeAndViews();
+                that.organizeView.organize.setChangesDisabled();
+                that.organizeView.reRenderOrganize();
             } else if ( this.isLockedByCurrentUser() ) {
                 this.enableReleaseLockButton();
             }
@@ -55,14 +61,25 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.remainingTime), this.remainingTimeChanged, this);
             this.episodeModel.on('change:'+this.model.vie.namespaces.uri(Voc.lockReleasedByOtherTime), this.lockReleasedByOther, this);
         },
-        episodeModelChanged: function() {
+        episodeModelChanged: function(model, value, options) {
+            if ( options && _.isObject(options) && options.hasOwnProperty('bnpPreventChanged') ) {
+                if ( options.bnpPreventChanged === true ) {
+                    return;
+                }
+            }
             if ( this.isOverlayNeeded() ) {
                 if ( false === this.isOverlayEnabled ) {
                     this.enableOverlayVisuals();
+                    this.organizeView.clearOrganizeAndViews();
+                    this.organizeView.organize.setChangesDisabled();
+                    this.organizeView.reRenderOrganize();
                 }
             } else {
                 if ( true === this.isOverlayEnabled ) {
                     this.disableOverlayVisuals();
+                    this.organizeView.clearOrganizeAndViews();
+                    this.organizeView.organize.setChangesEnabled();
+                    this.organizeView.reRenderOrganize();
                 }
             }
         },
@@ -149,15 +166,18 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             promise.done(function(result) {
 
                 if ( result === true ) {
+                    that.clearAutoLockReleaseTimeout();
+
                     that.organizeView.clearOrganizeAndViews();
                     var versionsPromise = EpisodeData.fetchVersions(episode);
                     var versionsCB = function() {
+                        that.organizeView.organize.setChangesEnabled();
                         that.organizeView.reRenderOrganize();
                         that.removeAjaxLoader(that.$el);
                         that.disableOverlayVisuals();
 
-                        episode.set(Voc.isLocked, true);
-                        episode.set(Voc.isLockedByUser, true);
+                        episode.set(Voc.isLocked, true, { bnpPreventChanged: true });
+                        episode.set(Voc.isLockedByUser, true, { bnpPreventChanged: true });
                     };
 
                     versionsPromise.done(function() {
@@ -211,15 +231,16 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             // TODO Consider enabling overlay right away
             promise.done(function(result) {
                 if ( true === result ) {
-                    // Clear auto release timeout if set
-                    if ( that.autoLockReleaseTimeout ) {
-                        clearTimeout(that.autoLockReleaseTimeout);
-                    }
+                    that.clearAutoLockReleaseTimeout();
 
                     that.enableOverlayVisuals();
 
-                    episode.set(Voc.isLocked, false);
-                    episode.set(Voc.isLockedByUser, false);
+                    that.organizeView.clearOrganizeAndViews();
+                    that.organizeView.organize.setChangesDisabled();
+                    that.organizeView.reRenderOrganize();
+
+                    episode.set(Voc.isLocked, false, { bnpPreventChanged: true });
+                    episode.set(Voc.isLockedByUser, false, { bnpPreventChanged: true });
 
                     tracker.info(tracker.RELEASEEDITBUTTON, tracker.ORGANIZEAREA, episode.getSubject(), 'success');
                 } else {
@@ -265,7 +286,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 if ( remainingTime > 0 && remainingTime <= 30000 ) {
                     var that = this;
                     that.autoLockReleaseTimeout = setTimeout(function() {
-                        that.enableOverlayVisuals();
                         episode.set(Voc.isLocked, false);
                         episode.set(Voc.isLockedByUser, false);
                     }, remainingTime);
@@ -282,6 +302,13 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             }).fail(function() {
                 that.organizeView.reRenderOrganize();
             });
+        },
+        clearAutoLockReleaseTimeout: function() {
+            // Clear auto release timeout if set
+            if ( this.autoLockReleaseTimeout ) {
+                clearTimeout(this.autoLockReleaseTimeout);
+                this.autoLockReleaseTimeout = null;
+            }
         }
     });
 });
