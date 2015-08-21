@@ -6,6 +6,10 @@
                 <h4 class="modal-title" id="circleRenameModalLabel">Please enter the Concept</h4>
             </div>
             <div class="modal-body">
+                <div class="well well-sm">
+                    <label>Author:</label>
+                    <span class="authorName"></span>
+                </div>
                 <form role="form">
                     <div class="form-group">
                         <label for="renamedCircleLabel">Concept label:</label>

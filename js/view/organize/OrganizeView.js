@@ -216,6 +216,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             // Set title, reset autocomplete (make sure that loaded info is used),
             // set save action handler (will close the modal), open modal
             this.circleRenameModalView.setRenamedCircleLabel(view.model.get(Voc.label));
+            this.circleRenameModalView.setAuthor(view.model.get(Voc.author).get(Voc.label));
             this.circleRenameModalView.resetAutocompleteSource();
             this.circleRenameModalView.setSaveActionHandler(function(e){
                 e.preventDefault();

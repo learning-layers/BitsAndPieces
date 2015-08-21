@@ -9,6 +9,7 @@ define(['logger', 'underscore', 'jquery', 'backbone',
         initialize: function() {
             this.circleRenameModalSelector = '#circleRenameModal';
             this.renamedCircleLableSelector = '#renamedCircleLabel';
+            this.authorNameSelector = '.authorName';
         },
         render: function() {
             var that = this;
@@ -29,6 +30,9 @@ define(['logger', 'underscore', 'jquery', 'backbone',
         },
         setRenamedCircleLabel: function(value) {
             this.$el.find(this.renamedCircleLableSelector).val(value);
+        },
+        setAuthor: function(value) {
+            this.$el.find(this.authorNameSelector).text(value);
         },
         resetAutocompleteSource: function() {
             this.$el.find(this.renamedCircleLableSelector).autocomplete('option', 'source', _.union(CategoryData.getPredefinedCategories(), UserData.getRecommendedTags()));
