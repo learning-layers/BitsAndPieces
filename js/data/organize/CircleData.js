@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, Data){
+define(['logger', 'voc', 'underscore', 'data/Data', 'userParams' ], function(Logger, Voc, _, Data, UserParams){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize OrgaEntityData");
@@ -42,6 +42,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         };
     };
     m.createCircle = function(model, options) {
+        model.set(Voc.author, UserParams.user);
         var version = model.get(Voc.belongsToVersion);
         var that = this;
         var data = this.mapAttributes(model);
