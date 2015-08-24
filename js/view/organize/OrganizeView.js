@@ -222,12 +222,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
                 e.preventDefault();
                 var newCircleLabel = that.circleRenameModalView.getRenamedCircleLabel();
                 circle.Label = newCircleLabel;
-                that.circleRenameModalView.hideModal();
 
                 //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
                 //circle['_organizeId'] = circle['id'];
                 delete circle['id'];
                 that.organize.currentLabel.text(circle.Label);
+                // Need to use currentLabel before hide is fired as the callback removes the currentLabel as such
+                that.circleRenameModalView.hideModal();
                 view.model.save(that.mapAttributes(circle), {'by': that});
 
                 var version = that.model.get(Voc.belongsToVersion);
@@ -238,6 +239,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
                 var version = that.model.get(Voc.belongsToVersion);
                 var episode = version.get(Voc.belongsToEpisode);
                 tracker.info(tracker.CLICKLABELRECOMMENDATION, tracker.ORGANIZEAREA, view.model.getSubject(), ui.item.value, [episode.getSubject()]);
+            });
+            this.circleRenameModalView.setHideActionHandler(function() {
+                that.organize.quietUnselectLabelAndInside();
             });
             this.circleRenameModalView.showModal();
         },

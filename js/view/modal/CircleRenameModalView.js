@@ -3,7 +3,8 @@ define(['logger', 'underscore', 'jquery', 'backbone',
         'text!templates/modal/circle_rename_modal.tpl'], function(Logger, _, $, Backbone, CategoryData, UserData, CircleRenameModalTemplate){
     return Backbone.View.extend({
         events: {
-            'submit form' : 'submitForm'
+            'submit form' : 'submitForm',
+            'hide.bs.modal' : 'callHideModalAction'
         },
         LOG: Logger.get('CircleRenameModalView'),
         initialize: function() {
@@ -57,6 +58,14 @@ define(['logger', 'underscore', 'jquery', 'backbone',
         },
         callSelectActionCallback: function(event, ui) {
             this.selectActionCallback(event, ui);
+        },
+        setHideActionHandler: function(cb) {
+            this.hideModalActionCallback = cb;
+        },
+        callHideModalAction: function() {
+            if ( this.hideModalActionCallback ) {
+                this.hideModalActionCallback();
+            }
         }
     });
 });
