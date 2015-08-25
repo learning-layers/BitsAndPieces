@@ -124,6 +124,13 @@ define(['underscore', 'logger'], function(_, Logger) {
                 if ( _.isObject(fixable['sss:'+prop]) ) {
                     fixable['sss:'+prop] = fixable['sss:' + prop].id;
                 }
+            } else if ( prop === 'thumb' ) {
+                // XXX A special case for thumbnail
+                if ( _.isObject(fixable['sss:'+prop]) ) {
+                    if ( _.isObject(fixable['sss:'+prop]['file']) ) {
+                        fixable['sss:'+prop] = fixable['sss:'+prop].file.downloadLink;
+                    }
+                }
             }
             delete fixable[prop];
         }
