@@ -39,7 +39,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
             }
         }).to('sss').execute().success(function(savedEntityUri) {
             model.set(model.idAttribute, savedEntityUri, options);
-            model.set(Voc.hasUsers, [mode.get(Voc.belongsToUser).getSubject()]);
+            model.set(Voc.hasUsers, [model.get(Voc.belongsToUser).getSubject()]);
             if(options.success) {
                 options.success(savedEntityUri);
             }
