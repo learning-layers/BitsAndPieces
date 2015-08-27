@@ -155,7 +155,7 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                                 if (error) error(result);
 
                                 // This could trigger a logout
-                                sss.checkErrorAndAct(jqXHR);
+                                sss.checkErrorAndAct(jqXHR, result);
                                 return;
                             }
 
@@ -307,14 +307,14 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
             }
         },
 
-        checkErrorAndAct: function(jqXHR) {
+        checkErrorAndAct: function(jqXHR, result) {
             if ( jqXHR.status === 500 ) {
                 var oidcErrors = [
                     'authCouldntConnectToOIDC',
                     'authCouldntParseOIDCUserInfoResponse',
                     'authOIDCUserInfoRequestFailed'
                 ];
-                if ( _.indexOf(oidcErrors, jqXHR.statusText) !== -1 ) {
+                if ( _.indexOf(oidcErrors, result.id) !== -1 ) {
                     var ev = $.Event('bnp:oidcTokenExpired', {});
                     $(document).trigger(ev);
                 }
