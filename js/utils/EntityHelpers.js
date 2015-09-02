@@ -27,10 +27,10 @@ function (Logger, $, Backbone, _, Voc, userParams) {
 
             if ( !_.isEmpty(sharedWith) ) {
                 sharedWith = ( _.isArray(sharedWith) ) ? sharedWith : [sharedWith];
-                var currentUserUri = userParams.user;
+                var authorUri = episode.get(Voc.author).getSubject();
 
                 _.each(sharedWith, function(user) {
-                    if ( user.getSubject() !== currentUserUri ) {
+                    if ( user.getSubject() !== authorUri ) {
                         sharedWithNames.push(user.get(Voc.label));
                     }
                 });

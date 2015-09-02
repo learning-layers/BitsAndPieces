@@ -4,7 +4,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
         this.LOG.debug("initialize Episode");
         this.vie = vie;
         this.vie.entities.on('add', this.filter, this);
-        this.setIntegrityCheck(Voc.hasUsers, Voc.USER, Voc.hasEpisode);
+        this.setIntegrityCheck(Voc.hasUsers, Voc.hasUsers, Voc.hasEpisode);
         this.setIntegrityCheck(Voc.hasVersion, Voc.VERSION, Voc.belongsToEpisode);
     };
     m.LOG = Logger.get('EpisodeData');
