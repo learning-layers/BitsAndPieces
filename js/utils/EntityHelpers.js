@@ -1,5 +1,5 @@
-define(['logger','jquery', 'backbone', 'underscore', 'voc', 'userParams'],
-function (Logger, $, Backbone, _, Voc, userParams) {
+define(['logger','jquery', 'backbone', 'underscore', 'voc'],
+function (Logger, $, Backbone, _, Voc) {
     return {
         LOG: Logger.get('EntityHelpers'),
         isSharedEpisode: function(episode) {
