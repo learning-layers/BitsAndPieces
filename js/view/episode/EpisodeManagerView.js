@@ -1,6 +1,6 @@
 // TODO EpisodeManagerView could be renamed to MenuView
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
-        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView'], function(VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView){
+define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
+        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
@@ -10,7 +10,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             //'click button#createNewVersion' : 'createNewVersion',
             'click a#logout' : 'logOut',
             'click a.helpButton' : 'showHelp',
-            'click a.affectButton' : 'handleAffect'
+            'click a.affectButton' : 'handleAffect',
+            'click .discussionToolButton' : 'handleDiscussionTool'
         },
         initialize: function() {
             this.views = {};
@@ -26,6 +27,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         render: function() {
             this.LOG.debug('EpisodeManager render');
+            // Hide discussionTool button until episode is loaded
+            this.$el.find('.discussionToolButton').hide();
+
             var version = this.model.get(Voc.currentVersion);
             this.LOG.debug('version', _.clone(version));
             if( !version || !version.isEntity ) {
@@ -39,6 +43,10 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
                 version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.render, this);
                 return;
             }
+
+            // Show discussionTool button when episode is loaded
+            this.$el.find('.discussionToolButton').show();
+
             var label = this.currentEpisode.get(Voc.label);
             this.renderLabel(this.currentEpisode, label);
             this.renderVisibility(this.currentEpisode, this.currentEpisode.get(Voc.circleTypes));
@@ -216,6 +224,14 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         handleAffect: function(e) {
             tracker.info(tracker.CLICKAFFECTBUTTON, null);
+        },
+        handleDiscussionTool: function(e) {
+           if ( !this.currentEpisode ) return;
+
+           var url = appConfig.discussionToolUrl
+               + '#/auth/'
+               + encodeURIComponent(encodeURIComponent(this.currentEpisode.getSubject()));
+           window.open(url);
         },
         clearAllEpisodeVisuals: function() {
             this.LOG.debug('clearAllEpisodeVisuals called');

@@ -4,6 +4,7 @@
   "oidcClientID" : "",
   "affectUrl" : "",
   "helpUrl" : "http://foti.ee/bits_and_pieces_manual/BnP_usermanual.html",
+  "discussionToolUrl": "",
   "search" : {
     "localSearchOp" : "and",
     "globalSearchOp" : "and"

@@ -10,6 +10,7 @@ function(module, config){
         'oidcClientID' : appConfig.oidcClientID,
         'affectUrl' : appConfig.affectUrl,
         'helpUrl' : appConfig.helpUrl,
+        'discussionToolUrl': appConfig.discussionToolUrl,
         'localSearchOp' : appConfig.search.localSearchOp || 'and',
         'globalSearchOp' : appConfig.search.globalSearchOp || 'and'
     };

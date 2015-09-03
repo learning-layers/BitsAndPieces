@@ -67,7 +67,8 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                 var navbar = _.template(NavbarTemplate, {
                     userLabel: this.model.get(Voc.label),
                     affectUrl: appConfig.affectUrl || '',
-                    helpUrl: appConfig.helpUrl || '#'
+                    helpUrl: appConfig.helpUrl || '#',
+                    discussionToolUrl: appConfig.discussionToolUrl || ''
                 });
 
                 // Prepend navbar to body
