@@ -34,7 +34,7 @@
 
       <% if ( discussionToolUrl ) { %>
       <button type="button" class="btn btn-default navbar-btn discussionToolButton" title="Open Discussion Tool">
-          <span class="glyphicon glyphicon-link"></span>
+          <span class="glyphicon glyphicon-comment"></span>
       </button>
       <% } %>
 
