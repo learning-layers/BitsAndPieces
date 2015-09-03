@@ -4,7 +4,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
         this.LOG.debug("initialize Episode");
         this.vie = vie;
         this.vie.entities.on('add', this.filter, this);
-        this.setIntegrityCheck(Voc.hasUsers, Voc.hasUsers, Voc.hasEpisode);
+        this.setIntegrityCheck(Voc.USER, Voc.USER, Voc.hasEpisode);
         this.setIntegrityCheck(Voc.hasVersion, Voc.VERSION, Voc.belongsToEpisode);
     };
     m.LOG = Logger.get('EpisodeData');
@@ -39,7 +39,6 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
             }
         }).to('sss').execute().success(function(savedEntityUri) {
             model.set(model.idAttribute, savedEntityUri, options);
-            model.set(Voc.hasUsers, [model.get(Voc.belongsToUser).getSubject()]);
             if(options.success) {
                 options.success(savedEntityUri);
             }
@@ -131,7 +130,9 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
         newEpisode = new this.vie.Entity();
         this.LOG.debug("newEpisode", newEpisode);
         newEpisode.set(Voc.label, "New Episode");
-        newEpisode.set(Voc.belongsToUser, user.getSubject());
+        newEpisode.set(Voc.author, user.getSubject());
+        newEpisode.set(Voc.USER, user.getSubject());
+        newEpisode.set(Voc.hasUsers, [user.getSubject()]);
         newEpisode.set('@type', Voc.EPISODE);
         this.vie.entities.addOrUpdate(newEpisode);
         newVersion = VersionData.newVersion(newEpisode, fromVersion).getSubject();

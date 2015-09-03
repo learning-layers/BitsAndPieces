@@ -102,6 +102,8 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
                 var usersToBeAdded = [];
                 _.each(episodes, function(episode) {
                     episode['@type'] = Voc.EPISODE;
+                    // A fix to allow linking of episodes to a current user
+                    episode[Voc.USER] = user.getSubject();
 
                     var users = episode[Voc.hasUsers];
                     if ( !_.isEmpty(users) ) {
