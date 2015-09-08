@@ -78,6 +78,7 @@ define([], {
     file : 'sss:file',
     note : 'sss:note',
     remainingTime : 'sss:remainingTime',
-    lockReleasedByOtherTime : 'sss:lockedReleasedByOtherTime'
+    lockReleasedByOtherTime : 'sss:lockedReleasedByOtherTime',
+    discussionsCount: 'sss:discussionsCount'
         
 });

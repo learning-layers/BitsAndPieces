@@ -317,5 +317,28 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
 
         return defer.promise();
     };
+    m.getDiscussionsCount = function(model) {
+        var that = this,
+            defer = $.Deferred();
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.load({
+                    service : 'discsGet',
+                    data : {
+                        'targets' : [modelUri]
+                    }
+                }).to('sss').execute().success(function(discussions) {
+                    that.LOG.debug('success discsGet', discussions);
+                    defer.resolve(discussions.length);
+                }).fail(function(f) {
+                    that.LOG.debug('error discsGet', f);
+                    defer.reject(f);
+                });
+            }
+        );
+
+        return defer.promise();
+    };
     return m;
 });

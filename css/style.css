@@ -597,3 +597,11 @@ ul.dropdown-menu li.episode a.highlight {
 	color: #333;
 }
 
+.navbar .discussionToolButton {
+	color: #777;
+}
+
+.navbar .discussionToolButton span {
+    color: #DB0000;
+}
+

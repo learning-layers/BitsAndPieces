@@ -579,6 +579,16 @@ define(['underscore', 'logger'], function(_, Logger) {
             },
             'preparation' : preparations['scrubParams'],
             'injectVariable': 'learnEp'
+        },
+        'discsGet' : {
+            'reqType' : 'GET',
+            'reqPath' : 'discs/discs/targets/:targets',
+            'resultKey' : 'discs',
+            'params' : {
+                'targets' : { 'type' : 'csv' }
+            },
+           'preparation' : preparations['scrubParams'],
+           'injectVariable' : 'targets'
         }
     };
     return m;

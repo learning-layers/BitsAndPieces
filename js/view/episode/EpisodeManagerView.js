@@ -44,14 +44,12 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 return;
             }
 
-            // Show discussionTool button when episode is loaded
-            this.$el.find('.discussionToolButton').show();
-
             var label = this.currentEpisode.get(Voc.label);
             this.renderLabel(this.currentEpisode, label);
             this.renderVisibility(this.currentEpisode, this.currentEpisode.get(Voc.circleTypes));
             this.renderAuthor(this.currentEpisode);
             this.renderSharedWith(this.currentEpisode, this.currentEpisode.get(Voc.hasUsers));
+            this.renderDiscussionToolButton(this.currentEpisode);
 
             var prevCurrVersion = this.model.previous(Voc.currentVersion);
             var prevCurrEpisode, epView;
@@ -65,6 +63,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderAuthor, this);
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
+                    prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.discussionsCount), this.renderDiscussionToolButton, this);
                 }
             }
             if(epView = this.views[this.currentEpisode.cid]) {
@@ -73,6 +72,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderAuthor, this);
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
+                this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.discussionsCount), this.renderDiscussionToolButton, this);
             }
         },
         renderLabel: function(episode, label) {
@@ -122,6 +122,17 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             }
 
             this.$el.find('.currentEpisodeSharedWith').html(sharedWithText);
+        },
+        renderDiscussionToolButton: function(episode) {
+            var count = episode.get(Voc.discussionsCount);
+
+            if ( count && count > 0 ) {
+                this.$el.find('.discussionToolButton > span.count').html('( ' + count + ' )');
+            } else {
+                this.$el.find('.discussionToolButton > span.count').html('');
+            }
+
+            this.$el.find('.discussionToolButton').show();
         },
         changeEpisodeSet: function(model, set, options) {
             this.LOG.debug('changeEpisodeSet', set);  
@@ -198,6 +209,17 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             this.placeholderAddModalView.showModal();
         },
         episodeVersionChanged: function() {
+            var version = this.model.get(Voc.currentVersion);
+            if ( version && version.isEntity ) {
+                var episode = version.get(Voc.belongsToEpisode);
+                if( !episode ) {
+                    // wait for the episode to be ready
+                    version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.loadAndSetDiscussionsCount, this);
+                } else {
+                    this.loadAndSetDiscussionsCount();
+                }
+            }
+
             this.render();
         },
         logOut: function(e) {
@@ -239,6 +261,24 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             this.$el.find('.currentEpisodeVisibility').html('');
             this.$el.find('.currentEpisodeAuthor').html('');
             this.$el.find('.currentEpisodeSharedWith').html('');
+        },
+        loadAndSetDiscussionsCount: function() {
+            var version = this.model.get(Voc.currentVersion);
+            if( !version || !version.isEntity ) {
+                return;
+            }
+            var episode  = version.get(Voc.belongsToEpisode);
+            if( !episode && !episode.isEntity ) {
+                return;
+            }
+
+            // Load and set discussions count
+            var discussionsPromise = EpisodeData.getDiscussionsCount(episode);
+            discussionsPromise.done(function(count) {
+                episode.set(Voc.discussionsCount, count);
+            }).fail(function() {
+                episode.set(Voc.discussionsCount, 0);
+            });
         }
     });
 });
