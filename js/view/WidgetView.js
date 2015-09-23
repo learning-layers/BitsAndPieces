@@ -36,7 +36,7 @@ define(['logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
                     this.view = this.createTimeline(body);
                 } else if (this.model.isof( Voc.ORGANIZE )) {
                     this.$el.append('<legend>Organize</legend>');
-                    body = $('<div tabindex="1" style="width:100%; height:400px"></div>');
+                    body = $('<div tabindex="1" style="width:100%; height:400px; display:block; overflow:auto;"></div>');
                     this.$el.append(body);
                     this.$el.addClass('organizeWidget');
                     this.view = this.createOrganize(body);

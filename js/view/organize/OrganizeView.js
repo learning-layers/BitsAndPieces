@@ -68,6 +68,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
         render: function() {
             this.LOG.debug('el = ', this.el);
             this.organize.loadOrganizeCanvas(this.el);
+            // Set height and width of SVG element
+            this.$el.find('svg').attr('width', '2000px').attr('height', '1500px');
             // Make the view aware of existing entities in collection
             var view = this;
             var version = this.model.get(Voc.belongsToVersion);
