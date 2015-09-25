@@ -14,6 +14,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             'ClickEntity': 'ClickEntity'
         },
         initialize: function() {
+            this.canvasWidth = 2000;
+            this.canvasHeight = 1500;
 
             this.EntityView = this.options.EntityView;
             var version = this.model.get(Voc.belongsToVersion);
@@ -25,6 +27,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
 
             this.LOG.debug("initialize Organize component");
             this.organize = new Organize();
+            // Set drag constraints as needed
+            this.organize.DRAG_CONSTRAINTS = {
+                minX: 0,
+                minY: 0,
+                maxX: 2000,
+                maxY: 1500
+            };
 
             this.circleRenameModalView = this.options.circleRenameModalView;
             version.on('destroy', function(model, collection, options) {
@@ -69,7 +78,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.LOG.debug('el = ', this.el);
             this.organize.loadOrganizeCanvas(this.el);
             // Set height and width of SVG element
-            this.$el.find('svg').attr('width', '2000px').attr('height', '1500px');
+            this.$el.find('svg').attr('width', this.canvasWidth + 'px').attr('height', this.canvasHeight + 'px');
             // Make the view aware of existing entities in collection
             var view = this;
             var version = this.model.get(Voc.belongsToVersion);
