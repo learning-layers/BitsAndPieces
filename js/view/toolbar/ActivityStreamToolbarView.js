@@ -190,16 +190,18 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             var that = this,
                 data = {
                 types : [
-                    'addCategory',
-                    'removeCategories',
-                    //'createLearnEp',
-                    'addEntityToLearnEpVersion',
-                    'removeLearnEpVersionEntity',
-                    'addCircleToLearnEpVersion',
-                    'changeLearnEpVersionCircleLabel',
-                    'removeLearnEpVersionCircle',
-                    'shareLearnEpWithUser',
-                    'messageSend'
+'removeCategories',
+//'createLearnEp',
+'addEntityToLearnEpVersion',
+'changeEntityForLearnEpVersionEntity',
+'moveLearnEpVersionEntity',
+'removeLearnEpVersionEntity',
+'addCircleToLearnEpVersion',
+'changeLearnEpVersionCircleLabel',
+'moveLearnEpVersionCircle',
+'removeLearnEpVersionCircle',
+'shareLearnEpWithUser',
+'messageSend'
                 ],
                 includeOnlyLastActivities : true,
                 startTime: this.activitiesFetchTime ? this.activitiesFetchTime : null
