@@ -191,7 +191,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                 data = {
                 types : [
 'removeCategories',
-//'createLearnEp',
 'addEntityToLearnEpVersion',
 'changeEntityForLearnEpVersionEntity',
 'moveLearnEpVersionEntity',
@@ -201,6 +200,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
 'moveLearnEpVersionCircle',
 'removeLearnEpVersionCircle',
 'shareLearnEpWithUser',
+'copyLearnEpForUsers',
 'messageSend'
                 ],
                 includeOnlyLastActivities : true,

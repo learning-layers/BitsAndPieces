@@ -40,15 +40,17 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
                         templateSettings.content = ' shared with me ' + this.encloseLabel(episodeLabel);
                     }
                     break;
-                /* dtheiler
-                 case 'createLearnEp':
-                    var episodeLabel = this.getContainedEntityLabel();
+                case 'copyLearnEpForUsers':
+                    var episodeLabel = this.getContainedEntityLabel(),
+                        userLabels = this.getUsersLabels();
 
-                    templateSettings.iconClass.push('glyphicon-briefcase');
-                    templateSettings.content = ' created an episode ' + this.encloseLabel(episodeLabel);
+                    templateSettings.iconClass.push('glyphicon-bell');
+                    if ( isLoggedInActor ) {
+                        templateSettings.content = ' shared a copy of episode ' + this.encloseLabel(episodeLabel) + ' with ' + this.encloseLabel( userLabels.join(', ') );
+                    } else {
+                        templateSettings.content = ' shared a copy of ' + this.encloseLabel(episodeLabel) + ' with me';
+                    }
                     break;
-                    
-                */
                 case 'messageSend':
                     var messageText = this.model.get(Voc.contents)
                         userLabel = this.getUsersLabels().join(', ');
