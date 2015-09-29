@@ -10,6 +10,7 @@ define(['logger', 'underscore', 'jquery', 'backbone',
         initialize: function() {
             this.circleRenameModalSelector = '#circleRenameModal';
             this.renamedCircleLableSelector = '#renamedCircleLabel';
+            this.renamedCircleDescriptionSelector = '#renameCircleDescription';
             this.authorNameSelector = '.authorName';
         },
         render: function() {
@@ -31,6 +32,12 @@ define(['logger', 'underscore', 'jquery', 'backbone',
         },
         setRenamedCircleLabel: function(value) {
             this.$el.find(this.renamedCircleLableSelector).val(value);
+        },
+        getRenamedCircleDescription: function() {
+            return this.$el.find(this.renamedCircleDescriptionSelector).val();
+        },
+        setRenamedCircleDescription: function(value) {
+            this.$el.find(this.renamedCircleDescriptionSelector).val(value);
         },
         setAuthor: function(value) {
             this.$el.find(this.authorNameSelector).text(value);

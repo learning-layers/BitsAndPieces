@@ -33,6 +33,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'userParams' ], function(Log
     m.mapAttributes = function(model) {
         return  {
             'label' : model.get(Voc.label),
+            'description' : model.get(Voc.description),
             'xLabel' : model.get(Voc.xLabel),
             'yLabel' : model.get(Voc.yLabel),
             'xR' : model.get(Voc.xR),

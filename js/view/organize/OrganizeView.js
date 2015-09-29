@@ -157,6 +157,10 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
                 item.label = item.Label;
                 delete item.Label;
             }
+            if ( item.Description ) {
+                item.description = item.Description;
+                delete item.Description;
+            }
             if( item.LabelX ) {
                 item.xLabel = item.LabelX;
                 delete item.LabelX;
@@ -227,12 +231,15 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             // Set title, reset autocomplete (make sure that loaded info is used),
             // set save action handler (will close the modal), open modal
             this.circleRenameModalView.setRenamedCircleLabel(view.model.get(Voc.label));
+            this.circleRenameModalView.setRenamedCircleDescription(view.model.get(Voc.description));
             this.circleRenameModalView.setAuthor(view.model.get(Voc.author).get(Voc.label));
             this.circleRenameModalView.resetAutocompleteSource();
             this.circleRenameModalView.setSaveActionHandler(function(e){
                 e.preventDefault();
                 var newCircleLabel = that.circleRenameModalView.getRenamedCircleLabel();
                 circle.Label = newCircleLabel;
+                var newCircleDescription = that.circleRenameModalView.getRenamedCircleDescription();
+                circle.Description = newCircleDescription;
 
                 //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
                 //circle['_organizeId'] = circle['id'];

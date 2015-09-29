@@ -15,6 +15,12 @@
                         <label for="renamedCircleLabel">Concept label:</label>
                         <input type="text" class="form-control" id="renamedCircleLabel" value="" />
                     </div>
+
+                    <div class="form-group">
+                        <label for="renameCircleDescription">Description:</label>
+                        <textarea class="form-control" id="renameCircleDescription"></textarea>
+                        <p class="help-block">Allows input of up to 5.000 characters. </p>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
