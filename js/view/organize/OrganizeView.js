@@ -192,7 +192,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             var version = this.model.get(Voc.belongsToVersion);
             var episode = version.get(Voc.belongsToEpisode);
             model.once('change:'+model.idAttribute, function(model, value, options) {
-                tracker.info(tracker.ADDCIRCLETOLEARNEPVERSION, tracker.ORGANIZEAREA, model.getSubject(), null, [episode.getSubject()]);
+                // TODO Clean-up needed
+                //tracker.info(tracker.ADDCIRCLETOLEARNEPVERSION, tracker.ORGANIZEAREA, model.getSubject(), null, [episode.getSubject()]);
             }, this);
         },
 
@@ -278,7 +279,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             
             var version = this.model.get(Voc.belongsToVersion);
             var episode = version.get(Voc.belongsToEpisode);
-            tracker.info(tracker.REMOVELEARNEPVERSIONCIRCLE, tracker.ORGANIZEAREA, view.model.getSubject(), null, [episode.getSubject()]);
+            // TODO Clean-up needed
+            //tracker.info(tracker.REMOVELEARNEPVERSIONCIRCLE, tracker.ORGANIZEAREA, view.model.getSubject(), null, [episode.getSubject()]);
 
             //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
             view.model.destroy({'by':this});
@@ -331,7 +333,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
 
             var version = this.model.get(Voc.belongsToVersion);
             var episode = version.get(Voc.belongsToEpisode);
-            tracker.info(tracker.REMOVELEARNEPVERSIONENTITY, tracker.ORGANIZEAREA, view.resourceView.model.getSubject(), null, [episode.getSubject()]);
+            // TODO Clean-up needed
+            //tracker.info(tracker.REMOVELEARNEPVERSIONENTITY, tracker.ORGANIZEAREA, view.resourceView.model.getSubject(), null, [episode.getSubject()]);
             SystemMessages.addSuccessMessage(view.resourceView.model.get(Voc.label) + ' was removed from episode ' + episode.get(Voc.label), true, 5000);
 
             //var eEntity = view.orgaEntityCollection.findWhere({'_organizeId' : entity.id });
