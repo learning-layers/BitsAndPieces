@@ -1,6 +1,6 @@
 define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
-        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'data/organize/OrganizeData', 'voc' ],
-    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, Voc){
+        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'data/organize/OrganizeData', 'voc', 'utils/SystemMessages' ],
+    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, Voc, SystemMessages){
     return Backbone.View.extend({
         LOG: Logger.get('OrganizeView'),
         events:{
@@ -324,6 +324,7 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             var version = this.model.get(Voc.belongsToVersion);
             var episode = version.get(Voc.belongsToEpisode);
             tracker.info(tracker.REMOVELEARNEPVERSIONENTITY, tracker.ORGANIZEAREA, view.resourceView.model.getSubject(), null, [episode.getSubject()]);
+            SystemMessages.addSuccessMessage(view.resourceView.model.get(Voc.label) + ' was removed from episode ' + episode.get(Voc.label), true, 5000);
 
             //var eEntity = view.orgaEntityCollection.findWhere({'_organizeId' : entity.id });
             view.model.destroy({'by':this});

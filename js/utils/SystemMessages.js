@@ -3,11 +3,15 @@ define(['logger','jquery', 'backbone', 'underscore',
 function (Logger, $, Backbone, _, DismissibleAlertTemplate) {
     return {
         LOG: Logger.get('SystemMessages'),
-        addMessage: function(type, text, clearWithTimeout) {
+        addMessage: function(type, text, clearWithTimeout, timeoutValue) {
             this.LOG.debug('Add dismissible message', text, clearWithTimeout);
 
             if ( !clearWithTimeout ) {
                 clearWithTimeout = true;
+            }
+
+            if ( !timeoutValue ) {
+                timeoutValue = 20000;
             }
 
             var message = _.template(DismissibleAlertTemplate, {
@@ -19,7 +23,7 @@ function (Logger, $, Backbone, _, DismissibleAlertTemplate) {
             if ( clearWithTimeout ) {
                 var timeoutId = setTimeout(function() {
                     message.alert('close');
-                }, 20000);
+                }, timeoutValue);
 
                 message.on('close.bs.alert', function() {
                     clearTimeout(timeoutId);
@@ -28,17 +32,17 @@ function (Logger, $, Backbone, _, DismissibleAlertTemplate) {
 
             $(document).find('#systemMessages').append(message);
         },
-        addSuccessMessage: function(message, clearWithTimeout) {
-            this.addMessage('success', message, clearWithTimeout);
+        addSuccessMessage: function(message, clearWithTimeout, timeoutValue) {
+            this.addMessage('success', message, clearWithTimeout, timeoutValue);
         },
-        addInfoMessage: function(message, clearWithTimeout) {
-            this.addMessage('info', message, clearWithTimeout);
+        addInfoMessage: function(message, clearWithTimeout, timeoutValue) {
+            this.addMessage('info', message, clearWithTimeout, timeoutValue);
         },
-        addWarningMessage: function(message, clearWithTimeout) {
-            this.addMessage('warning', message, clearWithTimeout);
+        addWarningMessage: function(message, clearWithTimeout, timeoutValue) {
+            this.addMessage('warning', message, clearWithTimeout, timeoutValue);
         },
-        addDangerMessage: function(message, clearWithTimeout) {
-            this.addMessage('danger', message, clearWithTimeout);
+        addDangerMessage: function(message, clearWithTimeout, timeoutValue) {
+            this.addMessage('danger', message, clearWithTimeout, timeoutValue);
         }
     }
 });
