@@ -119,6 +119,37 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
                     templateSettings.iconClass.push('glyphicon-minus-sign');
                     templateSettings.content = ' removed circle from episode ' + this.encloseLabel(episodeLabel);
                     break;
+                case 'addEntityToLearnEpCircle':
+                    var circleLabel = this.getContainedEntityLabelByType(Voc.CIRCLE),
+                        entityLabel = this.getContainedEntityLabel(),
+                        episodeLabel = this.getContainedEntityLabelByType(Voc.EPISODE);
+
+                    templateSettings.iconClass.push('glyphicon-plus-sign');
+                    templateSettings.content = ' added entity ' + this.encloseLabel(entityLabel) + ' to ' + this.encloseLabel(circleLabel) + ' of episode ' + this.encloseLabel(episodeLabel);
+                    break;
+                case 'removeEntityFromLearnEpCircle':
+                    var circleLabel = this.getContainedEntityLabelByType(Voc.CIRCLE),
+                        entityLabel = this.getContainedEntityLabel(),
+                        episodeLabel = this.getContainedEntityLabelByType(Voc.EPISODE);
+
+                    templateSettings.iconClass.push('glyphicon-minus-sign');
+                    templateSettings.content = ' removed entity ' + this.encloseLabel(entityLabel) + ' from ' + this.encloseLabel(circleLabel) + ' of episode ' + this.encloseLabel(episodeLabel);
+                    break;
+                case 'removeLearnEpVersionCircleWithEntitites':
+                    var episodeLabel = this.getContainedEntityLabel(),
+                        circleLabel = this.getContainedEntityLabelByType(Voc.CIRCLE),
+                        entitiesLabels = this.getContainedEntitiesLabelsByType(Voc.ENTITY);
+
+                    templateSettings.iconClass.push('glyphicon-minus-sign');
+                    templateSettings.content = ' removed circle ' + this.encloseLabel(circleLabel) + ' with ' + this.encloseLabel(entitiesLabels.join(', ')) + ' from episode ' + this.encloseLabel(episodeLabel);
+                    break;
+                case 'changeLearnEpVersionCircleDescription':
+                    var circleLabel = this.getContainedEntityLabelByType(Voc.CIRCLE),
+                        episodeLabel = this.getContainedEntityLabel();
+
+                    templateSettings.iconClass.push('glyphicon-info-sign');
+                    templateSettings.content = ' changed description of circle ' + this.encloseLabel(circleLabel) + ' of episode ' + this.encloseLabel(episodeLabel);
+                    break;
                 default:
                     templateSettings.iconClass.push('glyphicon-question-sign');
                     templateSettings.author = '';
@@ -227,6 +258,20 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
         },
         activityClicked: function(e) {
             tracker.info(tracker.CLICKBIT, tracker.NOTIFICATIONTAB, this.model.getSubject());
+        },
+        getContainedEntitiesLabelsByType: function(type) {
+            var labels = [],
+                entities = this._getEntitiesArrayFromAttribute(Voc.hasEntities);
+
+            if ( entities ) {
+                _.each(entities, function(entity) {
+                    if ( entity && entity.isEntity && entity.isof(type) ) {
+                        labels.push( entity.get(Voc.label) );
+                    }
+                });
+            }
+
+            return labels;
         }
     });
 });

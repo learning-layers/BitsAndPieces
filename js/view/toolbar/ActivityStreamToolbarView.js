@@ -201,7 +201,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
 'removeLearnEpVersionCircle',
 'shareLearnEpWithUser',
 'copyLearnEpForUsers',
-'messageSend'
+'messageSend',
+'addEntityToLearnEpCircle',
+'removeEntityFromLearnEpCircle',
+'removeLearnEpVersionCircleWithEntitites',
+'changeLearnEpVersionCircleDescription'
                 ],
                 includeOnlyLastActivities : true,
                 startTime: this.activitiesFetchTime ? this.activitiesFetchTime : null
