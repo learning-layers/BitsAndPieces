@@ -251,7 +251,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
 
                 var version = that.model.get(Voc.belongsToVersion);
                 var episode = version.get(Voc.belongsToEpisode);
-                tracker.info(tracker.CHANGELABEL, tracker.ORGANIZEAREA, view.model.getSubject(), newCircleLabel, [episode.getSubject()]);
+                // TODO Check if version and episode are needed any more
+                //tracker.info(tracker.CHANGELABEL, tracker.ORGANIZEAREA, view.model.getSubject(), newCircleLabel, [episode.getSubject()]);
             });
             this.circleRenameModalView.setSelectActionHandler(function(event, ui) {
                 var version = that.model.get(Voc.belongsToVersion);
