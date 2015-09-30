@@ -154,9 +154,8 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
         },
         constructFileDownloadUri: function(fileUri) {
             return appConfig.sssHostRESTFileDownload
-                + 'fileDownloadGET?user=' + encodeURIComponent(userParams.user)
-                + '&key=' + encodeURIComponent(userParams.userKey)
-                + '&file=' + encodeURIComponent(fileUri);
+                + '?file=' + encodeURIComponent(fileUri)
+                + '&key=' + encodeURIComponent(userParams.userKey);
         },
         defer: function() {
             this.LOG.debug('defer');

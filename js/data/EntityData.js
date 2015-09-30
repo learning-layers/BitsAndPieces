@@ -1,4 +1,4 @@
-define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], function(appConfig, Logger, Voc, _, $, Data, userParams){
+define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams', 'utils/EntityHelpers' ], function(appConfig, Logger, Voc, _, $, Data, userParams, EntityHelpers){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize EntityData");
@@ -135,13 +135,10 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
             };
 
         if ( !_.isEmpty(keywords) ) {
-            serviceData.includeLabel = true;
             serviceData.labelsToSearchFor = keywords;
-            serviceData.includeDescription = true;
             serviceData.descriptionsToSearchFor = keywords;
         }
         if ( !_.isEmpty(tags) ) {
-            serviceData.includeTags = true;
             serviceData.tagsToSearchFor = tags;
         }
 

@@ -67,7 +67,8 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                 var navbar = _.template(NavbarTemplate, {
                     userLabel: this.model.get(Voc.label),
                     affectUrl: appConfig.affectUrl || '',
-                    helpUrl: appConfig.helpUrl || '#'
+                    helpUrl: appConfig.helpUrl || '#',
+                    discussionToolUrl: appConfig.discussionToolUrl || ''
                 });
 
                 // Prepend navbar to body
@@ -247,8 +248,8 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                         if ( episode && episode.isEntity ) {
                             var promise = EpisodeData.learnEpLockHold(episode);
 
-                            promise.done(function(result, passThrough) {
-                                AppLog.debug('learnEpLockHold Succeeded', result, passThrough);
+                            promise.done(function(result, lockData) {
+                                AppLog.debug('learnEpLockHold Succeeded', result, lockData);
                             }).fail(function(f) {
                                 AppLog.debug('learnEpLockHold Failed', f);
                             });

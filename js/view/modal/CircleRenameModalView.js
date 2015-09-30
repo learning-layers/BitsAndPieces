@@ -3,12 +3,15 @@ define(['logger', 'underscore', 'jquery', 'backbone',
         'text!templates/modal/circle_rename_modal.tpl'], function(Logger, _, $, Backbone, CategoryData, UserData, CircleRenameModalTemplate){
     return Backbone.View.extend({
         events: {
-            'submit form' : 'submitForm'
+            'submit form' : 'submitForm',
+            'hide.bs.modal' : 'callHideModalAction'
         },
         LOG: Logger.get('CircleRenameModalView'),
         initialize: function() {
             this.circleRenameModalSelector = '#circleRenameModal';
             this.renamedCircleLableSelector = '#renamedCircleLabel';
+            this.renamedCircleDescriptionSelector = '#renameCircleDescription';
+            this.authorNameSelector = '.authorName';
         },
         render: function() {
             var that = this;
@@ -29,6 +32,15 @@ define(['logger', 'underscore', 'jquery', 'backbone',
         },
         setRenamedCircleLabel: function(value) {
             this.$el.find(this.renamedCircleLableSelector).val(value);
+        },
+        getRenamedCircleDescription: function() {
+            return this.$el.find(this.renamedCircleDescriptionSelector).val();
+        },
+        setRenamedCircleDescription: function(value) {
+            this.$el.find(this.renamedCircleDescriptionSelector).val(value);
+        },
+        setAuthor: function(value) {
+            this.$el.find(this.authorNameSelector).text(value);
         },
         resetAutocompleteSource: function() {
             this.$el.find(this.renamedCircleLableSelector).autocomplete('option', 'source', _.union(CategoryData.getPredefinedCategories(), UserData.getRecommendedTags()));
@@ -53,6 +65,14 @@ define(['logger', 'underscore', 'jquery', 'backbone',
         },
         callSelectActionCallback: function(event, ui) {
             this.selectActionCallback(event, ui);
+        },
+        setHideActionHandler: function(cb) {
+            this.hideModalActionCallback = cb;
+        },
+        callHideModalAction: function() {
+            if ( this.hideModalActionCallback ) {
+                this.hideModalActionCallback();
+            }
         }
     });
 });

@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, Data){
+define(['logger', 'voc', 'underscore', 'data/Data', 'userParams' ], function(Logger, Voc, _, Data, UserParams){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize OrgaEntityData");
@@ -33,6 +33,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
     m.mapAttributes = function(model) {
         return  {
             'label' : model.get(Voc.label),
+            'description' : model.get(Voc.description),
             'xLabel' : model.get(Voc.xLabel),
             'yLabel' : model.get(Voc.yLabel),
             'xR' : model.get(Voc.xR),
@@ -42,6 +43,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
         };
     };
     m.createCircle = function(model, options) {
+        model.set(Voc.author, UserParams.user);
         var version = model.get(Voc.belongsToVersion);
         var that = this;
         var data = this.mapAttributes(model);
@@ -50,7 +52,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             function(versionUri) {
                 that.vie.save({
                     'service' : 'learnEpVersionAddCircle',
-                    'data' : _.extend( data, {learnEpVersion : versionUri}),
+                    'data' : _.extend( data, { learnEpVersion : versionUri }),
                 }).to('sss').execute().success(function(savedEntityUri) {
                     model.set(model.idAttribute, savedEntityUri, options);
                     if(options.success) {
@@ -69,7 +71,7 @@ define(['logger', 'voc', 'underscore', 'data/Data' ], function(Logger, Voc, _, D
             function(modelUri) {
                 that.vie.save({
                     'service' : 'learnEpVersionUpdateCircle',
-                    'data' : _.extend( data, {learnEpCircle : modelUri}),
+                    'data' : _.extend( data, { learnEpCircle : modelUri }),
                 }).to('sss').execute().success(function(result) {
                     if(options.success) {
                         options.success(result);

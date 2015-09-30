@@ -31,6 +31,14 @@
             <span class="currentEpisodeAuthor"></span>
           | <span class="currentEpisodeSharedWith"></span>
       </p>
+
+      <% if ( discussionToolUrl ) { %>
+      <button type="button" class="btn btn-default navbar-btn discussionToolButton" title="Open Discussion Tool">
+          <span class="glyphicon glyphicon-comment"></span>
+          <span class="count"></span>
+      </button>
+      <% } %>
+
       <p class="navbar-text navbar-right">
         <% if ( affectUrl ) { %>
           <a href="<%= affectUrl %>" title="Affect" target="_blank" class="navbar-link affectButton"><span class="glyphicon glyphicon-heart text-danger"></span></a>

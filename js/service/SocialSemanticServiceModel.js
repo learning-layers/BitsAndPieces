@@ -1,4 +1,4 @@
-// works with SSS Rest API 4.1.0
+// works with SSS REST API V2 v11.0.0
 define(['underscore', 'logger'], function(_, Logger) {
     // to be called with a deferred object as context (eg. loadable)
     var LOG = Logger.get('SSSModel');
@@ -35,15 +35,44 @@ define(['underscore', 'logger'], function(_, Logger) {
         return true;
     };
 
+    var fixTags = function(object) {
+        if ( _.isArray(object['tags']) ) {
+            if ( !_.isEmpty(object['tags']) ) {
+                var fixedTags = _.map(object['tags'], function(tag) {
+                    if ( _.isObject(tag) ) {
+                        return tag.label;
+                    }
+                    return tag;
+                });
+                object['tags'] = fixedTags;
+            }
+        }
+        return true;
+    };
+
     /**
      * Fix in case object contains real entity data instead of URI.
-     * Applies fixForVIE to the attribute named 'entity', uses default
-     * idAttr and typeAttr.
+     * Applies fixForVIE to the provided key.
+     * Makes sure that fixable is not empty and is an object
+     * @param {object} object
+     * @param {string} containedKey The name of the key to fix
+     * @retrun {undefined}
+     */
+    var fixForContained = function(object, containedKey) {
+        if ( !_.isEmpty(object[containedKey]) && _.isObject(object[containedKey]) ) {
+            return fixForVIE(object[containedKey]);
+        }
+        return object;
+    };
+
+    /**
+     * Fix in case object contains real entity data instead of URI.
+     * Calls the fixForContained internally.
      * @param {object} object
      * @retrun {undefined}
      */
     var fixForContainedEntity = function(object) {
-        return fixForVIE(object['entity']);
+        return fixForContained(object, 'entity');
     };
 
     /**
@@ -80,11 +109,29 @@ define(['underscore', 'logger'], function(_, Logger) {
             delete fixable[typeAttr];
         }
 
+        // General fixes applied to any entity
+        fixTags(fixable);
+
         for( var prop in fixable ) {
             if( prop.indexOf('@') === 0 ) continue;
             if( prop.indexOf('sss:') === 0 ) continue;
             if( prop.indexOf('http:') === 0 ) continue;
             fixable['sss:'+prop] = fixable[prop];
+            // XXX Deal with author, force it to be URI not Object
+            // This is not a permanent solution, just a quick fix
+            // XXX This also deals with file object
+            if ( prop === 'author' || prop === 'file' ) {
+                if ( _.isObject(fixable['sss:'+prop]) ) {
+                    fixable['sss:'+prop] = fixable['sss:' + prop].id;
+                }
+            } else if ( prop === 'thumb' ) {
+                // XXX A special case for thumbnail
+                if ( _.isObject(fixable['sss:'+prop]) ) {
+                    if ( _.isObject(fixable['sss:'+prop]['file']) ) {
+                        fixable['sss:'+prop] = fixable['sss:'+prop].file.downloadLink;
+                    }
+                }
+            }
             delete fixable[prop];
         }
         return true;
@@ -131,6 +178,14 @@ define(['underscore', 'logger'], function(_, Logger) {
                     // force cast to number
                     params[key] = params[key] - 0;
                     break;
+                case 'encodedComponent':
+                    params[key] = encodeURIComponent(params[key]);
+                    break;
+                case 'csv':
+                    if (_.isArray(params[key])) {
+                        params[key] = encodeURIComponent(params[key].join(','));
+                    }
+                    break;
             }
         }
         return true;
@@ -149,21 +204,35 @@ define(['underscore', 'logger'], function(_, Logger) {
     };
 
     var m = {
-        'entityGet' : {
-            'resultKey' : 'entity',
-            'decoration' : decorations['single_entity']
-        },
         'entityUpdate' : {
-            'resultKey' : 'entity'
+            'reqType' : 'PUT',
+            'reqPath' : 'entities/entities/:entity',
+            'resultKey' : 'entity',
+            'params' : {
+                'entity': { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable' : 'entity'
         },
         'entityDescGet' : {
-            'resultKey' : 'desc',
-            'decoration' : decorations['single_desc_entity']
+            'reqType' : 'POST',
+            'reqPath' : 'entities/entities/filtered/:entity',
+            'resultKey' : 'entities',
+            'params' : {
+                'entity': { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'decoration' : decorations['single_desc_entity'],
+            'injectVariable': 'entity'
         },
         'categoriesPredefinedGet' : {
+            'reqType' : 'GET',
+            'reqPath' : 'categories/categories/predefined',
             'resultKey' : 'categories'
         },
         'search' : {
+            'reqType' : 'POST',
+            'reqPath' : 'search/search/filtered',
             'resultKey' : 'entities',
             'passThroughKeys' : ['pageNumber', 'pageNumbers', 'pagesID'],
             'params' : {
@@ -179,25 +248,42 @@ define(['underscore', 'logger'], function(_, Logger) {
             'decoration' : decorations['single_entity']
         },
         'userAll' : {
+            'reqType': 'GET',
+            'reqPath': 'users/users',
             'resultKey' : 'users',
             'decoration': decorations['single_entity']
         },
         'entityDescsGet' : {
-            'resultKey' : 'descs', 
+            'reqType': 'POST',
+            'reqPath': 'entities/entities/filtered/:entities',
+            'resultKey' : 'entities',
             'params' : {
-                'entities' : { 'type' : 'array' },
-                'types' : { 'type' : 'array' },
+                'entities' : { 'type' : 'csv' },
+                'setTags': { 'default' : true },
+                'setFlags': { 'default' : true }
             },
             'preparation' : preparations['scrubParams'],
-            'decoration' : decorations['single_desc_entity']
+            'decoration' : decorations['single_desc_entity'],
+            'injectVariable': 'entities'
         },
         'learnEpVersionCurrentGet' : {
+            'reqType': 'GET',
+            'reqPath': 'learneps/learneps/versions/current',
             'resultKey' : 'learnEpVersion'
         },
         'learnEpVersionCurrentSet' : {
-            'resultKey' : 'learnEpVersion'
+            'reqType': 'POST',
+            'reqPath': 'learneps/learneps/versions/current/:learnEpVersion',
+            'resultKey' : 'learnEpVersion',
+            'params': {
+                'learnEpVersion' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEpVersion'
         },
         'learnEpsGet' : {
+            'reqType': 'GET',
+            'reqPath': 'learneps/learneps',
             'resultKey' : 'learnEps',
             'decoration' : decorations['single_entity'],
             'subResults' : [
@@ -208,6 +294,8 @@ define(['underscore', 'logger'], function(_, Logger) {
             ]
         },
         'learnEpVersionsGet' : {
+            'reqType': 'GET',
+            'reqPath': 'learneps/learneps/:learnEp/versions',
             'resultKey' : 'learnEpVersions',
             'decoration' : decorations['single_entity'],
             'subResults' : [
@@ -219,47 +307,110 @@ define(['underscore', 'logger'], function(_, Logger) {
                     'resultKey' : 'learnEpEntities',
                     'decoration' : decorations['single_entity_with_contained']
                 }
-            ]
+            ],
+            'params': {
+                'learnEp' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEp'
         },
         'learnEpVersionGetTimelineState' : {
+            'reqType': 'GET',
+            'reqPath': 'learneps/learneps/versions/:learnEpVersion/timeline/state',
             'resultKey' : 'learnEpTimelineState',
-            'decoration' : decorations['single_entity']
+            'params': {
+                'learnEpVersion' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'decoration' : decorations['single_entity'],
+            'injectVariable': 'learnEpVersion'
         },
         'uEsGet' : {
-            'resultKey' : 'uEs',
-            'decoration' : decorations['fixForVIE_only'],
-            '@type': 'ueType'
+            'reqType' : 'POST',
+            'reqPath' : 'ues/ues/filtered',
+            'resultKey' : 'userEvents',
+            'params' : {
+                'setTags' : { 'default' : true },
+                'setFlags' : { 'default' : true }
+            },
+            'preparation' : preparations['scrubParams'],
+            'decoration' : decorations['single_entity_with_contained']
         },
         'learnEpVersionSetTimelineState' : {
+            'reqType': 'POST',
+            'reqPath': 'learneps/learneps/versions/:learnEpVersion/timeline/state',
             'resultKey' : 'learnEpTimelineState', 
             'params' : {
                 'startTime' : { 'type' : 'number' },
-                'endTime' : { 'type' : 'number' }
+                'endTime' : { 'type' : 'number' },
+                'learnEpVersion' : { 'type' : 'encodedComponent' }
             },
-            'preparation' : preparations['scrubParams']
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEpVersion'
         },
         'learnEpVersionAddCircle' : {
-            'resultKey' : 'learnEpCircle'
+            'reqType': 'POST',
+            'reqPath': 'learneps/learneps/versions/:learnEpVersion/circles',
+            'resultKey' : 'learnEpCircle',
+            'params' : {
+                'learnEpVersion' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEpVersion'
         },
         'learnEpVersionAddEntity' : {
-            'resultKey' : 'learnEpEntity'
+            'reqType': 'POST',
+            'reqPath': 'learneps/learneps/versions/:learnEpVersion/entities',
+            'resultKey' : 'learnEpEntity',
+            'params' : {
+                'learnEpVersion' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEpVersion'
         },
         'learnEpVersionUpdateCircle' : {
-            'resultKey' : 'worked'
+            'reqType': 'PUT',
+            'reqPath': 'learneps/learneps/circles/:learnEpCircle',
+            'resultKey' : 'worked',
+            'params' : {
+                'learnEpCircle' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEpCircle'
         },
         'learnEpVersionUpdateEntity' : {
-            'resultKey' : 'worked'
+            'reqType': 'PUT',
+            'reqPath': 'learneps/learneps/entities/:learnEpEntity',
+            'resultKey' : 'worked',
+            'params' : {
+                'learnEpEntity' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEpEntity'
         },
         'learnEpCreate' : {
+            'reqType': 'POST',
+            'reqPath': 'learneps/learneps',
             'resultKey' : 'learnEp'
         },
         'learnEpVersionCreate' : {
-            'resultKey' : 'learnEpVersion'
+            'reqType': 'POST',
+            'reqPath': 'learneps/learneps/:learnEp/versions',
+            'resultKey' : 'learnEpVersion',
+            'params' : {
+                'learnEp' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEp'
         },
         'tagAdd' : {
+            'reqType': 'POST',
+            'reqPath': 'tags/tags',
             'resultKey' : 'tag'
         },
         'flagsSet' : {
+            'reqType': 'POST',
+            'reqPath': 'flags/flags',
             'resultKey' : 'worked',
             'params' : {
                 'entities' : { 'type' : 'array' },
@@ -268,21 +419,32 @@ define(['underscore', 'logger'], function(_, Logger) {
             'preparation' : preparations['scrubParams']
         },
         'circleEntityShare' : {
+            'reqType': 'PUT',
+            'reqPath': 'entities/entities/:entity/share',
             'resultKey' : 'worked',
             'params' : {
                 'users' : { 'type' : 'array' },
+                'entity' : { 'type' : 'encodedComponent' }
             },
-            'preparation' : preparations['scrubParams']
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'entity'
         },
         'entityCopy' : {
+            'reqType': 'PUT',
+            'reqPath': 'entities/entities/:entity/copy',
             'resultKey' : 'worked',
             'params' : {
-                'users' : { 'type' : 'array' },
+                'forUsers' : { 'type' : 'array' },
                 'entitiesToExclude' : { 'type' : 'array' },
+                'includeEntities' : { 'default' : true },
+                'entity' : { 'type' : 'encodedComponent' }
             },
-            'preparation' : preparations['scrubParams']
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'entity'
         },
         'recommTags' : {
+            'reqType' : 'POST',
+            'reqPath' : 'recomm/recomm/filtered/tags',
             'resultKey' : 'tags',
             'params' : {
                 'maxTags' : { 'default' : 20 }
@@ -290,21 +452,48 @@ define(['underscore', 'logger'], function(_, Logger) {
             'preparation' : preparations['scrubParams']
         },
         'uECountGet' : {
+            'reqType' : 'POST',
+            'reqPath' : 'ues/ues/filtered/count',
             'resultKey' : 'count'
         },
         'learnEpVersionRemoveCircle' : {
-            'resultKey' : 'worked'
+            'reqType': 'DELETE',
+            'reqPath': 'learneps/learneps/circles/:learnEpCircle',
+            'resultKey' : 'worked',
+            'params' : {
+                'learnEpCircle' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEpCircle'
         },
         'learnEpVersionRemoveEntity' : {
-            'resultKey' : 'worked'
+            'reqType': 'DELETE',
+            'reqPath': 'learneps/learneps/entities/:learnEpEntity',
+            'resultKey' : 'worked',
+            'params' : {
+                'learnEpEntity' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEpEntity'
         },
         'tagsRemove' : {
-            'resultKey' : 'worked'
+            'reqType': 'DELETE',
+            'reqPath': 'tags/tags/entities/:entity',
+            'resultKey' : 'worked',
+            'params' : {
+                'entity' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'entity'
         },
         'messageSend' : {
+            'reqType' : 'POST',
+            'reqPath' : 'messages/messages',
             'resultKey' : 'message'
         },
         'messagesGet' : {
+            'reqType' : 'POST',
+            'reqPath' : 'messages/messages/filtered',
             'resultKey' : 'messages',
             'params' : {
                 'includeRead' : { 'default' : false }
@@ -314,6 +503,8 @@ define(['underscore', 'logger'], function(_, Logger) {
             'passThroughKeys' : ['queryTime']
         },
         'recommResources' : {
+            'reqType' : 'POST',
+            'reqPath' : 'recomm/recomm/filtered/resources',
             'resultKey' : 'resources',
             'params' : {
                 'maxResources' : { 'default' : 20 }
@@ -323,6 +514,8 @@ define(['underscore', 'logger'], function(_, Logger) {
             '@resourceKey' : 'resource'
         },
         'activitiesGet' : {
+            'reqType': 'POST',
+            'reqPath': 'activities/activities/filtered',
             'resultKey' : 'activities',
             'decoration' : decorations['single_entity_with_contained'],
             'subResults' : [
@@ -338,23 +531,64 @@ define(['underscore', 'logger'], function(_, Logger) {
             'passThroughKeys' : ['queryTime']
         },
         'tagFrequsGet' : {
+            'reqType' : 'POST',
+            'reqPath' : 'tags/tags/filtered/frequs',
             'resultKey' : 'tagFrequs'
         },
         'learnEpLockSet' : {
-            'resultKey' : 'worked'
+            'reqType': 'POST',
+            'reqPath': 'learneps/learneps/:learnEp/locks',
+            'resultKey' : 'worked',
+            'params' : {
+                'learnEp' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEp'
         },
         'learnEpLockRemove' : {
-            'resultKey' : 'worked'
+            'reqType': 'DELETE',
+            'reqPath': 'learneps/learneps/:learnEp/locks',
+            'resultKey' : 'worked',
+            'params' : {
+                'learnEp' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEp'
         },
-        'learnEpLockHold' : {
-            'resultKey' : 'locked',
-            'passThroughKeys' : ['locked', 'lockedByUser', 'remainingTime']
+        'learnEpsLockHold' : {
+            'reqType': 'GET',
+            'reqPath': 'learneps/learneps/:learnEp/locks',
+            'resultKey' : 'learnEpLocks',
+            'params' : {
+                'learnEp' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEp'
         },
         'entityAdd' : {
+            'reqType': 'POST',
+            'reqPath': 'entities/entities',
             'resultKey' : 'entity'
         },
         'learnEpRemove' : {
-            'resultKey' : 'worked'
+            'reqType': 'DELETE',
+            'reqPath': 'learneps/learneps/:learnEp',
+            'resultKey' : 'worked',
+            'params' : {
+                'learnEp' : { 'type' : 'encodedComponent' }
+            },
+            'preparation' : preparations['scrubParams'],
+            'injectVariable': 'learnEp'
+        },
+        'discsGet' : {
+            'reqType' : 'GET',
+            'reqPath' : 'discs/discs/targets/:targets',
+            'resultKey' : 'discs',
+            'params' : {
+                'targets' : { 'type' : 'csv' }
+            },
+           'preparation' : preparations['scrubParams'],
+           'injectVariable' : 'targets'
         }
     };
     return m;

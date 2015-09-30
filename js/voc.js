@@ -39,7 +39,7 @@ define([], {
     circleType: 'sss:circleType', 
     circleTypes : 'sss:circleTypes',
     orgaEntityType: 'sss:orgaEntityType',
-    belongsToUser: 'sss:user',
+    belongsToUser: 'sss:author',
     start: 'sss:startTime',
     end: 'sss:endTime',
 
@@ -74,9 +74,11 @@ define([], {
     hasTagRecommendation : 'sss:tagRecommendation',
 
     hasUserEvent : 'sss:hasUserEvent',
+    userEventType: 'sss:userEventType',
     file : 'sss:file',
     note : 'sss:note',
     remainingTime : 'sss:remainingTime',
-    lockReleasedByOtherTime : 'sss:lockedReleasedByOtherTime'
+    lockReleasedByOtherTime : 'sss:lockedReleasedByOtherTime',
+    discussionsCount: 'sss:discussionsCount'
         
 });

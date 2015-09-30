@@ -1,5 +1,5 @@
-define(['logger','jquery', 'backbone', 'underscore', 'voc', 'userParams'],
-function (Logger, $, Backbone, _, Voc, userParams) {
+define(['logger','jquery', 'backbone', 'underscore', 'voc'],
+function (Logger, $, Backbone, _, Voc) {
     return {
         LOG: Logger.get('EntityHelpers'),
         isSharedEpisode: function(episode) {
@@ -27,10 +27,10 @@ function (Logger, $, Backbone, _, Voc, userParams) {
 
             if ( !_.isEmpty(sharedWith) ) {
                 sharedWith = ( _.isArray(sharedWith) ) ? sharedWith : [sharedWith];
-                var currentUserUri = userParams.user;
+                var authorUri = episode.get(Voc.author).getSubject();
 
                 _.each(sharedWith, function(user) {
-                    if ( user.getSubject() !== currentUserUri ) {
+                    if ( user.getSubject() !== authorUri ) {
                         sharedWithNames.push(user.get(Voc.label));
                     }
                 });
@@ -127,6 +127,13 @@ function (Logger, $, Backbone, _, Voc, userParams) {
             }
 
             return false;
+        },
+        getIdFromUri: function(uri) {
+            if ( uri.substr(uri.length - 1) === '/' ) {
+                uri = uri.substr(0, uri.length - 1);
+            }
+            var tmp = uri.split('/');
+            return tmp[tmp.length - 1];
         }
     };
 });

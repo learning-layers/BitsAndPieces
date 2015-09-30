@@ -53,7 +53,7 @@ function(appConfig, VIE, Logger, userParams, UserData, SocialSemanticService, ex
     Logger.get('ActivityData').setLevel(Logger.OFF);
     Logger.get('CircleRenameModalView').setLevel(Logger.OFF);
     Logger.get('EntityHelpers').setLevel(Logger.OFF);
-    Logger.get('OrganizeOverlayView').setLevel(Logger.OFF);
+    Logger.get('OrganizeLockBarView').setLevel(Logger.OFF);
     Logger.get('BitThumbnailModalView').setLevel(Logger.OFF);
 
     // Add app version

@@ -6,10 +6,20 @@
                 <h4 class="modal-title" id="circleRenameModalLabel">Please enter the Concept</h4>
             </div>
             <div class="modal-body">
+                <div class="well well-sm">
+                    <label>Author:</label>
+                    <span class="authorName"></span>
+                </div>
                 <form role="form">
                     <div class="form-group">
                         <label for="renamedCircleLabel">Concept label:</label>
                         <input type="text" class="form-control" id="renamedCircleLabel" value="" />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="renameCircleDescription">Description:</label>
+                        <textarea class="form-control" id="renameCircleDescription"></textarea>
+                        <p class="help-block">Allows input of up to 5.000 characters. </p>
                     </div>
                 </form>
             </div>

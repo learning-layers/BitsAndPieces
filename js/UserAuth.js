@@ -31,14 +31,13 @@ function (appConfig, Logger, $) {
         },
         authCall: function(username, password, access_token) {
             var that = this,
-                defer = $.Deferred();
-                op = "authCheckCred";
+                defer = $.Deferred(),
                 params = {
                     'label' : username, 
                     'password' : password
                 },
                 ajaxSettings = {
-                    'url' : appConfig.sssHostREST + op + "/",
+                    'url' : appConfig.sssHostREST + 'auth/auth/',
                     'type': "POST",
                     'data' : JSON.stringify(params),
                     'contentType' : "application/json",
@@ -47,22 +46,18 @@ function (appConfig, Logger, $) {
                     'complete' : function(jqXHR, textStatus) {
                         if( jqXHR.readyState !== 4 || jqXHR.status !== 200){
                             AppLog.error("sss json request failed");
+                            defer.reject(false);
                             return;
                         }
                         
                         var result = $.parseJSON(jqXHR.responseText);
                         that.LOG.debug('result', result);
                         
-                        if( result.error ) {
-                            that.LOG.debug('Auth Error', result);
-                            defer.reject(false);
-                            return;
-                        }
                         that.LOG.debug('Auth Success', result);
                         var authData = {
                             label: username,
-                            key: result[op].key,
-                            user: result[op].user,
+                            key: result.key,
+                            user: result.user,
                         };
                         that.setAuthCookie(authData);
                         defer.resolve(true);
@@ -71,6 +66,8 @@ function (appConfig, Logger, $) {
 
             if ( access_token ) {
                 ajaxSettings['headers'] = { 'Authorization' : "Bearer " + access_token };
+                ajaxSettings['type'] = 'GET';
+                ajaxSettings['data'] = '';
             }
             $.ajax(ajaxSettings);
 

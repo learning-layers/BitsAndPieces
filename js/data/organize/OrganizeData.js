@@ -65,16 +65,5 @@ define(['logger', 'voc', 'underscore', 'data/CopyMachine', 'data/Data' ], functi
         });
         return newOrganize;
     };
-    m.fetchData = function(entityUris) {
-        var that = this;
-        this.vie.load({
-            'service' : 'entityDescsGet',
-            'data' : {
-                'entities' : entityUris
-            }
-        }).from('sss').execute().success(function(entities) {
-            that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
-        });
-    };
     return m;
 });

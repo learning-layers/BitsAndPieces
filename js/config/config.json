@@ -1,9 +1,10 @@
 {
-  "sssHostREST" : "http://localhost:8080/ss-adapter-rest/SSAdapterRest/",
+  "sssHostREST" : "http://localhost:8080/sss.adapter.rest.v2/",
   "oidcAuthorizationUrl" : "",
   "oidcClientID" : "",
   "affectUrl" : "",
   "helpUrl" : "http://foti.ee/bits_and_pieces_manual/BnP_usermanual.html",
+  "discussionToolUrl": "",
   "search" : {
     "localSearchOp" : "and",
     "globalSearchOp" : "and"

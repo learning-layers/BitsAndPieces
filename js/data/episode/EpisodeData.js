@@ -4,7 +4,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
         this.LOG.debug("initialize Episode");
         this.vie = vie;
         this.vie.entities.on('add', this.filter, this);
-        this.setIntegrityCheck(Voc.belongsToUser, Voc.USER, Voc.hasEpisode);
+        this.setIntegrityCheck(Voc.USER, Voc.USER, Voc.hasEpisode);
         this.setIntegrityCheck(Voc.hasVersion, Voc.VERSION, Voc.belongsToEpisode);
     };
     m.LOG = Logger.get('EpisodeData');
@@ -130,7 +130,9 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
         newEpisode = new this.vie.Entity();
         this.LOG.debug("newEpisode", newEpisode);
         newEpisode.set(Voc.label, "New Episode");
-        newEpisode.set(Voc.belongsToUser, user.getSubject());
+        newEpisode.set(Voc.author, user.getSubject());
+        newEpisode.set(Voc.USER, user.getSubject());
+        newEpisode.set(Voc.hasUsers, [user.getSubject()]);
         newEpisode.set('@type', Voc.EPISODE);
         this.vie.entities.addOrUpdate(newEpisode);
         newVersion = VersionData.newVersion(newEpisode, fromVersion).getSubject();
@@ -185,7 +187,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                     'service' : 'entityCopy',
                     'data' : {
                         'entity' : modelUri,
-                        'users' : users,
+                        'forUsers' : users,
                         'entitiesToExclude' : exclude,
                         'comment' : comment
                     }
@@ -210,7 +212,6 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 that.vie.save({
                     'service' : 'learnEpLockSet',
                     'data' : {
-                        'forUser' : userParams.user,
                         'learnEp' : modelUri
                     }
                 }).using('sss').execute().success(function(result){
@@ -234,7 +235,6 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                 that.vie.save({
                     'service' : 'learnEpLockRemove',
                     'data' : {
-                        'forUser' : userParams.user,
                         'learnEp' : modelUri
                     }
                 }).using('sss').execute().success(function(result){
@@ -256,32 +256,34 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
             model.getSubject(),
             function(modelUri) {
                 that.vie.save({
-                    'service' : 'learnEpLockHold',
+                    'service' : 'learnEpsLockHold',
                     'data' : {
                         'learnEp' : modelUri
                     }
-                }).using('sss').execute().success(function(result, passThrough){
-                    that.LOG.debug('success learnEpLockHold', result, passThrough);
+                }).using('sss').execute().success(function(result){
+                    that.LOG.debug('success learnEpsLockHold', result);
+
+                    var lockData = result[0];
 
                     if ( true === model.get(Voc.isLocked) && false === model.get(Voc.isLockedByUser) ) {
-                        if ( false === passThrough['locked'] ) {
+                        if ( false === lockData['locked'] ) {
                             model.set(Voc.lockReleasedByOtherTime, new Date().getTime());
                         }
                     }
 
-                    if ( model.get(Voc.isLocked) !== passThrough['locked'] ) {
-                        model.set(Voc.isLocked, passThrough['locked']);
+                    if ( model.get(Voc.isLocked) !== lockData['locked'] ) {
+                        model.set(Voc.isLocked, lockData['locked']);
                     }
 
-                    if ( model.get(Voc.isLockedByUser) !== passThrough['lockedByUser'] ) {
-                        model.set(Voc.isLockedByUser, passThrough['lockedByUser']);
+                    if ( model.get(Voc.isLockedByUser) !== lockData['lockedByUser'] ) {
+                        model.set(Voc.isLockedByUser, lockData['lockedByUser']);
                     }
 
-                    if ( model.get(Voc.remainingTime) !== passThrough['remainingTime'] ) {
-                        model.set(Voc.remainingTime, passThrough['remainingTime']);
+                    if ( model.get(Voc.remainingTime) !== lockData['remainingTime'] ) {
+                        model.set(Voc.remainingTime, lockData['remainingTime']);
                     }
 
-                    defer.resolve(result, passThrough);
+                    defer.resolve(result, lockData);
                 }).fail(function(f) {
                     that.LOG.debug('error learnEpLockHold', f);
                     defer.reject(f);
@@ -308,6 +310,29 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                     defer.resolve(true);
                 }).fail(function(f) {
                     that.LOG.debug('error learnEpRemove', f);
+                    defer.reject(f);
+                });
+            }
+        );
+
+        return defer.promise();
+    };
+    m.getDiscussionsCount = function(model) {
+        var that = this,
+            defer = $.Deferred();
+        this.vie.onUrisReady(
+            model.getSubject(),
+            function(modelUri) {
+                that.vie.load({
+                    service : 'discsGet',
+                    data : {
+                        'targets' : [modelUri]
+                    }
+                }).to('sss').execute().success(function(discussions) {
+                    that.LOG.debug('success discsGet', discussions);
+                    defer.resolve(discussions.length);
+                }).fail(function(f) {
+                    that.LOG.debug('error discsGet', f);
                     defer.reject(f);
                 });
             }

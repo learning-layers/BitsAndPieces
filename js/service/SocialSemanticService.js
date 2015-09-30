@@ -1,4 +1,4 @@
-// The SocialSemanticService wraps the SSS REST API v3.4.0
+// The SocialSemanticService wraps the SSS REST API V2 v11.0.0
 
 define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceModel', 'jquery'],
 function(Logger, VIE, _, Voc, SSSModel, $) {
@@ -60,11 +60,11 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                 this.vie.namespaces.add(key, val);
             }
             this.hostREST = this.options.hostREST;
-            if( !this.hostREST) {
+            if( !(this.hostREST) ) {
                 throw new Error("no REST endpoint for SocialSemanticService defined");
             }
         },
-        resolve: function(serviceCall, resultHandler, errorHandler, params) {
+        resolve: function(serviceCall, service, resultHandler, errorHandler, params) {
             this.LOG.debug('resolve', this);
             var i = 0;
             var that = this;
@@ -88,7 +88,7 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
             var pos = this.pendingCallsCount++;
             this.pendingCalls[serviceCall][pos] = p;
             this.LOG.debug('resolve pos', pos);
-            this.send(serviceCall, params || {},
+            this.send(serviceCall, service, params || {},
                     function(result) {
                         delete that.pendingCalls[serviceCall][pos];
                         that.LOG.debug("resolve resultHandlers", p);
@@ -112,40 +112,54 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
             }
         }, 
         /* AJAX request wrapper */
-        send : function(op, par, success, error ){
+        send : function(op, service, par, success, error ){
             this.LOG.debug('par', par);
             var sss = this;
             this.vie.onUrisReady(
                 this.user, 
                 function(userUri) {
+                    var serviceUrl = sss.hostREST;
+                    var serviceHeaders = { 'Authorization' : "Bearer " + sss.userKey };
+                    var serviceReqPath = service.reqPath;
+                    var serviceReqType = service.reqType || 'GET';
+
+                    if ( service.injectVariable ) {
+                        serviceReqPath = serviceReqPath.replace(':' + service.injectVariable, encodeURIComponent(par[service.injectVariable]));
+                        delete par[service.injectVariable];
+                    }
+
+                    var data = par;
+                    if ( service.reqType && service.reqType.toUpperCase() === 'GET' ) {
+                        if ( _.isEmpty(data) ) {
+                            data = '';
+                        } else {
+                            data = JSON.stringify(data);
+                        }
+                    } else {
+                        data = JSON.stringify(data);
+                    }
                     $.ajax({
-                        'url' : sss.hostREST + op + "/",
-                        'type': "POST",
-                        'data' : JSON.stringify(_.extend(par, {
-                            'user' : userUri || "mailto:dummyUser",
-                            'key' : sss.userKey || "someKey"
-                        })),
+                        'url' : serviceUrl + serviceReqPath + "/",
+                        'type': serviceReqType,
+                        'data' : data,
                         'contentType' : "application/json",
                         'async' : true,
                         'dataType': "application/json",
+                        'headers': serviceHeaders,
                         'complete' : function(jqXHR, textStatus) {
+                            var result = $.parseJSON(jqXHR.responseText);
 
                             if( jqXHR.readyState !== 4 || jqXHR.status !== 200){
                                 sss.LOG.error("sss json request failed");
-                                return;
-                            }
 
-                            var result = $.parseJSON(jqXHR.responseText); 
-
-                            if( result.error ) {
-                                if( error ) error(result);
+                                if (error) error(result);
 
                                 // This could trigger a logout
-                                sss.checkErrorAndAct(result);
-
+                                sss.checkErrorAndAct(jqXHR, result);
                                 return;
                             }
-                            success(result[op]);
+
+                            if (success) success(result);
                         }
                     });
                 }
@@ -205,7 +219,7 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                 });
             }
             this.LOG.debug('params', params);
-            this.resolve(serviceName,
+            this.resolve(serviceName, service,
                 function(result) {
                     sss.LOG.debug('result', result);
                     // TODO change to call in context of service, not able
@@ -293,10 +307,17 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
             }
         },
 
-        checkErrorAndAct: function(result) {
-            if ( result.error && result.id === 'authOIDCUserInfoRequestFailed' ) {
-                var ev = $.Event('bnp:oidcTokenExpired', {});
-                $(document).trigger(ev);
+        checkErrorAndAct: function(jqXHR, result) {
+            if ( jqXHR.status === 500 ) {
+                var oidcErrors = [
+                    'authCouldntConnectToOIDC',
+                    'authCouldntParseOIDCUserInfoResponse',
+                    'authOIDCUserInfoRequestFailed'
+                ];
+                if ( _.indexOf(oidcErrors, result.id) !== -1 ) {
+                    var ev = $.Event('bnp:oidcTokenExpired', {});
+                    $(document).trigger(ev);
+                }
             }
         }
     };

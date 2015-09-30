@@ -190,41 +190,52 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             var that = this,
                 data = {
                 types : [
-                    'addCategory',
-                    'removeCategories',
-                    //'createLearnEp',
-                    'addEntityToLearnEpVersion',
-                    'changeEntityForLearnEpVersionEntity',
-                    'moveLearnEpVersionEntity',
-                    'removeLearnEpVersionEntity',
-                    'addCircleToLearnEpVersion',
-                    'changeLearnEpVersionCircleLabel',
-                    'moveLearnEpVersionCircle',
-                    'removeLearnEpVersionCircle',
-                    'shareLearnEpWithUser',
-                    'messageSend'
+'removeCategories',
+'addEntityToLearnEpVersion',
+'changeEntityForLearnEpVersionEntity',
+'moveLearnEpVersionEntity',
+'removeLearnEpVersionEntity',
+'addCircleToLearnEpVersion',
+'changeLearnEpVersionCircleLabel',
+'moveLearnEpVersionCircle',
+'removeLearnEpVersionCircle',
+'shareLearnEpWithUser',
+'copyLearnEpForUsers',
+'messageSend',
+'addEntityToLearnEpCircle',
+'removeEntityFromLearnEpCircle',
+'removeLearnEpVersionCircleWithEntitites',
+'changeLearnEpVersionCircleDescription'
                 ],
                 includeOnlyLastActivities : true,
                 startTime: this.activitiesFetchTime ? this.activitiesFetchTime : null
             },
-            promise = ActivityData.getActivities(data);
+            promise = ActivityData.getActivities(data),
+            defer = $.Deferred();
 
             promise.done(function(activities, passThrough) {
                 that.activitiesFetchTime = passThrough['queryTime'];
+                defer.resolve(activities, passThrough);
+            }).fail(function(f) {
+                defer.resolve([], { 'queryTime' : null });
             });
 
-            return promise;
+            return defer.promise();
         },
         fetchMessages: function() {
             var that = this,
                 startTime = this.messagesFetchTime ? this.messagesFetchTime : null,
-                promise = MessageData.getMessages(true, startTime);
+                promise = MessageData.getMessages(true, startTime),
+                defer = $.Deferred();
 
             promise.done(function(messages, passThrough) {
                 that.messagesFetchTime = passThrough['queryTime'];
+                defer.resolve(messages, passThrough);
+            }).fail(function(f) {
+                defer.resolve([], { 'queryTime' : null });
             });
 
-            return promise;
+            return defer.promise();
         },
         fetchRecommendations: function() {
             var data = {
@@ -232,9 +243,16 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                     maxResources : 20,
                     typesToRecommOnly : ['evernoteResource', 'evernoteNote', 'evernoteNotebook']
                 },
-                promise = EntityData.getRecommResources(data);
+                promise = EntityData.getRecommResources(data),
+                defer = $.Deferred();
 
-            return promise;
+            promise.done(function(entities) {
+                defer.resolve(entities);
+            }).fail(function(f) {
+                defer.resolve([]);
+            });
+
+            return defer.promise();
         },
         fetchActivityStream: function() {
             var that = this,

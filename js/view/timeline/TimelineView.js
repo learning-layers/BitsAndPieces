@@ -203,7 +203,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 'start' : start,
                 'end' : end,
                 'min' : new Date('2013-01-01'),
-                'max' : new Date('2016-01-01'),
+                'max' : new Date( ( ( new Date() ).getFullYear() + 1 ) + '-07-01' ),
                 'zoomMin' : 28800000, // 8 hours
                 'zoomMax' : 31556940000 // 1 year
             }));

@@ -516,22 +516,14 @@ label.notBoldLabel {
 	position: relative;
 }
 
-.organizeOverlay {
-	/* XXX NEEDS BROWSER SPECIFIC PREFIXES */
-	width: calc(100% - 20px);
-	height: 400px;
-	position: absolute;
-	top: 19px;
-	left: 0;
-	margin-left: 10px;
-	padding-right: 10px;
+.organizeLockBar {
+	width: 100%;
 }
 
-.organizeOverlay button {
+.organizeLockBar button {
 	margin-left: auto;
 	margin-right: auto;
 	display: block;
-	margin-top: 10px;
 }
 
 .organizeWidget button {
@@ -570,15 +562,15 @@ img.bitModalThumbnail {
 	color: #555;
 }
 
-.activityIcon .addEntityToLearnEpVersion, .activityIcon .addCircleToLearnEpVersion {
+.activityIcon .addEntityToLearnEpVersion, .activityIcon .addCircleToLearnEpVersion, .addEntityToLearnEpCircle {
 	color: #5ba74a;
 }
 
-.activityIcon .removeLearnEpVersionEntity, .activityIcon .removeLearnEpVersionCircle {
+.activityIcon .removeLearnEpVersionEntity, .activityIcon .removeLearnEpVersionCircle, .removeEntityFromLearnEpCircle, .removeLearnEpVersionCircleWithEntitites {
 	color: #f6a551;
 }
 
-.activityIcon .moveLearnEpVersionCircle, .activityIcon .changeLearnEpVersionCircleLabel, .activityIcon .moveLearnEpVersionEntity, .activityIcon .changeEntityForLearnEpVersionEntity {
+.activityIcon .moveLearnEpVersionCircle, .activityIcon .changeLearnEpVersionCircleLabel, .activityIcon .moveLearnEpVersionEntity, .activityIcon .changeEntityForLearnEpVersionEntity, .changeLearnEpVersionCircleDescription {
 	color: #48a2c5;
 }
 
@@ -603,5 +595,13 @@ ul.dropdown-menu li.episode a {
 
 ul.dropdown-menu li.episode a.highlight {
 	color: #333;
+}
+
+.navbar .discussionToolButton {
+	color: #777;
+}
+
+.navbar .discussionToolButton span {
+    color: #DB0000;
 }
 

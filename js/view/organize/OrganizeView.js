@@ -1,6 +1,6 @@
 define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
-        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'data/organize/OrganizeData', 'voc' ],
-    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, Voc){
+        'view/sss/EntityView','view/sss/OrgaEntityView', 'organize', 'data/organize/OrganizeData', 'voc', 'utils/SystemMessages' ],
+    function(VIE, Logger, tracker, _, $, Backbone, EntityView, OrgaEntityView, Organize, OrganizeData, Voc, SystemMessages){
     return Backbone.View.extend({
         LOG: Logger.get('OrganizeView'),
         events:{
@@ -14,6 +14,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             'ClickEntity': 'ClickEntity'
         },
         initialize: function() {
+            this.canvasWidth = 2000;
+            this.canvasHeight = 1500;
 
             this.EntityView = this.options.EntityView;
             var version = this.model.get(Voc.belongsToVersion);
@@ -25,6 +27,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
 
             this.LOG.debug("initialize Organize component");
             this.organize = new Organize();
+            // Set drag constraints as needed
+            this.organize.DRAG_CONSTRAINTS = {
+                minX: 0,
+                minY: 0,
+                maxX: 2000,
+                maxY: 1500
+            };
 
             this.circleRenameModalView = this.options.circleRenameModalView;
             version.on('destroy', function(model, collection, options) {
@@ -68,6 +77,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
         render: function() {
             this.LOG.debug('el = ', this.el);
             this.organize.loadOrganizeCanvas(this.el);
+            // Set height and width of SVG element
+            this.$el.find('svg').attr('width', this.canvasWidth + 'px').attr('height', this.canvasHeight + 'px');
             // Make the view aware of existing entities in collection
             var view = this;
             var version = this.model.get(Voc.belongsToVersion);
@@ -146,6 +157,10 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
                 item.label = item.Label;
                 delete item.Label;
             }
+            if ( item.Description ) {
+                item.description = item.Description;
+                delete item.Description;
+            }
             if( item.LabelX ) {
                 item.xLabel = item.LabelX;
                 delete item.LabelX;
@@ -177,7 +192,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             var version = this.model.get(Voc.belongsToVersion);
             var episode = version.get(Voc.belongsToEpisode);
             model.once('change:'+model.idAttribute, function(model, value, options) {
-                tracker.info(tracker.ADDCIRCLETOLEARNEPVERSION, tracker.ORGANIZEAREA, model.getSubject(), null, [episode.getSubject()]);
+                // TODO Clean-up needed
+                //tracker.info(tracker.ADDCIRCLETOLEARNEPVERSION, tracker.ORGANIZEAREA, model.getSubject(), null, [episode.getSubject()]);
             }, this);
         },
 
@@ -216,27 +232,36 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             // Set title, reset autocomplete (make sure that loaded info is used),
             // set save action handler (will close the modal), open modal
             this.circleRenameModalView.setRenamedCircleLabel(view.model.get(Voc.label));
+            this.circleRenameModalView.setRenamedCircleDescription(view.model.get(Voc.description));
+            this.circleRenameModalView.setAuthor(view.model.get(Voc.author).get(Voc.label));
             this.circleRenameModalView.resetAutocompleteSource();
             this.circleRenameModalView.setSaveActionHandler(function(e){
                 e.preventDefault();
                 var newCircleLabel = that.circleRenameModalView.getRenamedCircleLabel();
                 circle.Label = newCircleLabel;
-                that.circleRenameModalView.hideModal();
+                var newCircleDescription = that.circleRenameModalView.getRenamedCircleDescription();
+                circle.Description = newCircleDescription;
 
                 //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
                 //circle['_organizeId'] = circle['id'];
                 delete circle['id'];
                 that.organize.currentLabel.text(circle.Label);
+                // Need to use currentLabel before hide is fired as the callback removes the currentLabel as such
+                that.circleRenameModalView.hideModal();
                 view.model.save(that.mapAttributes(circle), {'by': that});
 
                 var version = that.model.get(Voc.belongsToVersion);
                 var episode = version.get(Voc.belongsToEpisode);
-                tracker.info(tracker.CHANGELABEL, tracker.ORGANIZEAREA, view.model.getSubject(), newCircleLabel, [episode.getSubject()]);
+                // TODO Check if version and episode are needed any more
+                //tracker.info(tracker.CHANGELABEL, tracker.ORGANIZEAREA, view.model.getSubject(), newCircleLabel, [episode.getSubject()]);
             });
             this.circleRenameModalView.setSelectActionHandler(function(event, ui) {
                 var version = that.model.get(Voc.belongsToVersion);
                 var episode = version.get(Voc.belongsToEpisode);
                 tracker.info(tracker.CLICKLABELRECOMMENDATION, tracker.ORGANIZEAREA, view.model.getSubject(), ui.item.value, [episode.getSubject()]);
+            });
+            this.circleRenameModalView.setHideActionHandler(function() {
+                that.organize.quietUnselectLabelAndInside();
             });
             this.circleRenameModalView.showModal();
         },
@@ -254,7 +279,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             
             var version = this.model.get(Voc.belongsToVersion);
             var episode = version.get(Voc.belongsToEpisode);
-            tracker.info(tracker.REMOVELEARNEPVERSIONCIRCLE, tracker.ORGANIZEAREA, view.model.getSubject(), null, [episode.getSubject()]);
+            // TODO Clean-up needed
+            //tracker.info(tracker.REMOVELEARNEPVERSIONCIRCLE, tracker.ORGANIZEAREA, view.model.getSubject(), null, [episode.getSubject()]);
 
             //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
             view.model.destroy({'by':this});
@@ -307,7 +333,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
 
             var version = this.model.get(Voc.belongsToVersion);
             var episode = version.get(Voc.belongsToEpisode);
-            tracker.info(tracker.REMOVELEARNEPVERSIONENTITY, tracker.ORGANIZEAREA, view.resourceView.model.getSubject(), null, [episode.getSubject()]);
+            // TODO Clean-up needed
+            //tracker.info(tracker.REMOVELEARNEPVERSIONENTITY, tracker.ORGANIZEAREA, view.resourceView.model.getSubject(), null, [episode.getSubject()]);
+            SystemMessages.addSuccessMessage(view.resourceView.model.get(Voc.label) + ' was removed from episode ' + episode.get(Voc.label), true, 5000);
 
             //var eEntity = view.orgaEntityCollection.findWhere({'_organizeId' : entity.id });
             view.model.destroy({'by':this});

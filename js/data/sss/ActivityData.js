@@ -50,7 +50,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
                         _.each(activities, function(activity) {
                             // Check if acceptable activity
                             if ( activity[Voc.author] === userParams.user ) {
-                                if ( activity[Voc.hasActivityType] !== 'shareLearnEpWithUser' && activity[Voc.hasActivityType] !== 'messageSend' ) {
+                                if ( activity[Voc.hasActivityType] !== 'shareLearnEpWithUser' && activity[Voc.hasActivityType] !== 'copyLearnEpForUsers' && activity[Voc.hasActivityType] !== 'messageSend' ) {
                                     return;
                                 }
                             } else {
@@ -139,6 +139,8 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'userParams' ], fu
         if (entity['@type'] === Voc.EPISODE ) {
             for ( var key in entity ) {
                 if ( _.isEmpty(entity[key]) ) {
+                    delete entity[key];
+                } else if ( key === Voc.hasUsers ) {
                     delete entity[key];
                 }
             }

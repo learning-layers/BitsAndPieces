@@ -1,5 +1,5 @@
-define(['config/config', 'jquery', 'userParams', 'logger'],
-    function(appConfig, $, userParams, Logger) {
+define(['config/config', 'jquery', 'logger', 'userParams'],
+    function(appConfig, $, Logger, userParams) {
         tracker = Logger.get('Tracker');
         tracker.setLevel(Logger.INFO);
         tracker.setHandler(function(messages, context){
@@ -9,25 +9,22 @@ define(['config/config', 'jquery', 'userParams', 'logger'],
                 contentParam = messages[3] ? messages[3] : null,
                 entitiesParam = messages[4] ? messages[4] : [],
                 usersParam = messages[5] ? messages[5] : [],
-                op = "evalLog"
                 params = {
-                    'user' : userParams.user,
-                    'key' : userParams.userKey,
                     'type' : typeParam,
                     'toolContext' : toolContextParam,
-                    'forUser' : userParams.user,
                     'entity' : entityParam,
                     'content' : contentParam,
                     'entities' : entitiesParam,
                     'users' : usersParam
                 };
             $.ajax({
-                'url' : appConfig.sssHostREST + op + "/",
+                'url' : appConfig.sssHostREST + 'eval/eval/log/',
                 'type': "POST",
                 'data' : JSON.stringify(params),
                 'contentType' : "application/json",
                 'async' : true,
                 'dataType': "application/json",
+                'headers': { 'Authorization' : "Bearer " + userParams.userKey },
                 'complete' : function(jqXHR, textStatus) {
 
                     if( jqXHR.readyState !== 4 || jqXHR.status !== 200){

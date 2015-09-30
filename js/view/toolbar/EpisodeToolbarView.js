@@ -233,7 +233,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
             var sharedWithUsernames = this.getUserNamesFromUris(this.selectedUsers);
             if ( shareType === 'coediting' ) {
-                tracker.info(tracker.SHARELEARNEPWITHUSER, tracker.EPISODETAB, episode.getSubject(), null, [], this.selectedUsers);
+                // TODO Clean-up needed
+                //tracker.info(tracker.SHARELEARNEPWITHUSER, tracker.EPISODETAB, episode.getSubject(), null, [], this.selectedUsers);
 
                 var promise = EpisodeData.shareEpisode(episode, this.selectedUsers, notificationText);
 
@@ -293,7 +294,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     }
                 }
 
-                tracker.info(tracker.COPYLEARNEPFORUSER, tracker.EPISODETAB, episode.getSubject(), null, included, this.selectedUsers);
+                // TODO Clean-up needed
+                //tracker.info(tracker.COPYLEARNEPFORUSER, tracker.EPISODETAB, episode.getSubject(), null, included, this.selectedUsers);
 
                 var promise = EpisodeData.copyEpisode(episode, this.selectedUsers, excluded, notificationText);
 

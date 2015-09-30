@@ -1,6 +1,6 @@
 // TODO EpisodeManagerView could be renamed to MenuView
-define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
-        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView'], function(VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView){
+define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
+        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
@@ -10,7 +10,8 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             //'click button#createNewVersion' : 'createNewVersion',
             'click a#logout' : 'logOut',
             'click a.helpButton' : 'showHelp',
-            'click a.affectButton' : 'handleAffect'
+            'click a.affectButton' : 'handleAffect',
+            'click .discussionToolButton' : 'handleDiscussionTool'
         },
         initialize: function() {
             this.views = {};
@@ -26,6 +27,9 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         },
         render: function() {
             this.LOG.debug('EpisodeManager render');
+            // Hide discussionTool button until episode is loaded
+            this.$el.find('.discussionToolButton').hide();
+
             var version = this.model.get(Voc.currentVersion);
             this.LOG.debug('version', _.clone(version));
             if( !version || !version.isEntity ) {
@@ -39,11 +43,13 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
                 version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.render, this);
                 return;
             }
+
             var label = this.currentEpisode.get(Voc.label);
             this.renderLabel(this.currentEpisode, label);
             this.renderVisibility(this.currentEpisode, this.currentEpisode.get(Voc.circleTypes));
             this.renderAuthor(this.currentEpisode);
             this.renderSharedWith(this.currentEpisode, this.currentEpisode.get(Voc.hasUsers));
+            this.renderDiscussionToolButton(this.currentEpisode);
 
             var prevCurrVersion = this.model.previous(Voc.currentVersion);
             var prevCurrEpisode, epView;
@@ -55,14 +61,18 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
                     }
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
+                    prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderAuthor, this);
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
+                    prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.discussionsCount), this.renderDiscussionToolButton, this);
                 }
             }
             if(epView = this.views[this.currentEpisode.cid]) {
                 epView.highlight();
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.renderLabel, this);
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
+                this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderAuthor, this);
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
+                this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.discussionsCount), this.renderDiscussionToolButton, this);
             }
         },
         renderLabel: function(episode, label) {
@@ -112,6 +122,17 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             }
 
             this.$el.find('.currentEpisodeSharedWith').html(sharedWithText);
+        },
+        renderDiscussionToolButton: function(episode) {
+            var count = episode.get(Voc.discussionsCount);
+
+            if ( count && count > 0 ) {
+                this.$el.find('.discussionToolButton > span.count').html('( ' + count + ' )');
+            } else {
+                this.$el.find('.discussionToolButton > span.count').html('');
+            }
+
+            this.$el.find('.discussionToolButton').show();
         },
         changeEpisodeSet: function(model, set, options) {
             this.LOG.debug('changeEpisodeSet', set);  
@@ -188,6 +209,17 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
             this.placeholderAddModalView.showModal();
         },
         episodeVersionChanged: function() {
+            var version = this.model.get(Voc.currentVersion);
+            if ( version && version.isEntity ) {
+                var episode = version.get(Voc.belongsToEpisode);
+                if( !episode ) {
+                    // wait for the episode to be ready
+                    version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.loadAndSetDiscussionsCount, this);
+                } else {
+                    this.loadAndSetDiscussionsCount();
+                }
+            }
+
             this.render();
         },
         logOut: function(e) {
@@ -215,12 +247,38 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/ep
         handleAffect: function(e) {
             tracker.info(tracker.CLICKAFFECTBUTTON, null);
         },
+        handleDiscussionTool: function(e) {
+           if ( !this.currentEpisode ) return;
+
+           var url = appConfig.discussionToolUrl
+               + '#/auth/'
+               + encodeURIComponent(encodeURIComponent(this.currentEpisode.getSubject()));
+           window.open(url);
+        },
         clearAllEpisodeVisuals: function() {
             this.LOG.debug('clearAllEpisodeVisuals called');
             this.$el.find('.currentEpisodeLabel').html('');
             this.$el.find('.currentEpisodeVisibility').html('');
             this.$el.find('.currentEpisodeAuthor').html('');
             this.$el.find('.currentEpisodeSharedWith').html('');
+        },
+        loadAndSetDiscussionsCount: function() {
+            var version = this.model.get(Voc.currentVersion);
+            if( !version || !version.isEntity ) {
+                return;
+            }
+            var episode  = version.get(Voc.belongsToEpisode);
+            if( !episode && !episode.isEntity ) {
+                return;
+            }
+
+            // Load and set discussions count
+            var discussionsPromise = EpisodeData.getDiscussionsCount(episode);
+            discussionsPromise.done(function(count) {
+                episode.set(Voc.discussionsCount, count);
+            }).fail(function() {
+                episode.set(Voc.discussionsCount, 0);
+            });
         }
     });
 });
