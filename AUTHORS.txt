@@ -6,4 +6,4 @@ The main Bits And Pieces developers are:
 - Matthias Rella <mrella@know-center.at>
 - Isaias Barreto da Rosa <ibr@tlu.ee>
 - Dieter Theiler <dtheiler@know-center.at>
-- Pjor Savitski <gnum@tlu.ee>
+- Pjotr Savitski <gnum@tlu.ee>
