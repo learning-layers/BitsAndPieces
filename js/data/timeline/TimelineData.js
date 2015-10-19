@@ -1,5 +1,7 @@
 define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], function(Logger, Voc, _, Data, UserData){
     var m = Object.create(Data);
+    var fetchDataTimer = null;
+    var setStateTimer = null;
     m.init = function(vie) {
         this.LOG.debug("initialize TimelineData");
         this.vie = vie;
@@ -20,7 +22,14 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
             // TODO resolve this hack: only fire on start change to avoid double execution
             model.on('change:' + this.vie.namespaces.uri(Voc.start),
                 function(model, value, options){
-                    UserData.fetchRange(user, value, model.get(Voc.end));
+                    if (fetchDataTimer) {
+                        clearTimeout(fetchDataTimer);
+                    }
+
+                    fetchDataTimer = setTimeout(function() {
+                        fetchDataTimer = null;
+                        UserData.fetchRange(user, value, model.get(Voc.end));
+                    }, 250);
                 }
             );
             model.sync = this.sync;
@@ -32,7 +41,14 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
         switch(method) {
             case 'create':
             case 'update':
-                m.saveTimelineState(model, options);
+                if (setStateTimer) {
+                        clearTimeout(setStateTimer);
+                    }
+
+                    setStateTimer = setTimeout(function() {
+                        setStateTimer = null;
+                        m.saveTimelineState(model, options);
+                    }, 250);
                 break;
             case 'read':
                 m.fetchTimelineState(model, options);
