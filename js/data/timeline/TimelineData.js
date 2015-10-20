@@ -16,7 +16,15 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
     m.filter= function(model, collection, options) {
         if(model.isof(Voc.TIMELINE)){
             this.checkIntegrity(model, options);
-            this.fetchTimelineState(model);
+            var version = model.get(Voc.belongsToVersion);
+            version.once('change:'+this.vie.namespaces.uri(Voc.TIMELINE_STATE), function() {
+                var timelineState = version.get(Voc.TIMELINE_STATE);
+                var dataSet = {};
+                dataSet[Voc.start] = timelineState.get(Voc.start);
+                dataSet[Voc.end] = timelineState.get(Voc.end);
+                // XXX Timeline data is not preloded, probably some issue with these times
+                model.set(dataSet);
+            });
 
             var user = model.get(Voc.belongsToUser);
             // TODO resolve this hack: only fire on start change to avoid double execution
@@ -28,6 +36,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
 
                     fetchDataTimer = setTimeout(function() {
                         fetchDataTimer = null;
+                        console.log('fetched', value, model.get(Voc.end));
                         UserData.fetchRange(user, value, model.get(Voc.end));
                     }, 250);
                 }

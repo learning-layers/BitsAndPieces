@@ -115,6 +115,23 @@
                 "http://eval.bp/Thing" 
             ] 
         },
+        "http://eval.bp/learnEpTimelineState":{
+            "ancestors": [
+                "http://eval.bp/Thing"
+            ],
+            "comment": "",
+            "comment_plain": "",
+            "id": "http://eval.bp/learnEpTimelineState",
+            "label": "Timeline State",
+            "properties": [
+            ],
+            "specific_properties": [
+            ],
+            "subtypes": [],
+            "supertypes": [
+                "http://eval.bp/Thing"
+            ]
+        },
         "http://eval.bp/Episode":{
             "ancestors": [
                 "http://eval.bp/Thing" 
