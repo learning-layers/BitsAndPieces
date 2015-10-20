@@ -100,6 +100,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
 
                 var userUrisToBeAdded = [];
                 var usersToBeAdded = [];
+                var episodeVersions = {};
                 _.each(episodes, function(episode) {
                     episode['@type'] = Voc.EPISODE;
                     // A fix to allow linking of episodes to a current user
@@ -121,13 +122,17 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
                         });
                         episode[Voc.hasUsers] = userUris;
                     }
+                    episodeVersions[ episode[v.Entity.prototype.idAttribute] ] = episode[Voc.versions];
+                    delete episode[Voc.versions];
                 });
 
                 if ( !_.isEmpty(usersToBeAdded) ) {
                     v.entities.addOrUpdate(usersToBeAdded, {'overrideAttributes': true});
                 }
 
-                v.entities.addOrUpdate(episodes, {'overrideAttributes': true});
+                _.each(v.entities.addOrUpdate(episodes, {'overrideAttributes': true}), function(episode) {
+                    EpisodeData.handleVersions(episode, episodeVersions[episode.getSubject()]);
+                });
             }
         );
     };
