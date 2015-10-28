@@ -2,6 +2,12 @@ define(['module', 'text!config/config.json'],
 function(module, config){
     var appConfig = JSON.parse(config);
 
+    var buildHelpUrl = function() {
+        var currentUrl = window.location.href;
+        if ( currentUrl.substr(-1) !== '/' ) currentUrl += '/';
+        return currentUrl + 'help';
+    };
+
     return {
         'appVersion' : module.config().appVersion,
         'sssHostREST' : appConfig.sssHostREST,
@@ -9,7 +15,7 @@ function(module, config){
         'oidcAuthorizationUrl' : appConfig.oidcAuthorizationUrl,
         'oidcClientID' : appConfig.oidcClientID,
         'affectUrl' : appConfig.affectUrl,
-        'helpUrl' : appConfig.helpUrl,
+        'helpUrl' : appConfig.helpUrl ? appConfig.helpUrl : buildHelpUrl(),
         'discussionToolUrl': appConfig.discussionToolUrl,
         'localSearchOp' : appConfig.search.localSearchOp || 'and',
         'globalSearchOp' : appConfig.search.globalSearchOp || 'and'
