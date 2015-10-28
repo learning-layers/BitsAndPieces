@@ -1,6 +1,6 @@
 {
   "name": "BitsAndPieces",
-  "version": "2.5.1",
+  "version": "4.0.1",
   "description": "Bits and Pieces is a user interface framework for sensemaking based on a design idea introduced in the strand of the EU project Learning Layers.",
   "repository": {
     "type": "git",
@@ -22,7 +22,8 @@
     },
     {
       "name": "Pjotr Savitki",
-      "email": "gnum@tlu.ee",
+      "email": "gnum@tlu.ee"
+    }
   ],
   "license": "Apache-2.0",
   "bugs": {
