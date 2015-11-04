@@ -3,7 +3,7 @@
   "oidcAuthorizationUrl" : "",
   "oidcClientID" : "",
   "affectUrl" : "",
-  "helpUrl" : "http://foti.ee/bits_and_pieces_manual/BnP_usermanual.html",
+  "helpUrl" : "",
   "discussionToolUrl": "",
   "search" : {
     "localSearchOp" : "and",
