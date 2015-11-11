@@ -202,6 +202,11 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             var newEpisode = EpisodeData.newEpisode(this.model);
             var newVersion = newEpisode.get(Voc.hasVersion);
             this.model.save(Voc.currentVersion, newVersion.getSubject());
+            var ev = $.Event("bnp:createEpisode", {
+                originalEvent: e,
+                entity: this.model
+            });
+            $(document).find("#myToolbar").trigger(ev);
         },
         createPlaceholder: function(e) {
             e.preventDefault();
