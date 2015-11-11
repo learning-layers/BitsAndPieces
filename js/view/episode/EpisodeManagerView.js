@@ -74,6 +74,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.discussionsCount), this.renderDiscussionToolButton, this);
             }
+            this.handleNavbarHeightChange();
         },
         renderLabel: function(episode, label) {
             this.LOG.debug('renderLabel', label);
@@ -284,6 +285,13 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             }).fail(function() {
                 episode.set(Voc.discussionsCount, 0);
             });
+        },
+        handleNavbarHeightChange: function() {
+            var menuHeight = this.$el.height(),
+                compensatedHeight = menuHeight + 5;
+            $(document).find('#bnpApp').css('margin-top', compensatedHeight);
+            $(document).find('#myToolbar').css('top', compensatedHeight);
+            $(document).find('#systemMessages').css('top', compensatedHeight);
         }
     });
 });

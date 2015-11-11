@@ -1,6 +1,9 @@
 *  {
     font-family: Helvetica,Arial,sans-serif;
 }
+#bnpApp {
+	margin-top: 55px;
+}
 div.timeline-event-content {
     overflow: visible;
 }
@@ -127,7 +130,7 @@ div.cluster button {
 
 div#myToolbar {
 	position: fixed;
-	top: 40px;
+	top: 55px;
 	right: 0;
 	height: 100%;
 	z-index: 999;
@@ -482,7 +485,7 @@ label.notBoldLabel {
 
 #systemMessages {
 	position: fixed;
-	top: 50px;
+	top: 55px;
 	left: 0px;
 	width: 100%;
 	padding-left: 5px;
