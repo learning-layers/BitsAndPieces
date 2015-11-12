@@ -11,7 +11,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
         },
         events: {
             'click .toolbar-handle': 'showHide',
-            'bnp:clickEntity' : 'clickEntity'
+            'bnp:clickEntity' : 'clickEntity',
+            'bnp:createEpisode' : 'handleCreateEpisode'
         },
         LOG: Logger.get('ToolbarView'),
         _triggerShowHideEvent: function(type) {
@@ -81,6 +82,10 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
         clickEntity: function(e) {
             // Setting viewContext to event
             e['viewContext'] = this;
+        },
+        handleCreateEpisode: function(e) {
+            this.$el.find('#tabs').tabs("option", "active", this.tabMap['episode']);
+            if ( this.isHidden() ) this.showHide();
         }
     });
 });
