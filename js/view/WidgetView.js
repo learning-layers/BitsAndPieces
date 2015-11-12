@@ -102,7 +102,7 @@ define(['logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
                     drop: function(event, ui) {
                         var id = ui.helper.attr('about');
                         that.LOG.debug("dropped " + id);
-                        var offset = $(this).offset();
+                        var offset = $(this).find('svg').offset();
                         var entity = {};
                         entity[Voc.x] = ui.offset.left - offset.left;
                         entity[Voc.y] = ui.offset.top - offset.top;
