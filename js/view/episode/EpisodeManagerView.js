@@ -1,6 +1,6 @@
 // TODO EpisodeManagerView could be renamed to MenuView
 define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
-        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView){
+        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView', 'view/modal/EpisodeAddModalView'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView, EpisodeAddModalView){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
@@ -14,6 +14,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             'click .discussionToolButton' : 'handleDiscussionTool'
         },
         initialize: function() {
+            var that = this;
             this.heightChangeAllowed = true;
             this.views = {};
             this.LOG.debug('options', this.options);
@@ -24,6 +25,22 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
 
             this.placeholderAddModalView = new PlaceholderAddModalView().render();
             $(document).find('body').prepend(this.placeholderAddModalView.$el);
+
+            this.episodeAddModalView = new EpisodeAddModalView().render();
+            $(document).find('body').prepend(this.episodeAddModalView.$el);
+            this.episodeAddModalView.setCallback(function(label, description) {
+                var newEpisode = EpisodeData.newEpisode(that.model, null, {
+                    label: label,
+                    description: description
+                });
+                var newVersion = newEpisode.get(Voc.hasVersion);
+                that.model.save(Voc.currentVersion, newVersion.getSubject());
+                var ev = $.Event("bnp:createEpisode", {
+                    entity: newEpisode
+                });
+                $(document).find("#myToolbar").trigger(ev);
+            });
+
             var view = this;
         },
         render: function() {
@@ -206,16 +223,10 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             this.model.save(Voc.currentVersion, newVersion.getSubject());
         },
         createBlank: function(e) {
+            var that = this;
             e.preventDefault();
             this.LOG.debug('create new episode from scratch');
-            var newEpisode = EpisodeData.newEpisode(this.model);
-            var newVersion = newEpisode.get(Voc.hasVersion);
-            this.model.save(Voc.currentVersion, newVersion.getSubject());
-            var ev = $.Event("bnp:createEpisode", {
-                originalEvent: e,
-                entity: this.model
-            });
-            $(document).find("#myToolbar").trigger(ev);
+            this.episodeAddModalView.showModal();
         },
         createPlaceholder: function(e) {
             e.preventDefault();

@@ -125,11 +125,12 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
 
         return defer.promise();
     };
-    m.newEpisode= function(user, fromVersion) {
+    m.newEpisode= function(user, fromVersion, attributes) {
         var newEpisode, attr = {};
         newEpisode = new this.vie.Entity();
         this.LOG.debug("newEpisode", newEpisode);
-        newEpisode.set(Voc.label, "New Episode");
+        newEpisode.set(Voc.label, attributes.label ? attributes.label : "New Episode");
+        newEpisode.set(Voc.description, attributes.description ? attributes.description : '');
         newEpisode.set(Voc.author, user.getSubject());
         newEpisode.set(Voc.USER, user.getSubject());
         newEpisode.set(Voc.hasUsers, [user.getSubject()]);

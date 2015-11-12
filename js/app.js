@@ -55,6 +55,7 @@ function(appConfig, VIE, Logger, userParams, UserData, SocialSemanticService, ex
     Logger.get('EntityHelpers').setLevel(Logger.OFF);
     Logger.get('OrganizeLockBarView').setLevel(Logger.OFF);
     Logger.get('BitThumbnailModalView').setLevel(Logger.OFF);
+    Logger.get('EpisodeAddModalView').setLevel(Logger.OFF);
 
     // Add app version
     var appVersion = appConfig.appVersion || '',
