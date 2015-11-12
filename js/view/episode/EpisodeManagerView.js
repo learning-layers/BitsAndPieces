@@ -14,6 +14,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             'click .discussionToolButton' : 'handleDiscussionTool'
         },
         initialize: function() {
+            this.heightChangeAllowed = true;
             this.views = {};
             this.LOG.debug('options', this.options);
             this.vie = this.options.vie;
@@ -45,11 +46,13 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             }
 
             var label = this.currentEpisode.get(Voc.label);
+            this.heightChangeAllowed = false;
             this.renderLabel(this.currentEpisode, label);
             this.renderVisibility(this.currentEpisode, this.currentEpisode.get(Voc.circleTypes));
             this.renderAuthor(this.currentEpisode);
             this.renderSharedWith(this.currentEpisode, this.currentEpisode.get(Voc.hasUsers));
             this.renderDiscussionToolButton(this.currentEpisode);
+            this.heightChangeAllowed = true;
 
             var prevCurrVersion = this.model.previous(Voc.currentVersion);
             var prevCurrEpisode, epView;
@@ -79,10 +82,12 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
         renderLabel: function(episode, label) {
             this.LOG.debug('renderLabel', label);
             this.$el.find('.currentEpisodeLabel').html(label);
+            this.handleNavbarHeightChange();
         },
         renderVisibility: function(episode, circleTypes) {
             this.LOG.debug('renderVisibility', circleTypes);
             this.$el.find('.currentEpisodeVisibility').html(EntityHelpers.getEpisodeVisibility(episode));
+            this.handleNavbarHeightChange();
         },
         renderAuthor: function(episode) {
             var authorText = '';
@@ -99,6 +104,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             }
 
             this.$el.find('.currentEpisodeAuthor').html(authorText);
+            this.handleNavbarHeightChange();
         },
         renderSharedWith: function(episode, users) {
             this.LOG.debug('renderSharedWith', users);
@@ -123,6 +129,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             }
 
             this.$el.find('.currentEpisodeSharedWith').html(sharedWithText);
+            this.handleNavbarHeightChange();
         },
         renderDiscussionToolButton: function(episode) {
             var count = episode.get(Voc.discussionsCount);
@@ -134,6 +141,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             }
 
             this.$el.find('.discussionToolButton').show();
+            this.handleNavbarHeightChange();
         },
         changeEpisodeSet: function(model, set, options) {
             this.LOG.debug('changeEpisodeSet', set);  
@@ -287,6 +295,9 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             });
         },
         handleNavbarHeightChange: function() {
+            if ( this.heightChangeAllowed !== true ) {
+                return;
+            }
             var menuHeight = this.$el.height(),
                 compensatedHeight = menuHeight + 5;
             $(document).find('#bnpApp').css('margin-top', compensatedHeight);
