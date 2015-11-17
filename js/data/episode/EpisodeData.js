@@ -318,20 +318,38 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
 
         return defer.promise();
     };
-    m.getDiscussionsCount = function(model) {
+    m.getDiscussionsData = function(model) {
         var that = this,
             defer = $.Deferred();
         this.vie.onUrisReady(
             model.getSubject(),
             function(modelUri) {
                 that.vie.load({
-                    service : 'discsGet',
+                    service : 'discsFilteredGet',
                     data : {
-                        'targets' : [modelUri]
+                        'targets' : [modelUri],
+                        'setEntries' : true,
+                        'setReads' : true
                     }
                 }).to('sss').execute().success(function(discussions) {
                     that.LOG.debug('success discsGet', discussions);
-                    defer.resolve(discussions.length);
+                    var dataSet = {
+                        discussions: 0,
+                        unreadEntries: 0,
+                        entries: 0
+                    };
+                    _.each(discussions, function(discussion) {
+                        dataSet.discussions += 1;
+                        if ( discussion.entries.length > 0 ) {
+                            _.each(discussion.entries, function(entry) {
+                                dataSet.entries +=1;
+                                if ( !entry.read ) {
+                                    dataSet.unreadEntries += 1;
+                                }
+                            });
+                        }
+                    });
+                    defer.resolve(dataSet);
                 }).fail(function(f) {
                     that.LOG.debug('error discsGet', f);
                     defer.reject(f);

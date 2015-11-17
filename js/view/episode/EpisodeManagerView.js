@@ -83,7 +83,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderAuthor, this);
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
-                    prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.discussionsCount), this.renderDiscussionToolButton, this);
+                    prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.discussionsCount)+' change:'+this.model.vie.namespaces.uri(Voc.unreadEntriesCount)+' change:'+this.model.vie.namespaces.uri(Voc.entriesCount), this.renderDiscussionToolButton, this);
                 }
             }
             if(epView = this.views[this.currentEpisode.cid]) {
@@ -92,7 +92,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderAuthor, this);
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
-                this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.discussionsCount), this.renderDiscussionToolButton, this);
+                this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.discussionsCount)+' change:'+this.model.vie.namespaces.uri(Voc.unreadEntriesCount)+' change:'+this.model.vie.namespaces.uri(Voc.entriesCount), this.renderDiscussionToolButton, this);
             }
             this.handleNavbarHeightChange();
         },
@@ -149,10 +149,24 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             this.handleNavbarHeightChange();
         },
         renderDiscussionToolButton: function(episode) {
-            var count = episode.get(Voc.discussionsCount);
+            // NB! This could be triggered up to a few times in a row
+            // If is proven to be resource consuming or in other way problematic
+            // Then timeout could be added to maek sure that it only runs once per
+            // multiple subsequent calls
+            var count = episode.get(Voc.discussionsCount),
+                unreadEntriesCount = episode.get(Voc.unreadEntriesCount),
+                entriesCount = episode.get(Voc.entriesCount);
 
             if ( count && count > 0 ) {
-                this.$el.find('.discussionToolButton > span.count').html('( ' + count + ' )');
+                if ( entriesCount && entriesCount > 0 ) {
+                    if ( unreadEntriesCount && unreadEntriesCount > 0 ) {
+                        this.$el.find('.discussionToolButton > span.count').html(count + ' ( ' + unreadEntriesCount + ' / ' + entriesCount + ' )');
+                    } else {
+                        this.$el.find('.discussionToolButton > span.count').html(count + ' ( ' + entriesCount + ' )');
+                    }
+                } else {
+                    this.$el.find('.discussionToolButton > span.count').html(count);
+                }
             } else {
                 this.$el.find('.discussionToolButton > span.count').html('');
             }
@@ -239,9 +253,9 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 var episode = version.get(Voc.belongsToEpisode);
                 if( !episode ) {
                     // wait for the episode to be ready
-                    version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.loadAndSetDiscussionsCount, this);
+                    version.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), this.loadAndSetDiscussionsData, this);
                 } else {
-                    this.loadAndSetDiscussionsCount();
+                    this.loadAndSetDiscussionsData();
                 }
             }
 
@@ -287,7 +301,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             this.$el.find('.currentEpisodeAuthor').html('');
             this.$el.find('.currentEpisodeSharedWith').html('');
         },
-        loadAndSetDiscussionsCount: function() {
+        loadAndSetDiscussionsData: function() {
             var version = this.model.get(Voc.currentVersion);
             if( !version || !version.isEntity ) {
                 return;
@@ -298,11 +312,17 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             }
 
             // Load and set discussions count
-            var discussionsPromise = EpisodeData.getDiscussionsCount(episode);
-            discussionsPromise.done(function(count) {
-                episode.set(Voc.discussionsCount, count);
+            // Make sure the discussionsCount is set last
+            // Listener will change on that being set
+            var discussionsPromise = EpisodeData.getDiscussionsData(episode);
+            discussionsPromise.done(function(dataSet) {
+                episode.set(Voc.discussionsCount, dataSet.discussions);
+                episode.set(Voc.unreadEntriesCount, dataSet.unreadEntries);
+                episode.set(Voc.entriesCount, dataSet.entries);
             }).fail(function() {
                 episode.set(Voc.discussionsCount, 0);
+                episode.set(Voc.unreadEntriesCount, 0);
+                episode.set(Voc.entriesCount, 0);
             });
         },
         handleNavbarHeightChange: function() {
