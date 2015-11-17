@@ -160,7 +160,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             if ( count && count > 0 ) {
                 if ( entriesCount && entriesCount > 0 ) {
                     if ( unreadEntriesCount && unreadEntriesCount > 0 ) {
-                        this.$el.find('.discussionToolButton > span.count').html(count + ' ( ' + unreadEntriesCount + ' / ' + entriesCount + ' )');
+                        this.$el.find('.discussionToolButton > span.count').html(count + ' ( <strong>' + unreadEntriesCount + '</strong> / ' + entriesCount + ' )');
                     } else {
                         this.$el.find('.discussionToolButton > span.count').html(count + ' ( ' + entriesCount + ' )');
                     }
