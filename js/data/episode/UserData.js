@@ -6,7 +6,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
         this.LOG.debug('Data', Data);
         this.vie = vie;
         this.vie.entities.on('add', this.filter, this);
-        this.setIntegrityCheck(Voc.hasEpisode, Voc.EPISODE, Voc.belongsToUser);
+        this.setIntegrityCheck(Voc.hasEpisode, Voc.EPISODE, Voc.USER);
         this.setIntegrityCheck(Voc.currentVersion, Voc.VERSION);
         this.fetchAllUsers();
         this.recommendedTags = [];
