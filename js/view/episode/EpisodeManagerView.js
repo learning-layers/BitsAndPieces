@@ -162,7 +162,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                     if ( unreadEntriesCount && unreadEntriesCount > 0 ) {
                         this.$el.find('.discussionToolButton > span.count').html(count + ' ( <strong>' + unreadEntriesCount + '</strong> / ' + entriesCount + ' )');
                     } else {
-                        this.$el.find('.discussionToolButton > span.count').html(count + ' ( ' + entriesCount + ' )');
+                        this.$el.find('.discussionToolButton > span.count').html(count + ' ( 0 / ' + entriesCount + ' )');
                     }
                 } else {
                     this.$el.find('.discussionToolButton > span.count').html(count);
