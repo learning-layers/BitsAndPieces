@@ -260,9 +260,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
                 messagesPromise = this.fetchMessages(),
                 recommendationsPromise = this.fetchRecommendations();
 
-            // XXX Even if one of the call is rejected, nothing will be displayed
-            // Probably need to tune the corresponding calls to always resolve
-            // just resolve with an empty array in case of failure.
+            // Even one failure will prevent it from working, but all the wrapper
+            // methods return their own promise object and resolve with empty
+            // data even on case of reject
             $.when(activitiesPromise, messagesPromise, recommendationsPromise)
                 .done(function(activitiesData, messagesData, recommendations) {
                     var activities = activitiesData[0],

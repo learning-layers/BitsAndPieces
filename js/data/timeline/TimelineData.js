@@ -84,8 +84,9 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
                         'endTime' : model.get(Voc.end)
                     }
                 }).to('sss').execute().success(function(savedEntityUri) {
-                    // XXX This one updates timeline ID/Subject to URI of current state
+                    // This one updates timeline ID/Subject to URI of current state
                     // Not sure what is the purpose of it
+                    // Disabled for causing issues, the id is uninportant anyway
                     //model.set(model.idAttribute, savedEntityUri, options);
                     if(options.success) {
                         options.success(model);

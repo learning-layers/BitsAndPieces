@@ -41,7 +41,6 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
             }
         });
     };
-    // XXX This is a copy of fetchVersions method (the inner logic)
     m.handleVersions= function(episode, versions) {
         var em = this;
         var resourceUris = [];
@@ -122,66 +121,8 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                     episode.set(Voc.hasVersion, VersionData.newVersion(episode).getSubject());
                     return;
                 }
-                var resourceUris = [];
-                var resources = [];
-                var resourceUriTimes = {};
-                // put uris of circles/entities into version
-                // and create circle/entity entities 
-                _.each(versions, function(version) {
-                    version['@type'] = Voc.VERSION;
-                    var circleUris = [];
-                    var circles = version[Voc.hasCircle];
-                    _.each(version[Voc.hasCircle], function(circle) {
-                        circleUris.push(circle[em.vie.Entity.prototype.idAttribute]);
-                        circle[Voc.belongsToVersion] = version[em.vie.Entity.prototype.idAttribute];
-                        circle['@type'] = Voc.CIRCLE;
-                    });
-                    version[Voc.hasCircle] = circleUris;
-                    em.vie.entities.addOrUpdate(circles, {'overrideAttributes': true});
 
-                    var entityUris = [];
-                    var entities = version[Voc.hasEntity];
-                    _.each(version[Voc.hasEntity], function(entity) {
-                        // Check if resource is an object
-                        // If it is, then extract and add to resources if needed
-                        // Replace object with URI
-                        var resource = entity[Voc.hasResource];
-                        if ( _.isObject(resource) ) {
-                            if ( resourceUris.indexOf(resource[em.vie.Entity.prototype.idAttribute]) === -1 ) {
-                                resources.push(resource);
-                                resourceUris.push(resource[em.vie.Entity.prototype.idAttribute]);
-                                resourceUriTimes[resource[em.vie.Entity.prototype.idAttribute]] = 1;
-                            } else {
-                                resourceUriTimes[resource[em.vie.Entity.prototype.idAttribute]] += 1;
-                            }
-                            entity[Voc.hasResource] = resource[em.vie.Entity.prototype.idAttribute];
-                        }
-                        entityUris.push(entity[em.vie.Entity.prototype.idAttribute]);
-                        entity[Voc.belongsToVersion] = version[em.vie.Entity.prototype.idAttribute];
-                        entity['@type'] = Voc.ORGAENTITY;
-                    });
-                    version[Voc.hasEntity] = entityUris;
-
-                    em.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
-
-                    if ( version[Voc.TIMELINE_STATE] ) {
-                        var timelineState = version[Voc.TIMELINE_STATE];
-                        version[Voc.TIMELINE_STATE] =  timelineState[em.vie.Entity.prototype.idAttribute];
-                        em.vie.entities.addOrUpdate(timelineState, {'overrideAttributes' : true});
-                    }
-                });
-                em.vie.entities.addOrUpdate(versions, {'overrideAttributes': true});
-
-                // Add or update resources if any
-                if ( resources.length > 0 ) {
-                    resources = em.vie.entities.addOrUpdate(resources, {'overrideAttributes': true});
-
-                    // Set resource as belonging to an episode
-                    _.each(resources, function(resource) {
-                        EntityHelpers.removeBelongsToEpisode(resource, episode, true);
-                        EntityHelpers.addBelongsToEpisode(resource, episode, resourceUriTimes[resource.getSubject()]);
-                    });
-                }
+                em.handleVersions(episode, versions);
 
                 defer.resolve(true);
             }
