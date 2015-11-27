@@ -196,10 +196,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 end = new Date();
                 end.setDate(end.getDate() +1);
             }
-            this.timeline.draw( [{
-                    'start' : new Date(), // add a dummy event to force rendering
-                    'content' : "x"
-                }], _.extend(this.options.timeline, {
+            this.timeline.setOptions(_.extend(this.options.timeline, {
                 'start' : start,
                 'end' : end,
                 'min' : new Date('2013-01-01'),
@@ -207,6 +204,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 'zoomMin' : 28800000, // 8 hours
                 'zoomMax' : 31556940000 // 1 year
             }));
+            this.timeline.draw( [{
+                    'start' : new Date(), // add a dummy event to force rendering
+                    'content' : "x"
+                }] );
             this.timeline.deleteItem(0); // remove dummy node
             this.LOG.debug('timeline', this.timeline);
 
