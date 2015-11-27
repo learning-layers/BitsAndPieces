@@ -117,15 +117,15 @@ define(['underscore', 'logger'], function(_, Logger) {
             if( prop.indexOf('sss:') === 0 ) continue;
             if( prop.indexOf('http:') === 0 ) continue;
             fixable['sss:'+prop] = fixable[prop];
-            // XXX Deal with author, force it to be URI not Object
+            // Deal with author, force it to be URI not Object
             // This is not a permanent solution, just a quick fix
-            // XXX This also deals with file object
+            // This also deals with file object
             if ( prop === 'author' || prop === 'file' ) {
                 if ( _.isObject(fixable['sss:'+prop]) ) {
                     fixable['sss:'+prop] = fixable['sss:' + prop].id;
                 }
             } else if ( prop === 'thumb' ) {
-                // XXX A special case for thumbnail
+                // A special case for thumbnail
                 if ( _.isObject(fixable['sss:'+prop]) ) {
                     if ( _.isObject(fixable['sss:'+prop]['file']) ) {
                         fixable['sss:'+prop] = fixable['sss:'+prop].file.downloadLink;
@@ -290,6 +290,24 @@ define(['underscore', 'logger'], function(_, Logger) {
                 {
                     'resultKey' : 'users',
                     'decoration' : decorations['single_entity']
+                },
+                {
+                    'resultKey' : 'versions',
+                    'decoration' : decorations['single_entity'],
+                    'subResults' : [
+                        {
+                            'resultKey' : 'learnEpCircles',
+                            'decoration' : decorations['single_entity']
+                        },
+                        {
+                            'resultKey' : 'learnEpEntities',
+                            'decoration' : decorations['single_entity_with_contained']
+                        },
+                        {
+                            'resultKey' : 'learnEpTimelineState',
+                            'decoration' : decorations['single_entity']
+                        }
+                    ]
                 }
             ]
         },
@@ -306,6 +324,10 @@ define(['underscore', 'logger'], function(_, Logger) {
                 {
                     'resultKey' : 'learnEpEntities',
                     'decoration' : decorations['single_entity_with_contained']
+                },
+                {
+                    'resultKey' : 'learnEpTimelineState',
+                    'decoration' : decorations['single_entity']
                 }
             ],
             'params': {

@@ -1,6 +1,7 @@
 define([], {
     THING : "owl:Thing",
     TIMELINE : "sss:Timeline",
+    TIMELINE_STATE : 'sss:learnEpTimelineState',
     ORGANIZE : "sss:Organize",
     USEREVENT : "sss:userEvent",
     EPISODE: "sss:learnEp",
@@ -81,6 +82,7 @@ define([], {
     lockReleasedByOtherTime : 'sss:lockedReleasedByOtherTime',
     discussionsCount: 'sss:discussionsCount',
     unreadEntriesCount: 'sss:unreadEntriesCount',
-    entriesCount: 'sss:entriesCount'
+    entriesCount: 'sss:entriesCount',
+    versions: 'sss:versions'
         
 });
