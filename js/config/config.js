@@ -8,10 +8,13 @@ function(module, config){
         return currentUrl + 'help';
     };
 
+    var sssHostRESTPrefix = 'prefix';
+
     return {
         'appVersion' : module.config().appVersion,
         'sssHostREST' : appConfig.sssHostREST,
-        'sssHostRESTFileDownload' : appConfig.sssHostREST + 'files/files/download/',
+        'sssHostRESTFileDownload' : appConfig.sssHostREST + sssHostRESTPrefix +'/files/download/',
+        'sssHostRESTPrefix' : sssHostRESTPrefix,
         'oidcAuthorizationUrl' : appConfig.oidcAuthorizationUrl,
         'oidcClientID' : appConfig.oidcClientID,
         'affectUrl' : appConfig.affectUrl,

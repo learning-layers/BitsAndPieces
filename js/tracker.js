@@ -18,7 +18,7 @@ define(['config/config', 'jquery', 'logger', 'userParams'],
                     'users' : usersParam
                 };
             $.ajax({
-                'url' : appConfig.sssHostREST + 'eval/eval/log/',
+                'url' : appConfig.sssHostREST + appConfig.sssHostRESTPrefix + '/eval/log/',
                 'type': "POST",
                 'data' : JSON.stringify(params),
                 'contentType' : "application/json",
