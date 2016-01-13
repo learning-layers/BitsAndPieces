@@ -85,6 +85,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
 
             em.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
 
+            // XXX To be removed. Timeline state is no longer part of the version
             if ( version[Voc.TIMELINE_STATE] ) {
                 var timelineState = version[Voc.TIMELINE_STATE];
                 version[Voc.TIMELINE_STATE] =  timelineState[em.vie.Entity.prototype.idAttribute];

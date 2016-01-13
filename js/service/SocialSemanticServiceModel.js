@@ -302,10 +302,6 @@ define(['underscore', 'logger'], function(_, Logger) {
                         {
                             'resultKey' : 'learnEpEntities',
                             'decoration' : decorations['single_entity_with_contained']
-                        },
-                        {
-                            'resultKey' : 'learnEpTimelineState',
-                            'decoration' : decorations['single_entity']
                         }
                     ]
                 }
@@ -324,10 +320,6 @@ define(['underscore', 'logger'], function(_, Logger) {
                 {
                     'resultKey' : 'learnEpEntities',
                     'decoration' : decorations['single_entity_with_contained']
-                },
-                {
-                    'resultKey' : 'learnEpTimelineState',
-                    'decoration' : decorations['single_entity']
                 }
             ],
             'params': {

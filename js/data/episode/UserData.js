@@ -134,7 +134,9 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
                     EpisodeData.handleVersions(episode, episodeVersions[episode.getSubject()]);
                 });
             }
-        );
+        ).fail(function(f) {
+            that.LOG.debug("error fetchEpisodes", f);
+        });
     };
     m.fetchAllUsers = function() {
         var that = this,
