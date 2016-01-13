@@ -62,6 +62,9 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                     });
 
                 }
+                if ( model.isof(Voc.TIMELINE) ) {
+                    this.drawWidget(this.$el.find('.timelineContainer'), model);
+                }
             },
             render: function() {
                 var navbar = _.template(NavbarTemplate, {
@@ -74,8 +77,9 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                 // Prepend navbar to body
                 this.$el.parent().prepend(navbar);
 
-                this.widgetFrame = $('<div id="myWidgets"></div>');
+                this.widgetFrame = $('<div id="myWidgets"><div class="timelineContainer"></div><div class="episodeSpecificContainer"></div></div>');
                 this.$el.append( this.widgetFrame );
+                this.episodeSpecificContainer = this.widgetFrame.find('.episodeSpecificContainer');
                 this.episodeMgrView = new EpisodeManagerView({
                     model: this.model,
                     el: 'nav',
@@ -128,11 +132,11 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                         return;
                 }
                 AppLog.debug('drawing ', version.getSubject());
-                var versionElem = this.widgetFrame.children('*[about="'+version.getSubject()+'"]').first();
+                var versionElem = this.episodeSpecificContainer.children('*[about="'+version.getSubject()+'"]').first();
                 AppLog.debug('versionElem', versionElem);
                 if( versionElem.length === 0) {
                     versionElem = $('<div about="'+version.getSubject()+'" rel="'+this.vie.namespaces.uri(Voc.hasWidget)+'"></div>');
-                    this.widgetFrame.append(versionElem);
+                    this.episodeSpecificContainer.append(versionElem);
                     version.once('change:' + version.idAttribute, function(model, value, options) {
                         AppLog.debug('change subject from', model.cid, 'to', value);
                         versionElem.attr('about', value);
@@ -166,12 +170,12 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                 AppLog.debug('showing', version.getSubject());
 
                 var that= this;
-                this.widgetFrame.children().addClass('widgetHidden');
-                AppLog.debug('hide' , this.widgetFrame.children());
-                var element = this.widgetFrame.children('*[about="'+version.getSubject()+'"]');
+                this.episodeSpecificContainer.children().addClass('widgetHidden');
+                AppLog.debug('hide' , this.episodeSpecificContainer.children());
+                var element = this.episodeSpecificContainer.children('*[about="'+version.getSubject()+'"]');
                 element.removeClass('widgetHidden');
                 element.detach();
-                this.widgetFrame.prepend(element);
+                this.episodeSpecificContainer.prepend(element);
 
                 var previousVersion = this.model.previous(Voc.currentVersion);
                 // This force redraws current timeline element.

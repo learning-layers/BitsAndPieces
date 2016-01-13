@@ -54,6 +54,16 @@ function(Logger, Voc, _, userParams,
                 this.LOG.debug("widgets = ", ws);
                 this.initWidgets(model, ws);
 
+            } else if ( model.isof(Voc.USER) ) {
+                if ( !model.isNew() ) {
+                    if ( model === this.vie.entities.get(userParams.user) ) {
+                        // XXX This has to be implemented in a better way
+                        var that = this;
+                        setTimeout(function() {
+                            that.vie.entities.addOrUpdate(that.createTimeline(model));
+                        }, 1000);
+                    }
+                }
             }
         },
         /**
@@ -68,7 +78,7 @@ function(Logger, Voc, _, userParams,
             this.LOG.debug('initWidgets');
 
             this.vie.entities.addOrUpdate(this.createOrganize(version));
-            this.vie.entities.addOrUpdate(this.createTimeline(version));
+            //this.vie.entities.addOrUpdate(this.createTimeline(version));
         },
         createOrganize : function(version) {
             AppLog.debug("creating default organize widget");
@@ -80,14 +90,14 @@ function(Logger, Voc, _, userParams,
             newWidget.set(Voc.belongsToVersion, version.getSubject());
             return newWidget;
         },
-        createTimeline : function(version) {
+        createTimeline : function(user) {
             AppLog.debug("creating default timeline widget");
             var newWidget = new this.vie.Entity;
             newWidget.set('@type', Voc.TIMELINE);
-            newWidget.set(Voc.belongsToUser, userParams.user);
+            newWidget.set(Voc.belongsToUser, user.getSubject());
             newWidget.set(Voc.timeAttr, Voc.creationTime);
             newWidget.set(Voc.predicate, Voc.USEREVENT);
-            newWidget.set(Voc.belongsToVersion, version.getSubject());
+            //newWidget.set(Voc.belongsToVersion, version.getSubject());
             return newWidget;
         }
 

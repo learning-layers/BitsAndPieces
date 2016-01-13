@@ -16,14 +16,6 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
         var that = m;
         if(model.isof(Voc.TIMELINE)){
             this.checkIntegrity(model, options);
-            var version = model.get(Voc.belongsToVersion);
-            version.once('change:'+this.vie.namespaces.uri(Voc.TIMELINE_STATE), function() {
-                var timelineState = version.get(Voc.TIMELINE_STATE);
-                var dataSet = {};
-                dataSet[Voc.start] = timelineState.get(Voc.start);
-                dataSet[Voc.end] = timelineState.get(Voc.end);
-                model.set(dataSet);
-            });
 
             var user = model.get(Voc.belongsToUser);
             // TODO resolve this hack: only fire on start change to avoid double execution
@@ -42,6 +34,8 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
                 }
             );
             model.sync = this.sync;
+            // Fetch state and fill start and end values
+            this.fetchTimelineState(model);
         }
     };
     m.sync= function(method, model, options) {
@@ -71,11 +65,9 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
     },
     m.saveTimelineState= function(model,options) {
         options = options || {};
-        var version = model.get(Voc.belongsToVersion);
         var that = this;
         this.vie.onUrisReady(
-            version.getSubject(),
-            function(versionUri) {
+            function() {
                 that.vie.save({
                     service : 'learnEpsTimelineStateSet',
                     data : {
@@ -96,28 +88,16 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
     },
     m.fetchTimelineState= function(model, options) {
         options = options || {};
-        var version = model.get(Voc.belongsToVersion);
         var that = this;
         this.vie.onUrisReady(
-            version.getSubject(),
-            function(versionUri) {
+            function() {
                 that.vie.load({
                     'service' : 'learnEpsTimelineStateGet',
                 }).from('sss').execute().success(function(state) {
-                    var type = null;
-
-                    // Store @type and remove it from entity data
-                    if ( state['@type'] ) {
-                        type = state['@type'];
-                        delete state['@type'];
-                    }
-
-                    model.set(state);
-
-                    // Add @type back if stored
-                    if ( null !== type ) {
-                        state['@type'] = type;
-                    }
+                    var dataSet = {};
+                    dataSet[Voc.start] = state[Voc.start];
+                    dataSet[Voc.end] = state[Voc.end];
+                    model.set(dataSet);
 
                     if(options.success) {
                         options.success(state);
