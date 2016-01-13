@@ -8,7 +8,7 @@ function(module, config){
         return currentUrl + 'help';
     };
 
-    var sssHostRESTPrefix = 'prefix';
+    var sssHostRESTPrefix = 'rest';
 
     return {
         'appVersion' : module.config().appVersion,
