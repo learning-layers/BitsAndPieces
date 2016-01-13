@@ -336,16 +336,21 @@ define(['underscore', 'logger'], function(_, Logger) {
             'preparation' : preparations['scrubParams'],
             'injectVariable': 'learnEp'
         },
-        'learnEpVersionGetTimelineState' : {
+        'learnEpsTimelineStateGet' : {
             'reqType': 'GET',
-            'reqPath': 'learneps/versions/:learnEpVersion/timeline/state',
+            'reqPath': 'learneps/timelinestate',
             'resultKey' : 'learnEpTimelineState',
-            'params': {
-                'learnEpVersion' : { 'type' : 'encodedComponent' }
-            },
-            'preparation' : preparations['scrubParams'],
             'decoration' : decorations['single_entity'],
-            'injectVariable': 'learnEpVersion'
+        },
+        'learnEpsTimelineStateSet' : {
+            'reqType': 'POST',
+            'reqPath': 'learneps/timelinestate',
+            'resultKey' : 'learnEpTimelineState',
+            'params' : {
+                'startTime' : { 'type' : 'number' },
+                'endTime' : { 'type' : 'number' },
+            },
+            'preparation' : preparations['scrubParams']
         },
         'uEsGet' : {
             'reqType' : 'POST',
@@ -357,18 +362,6 @@ define(['underscore', 'logger'], function(_, Logger) {
             },
             'preparation' : preparations['scrubParams'],
             'decoration' : decorations['single_entity_with_contained']
-        },
-        'learnEpVersionSetTimelineState' : {
-            'reqType': 'POST',
-            'reqPath': 'learneps/versions/:learnEpVersion/timeline/state',
-            'resultKey' : 'learnEpTimelineState', 
-            'params' : {
-                'startTime' : { 'type' : 'number' },
-                'endTime' : { 'type' : 'number' },
-                'learnEpVersion' : { 'type' : 'encodedComponent' }
-            },
-            'preparation' : preparations['scrubParams'],
-            'injectVariable': 'learnEpVersion'
         },
         'learnEpVersionAddCircle' : {
             'reqType': 'POST',

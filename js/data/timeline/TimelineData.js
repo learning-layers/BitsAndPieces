@@ -77,9 +77,8 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
             version.getSubject(),
             function(versionUri) {
                 that.vie.save({
-                    service : 'learnEpVersionSetTimelineState',
+                    service : 'learnEpsTimelineStateSet',
                     data : {
-                        'learnEpVersion' : versionUri,
                         'startTime' : model.get(Voc.start),
                         'endTime' : model.get(Voc.end)
                     }
@@ -103,10 +102,7 @@ define(['logger', 'voc', 'underscore', 'data/Data', 'data/episode/UserData' ], f
             version.getSubject(),
             function(versionUri) {
                 that.vie.load({
-                    'service' : 'learnEpVersionGetTimelineState',
-                    'data' : {
-                        'learnEpVersion' : versionUri
-                    }
+                    'service' : 'learnEpsTimelineStateGet',
                 }).from('sss').execute().success(function(state) {
                     var type = null;
 
