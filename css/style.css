@@ -608,3 +608,17 @@ ul.dropdown-menu li.episode a.highlight {
     color: #DB0000;
 }
 
+.widget-handle {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	cursor: pointer;
+	height: 10px;
+	width: 50px;
+	font-size: 24px;
+	color: #d79634;
+	text-align: center;
+	position: relative;
+	bottom: 4px;
+}
+

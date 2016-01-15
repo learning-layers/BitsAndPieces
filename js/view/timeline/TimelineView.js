@@ -3,6 +3,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
     return Backbone.View.extend({
         LOG: Logger.get('TimelineView'),
         waitingForLastOne : 0,
+        is_hidden: false,
         events: {
             'bnp:zoomCluster' : 'expand', //@unused UI removed
             'bnp:expanded' : 'redraw',
@@ -51,6 +52,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                     timer = null;
                     that.redraw();
                 }, 500);
+            });
+            this.$el.parent().append('<span class="widget-handle"><span class="glyphicon glyphicon-chevron-up" title="Show or hide Timeline"></span></span>');
+            this.$el.parent().find('.widget-handle > .glyphicon').on('click', function(e) {
+                that.showHide(e);
             });
         },
         changeEntitySet: function(model, set, options) {
@@ -229,7 +234,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         },
         renderDatepicker: function() {
             var that = this;
-
+            
             this.$el.prepend('<div class="jumpToDate">Jump To Date: <input type="text" name="jumpToDate" val="" /></div>');
             this.$el.find('input[name="jumpToDate"]')
                 .datepicker({
@@ -344,7 +349,28 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                     e.clusterView.$el.parent().parent().css('z-index', '');
                 }
             }
-        }
+        },
+        isHidden: function() {
+            return this.is_hidden;
+        },
+        showHide: function(e) {
+            var that = this,
+                handle = this.$el.parent().find('.widget-handle'),
+                timeline = this.$el;
+            if ( this.isHidden() ) {
+                timeline.slideDown(400, function() {
+                  handle.css('bottom', '4px');
+                  handle.find('.glyphicon').switchClass('glyphicon-chevron-down', 'glyphicon-chevron-up');
+                  that.is_hidden = false;
+                });
+            } else {
+                timeline.slideUp(400, function() {
+                  handle.css('bottom', '9px');
+                  handle.find('.glyphicon').switchClass('glyphicon-chevron-up', 'glyphicon-chevron-down');
+                  that.is_hidden = true;
+                });
 
+            }
+        }
     });
 });
