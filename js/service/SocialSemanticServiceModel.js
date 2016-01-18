@@ -596,7 +596,20 @@ define(['underscore', 'logger'], function(_, Logger) {
             },
            'preparation' : preparations['scrubParams'],
            'injectVariable' : 'targets'
-        }
+        },
+        'entitiesAccessibleGet' : {
+            'reqType' : 'POST',
+            'reqPath' : 'entities/filtered/accessible',
+            'resultKey' : 'entities',
+            // XXX Comment those out once the API has evolved
+            /*'params' : {
+                'setTags' : { 'default' : true },
+                'setFlags' : { 'default' : true }
+            },*/
+            'preparation' : preparations['scrubParams'],
+            'decoration' : decorations['single_entity']
+        },
+
     };
     return m;
 });

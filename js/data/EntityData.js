@@ -129,7 +129,7 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
     m.search = function(keywords, tags, callback) {
         var that = this,
             serviceData = {
-                'typesToSearchOnlyFor' : ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook', 'placeholder'],
+                'typesToSearchOnlyFor' : appConfig.acceptableEntityTypes,
                 'localSearchOp' : appConfig.localSearchOp,
                 'globalSearchOp' : appConfig.globalSearchOp
             };

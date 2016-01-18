@@ -21,7 +21,8 @@ function(module, config){
         'helpUrl' : appConfig.helpUrl ? appConfig.helpUrl : buildHelpUrl(),
         'discussionToolUrl': appConfig.discussionToolUrl,
         'localSearchOp' : appConfig.search.localSearchOp || 'and',
-        'globalSearchOp' : appConfig.search.globalSearchOp || 'and'
+        'globalSearchOp' : appConfig.search.globalSearchOp || 'and',
+        'acceptableEntityTypes': ['entity', 'file', 'evernoteResource', 'evernoteNote', 'evernoteNotebook', 'placeholder']
     };
 });
 

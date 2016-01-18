@@ -35,7 +35,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             // TODO: resolve this hack: only fire on start change to avoid double execution
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.start), this.rearrangeVisibleArea, this);
-            this.user.on('change:' + this.model.vie.namespaces.uri(Voc.hasUserEvent), this.changeEntitySet, this);
+            this.user.on('change:' + this.model.vie.namespaces.uri(Voc.hasAccessibleEntity), this.changeEntitySet, this);
 
             this.LOG.debug('TimelineView initialized');
 
@@ -63,7 +63,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             set = set || [];
             if( !_.isArray(set)) set = [set];
             var previous = Backbone.Model.prototype.previous.call(this.user, 
-                this.model.vie.namespaces.uri(Voc.hasUserEvent)) || [];
+                this.model.vie.namespaces.uri(Voc.hasAccessibleEntity)) || [];
             if( !_.isArray(previous)) previous = [previous];
             this.LOG.debug('previous', previous);  
             var that = this;
@@ -73,9 +73,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             
             var deleted = _.difference(previous, set);
             _.each(deleted, function(a){
-                a = that.model.vie.entities.get(a);
-                var entity = a.get(Voc.hasResource);
-                // TODO don't remove entity if referenced by another user event
+                var entity = that.model.vie.entities.get(a);
+                // XXX Removal is probably not needed
+                // Recheck if this even works, should probably be removed
+                // As entities are there to stay
                 that.removeEntity(entity);
             });
         },
@@ -100,9 +101,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             var initRange = !this.model.get(Voc.start) && !this.model.get(Voc.end);
             this.LOG.debug("initRange", initRange, this.model.get(Voc.start), this.model.get(Voc.end));
             var readyEntities = [];
-            _.each(entities, function(ue) {
-                if( !ue.isEntity ) ue = that.model.vie.entities.get(ue);
-                var entity = ue.get(Voc.hasResource);
+            _.each(entities, function(entity) {
+                if( !entity.isEntity ) entity = that.model.vie.entities.get(entity);
                 that.addEntity(entity);
                 if( !initRange ) return;
 
@@ -159,9 +159,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             var view = this;
             // add entities which are already contained
-            var userevents = this.user.get(Voc.hasUserEvent) || [];
-            if( !_.isArray(userevents)) userevents = [userevents];
-            this.addEntities(userevents);
+            var entities = this.user.get(Voc.hasAccessibleEntity) || [];
+            if( !_.isArray(entities)) entities = [entities];
+            this.addEntities(entities);
             return this;
         },
         renderUser: function () {

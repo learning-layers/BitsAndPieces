@@ -83,6 +83,7 @@ define([], {
     discussionsCount: 'sss:discussionsCount',
     unreadEntriesCount: 'sss:unreadEntriesCount',
     entriesCount: 'sss:entriesCount',
-    versions: 'sss:versions'
+    versions: 'sss:versions',
+    hasAccessibleEntity: 'sss:hasAccessibleEntity'
         
 });
