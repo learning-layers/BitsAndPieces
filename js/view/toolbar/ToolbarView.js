@@ -21,9 +21,31 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             });
             this.$el.trigger(ev);
         },
+        _calculateAndSetToolbarHeight: function() {
+            var windowHeight = $(window).height(),
+                toolbarPosition = this.$el.position();
+            this.$el.css('height', windowHeight - toolbarPosition.top);
+        },
         initialize: function() {
+            var that = this;
+
             this.is_hidden = true;
             this.$el.addClass('toolbarHidden');
+
+            // Set real height
+            this._calculateAndSetToolbarHeight();
+            // Add resize listener
+            this.timerId = null;
+            $(window).on('resize', function() {
+                if ( that.timerId ) {
+                    clearTimeout(that.timerId);
+                }
+
+                that.timerId = setTimeout(function() {
+                    that.timerId = null;
+                    that._calculateAndSetToolbarHeight();
+                }, 500);
+            });
         },
         setBit: function(entity) {
             this.subViews['bit'].setEntity(entity);
