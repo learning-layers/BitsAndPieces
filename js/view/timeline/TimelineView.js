@@ -70,15 +70,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             var added = _.difference(set, previous);
             this.LOG.debug('added', added);
             this.addEntities(added);
-            
-            var deleted = _.difference(previous, set);
-            _.each(deleted, function(a){
-                var entity = that.model.vie.entities.get(a);
-                // XXX Removal is probably not needed
-                // Recheck if this even works, should probably be removed
-                // As entities are there to stay
-                that.removeEntity(entity);
-            });
         },
         rearrangeVisibleArea: function(model, collection, options ) {
             this.LOG.debug("rearrangeVisibleArea", options && options.by);

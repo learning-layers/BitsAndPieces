@@ -1,4 +1,5 @@
 define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
+        'data/AppData',
         'data/timeline/TimelineData', 
         'data/organize/OrganizeData',
         'data/episode/UserData',
@@ -12,7 +13,7 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
         'utils/SystemMessages',
         'utils/EntityHelpers',
         'text!templates/navbar.tpl'],
-    function(appConfig, Logger, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, EntityHelpers, NavbarTemplate){
+    function(appConfig, Logger, Backbone, $, Voc, _, AppData, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, EntityHelpers, NavbarTemplate){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {
@@ -44,6 +45,8 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                         }
                     },this);
                 this.setUpEpisodeLockHoldInternal();
+                this.timelineModel = this.vie.entities.addOrUpdate(
+                        AppData.createTimeline(this.model));
             },
             filter: function(model, collection, options) {
                 if(model.isof(Voc.VERSION)){
@@ -60,10 +63,6 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                         AppLog.debug('Version hasWidget changed', widgets);
                         AppView.draw(model);
                     });
-
-                }
-                if ( model.isof(Voc.TIMELINE) ) {
-                    this.drawWidget(this.$el.find('.timelineContainer'), model);
                 }
             },
             render: function() {
@@ -102,6 +101,8 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                 // Initialize and place the OIDCTokenExpired view
                 this.oidcTokenExpiredModalView = new OIDCTokenExpiredModalView().render();
                 this.$el.parent().prepend(this.oidcTokenExpiredModalView.$el);
+
+                this.drawWidget(this.$el.find('.timelineContainer'), this.timelineModel);
             },
             drawWidget: function(versionElem, widget) {
                 AppLog.debug('drawWidget', widget);

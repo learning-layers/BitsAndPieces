@@ -53,17 +53,6 @@ function(Logger, Voc, _, userParams,
                 else ws = _.clone(ws);
                 this.LOG.debug("widgets = ", ws);
                 this.initWidgets(model, ws);
-
-            } else if ( model.isof(Voc.USER) ) {
-                if ( !model.isNew() ) {
-                    if ( model === this.vie.entities.get(userParams.user) ) {
-                        // XXX This has to be implemented in a better way
-                        var that = this;
-                        setTimeout(function() {
-                            that.vie.entities.addOrUpdate(that.createTimeline(model));
-                        }, 1000);
-                    }
-                }
             }
         },
         /**

@@ -3,7 +3,7 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc', 'view/ss
         LOG: Logger.get('ClusterView'),
         events: {
             'click .expandable' : 'expand',
-            // XXX mouseover/leave don't work in junction with dragndrop of bits from the preview box
+            // NB! mouseover/leave don't work in junction with dragndrop of bits from the preview box
             //'mouseover .expandable' : 'expand', 
             //'mouseleave .expanded' : 'close',
             'click .expanded .closeCluster' : 'close',
