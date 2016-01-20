@@ -601,11 +601,11 @@ define(['underscore', 'logger'], function(_, Logger) {
             'reqType' : 'POST',
             'reqPath' : 'entities/filtered/accessible',
             'resultKey' : 'entities',
-            // XXX Comment those out once the API has evolved
-            /*'params' : {
+            'params' : {
                 'setTags' : { 'default' : true },
-                'setFlags' : { 'default' : true }
-            },*/
+                'setFlags' : { 'default' : true },
+                'pageSize' : { 'default' : 0 }
+            },
             'preparation' : preparations['scrubParams'],
             'decoration' : decorations['single_entity']
         },
