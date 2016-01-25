@@ -6,7 +6,7 @@ function (Logger, $, Backbone, _, DismissibleAlertTemplate) {
         addMessage: function(type, text, clearWithTimeout, timeoutValue) {
             this.LOG.debug('Add dismissible message', text, clearWithTimeout);
 
-            if ( !clearWithTimeout ) {
+            if ( clearWithTimeout !== false ) {
                 clearWithTimeout = true;
             }
 
