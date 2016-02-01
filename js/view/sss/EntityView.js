@@ -177,6 +177,8 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 if ( file ) {
                     window.open(this.constructFileDownloadUri(file));
                     return true;
+                } else {
+                    return false;
                 }
             } else if ( resource.isof(Voc.FILE) ) {
                 window.open(this.constructFileDownloadUri(resourceUri));
