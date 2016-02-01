@@ -1,9 +1,6 @@
 define(['view/sss/EntityView', 'logger', 'jquery', 'voc'], function(EntityView, Logger, $, Voc ){
     return EntityView.extend({
         LOG: Logger.get('OrgaEntityView'),
-        events: {
-            'contextmenu' : 'detailView' // detailView comes from EntityView
-        },
         initialize: function() {
             var resource = this.model.get(Voc.hasResource);
             this.LOG.debug('initialize orgaentitzview', this.model, resource);

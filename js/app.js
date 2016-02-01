@@ -20,7 +20,6 @@ function(appConfig, VIE, Logger, userParams, UserData, SocialSemanticService, ex
     Logger.get('TimelineView').setLevel(Logger.OFF);
     Logger.get('OrganizeView').setLevel(Logger.OFF);
     Logger.get('WidgetView').setLevel(Logger.OFF);
-    Logger.get('DetailView').setLevel(Logger.OFF);
     Logger.get('EpisodeManagerView').setLevel(Logger.OFF);
     Logger.get('EpisodeView').setLevel(Logger.OFF);
     Logger.get('EntityView').setLevel(Logger.OFF);

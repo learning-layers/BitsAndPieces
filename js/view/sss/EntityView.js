@@ -1,4 +1,6 @@
-define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView', 'voc', 'userParams'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, DetailView, Voc, userParams){
+"use strict";
+define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc', 'userParams'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, Voc, userParams){
+    "use strict";
     return Backbone.View.extend({
         LOG: Logger.get('EntityView'),
         icons: {
@@ -87,7 +89,6 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
         },
         events : {
           'click' : '_click'
-          //'contextmenu' : 'detailView'
         },
         initialize: function() {
             this.model.on('change', this.render,this );
@@ -96,9 +97,6 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             this.LOG.error('clicked', e);
             if( e.which === 1 ) {
                 this.defer();
-            } else if( e.which === 3) {
-                this.detailView();
-                return false;
             }
         },
         // click function to manage click/dblclick
@@ -120,7 +118,6 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             {
                 this.alreadyclicked=true;
                 var view = this;
-                //view.detailView(e);
                 this.alreadyclickedTimeout=setTimeout(function(){
                     view.alreadyclicked=false; // reset when it happens
                     view.LOG.debug('_click timeOut');
@@ -215,28 +212,6 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             this.LOG.debug('rendering ', this.model);
             this.draggable();
             return this;
-        },
-        detailView: function(e) {
-            this.LOG.debug("clicked entity");
-            this.LOG.debug("e", e);
-            if( !e.currentTarget ) return;
-            var id = $(e.currentTarget).attr('about');
-            if( !id ) return;
-            this.LOG.debug("id", id);
-            if( id != this.model.getSubject() ) return;
-
-            // --- ADD THE DETAIL VIEW --- //
-            var detailViewId = "detailView" + id.replace(/[\\/:-\\.#]/g, '');
-            if( !document.getElementById(detailViewId)) {
-                $('body').append("<span id=\""+detailViewId+"\"></div>");
-                var detailView = new DetailView({
-                    model: this.model,
-                    el: '#' + detailViewId
-                });
-            } 
-            this.model.trigger('showDetails', e);
-            return false;
-
         },
         draggable: function() {
             var VIEW = this;

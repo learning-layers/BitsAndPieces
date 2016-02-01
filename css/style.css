@@ -99,15 +99,6 @@ fieldset legend {
     font-size: 0.8em;
     color: gray;
 }
-.detailView {
-}
-.detailView ul  {
-    margin: 0;
-    padding-left: 1em;
-}
-.detailView ul li {
-    list-style: none;
-}
 /*override timeline.css*/
 div.timeline-groups-text {
     padding-left:0;
