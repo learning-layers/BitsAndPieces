@@ -1,6 +1,4 @@
-"use strict";
 define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc', 'userParams'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, Voc, userParams){
-    "use strict";
     return Backbone.View.extend({
         LOG: Logger.get('EntityView'),
         icons: {
