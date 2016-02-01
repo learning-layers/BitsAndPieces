@@ -67,8 +67,6 @@ define(['config/config', 'jquery', 'logger', 'userParams'],
         tracker.CLICKHELPBUTTON = 'clickHelpButton';
         tracker.CLICKAFFECTBUTTON = 'clickAffectButton';
         tracker.NOTIFICATIONTAB = 'notificationTab';
-        tracker.SENDMESSAGE = 'sendMessage';
-        tracker.READMESSAGE = 'readMessage';
         tracker.SETFILTER = 'setFilter';
         tracker.REMOVEFILTER = 'removeFilter';
         tracker.EPISODETAB = 'episodeTab';

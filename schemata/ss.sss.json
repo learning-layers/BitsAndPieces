@@ -1406,23 +1406,6 @@
                 "http://eval.bp/userEvent"
             ]
         },
-        "http://eval.bp/message" : {
-            "ancestors": [
-                "http://eval.bp/Thing"
-            ],
-            "comment": "",
-            "comment_plain": "",
-            "id": "http://eval.bp/message",
-            "label": "message",
-            "properties": [
-            ],
-            "specific_properties": [
-            ],
-            "subtypes": [],
-            "supertypes": [
-                "http://eval.bp/Thing"
-            ]
-        },
         "http://eval.bp/activity" : {
             "ancestors": [
                 "http://eval.bp/Thing"

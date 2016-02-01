@@ -493,22 +493,6 @@ define(['underscore', 'logger'], function(_, Logger) {
             'preparation' : preparations['scrubParams'],
             'injectVariable': 'entity'
         },
-        'messageSend' : {
-            'reqType' : 'POST',
-            'reqPath' : 'messages',
-            'resultKey' : 'message'
-        },
-        'messagesGet' : {
-            'reqType' : 'POST',
-            'reqPath' : 'messages/filtered',
-            'resultKey' : 'messages',
-            'params' : {
-                'includeRead' : { 'default' : false }
-            },
-            'preparation' : preparations['scrubParams'],
-            'decoration' : decorations['single_entity'],
-            'passThroughKeys' : ['queryTime']
-        },
         'recommResources' : {
             'reqType' : 'POST',
             'reqPath' : 'recomm/filtered/resources',
