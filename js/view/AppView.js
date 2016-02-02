@@ -48,7 +48,7 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
                 this.setUpWorksLogInterval();
                 this.timelineModel = this.vie.entities.addOrUpdate(
                         AppData.createTimeline(this.model));
-                tracker.info(tracker.STARTBITSANDPIECES), null;
+                tracker.info(tracker.STARTBITSANDPIECES, null);
             },
             filter: function(model, collection, options) {
                 if(model.isof(Voc.VERSION)){
