@@ -73,6 +73,10 @@ define(['config/config', 'jquery', 'logger', 'userParams'],
         tracker.SHARELEARNEPWITHUSER = 'shareLearnEpWithUser';
         tracker.COPYLEARNEPFORUSER = 'copyLearnEpForUser';
         tracker.SEARCHWITHKEYWORD = 'searchWithKeyword';
+        tracker.OPENDISCUSSIONTOOL = 'openDiscussionTool';
+        tracker.STARTBITSANDPIECES = 'startBitsAndPieces';
+        tracker.WORKSINBITSANDPIECES = 'worksInBitsAndPieces';
+        tracker.ADDLEARNEPVERSIONENTITYFROMRECOMMENDEDENTITIES = 'addLearnEpVersionEntityFromRecommendedEntities'
 
         return tracker;
 });

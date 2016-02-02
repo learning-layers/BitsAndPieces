@@ -293,6 +293,8 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                + '#/auth/'
                + encodeURIComponent(encodeURIComponent(this.currentEpisode.getSubject()));
            window.open(url);
+           
+           tracker.info(tracker.OPENDISCUSSIONTOOL, null, this.currentEpisode.getSubject());
         },
         clearAllEpisodeVisuals: function() {
             this.LOG.debug('clearAllEpisodeVisuals called');

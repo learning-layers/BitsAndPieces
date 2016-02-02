@@ -111,8 +111,9 @@ define(['logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
 
                         var version = that.model.get(Voc.belongsToVersion);
                         var episode = version.get(Voc.belongsToEpisode);
-                        // TODO Clean-up needed
-                        //tracker.info(tracker.ADDENTITYTOLEARNEPVERSION, tracker.ORGANIZEAREA, id, null, [episode.getSubject()]);
+                        if ( ui.helper.hasClass('singleRecommendation') ) {
+                            tracker.info(tracker.ADDLEARNEPVERSIONENTITYFROMRECOMMENDEDENTITIES, tracker.ORGANIZEAREA, id, null, [episode.getSubject()]);
+                        }
                     }
                 });
                 return organizeView;

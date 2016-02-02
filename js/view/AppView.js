@@ -1,4 +1,4 @@
-define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
+define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
         'data/AppData',
         'data/timeline/TimelineData', 
         'data/organize/OrganizeData',
@@ -13,7 +13,7 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
         'utils/SystemMessages',
         'utils/EntityHelpers',
         'text!templates/navbar.tpl'],
-    function(appConfig, Logger, Backbone, $, Voc, _, AppData, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, EntityHelpers, NavbarTemplate){
+    function(appConfig, Logger, tracker, Backbone, $, Voc, _, AppData, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, EntityHelpers, NavbarTemplate){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {
@@ -45,8 +45,10 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                         }
                     },this);
                 this.setUpEpisodeLockHoldInternal();
+                this.setUpWorksLogInterval();
                 this.timelineModel = this.vie.entities.addOrUpdate(
                         AppData.createTimeline(this.model));
+                tracker.info(tracker.STARTBITSANDPIECES), null;
             },
             filter: function(model, collection, options) {
                 if(model.isof(Voc.VERSION)){
@@ -264,6 +266,26 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                     } else {
                         AppLog.debug('learnEpLockHold No Current Version For User', that.model);
                     }
+                }, 30000);
+            },
+            setUpWorksLogInterval: function() {
+                var that = this;
+
+                setInterval(function() {
+                    var version = null,
+                        episode = null,
+                        episodeUri = null;
+
+                    version = that.model.get(Voc.currentVersion);
+                    if ( version && version.isEntity ) {
+                        episode = version.get(Voc.belongsToEpisode);
+
+                        if ( episode && episode.isEntity ) {
+                            episodeUri = episode.getSubject();
+                        }
+                    }
+
+                    tracker.info(tracker.WORKSINBITSANDPIECES, null, episodeUri);
                 }, 30000);
             }
         });
