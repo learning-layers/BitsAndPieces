@@ -234,8 +234,10 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
             this.circleRenameModalView.setSaveActionHandler(function(e){
                 e.preventDefault();
                 var newCircleLabel = that.circleRenameModalView.getRenamedCircleLabel();
+                var oldCircleLabel = view.model.get(Voc.label);
                 circle.Label = newCircleLabel;
                 var newCircleDescription = that.circleRenameModalView.getRenamedCircleDescription();
+                var oldCircleDescription = view.model.get(Voc.description);
                 circle.Description = newCircleDescription;
 
                 //var cEntity = view.circleCollection.findWhere({'_organizeId' : circle.id });
@@ -248,8 +250,12 @@ define(['vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone',
 
                 var version = that.model.get(Voc.belongsToVersion);
                 var episode = version.get(Voc.belongsToEpisode);
-                // TODO Check if version and episode are needed any more
-                //tracker.info(tracker.CHANGELABEL, tracker.ORGANIZEAREA, view.model.getSubject(), newCircleLabel, [episode.getSubject()]);
+                if ( oldCircleLabel != newCircleLabel ) {
+                    tracker.info(tracker.CHANGELABEL, tracker.ORGANIZEAREA, view.model.getSubject(), newCircleLabel, [episode.getSubject()]);
+                }
+                if ( oldCircleDescription != newCircleDescription ) {
+                    tracker.info(tracker.CHANGEDESCRIPTION, tracker.ORGANIZEAREA, view.model.getSubject(), newCircleDescription, [episode.getSubject()]);
+                }
             });
             this.circleRenameModalView.setSelectActionHandler(function(event, ui) {
                 var version = that.model.get(Voc.belongsToVersion);
