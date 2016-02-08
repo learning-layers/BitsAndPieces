@@ -129,8 +129,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 },
                 'user_initiated' : true
             });
-            
-            tracker.info(tracker.ADDTAG, tracker.BITTAB, this.model.getSubject(), tag);
         },
         getBitTags: function() {
             var tags = this.model.get(Voc.hasTag) || [];
@@ -147,8 +145,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.model.set(Voc.hasTag, newTags, {
                 'user_initiated' : true
             });
-
-            tracker.info(tracker.REMOVETAG, tracker.BITTAB, this.model.getSubject(), currentTag);
         },
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {

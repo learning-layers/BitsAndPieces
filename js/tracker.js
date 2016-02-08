@@ -61,8 +61,6 @@ define(['config/config', 'jquery', 'logger', 'userParams'],
         tracker.CHANGELABEL = 'changeLabel';
         tracker.CHANGEDESCRIPTION = 'changeDescription';
         tracker.SETIMPORTANCE = 'setImportance';
-        tracker.ADDTAG = 'addTag';
-        tracker.REMOVETAG = 'removeTag';
         tracker.CLICKTAGRECOMMENDATION = 'clickTagRecommendation';
         tracker.CLICKHELPBUTTON = 'clickHelpButton';
         tracker.CLICKAFFECTBUTTON = 'clickAffectButton';
