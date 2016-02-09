@@ -1,13 +1,12 @@
 // TODO EpisodeManagerView could be renamed to MenuView
 define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
-        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView', 'view/modal/EpisodeAddModalView'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView, EpisodeAddModalView){
+        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView', 'view/modal/EpisodeAddModalView', 'view/modal/BitAddModalView'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView, EpisodeAddModalView, BitAddModalView){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
             'click a#createBlank' : 'createBlank',
             'click a#createPlaceholder' : 'createPlaceholder',
-            //'click button#createFromHere' : 'createFromHere',
-            //'click button#createNewVersion' : 'createNewVersion',
+            'click a#createBit' : 'createBit',
             'click a#logout' : 'logOut',
             'click a.helpButton' : 'showHelp',
             'click a.affectButton' : 'handleAffect',
@@ -41,10 +40,19 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 $(document).find("#myToolbar").trigger(ev);
             });
 
+            this.bitAddModalView = new BitAddModalView().render();
+            $(document).find('body').prepend(this.bitAddModalView.$el);
+
             var view = this;
         },
         render: function() {
             this.LOG.debug('EpisodeManager render');
+
+            // Set Bit creation as disabled
+            if ( !this.bitAddModalView.isFormDataSupported() ) {
+                this.$el.find('#createBit').parent().addClass('disabled');
+            }
+
             // Hide discussionTool button until episode is loaded
             this.$el.find('.discussionToolButton').hide();
 
@@ -220,22 +228,6 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
         removeEpisode: function(model) {
             this.LOG.debug('removeEpisode', model);
         },
-        // @unused Only one version allowed
-        createNewVersion: function() {
-            var version = this.model.get(Voc.currentVersion);
-            this.LOG.debug('createNewVersion from', version);
-            var episode = version.get(Voc.belongsToEpisode);
-            var newVersion = VersionData.newVersion(episode, version);
-            this.model.save(Voc.currentVersion, newVersion.getSubject());
-        },
-        // @unused Creating episode from version removed
-        createFromHere: function() {
-            var version = this.model.get(Voc.currentVersion);
-            this.LOG.debug('create new episode from version', version);
-            var newEpisode = EpisodeData.newEpisode(this.model, version );
-            var newVersion = newEpisode.get(Voc.hasVersion);
-            this.model.save(Voc.currentVersion, newVersion.getSubject());
-        },
         createBlank: function(e) {
             var that = this;
             e.preventDefault();
@@ -336,6 +328,12 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             $(document).find('#bnpApp').css('margin-top', compensatedHeight);
             $(document).find('#myToolbar').css('top', compensatedHeight);
             $(document).find('#systemMessages').css('top', compensatedHeight);
+        },
+        createBit: function(e) {
+            e.preventDefault();
+
+            this.bitAddModalView.showModal();
         }
+
     });
 });
