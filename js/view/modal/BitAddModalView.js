@@ -56,6 +56,7 @@ define(['logger', 'underscore', 'jquery', 'backbone',
 
             formData.append('file', file);
             formData.append('label', label);
+            formData.append('description', description);
             formData.append('mimeType', file.type);
 
             promise = EntityData.uploadFile(formData);
