@@ -593,6 +593,12 @@ define(['underscore', 'logger'], function(_, Logger) {
             'preparation' : preparations['scrubParams'],
             'decoration' : decorations['single_entity']
         },
+        'fileUpload' : {
+            'reqType' : 'POST',
+            'reqPath': 'files/upload',
+            'resultKey' : 'file',
+            'fileUpload' : true
+        }
 
     };
     return m;

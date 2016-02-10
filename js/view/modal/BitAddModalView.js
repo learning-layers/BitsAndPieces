@@ -50,15 +50,15 @@ define(['logger', 'underscore', 'jquery', 'backbone',
 
             var label = this.$el.find(this.labelInputSelector).val(),
                 description = this.$el.find(this.descriptionSelector).val(),
-                file = this.$el.find(this.fileSelector).val(),
-                promise = null;
+                file = this.$el.find(this.fileSelector).get(0).files[0],
+                promise = null,
+                formData = new FormData();
 
-            // XXX This is wrong and not defined yet
-            promise = EntityData.uploadFile({
-                label: label,
-                description: description,
-                file: file
-            });
+            formData.append('file', file);
+            formData.append('label', label);
+            formData.append('mimeType', file.type);
+
+            promise = EntityData.uploadFile(formData);
 
             this.hideModal();
 

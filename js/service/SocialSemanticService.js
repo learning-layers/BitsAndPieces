@@ -128,6 +128,9 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                     var serviceHeaders = { 'Authorization' : "Bearer " + sss.userKey };
                     var serviceReqPath = service.reqPath;
                     var serviceReqType = service.reqType || 'GET';
+                    var processData = service.fileUpload ? false : true;
+                    var contentType = service.fileUpload ? 'multipart/form-data' : 'application/json';
+                    var dataType = service.fileUpload ? false : 'application/json';
 
                     if ( service.injectVariable ) {
                         serviceReqPath = serviceReqPath.replace(':' + service.injectVariable, encodeURIComponent(par[service.injectVariable]));
@@ -142,15 +145,18 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                             data = JSON.stringify(data);
                         }
                     } else {
-                        data = JSON.stringify(data);
+                        if ( !service.fileUpload ) {
+                            data = JSON.stringify(data);
+                        }
                     }
                     $.ajax({
                         'url' : serviceUrl + servicePrefix + "/" + serviceReqPath + "/",
                         'type': serviceReqType,
                         'data' : data,
-                        'contentType' : "application/json",
+                        'processData' : processData,
+                        'contentType' : contentType,
                         'async' : true,
-                        'dataType': "application/json",
+                        'dataType': dataType,
                         'headers': serviceHeaders,
                         'complete' : function(jqXHR, textStatus) {
                             var result = $.parseJSON(jqXHR.responseText);

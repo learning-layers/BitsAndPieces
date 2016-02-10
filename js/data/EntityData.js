@@ -322,6 +322,28 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
 
         return defer.promise();
     };
+    m.uploadFile = function(formData) {
+        var that = this,
+            defer = $.Deferred();
+
+        this.vie.onUrisReady(
+            function() {
+                that.vie.analyze({
+                    'service' : 'fileUpload',
+                    'data' : formData
+                }).using('sss').execute().success(function(result){
+                    that.LOG.debug('uploadFile success', result);
+                    defer.resolve(result);
+                }).fail(function(f) {
+                    that.LOG.debug('uploadFile fail', f);
+                    defer.reject(f);
+                });
+            }
+        );
+
+        return defer.promise();
+    };
+
 
     return m;
 
