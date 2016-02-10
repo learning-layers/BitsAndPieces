@@ -129,7 +129,7 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                     var serviceReqPath = service.reqPath;
                     var serviceReqType = service.reqType || 'GET';
                     var processData = service.fileUpload ? false : true;
-                    var contentType = service.fileUpload ? 'multipart/form-data' : 'application/json';
+                    var contentType = service.fileUpload ? false : 'application/json';
                     var dataType = service.fileUpload ? false : 'application/json';
 
                     if ( service.injectVariable ) {
