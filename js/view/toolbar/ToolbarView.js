@@ -32,8 +32,6 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             this.is_hidden = true;
             this.$el.addClass('toolbarHidden');
 
-            // Set real height
-            this._calculateAndSetToolbarHeight();
             // Add resize listener
             this.timerId = null;
             $(window).on('resize', function() {
@@ -85,6 +83,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                 this.$el.switchClass('toolbarHidden', 'toolbarShown', function() {
                     toolbar.is_hidden = false;
                     handle.find('.glyphicon').switchClass('glyphicon-chevron-left', 'glyphicon-chevron-right');
+                    // Set real height
+                    toolbar._calculateAndSetToolbarHeight();
                 });
                 toolbar._triggerShowHideEvent('shown');
             } else {
