@@ -9,7 +9,7 @@ define([], {
     USER: "sss:user",
     ORGAENTITY: "sss:learnEpEntity",
     ENTITY: "sss:entity",
-    FILE: "sss:file",
+    FILE: "sss:uploadedFile",
     PLACEHOLDER: "sss:placeholder",
     EVERNOTE_RESOURCE: "sss:evernoteResource",
     EVERNOTE_NOTE: "sss:evernoteNote",
