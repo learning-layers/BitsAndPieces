@@ -175,7 +175,7 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
                     'service' : 'recommTags',
                     'data' : {
                         'entity' : modelUri,
-                        'maxTags' : 20,
+                        'maxTags' : 10,
                         'forUser' : userParams.user,
                         'includeOwn' : false
                     }
