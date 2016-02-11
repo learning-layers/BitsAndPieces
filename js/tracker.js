@@ -70,7 +70,6 @@ define(['config/config', 'jquery', 'logger', 'userParams'],
         tracker.EPISODETAB = 'episodeTab';
         tracker.SHARELEARNEPWITHUSER = 'shareLearnEpWithUser';
         tracker.COPYLEARNEPFORUSER = 'copyLearnEpForUser';
-        tracker.SEARCHWITHKEYWORD = 'searchWithKeyword';
         tracker.OPENDISCUSSIONTOOL = 'openDiscussionTool';
         tracker.STARTBITSANDPIECES = 'startBitsAndPieces';
         tracker.WORKSINBITSANDPIECES = 'worksInBitsAndPieces';
