@@ -164,7 +164,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             }
             return {'entity' : {
                 'label' : this.model.get(Voc.label),
-                'description' : this.model.get(Voc.description),
+                'description' : this.model.get(Voc.description).replace(/\\n/g, '\n'),
                 'author' : author,
                 'creationTime' : DateHelpers.formatTimestampDateDMY(this.model.get(Voc.creationTime)),
                 'views' : this.model.get(Voc.hasViewCount) || 0,
