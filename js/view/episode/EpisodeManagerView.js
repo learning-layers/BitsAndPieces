@@ -123,7 +123,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                     authorLabel = '';
 
                 if ( author && author.isEntity ) {
-                    authorLabel = author.get(Voc.label);
+                    authorLabel = author.get(Voc.label).split('@')[0];
                 }
                 authorText = ' | author: ' + authorLabel;
             }
@@ -150,7 +150,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
 
 
             if ( users.length > 0 ) {
-                sharedWithText = 'contributors: ' + EntityHelpers.getSharedWithNames(episode).join(', ');
+                sharedWithText = 'contributors: ' + EntityHelpers.getSharedWithNames(episode, true).join(', ');
             }
 
             this.$el.find('.currentEpisodeSharedWith').html(sharedWithText);
