@@ -35,7 +35,7 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
                 this.model.on('change:'
                     + this.vie.namespaces.uri(Voc.label),
                     function(model, value, options) {
-                        that.$el.parent().find('.currentUserLabel').html(model.get(Voc.label));
+                        that.$el.parent().find('.currentUserLabel').html(model.get(Voc.label).split('@')[0]);
                     },this);
                 this.model.on('change:'
                     + this.vie.namespaces.uri(Voc.hasEpisode),
