@@ -1,8 +1,8 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
-        'utils/DateHelpers',
+        'utils/DateHelpers', 'utils/EntityHelpers',
         'text!templates/toolbar/bit.tpl', 'text!templates/toolbar/empty.tpl',
         'view/toolbar/EpisodeListGroupView', 'view/modal/BitThumbnailModalView',
-        'data/EntityData', 'data/sss/CategoryData'], function(Logger, tracker, _, $, Backbone, Voc, DateHelpers, BitTemplate, EmptyTemplate, EpisodeListGroupView, BitThumbnailModalView, EntityData, CategoryData){
+        'data/EntityData', 'data/sss/CategoryData'], function(Logger, tracker, _, $, Backbone, Voc, DateHelpers, EntityHelpers, BitTemplate, EmptyTemplate, EpisodeListGroupView, BitThumbnailModalView, EntityData, CategoryData){
     return Backbone.View.extend({
         events: {
             'slidechange .slider' : 'setImportance',
@@ -10,7 +10,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             'click .deleteTag' : 'deleteTag',
             'click .deadline .clearDatepicker' : 'clearDatepicker',
             'keypress input[name="title"]' : 'updateOnEnter',
-            'keypress textarea[name="description"]' : 'updateOnEnter',
             'blur input[name="title"]' : 'changeLabel',
             'blur textarea[name="description"]' : 'changeDescription',
             'click .recommendedTags .tagcloud a' : 'clickRecommendedTag',
@@ -164,7 +163,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             }
             return {'entity' : {
                 'label' : this.model.get(Voc.label),
-                'description' : this.model.get(Voc.description).replace(/\\n/g, '\n'),
+                'description' : EntityHelpers.fixNewlinesForInput(this.model.get(Voc.description)),
                 'author' : author,
                 'creationTime' : DateHelpers.formatTimestampDateDMY(this.model.get(Voc.creationTime)),
                 'views' : this.model.get(Voc.hasViewCount) || 0,

@@ -8,7 +8,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         events: {
             'keypress input[name="label"]' : 'updateOnEnter',
             'blur input[name="label"]' : 'changeLabel',
-            'keypress textarea[name="description"]' : 'updateOnEnter',
             'blur textarea[name="description"]' : 'changeDescription',
             'change input[name="sharetype"]' : 'shareTypeChanged',
             'click button[name="share"]' : 'shareEpisode',
@@ -153,7 +152,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return {
                 entity : {
                     label : episode.get(Voc.label),
-                    description : episode.get(Voc.description),
+                    description : EntityHelpers.fixNewlinesForInput(episode.get(Voc.description)),
                     visibility : EntityHelpers.getEpisodeVisibility(episode),
                     sharedWith : EntityHelpers.getSharedWithNames(episode).join(', ')
                 }

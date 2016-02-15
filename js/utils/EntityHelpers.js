@@ -145,6 +145,9 @@ function (Logger, $, Backbone, _, Voc) {
             }
             var tmp = uri.split('/');
             return tmp[tmp.length - 1];
+        },
+        fixNewlinesForInput: function(text) {
+            return text.replace(/\\n/g, '\n');
         }
     };
 });
