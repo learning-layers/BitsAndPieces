@@ -1,6 +1,7 @@
 define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'text!templates/toolbar/episode_listing.tpl',
-        'data/episode/EpisodeData'], function(Logger, tracker, _, $, Backbone, Voc, EpisodeListingTemplate, EpisodeData){
+        'data/episode/EpisodeData',
+        'userParams'], function(Logger, tracker, _, $, Backbone, Voc, EpisodeListingTemplate, EpisodeData, UserParams){
     return Backbone.View.extend({
         tagName: 'li',
         events: {
@@ -23,7 +24,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         episodeClicked: function() {
             var id = EpisodeData.getFirstVersion(this.model);
             if ( !id ) return;
-            this.model.get(Voc.belongsToUser).save( Voc.currentVersion, id.getSubject());
+            this.model.collection.get(UserParams.user).save( Voc.currentVersion, id.getSubject());
 
             if ( this.options.toolContext ) {
                 tracker.info(tracker.CLICKBIT, this.options.toolContext, this.model.getSubject(), this.options.trackerEvtContent);
