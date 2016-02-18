@@ -129,6 +129,8 @@ define(['underscore', 'logger'], function(_, Logger) {
                 if ( _.isObject(fixable['sss:'+prop]) ) {
                     if ( _.isObject(fixable['sss:'+prop]['file']) ) {
                         fixable['sss:'+prop] = fixable['sss:'+prop].file.downloadLink;
+                    } else {
+                        fixable['sss:'+prop] = null;
                     }
                 }
             }
