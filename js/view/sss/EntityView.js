@@ -52,6 +52,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             'sss:fileDoc' : 'img/sss/entityFileDoc.png',
             'sss:fileSpreadsheet' : 'img/sss/entitySpreadsheet.png',
             'sss:filePresentation' : 'img/sss/entityPresentation.png',
+            'sss:fileText' : 'img/sss/document.png',
             'sss:rating' : 'img/sss/rate.png',
             'sss:tag' : 'img/evernote/tag.png',
             'sss:placeholder' : 'img/sss/entityPlaceholder.png',
@@ -288,6 +289,12 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                         case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
                             name = 'sss:filePresentation';
                             break;
+                        case 'text/plain':
+                        case 'text/html':
+                        case 'text/css':
+                        case 'text/x-vcard':
+                            name = 'sss:fileText';
+                            break;
                     }
                 } else {
                     file = this.model.get(Voc.file);
@@ -319,6 +326,13 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                             case '.ppt':
                             case 'pptx':
                                 name = 'sss:filePresentation';
+                                break;
+                            case '.txt':
+                            case 'html':
+                            case '.xml':
+                            case '.css':
+                            case '.vcf':
+                                name = 'sss:fileText';
                                 break;
                         }
                     }
