@@ -52,7 +52,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             'sss:fileDoc' : 'img/sss/entityFileDoc.png',
             'sss:fileSpreadsheet' : 'img/sss/entitySpreadsheet.png',
             'sss:filePresentation' : 'img/sss/entityPresentation.png',
-            'sss:fileText' : 'img/sss/document.png',
+            'sss:fileText' : 'img/sss/entityText.png',
             'sss:rating' : 'img/sss/rate.png',
             'sss:tag' : 'img/evernote/tag.png',
             'sss:placeholder' : 'img/sss/entityPlaceholder.png',
