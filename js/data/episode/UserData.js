@@ -158,15 +158,29 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
     m.getAllUsers = function() {
         return _.clone(this.allUsers);
     };
-    m.getSearchableUsers = function() {
+    m.getSearchableUsers = function(includeCurrent) {
+        if ( includeCurrent !== true ) {
+            includeCurrent = false;
+        }
         // TODO It might be a good idea to make the run only once
         // And then serve data from cache
         var searchableUsers = [];
         _.each(this.allUsers, function(user) {
-            // Make sure to remove the currently logged in user
-            // Sharing with self is not allowed
-            // Also remove 'system' user
-            if ( user.id !== userParams.user && user.id.indexOf('/system', user.id.length - '/system'.length) === -1 ) {
+            var shouldBeAdded = true;
+
+            if ( includeCurrent ) {
+                // Remove 'system' user
+                if ( user.id.indexOf('/system', user.id.length - '/system'.length) !== -1 ) {
+                    shouldBeAdded = false;
+                }
+            } else {
+                // Remove currently logged in and 'system' users
+                if ( user.id === userParams.user || user.id.indexOf('/system', user.id.length - '/system'.length) !== -1 ) {
+                    shouldBeAdded = false;
+                }
+            }
+
+            if ( shouldBeAdded ) {
                 searchableUsers.push({
                     label: user.label,
                     value: user.id

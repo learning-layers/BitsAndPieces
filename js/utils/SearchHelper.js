@@ -10,10 +10,20 @@ function (Logger, $, Backbone, _, userParams, UserData) {
             var pattern = new RegExp(request.term, 'i');
 
             response(
-                _.filter(UserData.getSearchableUsers(), function(user) {
+                _.filter(UserData.getSearchableUsers(false), function(user) {
                     return pattern.test(user.label);
                })
-            ); 
+            );
+        },
+        userAutocompleteSourceWithCurrent: function(request, response) {
+            var pattern = new RegExp(request.term, 'i');
+
+            response(
+                _.filter(UserData.getSearchableUsers(true), function(user) {
+                    return pattern.test(user.label);
+               })
+            );
         }
+
     };
 });
