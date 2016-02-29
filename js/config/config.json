@@ -8,6 +8,11 @@
   "search" : {
     "localSearchOp" : "and",
     "globalSearchOp" : "and"
+  },
+  "toolbar" : {
+    "description" : {
+      "rows" : 2
+    }
   }
 }
 

@@ -1,8 +1,8 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
+define(['config/config', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         'utils/DateHelpers', 'utils/EntityHelpers',
         'text!templates/toolbar/bit.tpl', 'text!templates/toolbar/empty.tpl',
         'view/toolbar/EpisodeListGroupView', 'view/modal/BitThumbnailModalView',
-        'data/EntityData', 'data/sss/CategoryData'], function(Logger, tracker, _, $, Backbone, Voc, DateHelpers, EntityHelpers, BitTemplate, EmptyTemplate, EpisodeListGroupView, BitThumbnailModalView, EntityData, CategoryData){
+        'data/EntityData', 'data/sss/CategoryData'], function(appConfig, Logger, tracker, _, $, Backbone, Voc, DateHelpers, EntityHelpers, BitTemplate, EmptyTemplate, EpisodeListGroupView, BitThumbnailModalView, EntityData, CategoryData){
     return Backbone.View.extend({
         events: {
             'slidechange .slider' : 'setImportance',
@@ -171,6 +171,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 'predefined' : CategoryData.getPredefinedCategories(),
                 'importance' : this.model.get(Voc.importance),
                 'thumb' : this.getEntityThumbnail()
+            }, 'description' : {
+                'rows' : appConfig.toolbarDescriptionRows
             }};
         },
         clearDatepicker: function(e) {
