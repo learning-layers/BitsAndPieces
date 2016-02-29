@@ -13,6 +13,13 @@
     "description" : {
       "rows" : 2
     }
+  },
+  "widget" : {
+    "organize" : {
+      "container" : {
+          "height" : "400px"
+      }
+    }
   }
 }
 
