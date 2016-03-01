@@ -168,13 +168,19 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
 
             if ( users.length > 0 ) {
                 var sharedWithNames = EntityHelpers.getSharedWithNames(episode, true);
-                sharedWithText = '<span class="badge bnp-navbar-icon bnp-contributors" data-container=".navbar" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-title="Contributors" data-content="' + sharedWithNames.join(', ') + '">' + sharedWithNames.length + '</span>';
+                sharedWithText = '<span class="badge bnp-navbar-icon bnp-contributors">' + sharedWithNames.length + '</span>';
             }
 
             this.$el.find('.currentEpisodeSharedWith > span.bnp-contributors').popover('destroy');
             this.$el.find('.currentEpisodeSharedWith').html(sharedWithText);
             if ( sharedWithText !== '' ) {
-                this.$el.find('.currentEpisodeSharedWith > span.bnp-contributors').popover();
+                this.$el.find('.currentEpisodeSharedWith > span.bnp-contributors').popover({
+                    container: '.navbar',
+                    content: sharedWithNames.join(', '),
+                    placement: 'bottom',
+                    title: 'Contributors',
+                    trigger: 'hover'
+                });
             }
             this.handleNavbarHeightChange();
         },
@@ -201,7 +207,17 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 this.$el.find('.discussionToolButton > span.count').html('');
             }
 
+            this.$el.find('.discussionToolButton').popover('destroy');
             this.$el.find('.discussionToolButton').show();
+            if ( count && count > 0 ) {
+                this.$el.find('.discussionToolButton').popover({
+                    container: '.navbar',
+                    content: '<strong>' + count + '</strong> discussions in total.<br>With <strong>' + unreadEntriesCount + '</strong> unread entries out of <strong>' + entriesCount + '</strong> total entries.',
+                    html: true,
+                    placement: 'bottom',
+                    trigger: 'hover'
+                });
+            }
             this.handleNavbarHeightChange();
         },
         changeEpisodeSet: function(model, set, options) {
