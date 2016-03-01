@@ -582,7 +582,7 @@ ul.dropdown-menu li.episode a.highlight {
 	color: #777;
 }
 
-.navbar .discussionToolButton span {
+.navbar .discussionToolButton i {
     color: #DB0000;
 }
 
@@ -598,5 +598,25 @@ ul.dropdown-menu li.episode a.highlight {
 	text-align: center;
 	position: relative;
 	bottom: 4px;
+}
+
+.navbar i.fa {
+	font-size: 120%;
+}
+
+.bnp-navbar-icon {
+	cursor: pointer;
+}
+
+.fa.bnp-episode-shared {
+	color: #5ba74a;
+}
+
+.fa.bnp-episode-private {
+	color: #f6a551;
+}
+
+.badge.bnp-contributors {
+	background-color: #5ba74a;
 }
 

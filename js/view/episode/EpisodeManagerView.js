@@ -111,24 +111,41 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
         },
         renderVisibility: function(episode, circleTypes) {
             this.LOG.debug('renderVisibility', circleTypes);
-            this.$el.find('.currentEpisodeVisibility').html(EntityHelpers.getEpisodeVisibility(episode));
+            var elementClasses = ['fa', 'bnp-navbar-icon'],
+                elementTitle = '';
+
+            if ( EntityHelpers.isSharedEpisode(episode) ) {
+                elementClasses.push('fa-users');
+                elementTitle = 'This Episode is shared with other users.';
+            } else {
+                elementClasses.push('fa-user-secret');
+                elementTitle = 'This Episode is private and only visible to owner.';
+            }
+
+            this.$el.find('.currentEpisodeVisibility').html('<i class="' + elementClasses.join(' ') + '" title="' + elementTitle + '"></i>');
             this.handleNavbarHeightChange();
         },
         renderAuthor: function(episode) {
             var authorText = '';
             this.LOG.debug('renderAuthor', episode);
 
-            if ( EntityHelpers.isSharedEpisode(episode) ) {
-                var author = episode.get(Voc.author),
-                    authorLabel = '';
+            var author = episode.get(Voc.author),
+                authorLabel = '',
+                elementClasses = ['fa', 'bnp-navbar-icon'];
 
-                if ( author && author.isEntity ) {
-                    authorLabel = author.get(Voc.label).split('@')[0];
-                }
-                authorText = ' | author: ' + authorLabel;
+            if ( author && author.isEntity ) {
+                authorLabel = author.get(Voc.label).split('@')[0];
             }
 
-            this.$el.find('.currentEpisodeAuthor').html(authorText);
+            if ( EntityHelpers.isSharedEpisode(episode) ) {
+                elementClasses.push('fa-unlock');
+                elementClasses.push('bnp-episode-shared');
+            } else {
+                elementClasses.push('fa-lock');
+                elementClasses.push('bnp-episode-private');
+            }
+
+            this.$el.find('.currentEpisodeAuthor').html('<i class="' + elementClasses.join(' ') + '" title="Author: ' + authorLabel  + '"></i>');
             this.handleNavbarHeightChange();
         },
         renderSharedWith: function(episode, users) {
@@ -150,10 +167,15 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
 
 
             if ( users.length > 0 ) {
-                sharedWithText = 'contributors: ' + EntityHelpers.getSharedWithNames(episode, true).join(', ');
+                var sharedWithNames = EntityHelpers.getSharedWithNames(episode, true);
+                sharedWithText = '<span class="badge bnp-navbar-icon bnp-contributors" data-container=".navbar" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-title="Contributors" data-content="' + sharedWithNames.join(', ') + '">' + sharedWithNames.length + '</span>';
             }
 
+            this.$el.find('.currentEpisodeSharedWith > span.bnp-contributors').popover('destroy');
             this.$el.find('.currentEpisodeSharedWith').html(sharedWithText);
+            if ( sharedWithText !== '' ) {
+                this.$el.find('.currentEpisodeSharedWith > span.bnp-contributors').popover();
+            }
             this.handleNavbarHeightChange();
         },
         renderDiscussionToolButton: function(episode) {

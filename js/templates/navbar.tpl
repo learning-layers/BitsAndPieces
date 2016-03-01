@@ -28,26 +28,28 @@
       </ul>
       <p class="navbar-text currentEpisodeLabel"></p>
       <p class="navbar-text">
-          | <span class="currentEpisodeVisibility"></span>
-            <span class="currentEpisodeAuthor"></span>
-          | <span class="currentEpisodeSharedWith"></span>
+          |
+          <span class="currentEpisodeVisibility"></span>
+          <span class="currentEpisodeAuthor"></span>
+          <span class="currentEpisodeSharedWith"></span>
+          |
       </p>
 
       <% if ( discussionToolUrl ) { %>
       <button type="button" class="btn btn-default navbar-btn discussionToolButton" title="Open Discussion Tool">
-          <span class="glyphicon glyphicon-comment"></span>
+          <i class="fa fa-comments"></i>
           <span class="count"></span>
       </button>
       <% } %>
 
       <p class="navbar-text navbar-right">
         <% if ( affectUrl ) { %>
-          <a href="<%= affectUrl %>" title="Affect" target="_blank" class="navbar-link affectButton"><span class="glyphicon glyphicon-heart text-danger"></span></a>
+          <a href="<%= affectUrl %>" title="Affect" target="_blank" class="navbar-link affectButton"><i class="fa fa-heart text-danger"></i></a>
         <% } %>
 
-        <span class="glyphicon glyphicon-user"></span> <span class="currentUserLabel"><%= userLabel %></span>
+        <i class="fa fa-user"></i> <span class="currentUserLabel"><%= userLabel %></span>
         <a href="<%= helpUrl %>" class="navbar-link helpButton" target="_blank">
-            <span class="glyphicon glyphicon-question-sign"></span>
+            <i class="fa fa-question-circle"></i>
         </a>
       </p>
     </div><!-- /.navbar-collapse -->
