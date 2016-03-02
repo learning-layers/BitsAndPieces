@@ -46,7 +46,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             var that = this,
                 data = {
                 types : [
-'removeCategories',
+//'removeCategories',
 'addEntityToLearnEpVersion',
 'changeEntityForLearnEpVersionEntity',
 'moveLearnEpVersionEntity',
