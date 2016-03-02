@@ -565,9 +565,13 @@ button.activityStreamRefresh span.glyphicon {
 }
 
 .episode button.deleteEpisode {
-	padding: 1px 2px;
-	padding-bottom: 0px;
+	padding: 2px 3px;
+	padding-bottom: 1px;
 	font-size: 65%;
+}
+
+.episode button.deleteEpisode i.fa {
+	font-size: 155%;
 }
 
 ul.dropdown-menu li.episode a {
