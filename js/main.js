@@ -1,5 +1,5 @@
 var require = (function() {
-    var appVersion = '4.1.0-alpha';
+    var appVersion = '4.1.0';
     return {
         config: {
             'config/config': {
