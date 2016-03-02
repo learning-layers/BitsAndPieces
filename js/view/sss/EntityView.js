@@ -1,4 +1,4 @@
-define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/detail/DetailView', 'voc', 'userParams'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, DetailView, Voc, userParams){
+define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc', 'userParams'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, Voc, userParams){
     return Backbone.View.extend({
         LOG: Logger.get('EntityView'),
         icons: {
@@ -52,6 +52,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             'sss:fileDoc' : 'img/sss/entityFileDoc.png',
             'sss:fileSpreadsheet' : 'img/sss/entitySpreadsheet.png',
             'sss:filePresentation' : 'img/sss/entityPresentation.png',
+            'sss:fileText' : 'img/sss/entityText.png',
             'sss:rating' : 'img/sss/rate.png',
             'sss:tag' : 'img/evernote/tag.png',
             'sss:placeholder' : 'img/sss/entityPlaceholder.png',
@@ -87,7 +88,6 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
         },
         events : {
           'click' : '_click'
-          //'contextmenu' : 'detailView'
         },
         initialize: function() {
             this.model.on('change', this.render,this );
@@ -96,9 +96,6 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             this.LOG.error('clicked', e);
             if( e.which === 1 ) {
                 this.defer();
-            } else if( e.which === 3) {
-                this.detailView();
-                return false;
             }
         },
         // click function to manage click/dblclick
@@ -120,7 +117,6 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             {
                 this.alreadyclicked=true;
                 var view = this;
-                //view.detailView(e);
                 this.alreadyclickedTimeout=setTimeout(function(){
                     view.alreadyclicked=false; // reset when it happens
                     view.LOG.debug('_click timeOut');
@@ -177,6 +173,8 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 if ( file ) {
                     window.open(this.constructFileDownloadUri(file));
                     return true;
+                } else {
+                    return false;
                 }
             } else if ( resource.isof(Voc.FILE) ) {
                 window.open(this.constructFileDownloadUri(resourceUri));
@@ -213,28 +211,6 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             this.LOG.debug('rendering ', this.model);
             this.draggable();
             return this;
-        },
-        detailView: function(e) {
-            this.LOG.debug("clicked entity");
-            this.LOG.debug("e", e);
-            if( !e.currentTarget ) return;
-            var id = $(e.currentTarget).attr('about');
-            if( !id ) return;
-            this.LOG.debug("id", id);
-            if( id != this.model.getSubject() ) return;
-
-            // --- ADD THE DETAIL VIEW --- //
-            var detailViewId = "detailView" + id.replace(/[\\/:-\\.#]/g, '');
-            if( !document.getElementById(detailViewId)) {
-                $('body').append("<span id=\""+detailViewId+"\"></div>");
-                var detailView = new DetailView({
-                    model: this.model,
-                    el: '#' + detailViewId
-                });
-            } 
-            this.model.trigger('showDetails', e);
-            return false;
-
         },
         draggable: function() {
             var VIEW = this;
@@ -313,6 +289,12 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                         case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
                             name = 'sss:filePresentation';
                             break;
+                        case 'text/plain':
+                        case 'text/html':
+                        case 'text/css':
+                        case 'text/x-vcard':
+                            name = 'sss:fileText';
+                            break;
                     }
                 } else {
                     file = this.model.get(Voc.file);
@@ -344,6 +326,13 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                             case '.ppt':
                             case 'pptx':
                                 name = 'sss:filePresentation';
+                                break;
+                            case '.txt':
+                            case 'html':
+                            case '.xml':
+                            case '.css':
+                            case '.vcf':
+                                name = 'sss:fileText';
                                 break;
                         }
                     }

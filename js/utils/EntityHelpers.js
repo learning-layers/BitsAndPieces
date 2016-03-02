@@ -21,17 +21,28 @@ function (Logger, $, Backbone, _, Voc) {
 
             return 'private';
         },
-        getSharedWithNames: function(episode) {
+        getSharedWithNames: function(episode, split_by_at) {
             var sharedWithNames = [],
                 sharedWith = episode.get(Voc.hasUsers);
 
+            if ( split_by_at !== true ) {
+                split_by_at = false;
+            }
+
             if ( !_.isEmpty(sharedWith) ) {
                 sharedWith = ( _.isArray(sharedWith) ) ? sharedWith : [sharedWith];
-                var authorUri = episode.get(Voc.author).getSubject();
+                var authorUri = episode.get(Voc.author);
+                if ( authorUri.isEntity ) {
+                    authorUri = authorUri.getSubject();
+                }
 
                 _.each(sharedWith, function(user) {
                     if ( user.getSubject() !== authorUri ) {
-                        sharedWithNames.push(user.get(Voc.label));
+                        if ( split_by_at ) {
+                            sharedWithNames.push(user.get(Voc.label).split('@')[0]);
+                        } else {
+                            sharedWithNames.push(user.get(Voc.label));
+                        }
                     }
                 });
             }
@@ -134,6 +145,9 @@ function (Logger, $, Backbone, _, Voc) {
             }
             var tmp = uri.split('/');
             return tmp[tmp.length - 1];
+        },
+        fixNewlinesForInput: function(text) {
+            return text.replace(/\\n/g, '\n');
         }
     };
 });

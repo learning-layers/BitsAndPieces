@@ -18,7 +18,7 @@ define(['config/config', 'jquery', 'logger', 'userParams'],
                     'users' : usersParam
                 };
             $.ajax({
-                'url' : appConfig.sssHostREST + 'eval/eval/log/',
+                'url' : appConfig.sssHostREST + appConfig.sssHostRESTPrefix + '/eval/log/',
                 'type': "POST",
                 'data' : JSON.stringify(params),
                 'contentType' : "application/json",
@@ -61,20 +61,19 @@ define(['config/config', 'jquery', 'logger', 'userParams'],
         tracker.CHANGELABEL = 'changeLabel';
         tracker.CHANGEDESCRIPTION = 'changeDescription';
         tracker.SETIMPORTANCE = 'setImportance';
-        tracker.ADDTAG = 'addTag';
-        tracker.REMOVETAG = 'removeTag';
         tracker.CLICKTAGRECOMMENDATION = 'clickTagRecommendation';
         tracker.CLICKHELPBUTTON = 'clickHelpButton';
         tracker.CLICKAFFECTBUTTON = 'clickAffectButton';
         tracker.NOTIFICATIONTAB = 'notificationTab';
-        tracker.SENDMESSAGE = 'sendMessage';
-        tracker.READMESSAGE = 'readMessage';
         tracker.SETFILTER = 'setFilter';
         tracker.REMOVEFILTER = 'removeFilter';
         tracker.EPISODETAB = 'episodeTab';
         tracker.SHARELEARNEPWITHUSER = 'shareLearnEpWithUser';
         tracker.COPYLEARNEPFORUSER = 'copyLearnEpForUser';
-        tracker.SEARCHWITHKEYWORD = 'searchWithKeyword';
+        tracker.OPENDISCUSSIONTOOL = 'openDiscussionTool';
+        tracker.STARTBITSANDPIECES = 'startBitsAndPieces';
+        tracker.WORKSINBITSANDPIECES = 'worksInBitsAndPieces';
+        tracker.ADDLEARNEPVERSIONENTITYFROMRECOMMENDEDENTITIES = 'addLearnEpVersionEntityFromRecommendedEntities'
 
         return tracker;
 });

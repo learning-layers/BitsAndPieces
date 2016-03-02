@@ -8,6 +8,18 @@
   "search" : {
     "localSearchOp" : "and",
     "globalSearchOp" : "and"
+  },
+  "toolbar" : {
+    "description" : {
+      "rows" : 2
+    }
+  },
+  "widget" : {
+    "organize" : {
+      "container" : {
+          "height" : "400px"
+      }
+    }
   }
 }
 

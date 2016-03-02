@@ -36,8 +36,21 @@ function (Logger, $, Backbone, _, DismissibleAlertTemplate) {
             this.removeAlertsFromParent(element);
             if ( _.isEmpty(elementText.trim()) ) {
                 this.addValidationStateToParent(element, 'has-error');
-                this.addAlert(element, 'alert-danger', alertText); 
-                return false;                        
+                this.addAlert(element, 'alert-danger', alertText);
+                return false;
+            } else {
+                this.removeValidationStateFromParent(element);
+                return true;
+            }
+        },
+        validateFileInput: function(element, alertText) {
+            var filesCount = element.get(0).files.length;
+
+            this.removeAlertsFromParent(element);
+            if ( filesCount === 0 ) {
+                this.addValidationStateToParent(element, 'has-error');
+                this.addAlert(element, 'alert-danger', alertText);
+                return false;
             } else {
                 this.removeValidationStateFromParent(element);
                 return true;

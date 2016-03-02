@@ -43,8 +43,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc',
         updateOnEnter: function(e) {
             if (e.keyCode == 13) {
                 this.search($(e.currentTarget).val());
-
-                tracker.info(tracker.SEARCHWITHKEYWORD, tracker.SEARCHTAB, null, $(e.currentTarget).val());
             }
         },
         _addToResultSet: function(results) {

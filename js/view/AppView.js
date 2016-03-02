@@ -1,4 +1,5 @@
-define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
+define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','underscore',
+        'data/AppData',
         'data/timeline/TimelineData', 
         'data/organize/OrganizeData',
         'data/episode/UserData',
@@ -12,7 +13,7 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
         'utils/SystemMessages',
         'utils/EntityHelpers',
         'text!templates/navbar.tpl'],
-    function(appConfig, Logger, Backbone, $, Voc, _, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, EntityHelpers, NavbarTemplate){
+    function(appConfig, Logger, tracker, Backbone, $, Voc, _, AppData, TimelineData, OrganizeData, UserData, EpisodeData, VersionData,WidgetView, EpisodeManagerView, ToolbarView, CircleRenameModalView, OIDCTokenExpiredModalView, SystemMessages, EntityHelpers, NavbarTemplate){
         AppLog = Logger.get('App');
         return Backbone.View.extend({
             events : {
@@ -34,7 +35,7 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                 this.model.on('change:'
                     + this.vie.namespaces.uri(Voc.label),
                     function(model, value, options) {
-                        that.$el.parent().find('.currentUserLabel').html(model.get(Voc.label));
+                        that.$el.parent().find('.currentUserLabel').html(model.get(Voc.label).split('@')[0]);
                     },this);
                 this.model.on('change:'
                     + this.vie.namespaces.uri(Voc.hasEpisode),
@@ -44,6 +45,10 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                         }
                     },this);
                 this.setUpEpisodeLockHoldInternal();
+                this.setUpWorksLogInterval();
+                this.timelineModel = this.vie.entities.addOrUpdate(
+                        AppData.createTimeline(this.model));
+                tracker.info(tracker.STARTBITSANDPIECES, null);
             },
             filter: function(model, collection, options) {
                 if(model.isof(Voc.VERSION)){
@@ -60,7 +65,6 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                         AppLog.debug('Version hasWidget changed', widgets);
                         AppView.draw(model);
                     });
-
                 }
             },
             render: function() {
@@ -74,8 +78,9 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                 // Prepend navbar to body
                 this.$el.parent().prepend(navbar);
 
-                this.widgetFrame = $('<div id="myWidgets"></div>');
+                this.widgetFrame = $('<div id="myWidgets"><div class="timelineContainer"></div><div class="episodeSpecificContainer"></div></div>');
                 this.$el.append( this.widgetFrame );
+                this.episodeSpecificContainer = this.widgetFrame.find('.episodeSpecificContainer');
                 this.episodeMgrView = new EpisodeManagerView({
                     model: this.model,
                     el: 'nav',
@@ -98,6 +103,8 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                 // Initialize and place the OIDCTokenExpired view
                 this.oidcTokenExpiredModalView = new OIDCTokenExpiredModalView().render();
                 this.$el.parent().prepend(this.oidcTokenExpiredModalView.$el);
+
+                this.drawWidget(this.$el.find('.timelineContainer'), this.timelineModel);
             },
             drawWidget: function(versionElem, widget) {
                 AppLog.debug('drawWidget', widget);
@@ -128,11 +135,11 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                         return;
                 }
                 AppLog.debug('drawing ', version.getSubject());
-                var versionElem = this.widgetFrame.children('*[about="'+version.getSubject()+'"]').first();
+                var versionElem = this.episodeSpecificContainer.children('*[about="'+version.getSubject()+'"]').first();
                 AppLog.debug('versionElem', versionElem);
                 if( versionElem.length === 0) {
                     versionElem = $('<div about="'+version.getSubject()+'" rel="'+this.vie.namespaces.uri(Voc.hasWidget)+'"></div>');
-                    this.widgetFrame.append(versionElem);
+                    this.episodeSpecificContainer.append(versionElem);
                     version.once('change:' + version.idAttribute, function(model, value, options) {
                         AppLog.debug('change subject from', model.cid, 'to', value);
                         versionElem.attr('about', value);
@@ -166,12 +173,12 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                 AppLog.debug('showing', version.getSubject());
 
                 var that= this;
-                this.widgetFrame.children().addClass('widgetHidden');
-                AppLog.debug('hide' , this.widgetFrame.children());
-                var element = this.widgetFrame.children('*[about="'+version.getSubject()+'"]');
+                this.episodeSpecificContainer.children().addClass('widgetHidden');
+                AppLog.debug('hide' , this.episodeSpecificContainer.children());
+                var element = this.episodeSpecificContainer.children('*[about="'+version.getSubject()+'"]');
                 element.removeClass('widgetHidden');
                 element.detach();
-                this.widgetFrame.prepend(element);
+                this.episodeSpecificContainer.prepend(element);
 
                 var previousVersion = this.model.previous(Voc.currentVersion);
                 // This force redraws current timeline element.
@@ -259,6 +266,26 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc','underscore',
                     } else {
                         AppLog.debug('learnEpLockHold No Current Version For User', that.model);
                     }
+                }, 30000);
+            },
+            setUpWorksLogInterval: function() {
+                var that = this;
+
+                setInterval(function() {
+                    var version = null,
+                        episode = null,
+                        episodeUri = null;
+
+                    version = that.model.get(Voc.currentVersion);
+                    if ( version && version.isEntity ) {
+                        episode = version.get(Voc.belongsToEpisode);
+
+                        if ( episode && episode.isEntity ) {
+                            episodeUri = episode.getSubject();
+                        }
+                    }
+
+                    tracker.info(tracker.WORKSINBITSANDPIECES, null, episodeUri);
                 }, 30000);
             }
         });

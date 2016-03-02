@@ -1,13 +1,12 @@
 // TODO EpisodeManagerView could be renamed to MenuView
 define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
-        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView', 'view/modal/EpisodeAddModalView'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView, EpisodeAddModalView){
+        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView', 'view/modal/EpisodeAddModalView', 'view/modal/BitAddModalView'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView, EpisodeAddModalView, BitAddModalView){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
             'click a#createBlank' : 'createBlank',
             'click a#createPlaceholder' : 'createPlaceholder',
-            //'click button#createFromHere' : 'createFromHere',
-            //'click button#createNewVersion' : 'createNewVersion',
+            'click a#createBit' : 'createBit',
             'click a#logout' : 'logOut',
             'click a.helpButton' : 'showHelp',
             'click a.affectButton' : 'handleAffect',
@@ -41,10 +40,19 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 $(document).find("#myToolbar").trigger(ev);
             });
 
+            this.bitAddModalView = new BitAddModalView().render();
+            $(document).find('body').prepend(this.bitAddModalView.$el);
+
             var view = this;
         },
         render: function() {
             this.LOG.debug('EpisodeManager render');
+
+            // Set Bit creation as disabled
+            if ( !this.bitAddModalView.isFormDataSupported() ) {
+                this.$el.find('#createBit').parent().addClass('disabled');
+            }
+
             // Hide discussionTool button until episode is loaded
             this.$el.find('.discussionToolButton').hide();
 
@@ -103,24 +111,41 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
         },
         renderVisibility: function(episode, circleTypes) {
             this.LOG.debug('renderVisibility', circleTypes);
-            this.$el.find('.currentEpisodeVisibility').html(EntityHelpers.getEpisodeVisibility(episode));
+            var elementClasses = ['fa', 'bnp-navbar-icon'],
+                elementTitle = '';
+
+            if ( EntityHelpers.isSharedEpisode(episode) ) {
+                elementClasses.push('fa-users');
+                elementTitle = 'This Episode is shared with other users.';
+            } else {
+                elementClasses.push('fa-user-secret');
+                elementTitle = 'This Episode is private and only visible to owner.';
+            }
+
+            this.$el.find('.currentEpisodeVisibility').html('<i class="' + elementClasses.join(' ') + '" title="' + elementTitle + '"></i>');
             this.handleNavbarHeightChange();
         },
         renderAuthor: function(episode) {
             var authorText = '';
             this.LOG.debug('renderAuthor', episode);
 
-            if ( EntityHelpers.isSharedEpisode(episode) ) {
-                var author = episode.get(Voc.author),
-                    authorLabel = '';
+            var author = episode.get(Voc.author),
+                authorLabel = '',
+                elementClasses = ['fa', 'bnp-navbar-icon'];
 
-                if ( author && author.isEntity ) {
-                    authorLabel = author.get(Voc.label);
-                }
-                authorText = ' | author: ' + authorLabel;
+            if ( author && author.isEntity ) {
+                authorLabel = author.get(Voc.label).split('@')[0];
             }
 
-            this.$el.find('.currentEpisodeAuthor').html(authorText);
+            if ( EntityHelpers.isSharedEpisode(episode) ) {
+                elementClasses.push('fa-unlock');
+                elementClasses.push('bnp-episode-shared');
+            } else {
+                elementClasses.push('fa-lock');
+                elementClasses.push('bnp-episode-private');
+            }
+
+            this.$el.find('.currentEpisodeAuthor').html('<i class="' + elementClasses.join(' ') + '" title="Author: ' + authorLabel  + '"></i>');
             this.handleNavbarHeightChange();
         },
         renderSharedWith: function(episode, users) {
@@ -142,10 +167,21 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
 
 
             if ( users.length > 0 ) {
-                sharedWithText = 'contributors: ' + EntityHelpers.getSharedWithNames(episode).join(', ');
+                var sharedWithNames = EntityHelpers.getSharedWithNames(episode, true);
+                sharedWithText = '<span class="badge bnp-navbar-icon bnp-contributors">' + sharedWithNames.length + '</span>';
             }
 
+            this.$el.find('.currentEpisodeSharedWith > span.bnp-contributors').popover('destroy');
             this.$el.find('.currentEpisodeSharedWith').html(sharedWithText);
+            if ( sharedWithText !== '' ) {
+                this.$el.find('.currentEpisodeSharedWith > span.bnp-contributors').popover({
+                    container: '.navbar',
+                    content: sharedWithNames.join(', '),
+                    placement: 'bottom',
+                    title: 'Contributors',
+                    trigger: 'hover'
+                });
+            }
             this.handleNavbarHeightChange();
         },
         renderDiscussionToolButton: function(episode) {
@@ -171,7 +207,17 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 this.$el.find('.discussionToolButton > span.count').html('');
             }
 
+            this.$el.find('.discussionToolButton').popover('destroy');
             this.$el.find('.discussionToolButton').show();
+            if ( count && count > 0 ) {
+                this.$el.find('.discussionToolButton').popover({
+                    container: '.navbar',
+                    content: '<strong>' + count + '</strong> discussions in total.<br>With <strong>' + unreadEntriesCount + '</strong> unread entries out of <strong>' + entriesCount + '</strong> total entries.',
+                    html: true,
+                    placement: 'bottom',
+                    trigger: 'hover'
+                });
+            }
             this.handleNavbarHeightChange();
         },
         changeEpisodeSet: function(model, set, options) {
@@ -219,22 +265,6 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
         },
         removeEpisode: function(model) {
             this.LOG.debug('removeEpisode', model);
-        },
-        // @unused Only one version allowed
-        createNewVersion: function() {
-            var version = this.model.get(Voc.currentVersion);
-            this.LOG.debug('createNewVersion from', version);
-            var episode = version.get(Voc.belongsToEpisode);
-            var newVersion = VersionData.newVersion(episode, version);
-            this.model.save(Voc.currentVersion, newVersion.getSubject());
-        },
-        // @unused Creating episode from version removed
-        createFromHere: function() {
-            var version = this.model.get(Voc.currentVersion);
-            this.LOG.debug('create new episode from version', version);
-            var newEpisode = EpisodeData.newEpisode(this.model, version );
-            var newVersion = newEpisode.get(Voc.hasVersion);
-            this.model.save(Voc.currentVersion, newVersion.getSubject());
         },
         createBlank: function(e) {
             var that = this;
@@ -293,6 +323,8 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                + '#/auth/'
                + encodeURIComponent(encodeURIComponent(this.currentEpisode.getSubject()));
            window.open(url);
+           
+           tracker.info(tracker.OPENDISCUSSIONTOOL, null, this.currentEpisode.getSubject());
         },
         clearAllEpisodeVisuals: function() {
             this.LOG.debug('clearAllEpisodeVisuals called');
@@ -334,6 +366,12 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             $(document).find('#bnpApp').css('margin-top', compensatedHeight);
             $(document).find('#myToolbar').css('top', compensatedHeight);
             $(document).find('#systemMessages').css('top', compensatedHeight);
+        },
+        createBit: function(e) {
+            e.preventDefault();
+
+            this.bitAddModalView.showModal();
         }
+
     });
 });

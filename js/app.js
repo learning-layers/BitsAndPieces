@@ -20,14 +20,12 @@ function(appConfig, VIE, Logger, userParams, UserData, SocialSemanticService, ex
     Logger.get('TimelineView').setLevel(Logger.OFF);
     Logger.get('OrganizeView').setLevel(Logger.OFF);
     Logger.get('WidgetView').setLevel(Logger.OFF);
-    Logger.get('DetailView').setLevel(Logger.OFF);
     Logger.get('EpisodeManagerView').setLevel(Logger.OFF);
     Logger.get('EpisodeView').setLevel(Logger.OFF);
     Logger.get('EntityView').setLevel(Logger.OFF);
     Logger.get('OrgaEntityView').setLevel(Logger.OFF);
     Logger.get('UserEventView').setLevel(Logger.OFF);
     Logger.get('UserView').setLevel(Logger.OFF);
-    Logger.get('MessageView').setLevel(Logger.OFF);
     Logger.get('ActivityView').setLevel(Logger.OFF);
     Logger.get('EntityRecommendationView').setLevel(Logger.OFF);
     Logger.get('App').setLevel(Logger.OFF);
@@ -49,13 +47,13 @@ function(appConfig, VIE, Logger, userParams, UserData, SocialSemanticService, ex
     Logger.get('CategoryData').setLevel(Logger.OFF);
     Logger.get('SystemMessages').setLevel(Logger.OFF);
     Logger.get('InputValidation').setLevel(Logger.OFF);
-    Logger.get('MessageData').setLevel(Logger.OFF);
     Logger.get('ActivityData').setLevel(Logger.OFF);
     Logger.get('CircleRenameModalView').setLevel(Logger.OFF);
     Logger.get('EntityHelpers').setLevel(Logger.OFF);
     Logger.get('OrganizeLockBarView').setLevel(Logger.OFF);
     Logger.get('BitThumbnailModalView').setLevel(Logger.OFF);
     Logger.get('EpisodeAddModalView').setLevel(Logger.OFF);
+    Logger.get('BitAddModalView').setLevel(Logger.OFF);
 
     // Add app version
     var appVersion = appConfig.appVersion || '',
@@ -85,7 +83,8 @@ function(appConfig, VIE, Logger, userParams, UserData, SocialSemanticService, ex
         'namespaces': {
             'sss': namespace
         },
-        'hostREST' : appConfig.sssHostREST
+        'hostREST' : appConfig.sssHostREST,
+        'hostRESTPrefix' : appConfig.sssHostRESTPrefix
     }, userParams));
     v.use(sss, 'sss');
     //v.namespaces.base(namespace);

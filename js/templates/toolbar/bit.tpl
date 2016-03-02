@@ -16,7 +16,7 @@
 
             <div class="form-group">
                 <label class="control-label">Description</label>
-                <textarea class="form-control" name="description"><%= entity.description %></textarea>
+                <textarea class="form-control" name="description" rows="<%= description.rows %>"><%= entity.description %></textarea>
                 <p class="help-block">Allows input of up to 5.000 characters. </p>
             </div>
 

@@ -12,12 +12,6 @@
                 <input type="checkbox" id="showActivities" name="showInToolbar[]" value="activities" checked="checked" />
                 <label class="notBoldLabel" for="showActivities">Activities</label>
                 <br />
-                <input type="checkbox" id="showMessages" name="showInToolbar[]" value="messages" checked="checked" />
-                <label class="notBoldLabel" for="showMessages">Messages</label>
-                <br />
-                <!--input type="checkbox" id="showNotifications" name="showInToolbar[]" value="notifications" checked="checked" />
-                <label class="notBoldLabel" for="showNotifications">Notifications</label>
-                <br /-->
                 <input type="checkbox" id="showRecommendations" name="showInToolbar[]" value="recommendations" checked="checked" />
                 <label class="notBoldLabel" for="showRecommendations">Recommendations</label>
             </div>
@@ -38,20 +32,6 @@
             </button>
             <div class="resultSet"></div>
         </div><!-- .stream -->
-
-        <div class="form-group writeMessage">
-            <label class="control-label">Write new message to:</label>
-
-            <div class="form-group">
-                <input type="text" class="form-control" name="messageRecipient" value="" />
-            </div>
-
-            <div class="form-group">
-                <textarea class="form-control" name="messageText"></textarea>
-                <p class="help-block"><span class="charactersRemaining"></span> characters remaining</p>
-            </div>
-
-        </div><!-- .writeMessage -->
 
     </div><!-- .panel-body -->
 

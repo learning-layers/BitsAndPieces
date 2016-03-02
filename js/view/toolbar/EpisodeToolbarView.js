@@ -8,7 +8,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         events: {
             'keypress input[name="label"]' : 'updateOnEnter',
             'blur input[name="label"]' : 'changeLabel',
-            'keypress textarea[name="description"]' : 'updateOnEnter',
             'blur textarea[name="description"]' : 'changeDescription',
             'change input[name="sharetype"]' : 'shareTypeChanged',
             'click button[name="share"]' : 'shareEpisode',
@@ -27,6 +26,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.shareBitsOnlySelector = '.shareBitsOnly';
             this.onlySelector = 'input[name="only[]"]';
             this.onlySelectedSelector = 'input[name="onlyselected"]';
+            this.shareWithSelector = 'input[name="sharewith"]';
         },
         episodeVersionChanged: function() {
             this.render();
@@ -86,7 +86,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.$el.html(_.template(EpisodeTemplate, this.getEpisodeViewData()));
 
             // Initialize user select autocomplete
-            this.$el.find('input[name="sharewith"]').autocomplete({
+            this.$el.find(this.shareWithSelector).autocomplete({
                 source: SearchHelper.userAutocompleteSource,
                 select: function(event, ui) {
                     event.preventDefault();
@@ -153,7 +153,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return {
                 entity : {
                     label : episode.get(Voc.label),
-                    description : episode.get(Voc.description),
+                    description : EntityHelpers.fixNewlinesForInput(episode.get(Voc.description)),
                     visibility : EntityHelpers.getEpisodeVisibility(episode),
                     sharedWith : EntityHelpers.getSharedWithNames(episode).join(', ')
                 }
@@ -201,9 +201,15 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 if ( onlyselected.is(':checked') ) {
                     onlyselected.trigger('click');
                 }
-                onlyselected.prop('disabled', true)
+                onlyselected.prop('disabled', true);
+                // Replace user search autocomplete with default one
+                this.$el.find(this.shareWithSelector).autocomplete('option', 'source', SearchHelper.userAutocompleteSource);
+                // Remove current user is selected
+                this.$el.find(".selectedUser[data-value='"+userParams.user+"'] > span").trigger('click');
             } else if ( $(e.currentTarget).val() === 'separatecopy' ) {
                 this.$el.find(this.onlySelectedSelector).prop('disabled', false);
+                // Replace user search autocomplete with one that allows current user
+                this.$el.find(this.shareWithSelector).autocomplete('option', 'source', SearchHelper.userAutocompleteSourceWithCurrent);
             }
         },
         shareEpisode: function(e) {
@@ -233,8 +239,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
             var sharedWithUsernames = this.getUserNamesFromUris(this.selectedUsers);
             if ( shareType === 'coediting' ) {
-                // TODO Clean-up needed
-                //tracker.info(tracker.SHARELEARNEPWITHUSER, tracker.EPISODETAB, episode.getSubject(), null, [], this.selectedUsers);
 
                 var promise = EpisodeData.shareEpisode(episode, this.selectedUsers, notificationText);
 
@@ -294,9 +298,6 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                     }
                 }
 
-                // TODO Clean-up needed
-                //tracker.info(tracker.COPYLEARNEPFORUSER, tracker.EPISODETAB, episode.getSubject(), null, included, this.selectedUsers);
-
                 var promise = EpisodeData.copyEpisode(episode, this.selectedUsers, excluded, notificationText);
 
                 promise.done(function() {
@@ -317,7 +318,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         },
         _cleanUpAfterSharing: function() {
             this.$el.find('#coediting').trigger('click');
-            this.$el.find('input[name="sharewith"]').val('');
+            this.$el.find(this.shareWithSelector).val('');
             this.$el.find('textarea[name="notificationtext"]').val('');
             this.$el.find('.selectedUser').remove();
             this.$el.find(this.shareBitsOnlySelector).remove();
@@ -426,7 +427,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             return returned;
         },
         validateSharedWith: function() {
-            var element = this.$el.find('input[name="sharewith"]'),
+            var element = this.$el.find(this.shareWithSelector),
                 alertText = 'Please select at least one user from suggested list!';
 
             return InputValidation.validateUserSelect(element, this.selectedUsers, alertText);

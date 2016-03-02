@@ -1,4 +1,4 @@
-define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/EpisodeData', 'userParams', 'view/sss/EntityView' ], function(Logger, Voc, _, $, Data, EpisodeData, userParams, EntityView){
+define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/EpisodeData', 'userParams', 'view/sss/EntityView' ], function(appConfig, Logger, Voc, _, $, Data, EpisodeData, userParams, EntityView){
     var m = Object.create(Data);
     m.init = function(vie) {
         this.LOG.debug("initialize UserData");
@@ -25,7 +25,6 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
                 if ( user === this.vie.entities.get(userParams.user) ) {
                     this.fetchEpisodes(user);
                     this.fetchCurrentVersion(user);
-                    this.fetchRange(user);
                 }
             } 
             user.sync = this.sync;
@@ -100,6 +99,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
 
                 var userUrisToBeAdded = [];
                 var usersToBeAdded = [];
+                var episodeVersions = {};
                 _.each(episodes, function(episode) {
                     episode['@type'] = Voc.EPISODE;
                     // A fix to allow linking of episodes to a current user
@@ -121,15 +121,21 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
                         });
                         episode[Voc.hasUsers] = userUris;
                     }
+                    episodeVersions[ episode[v.Entity.prototype.idAttribute] ] = episode[Voc.versions];
+                    delete episode[Voc.versions];
                 });
 
                 if ( !_.isEmpty(usersToBeAdded) ) {
                     v.entities.addOrUpdate(usersToBeAdded, {'overrideAttributes': true});
                 }
 
-                v.entities.addOrUpdate(episodes, {'overrideAttributes': true});
+                _.each(v.entities.addOrUpdate(episodes, {'overrideAttributes': true}), function(episode) {
+                    EpisodeData.handleVersions(episode, episodeVersions[episode.getSubject()]);
+                });
             }
-        );
+        ).fail(function(f) {
+            that.LOG.debug("error fetchEpisodes", f);
+        });
     };
     m.fetchAllUsers = function() {
         var that = this,
@@ -152,15 +158,29 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
     m.getAllUsers = function() {
         return _.clone(this.allUsers);
     };
-    m.getSearchableUsers = function() {
+    m.getSearchableUsers = function(includeCurrent) {
+        if ( includeCurrent !== true ) {
+            includeCurrent = false;
+        }
         // TODO It might be a good idea to make the run only once
         // And then serve data from cache
         var searchableUsers = [];
         _.each(this.allUsers, function(user) {
-            // Make sure to remove the currently logged in user
-            // Sharing with self is not allowed
-            // Also remove 'system' user
-            if ( user.id !== userParams.user && user.id.indexOf('/system', user.id.length - '/system'.length) === -1 ) {
+            var shouldBeAdded = true;
+
+            if ( includeCurrent ) {
+                // Remove 'system' user
+                if ( user.id.indexOf('/system', user.id.length - '/system'.length) !== -1 ) {
+                    shouldBeAdded = false;
+                }
+            } else {
+                // Remove currently logged in and 'system' users
+                if ( user.id === userParams.user || user.id.indexOf('/system', user.id.length - '/system'.length) !== -1 ) {
+                    shouldBeAdded = false;
+                }
+            }
+
+            if ( shouldBeAdded ) {
                 searchableUsers.push({
                     label: user.label,
                     value: user.id
@@ -191,12 +211,12 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
         var forUser = user.getSubject();
         var that = this;
         this.vie.load({
-            'service' : 'uEsGet',
+            'service' : 'entitiesAccessibleGet',
             'data' : {
                 'startTime' : start.getTime(),
                 'endTime' : end.getTime(),
-                'forUser' : forUser,
-                'types' : ['evernoteNotebookCreate', 'evernoteNotebookUpdate', 'evernoteNotebookFollow', 'evernoteNoteCreate', 'evernoteNoteUpdate', 'evernoteNoteDelete', 'evernoteNoteShare', 'evernoteReminderDone', 'evernoteReminderCreate', 'evernoteResourceAdd', 'bnpPlaceholderAdd']
+                'authors' : [forUser],
+                'types' : appConfig.acceptableEntityTypes
             }
         }).from('sss').execute().success(
             function(entities) {
@@ -204,40 +224,15 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Epis
                 if ( lastStart === undefined || start < lastStart ) user.set(Voc.start, start);
                 if ( lastEnd === undefined || end > lastEnd ) user.set(Voc.end, end);
                 that.LOG.debug('success fetchRange: ', _.clone(entities), 'user: ', user);
-                var keys = _.keys(EntityView.prototype.icons);
-                entities = _.filter(entities, function(entity) {
-                    // XXX Determine if this is suitable or should be done as part of the
-                    // general model fixing process
-                    return _.contains( keys, 'sss:'+entity[Voc.userEventType] );
-                });
-                var resources = [];
-                var resourceUris = [];
-                _.each(entities, function(entity) {
-                    var resource = entity[Voc.hasResource];
-                    if (_.isObject(resource)) {
-                        if ( resourceUris.indexOf(resource[that.vie.Entity.prototype.idAttribute]) === -1 ) {
-                            resources.push(resource);
-                            resourceUris.push(resource[that.vie.Entity.prototype.idAttribute]);
-                        }
-                        entity[Voc.hasResource] = resource[that.vie.Entity.prototype.idAttribute];
-                    }
-                });
-                that.LOG.debug('filtered entities', entities);
                 entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
-                that.LOG.debug('attached resources', resources, resourceUris);
-                if ( resources.length > 0 ) {
-                    that.vie.entities.addOrUpdate(resources, { 'overrideAttributes': true });
-                }
 
-                var currentEvents = user.get(Voc.hasUserEvent) || [];
-                if( !_.isArray(currentEvents)) currentEvents = [currentEvents];
-                currentEvents = _.union(currentEvents, entities);
-                var uris = _.map(currentEvents, function(userEvent){
-                    var entity = userEvent.get(Voc.hasResource);
-                    if( entity.isEntity) entity = entity.getSubject();
-                    return userEvent.getSubject();
+                var currentEntities = user.get(Voc.hasAccessibleEntity) || [];
+                if( !_.isArray(currentEntities)) currentEntities = [currentEntities];
+                currentEntities = _.union(currentEntities, entities);
+                var uris = _.map(currentEntities, function(entity){
+                    return ( entity.isEntity) ? entity.getSubject() : entity;
                 });
-                user.set(Voc.hasUserEvent, uris);
+                user.set(Voc.hasAccessibleEntity, uris);
 
                 if( callbacks && _.isFunction(callbacks.success) ) {
                     callbacks.success(entities);

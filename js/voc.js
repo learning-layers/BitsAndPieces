@@ -1,6 +1,7 @@
 define([], {
     THING : "owl:Thing",
     TIMELINE : "sss:Timeline",
+    TIMELINE_STATE : 'sss:learnEpTimelineState',
     ORGANIZE : "sss:Organize",
     USEREVENT : "sss:userEvent",
     EPISODE: "sss:learnEp",
@@ -8,7 +9,7 @@ define([], {
     USER: "sss:user",
     ORGAENTITY: "sss:learnEpEntity",
     ENTITY: "sss:entity",
-    FILE: "sss:file",
+    FILE: "sss:uploadedFile",
     PLACEHOLDER: "sss:placeholder",
     EVERNOTE_RESOURCE: "sss:evernoteResource",
     EVERNOTE_NOTE: "sss:evernoteNote",
@@ -63,7 +64,6 @@ define([], {
     hasTag : 'sss:tags',
     importance : 'sss:importance',
     isUsed : 'sss:isUsed',
-    isRead : "sss:read",
     isLocked : "sss:locked",
     isLockedByUser : "sss:lockedByUser",
     hasMimeType : 'sss:mimeType',
@@ -81,6 +81,8 @@ define([], {
     lockReleasedByOtherTime : 'sss:lockedReleasedByOtherTime',
     discussionsCount: 'sss:discussionsCount',
     unreadEntriesCount: 'sss:unreadEntriesCount',
-    entriesCount: 'sss:entriesCount'
+    entriesCount: 'sss:entriesCount',
+    versions: 'sss:versions',
+    hasAccessibleEntity: 'sss:hasAccessibleEntity'
         
 });

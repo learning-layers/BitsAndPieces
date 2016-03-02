@@ -1,11 +1,11 @@
-define(['logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
+define(['config/config', 'logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
         'view/sss/EntityView', 
         'view/sss/ClusterView', 
         'view/timeline/TimelineView', 
         'view/organize/OrganizeView',
         'view/organize/OrganizeLockBarView',
         'data/organize/OrganizeData'],
-    function(Logger, Backbone, $, Voc, _, $, EntityView, ClusterView, TimelineView, OrganizeView, OrganizeLockBarView, OrganizeData) {
+    function(appConfig, Logger, Backbone, $, Voc, _, $, EntityView, ClusterView, TimelineView, OrganizeView, OrganizeLockBarView, OrganizeData) {
         return Backbone.View.extend({
             LOG: Logger.get("WidgetView"),
             events: {
@@ -36,7 +36,7 @@ define(['logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
                     this.view = this.createTimeline(body);
                 } else if (this.model.isof( Voc.ORGANIZE )) {
                     this.$el.append('<legend>Organize</legend>');
-                    body = $('<div tabindex="1" style="width:100%; height:400px; display:block; overflow:auto;"></div>');
+                    body = $('<div tabindex="1" style="width:100%; height:' + appConfig.widgetOrganizeContainerHeight + '; display:block; overflow:auto;"></div>');
                     this.$el.append(body);
                     this.$el.addClass('organizeWidget');
                     this.view = this.createOrganize(body);
@@ -111,8 +111,9 @@ define(['logger', 'backbone', 'jquery', 'voc', 'underscore', 'jquery',
 
                         var version = that.model.get(Voc.belongsToVersion);
                         var episode = version.get(Voc.belongsToEpisode);
-                        // TODO Clean-up needed
-                        //tracker.info(tracker.ADDENTITYTOLEARNEPVERSION, tracker.ORGANIZEAREA, id, null, [episode.getSubject()]);
+                        if ( ui.helper.hasClass('singleRecommendation') ) {
+                            tracker.info(tracker.ADDLEARNEPVERSIONENTITYFROMRECOMMENDEDENTITIES, tracker.ORGANIZEAREA, id, null, [episode.getSubject()]);
+                        }
                     }
                 });
                 return organizeView;

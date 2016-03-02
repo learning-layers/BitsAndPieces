@@ -1,4 +1,4 @@
-// The SocialSemanticService wraps the SSS REST API V2 v11.0.0
+// The SocialSemanticService wraps the SSS REST API V2 (cpecific version can be found in README.md file)
 
 define(['logger', 'vie', 'underscore', 'voc', 'service/SocialSemanticServiceModel', 'jquery'],
 function(Logger, VIE, _, Voc, SSSModel, $) {
@@ -63,6 +63,11 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
             if( !(this.hostREST) ) {
                 throw new Error("no REST endpoint for SocialSemanticService defined");
             }
+            this.hostRESTPrefix = this.options.hostRESTPrefix;
+            if( !(this.hostRESTPrefix) ) {
+                throw new Error("no REST prefix for SocialSemanticService defined");
+            }
+
         },
         resolve: function(serviceCall, service, resultHandler, errorHandler, params) {
             this.LOG.debug('resolve', this);
@@ -119,9 +124,13 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                 this.user, 
                 function(userUri) {
                     var serviceUrl = sss.hostREST;
+                    var servicePrefix = sss.hostRESTPrefix;
                     var serviceHeaders = { 'Authorization' : "Bearer " + sss.userKey };
                     var serviceReqPath = service.reqPath;
                     var serviceReqType = service.reqType || 'GET';
+                    var processData = service.fileUpload ? false : true;
+                    var contentType = service.fileUpload ? false : 'application/json';
+                    var dataType = service.fileUpload ? false : 'application/json';
 
                     if ( service.injectVariable ) {
                         serviceReqPath = serviceReqPath.replace(':' + service.injectVariable, encodeURIComponent(par[service.injectVariable]));
@@ -136,15 +145,18 @@ function(Logger, VIE, _, Voc, SSSModel, $) {
                             data = JSON.stringify(data);
                         }
                     } else {
-                        data = JSON.stringify(data);
+                        if ( !service.fileUpload ) {
+                            data = JSON.stringify(data);
+                        }
                     }
                     $.ajax({
-                        'url' : serviceUrl + serviceReqPath + "/",
+                        'url' : serviceUrl + servicePrefix + "/" + serviceReqPath + "/",
                         'type': serviceReqType,
                         'data' : data,
-                        'contentType' : "application/json",
+                        'processData' : processData,
+                        'contentType' : contentType,
                         'async' : true,
-                        'dataType': "application/json",
+                        'dataType': dataType,
                         'headers': serviceHeaders,
                         'complete' : function(jqXHR, textStatus) {
                             var result = $.parseJSON(jqXHR.responseText);

@@ -1,9 +1,6 @@
 define(['view/sss/EntityView', 'logger', 'jquery', 'voc'], function(EntityView, Logger, $, Voc ){
     return EntityView.extend({
         LOG: Logger.get('OrgaEntityView'),
-        events: {
-            'contextmenu' : 'detailView' // detailView comes from EntityView
-        },
         initialize: function() {
             var resource = this.model.get(Voc.hasResource);
             this.LOG.debug('initialize orgaentitzview', this.model, resource);
@@ -29,7 +26,7 @@ define(['view/sss/EntityView', 'logger', 'jquery', 'voc'], function(EntityView, 
             return this.resourceView.getIcon(); 
         },
         render: function() {
-            // XXX this function is indirectly coupled to createEntity of organize.js
+            // NB! this function is indirectly coupled to createEntity of organize.js
             this.LOG.debug('render', this.$el.attr('href'), this.getIcon());
             var label = this.resourceView.model.get(Voc.label) || "";
             this.$el.attr('label', label);

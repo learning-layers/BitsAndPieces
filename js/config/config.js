@@ -8,17 +8,23 @@ function(module, config){
         return currentUrl + 'help';
     };
 
+    var sssHostRESTPrefix = 'rest';
+
     return {
         'appVersion' : module.config().appVersion,
         'sssHostREST' : appConfig.sssHostREST,
-        'sssHostRESTFileDownload' : appConfig.sssHostREST + 'files/files/download/',
+        'sssHostRESTFileDownload' : appConfig.sssHostREST + sssHostRESTPrefix +'/files/download/',
+        'sssHostRESTPrefix' : sssHostRESTPrefix,
         'oidcAuthorizationUrl' : appConfig.oidcAuthorizationUrl,
         'oidcClientID' : appConfig.oidcClientID,
         'affectUrl' : appConfig.affectUrl,
         'helpUrl' : appConfig.helpUrl ? appConfig.helpUrl : buildHelpUrl(),
         'discussionToolUrl': appConfig.discussionToolUrl,
         'localSearchOp' : appConfig.search.localSearchOp || 'and',
-        'globalSearchOp' : appConfig.search.globalSearchOp || 'and'
+        'globalSearchOp' : appConfig.search.globalSearchOp || 'and',
+        'acceptableEntityTypes': ['entity', 'uploadedFile', 'evernoteResource', 'evernoteNote', 'evernoteNotebook', 'placeholder'],
+        'toolbarDescriptionRows' : appConfig.toolbar.description.rows || 2,
+        'widgetOrganizeContainerHeight' : appConfig.widget.organize.container.height || '400px'
     };
 });
 

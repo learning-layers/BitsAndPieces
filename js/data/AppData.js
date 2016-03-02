@@ -1,7 +1,6 @@
 define(['logger', 'voc', 'underscore', 'userParams',
         'data/episode/UserData',
         'data/sss/CategoryData',
-        'data/sss/MessageData',
         'data/sss/ActivityData',
         'data/episode/EpisodeData',
         'data/episode/VersionData',
@@ -14,7 +13,6 @@ define(['logger', 'voc', 'underscore', 'userParams',
 function(Logger, Voc, _, userParams,
     UserData, 
     CategoryData, 
-    MessageData,
     ActivityData,
     EpisodeData, 
     VersionData, 
@@ -30,7 +28,6 @@ function(Logger, Voc, _, userParams,
             this.vie = vie;
             UserData.init(this.vie);
             CategoryData.init(this.vie);
-            MessageData.init(this.vie);
             ActivityData.init(this.vie);
             EpisodeData.init(this.vie);
             VersionData.init(this.vie);
@@ -53,7 +50,6 @@ function(Logger, Voc, _, userParams,
                 else ws = _.clone(ws);
                 this.LOG.debug("widgets = ", ws);
                 this.initWidgets(model, ws);
-
             }
         },
         /**
@@ -68,7 +64,7 @@ function(Logger, Voc, _, userParams,
             this.LOG.debug('initWidgets');
 
             this.vie.entities.addOrUpdate(this.createOrganize(version));
-            this.vie.entities.addOrUpdate(this.createTimeline(version));
+            //this.vie.entities.addOrUpdate(this.createTimeline(version));
         },
         createOrganize : function(version) {
             AppLog.debug("creating default organize widget");
@@ -80,14 +76,14 @@ function(Logger, Voc, _, userParams,
             newWidget.set(Voc.belongsToVersion, version.getSubject());
             return newWidget;
         },
-        createTimeline : function(version) {
+        createTimeline : function(user) {
             AppLog.debug("creating default timeline widget");
             var newWidget = new this.vie.Entity;
             newWidget.set('@type', Voc.TIMELINE);
-            newWidget.set(Voc.belongsToUser, userParams.user);
+            newWidget.set(Voc.belongsToUser, user.getSubject());
             newWidget.set(Voc.timeAttr, Voc.creationTime);
             newWidget.set(Voc.predicate, Voc.USEREVENT);
-            newWidget.set(Voc.belongsToVersion, version.getSubject());
+            //newWidget.set(Voc.belongsToVersion, version.getSubject());
             return newWidget;
         }
 

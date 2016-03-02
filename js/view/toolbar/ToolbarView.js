@@ -1,6 +1,6 @@
 define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
         'view/toolbar/BitToolbarView', 'view/toolbar/SearchToolbarView', 'view/toolbar/EpisodeToolbarView', 'view/toolbar/ActivityStreamToolbarView',
-        'text!templates/toolbar/toolbar.tpl'], function(Logger, _, $, Backbone, Voc, BitToolbarView, SearchToolbarView, EpisodeToolbarView, ActivityStreamToolbarView, ToolbarTemplate){
+        'text!templates/toolbar/toolbar.tpl', 'jquery-ui'], function(Logger, _, $, Backbone, Voc, BitToolbarView, SearchToolbarView, EpisodeToolbarView, ActivityStreamToolbarView, ToolbarTemplate){
     return Backbone.View.extend({
         subViews: {},
         tabMap : {
@@ -21,9 +21,29 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
             });
             this.$el.trigger(ev);
         },
+        _calculateAndSetToolbarHeight: function() {
+            var windowHeight = $(window).height(),
+                toolbarPosition = this.$el.position();
+            this.$el.css('height', windowHeight - toolbarPosition.top);
+        },
         initialize: function() {
+            var that = this;
+
             this.is_hidden = true;
             this.$el.addClass('toolbarHidden');
+
+            // Add resize listener
+            this.timerId = null;
+            $(window).on('resize', function() {
+                if ( that.timerId ) {
+                    clearTimeout(that.timerId);
+                }
+
+                that.timerId = setTimeout(function() {
+                    that.timerId = null;
+                    that._calculateAndSetToolbarHeight();
+                }, 500);
+            });
         },
         setBit: function(entity) {
             this.subViews['bit'].setEntity(entity);
@@ -63,6 +83,8 @@ define(['logger', 'underscore', 'jquery', 'backbone', 'voc',
                 this.$el.switchClass('toolbarHidden', 'toolbarShown', function() {
                     toolbar.is_hidden = false;
                     handle.find('.glyphicon').switchClass('glyphicon-chevron-left', 'glyphicon-chevron-right');
+                    // Set real height
+                    toolbar._calculateAndSetToolbarHeight();
                 });
                 toolbar._triggerShowHideEvent('shown');
             } else {

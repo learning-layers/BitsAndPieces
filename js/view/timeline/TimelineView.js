@@ -3,6 +3,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
     return Backbone.View.extend({
         LOG: Logger.get('TimelineView'),
         waitingForLastOne : 0,
+        is_hidden: false,
         events: {
             'bnp:zoomCluster' : 'expand', //@unused UI removed
             'bnp:expanded' : 'redraw',
@@ -34,7 +35,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             // TODO: resolve this hack: only fire on start change to avoid double execution
             this.model.on('change:' + this.model.vie.namespaces.uri(Voc.start), this.rearrangeVisibleArea, this);
-            this.user.on('change:' + this.model.vie.namespaces.uri(Voc.hasUserEvent), this.changeEntitySet, this);
+            this.user.on('change:' + this.model.vie.namespaces.uri(Voc.hasAccessibleEntity), this.changeEntitySet, this);
 
             this.LOG.debug('TimelineView initialized');
 
@@ -52,27 +53,23 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                     that.redraw();
                 }, 500);
             });
+            this.$el.parent().append('<span class="widget-handle"><span class="glyphicon glyphicon-chevron-up" title="Show or hide Timeline"></span></span>');
+            this.$el.parent().find('.widget-handle > .glyphicon').on('click', function(e) {
+                that.showHide(e);
+            });
         },
         changeEntitySet: function(model, set, options) {
             this.LOG.debug('changeEntitySet', set);  
             set = set || [];
             if( !_.isArray(set)) set = [set];
             var previous = Backbone.Model.prototype.previous.call(this.user, 
-                this.model.vie.namespaces.uri(Voc.hasUserEvent)) || [];
+                this.model.vie.namespaces.uri(Voc.hasAccessibleEntity)) || [];
             if( !_.isArray(previous)) previous = [previous];
             this.LOG.debug('previous', previous);  
             var that = this;
             var added = _.difference(set, previous);
             this.LOG.debug('added', added);
             this.addEntities(added);
-            
-            var deleted = _.difference(previous, set);
-            _.each(deleted, function(a){
-                a = that.model.vie.entities.get(a);
-                var entity = a.get(Voc.hasResource);
-                // TODO don't remove entity if referenced by another user event
-                that.removeEntity(entity);
-            });
         },
         rearrangeVisibleArea: function(model, collection, options ) {
             this.LOG.debug("rearrangeVisibleArea", options && options.by);
@@ -95,9 +92,8 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             var initRange = !this.model.get(Voc.start) && !this.model.get(Voc.end);
             this.LOG.debug("initRange", initRange, this.model.get(Voc.start), this.model.get(Voc.end));
             var readyEntities = [];
-            _.each(entities, function(ue) {
-                if( !ue.isEntity ) ue = that.model.vie.entities.get(ue);
-                var entity = ue.get(Voc.hasResource);
+            _.each(entities, function(entity) {
+                if( !entity.isEntity ) entity = that.model.vie.entities.get(entity);
                 that.addEntity(entity);
                 if( !initRange ) return;
 
@@ -154,9 +150,9 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
 
             var view = this;
             // add entities which are already contained
-            var userevents = this.user.get(Voc.hasUserEvent) || [];
-            if( !_.isArray(userevents)) userevents = [userevents];
-            this.addEntities(userevents);
+            var entities = this.user.get(Voc.hasAccessibleEntity) || [];
+            if( !_.isArray(entities)) entities = [entities];
+            this.addEntities(entities);
             return this;
         },
         renderUser: function () {
@@ -196,10 +192,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 end = new Date();
                 end.setDate(end.getDate() +1);
             }
-            this.timeline.draw( [{
-                    'start' : new Date(), // add a dummy event to force rendering
-                    'content' : "x"
-                }], _.extend(this.options.timeline, {
+            this.timeline.setOptions(_.extend(this.options.timeline, {
                 'start' : start,
                 'end' : end,
                 'min' : new Date('2013-01-01'),
@@ -207,6 +200,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                 'zoomMin' : 28800000, // 8 hours
                 'zoomMax' : 31556940000 // 1 year
             }));
+            this.timeline.draw( [{
+                    'start' : new Date(), // add a dummy event to force rendering
+                    'content' : "x"
+                }] );
             this.timeline.deleteItem(0); // remove dummy node
             this.LOG.debug('timeline', this.timeline);
 
@@ -228,7 +225,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
         },
         renderDatepicker: function() {
             var that = this;
-
+            
             this.$el.prepend('<div class="jumpToDate">Jump To Date: <input type="text" name="jumpToDate" val="" /></div>');
             this.$el.find('input[name="jumpToDate"]')
                 .datepicker({
@@ -343,7 +340,28 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
                     e.clusterView.$el.parent().parent().css('z-index', '');
                 }
             }
-        }
+        },
+        isHidden: function() {
+            return this.is_hidden;
+        },
+        showHide: function(e) {
+            var that = this,
+                handle = this.$el.parent().find('.widget-handle'),
+                timeline = this.$el;
+            if ( this.isHidden() ) {
+                timeline.slideDown(400, function() {
+                  handle.css('bottom', '4px');
+                  handle.find('.glyphicon').switchClass('glyphicon-chevron-down', 'glyphicon-chevron-up');
+                  that.is_hidden = false;
+                });
+            } else {
+                timeline.slideUp(400, function() {
+                  handle.css('bottom', '9px');
+                  handle.find('.glyphicon').switchClass('glyphicon-chevron-up', 'glyphicon-chevron-down');
+                  that.is_hidden = true;
+                });
 
+            }
+        }
     });
 });

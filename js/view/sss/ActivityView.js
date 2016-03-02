@@ -37,7 +37,11 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
                     if ( isLoggedInActor ) {
                         templateSettings.content = ' shared episode ' + this.encloseLabel(episodeLabel) + ' with ' + this.encloseLabel( userLabels.join(', ') );
                     } else {
-                        templateSettings.content = ' shared with me ' + this.encloseLabel(episodeLabel);
+                        if ( this._isSharedWithCurrentUser() ) {
+                            templateSettings.content = ' shared with me ' + this.encloseLabel(episodeLabel);
+                        } else {
+                            templateSettings.content = ' shared episode ' + this.encloseLabel(episodeLabel) + ' with ' + this.encloseLabel( userLabels.join(', ') );
+                        }
                     }
                     break;
                 case 'copyLearnEpForUsers':
@@ -50,19 +54,6 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
                     } else {
                         templateSettings.content = ' shared a copy of ' + this.encloseLabel(episodeLabel) + ' with me';
                     }
-                    break;
-                case 'messageSend':
-                    var messageText = this.model.get(Voc.contents)
-                        userLabel = this.getUsersLabels().join(', ');
-
-                    messageText = messageText ? messageText : this.labelNotFoundText;
-
-                    if ( _.isArray(messageText) ) {
-                        messageText = messageText.toString();
-                    }
-
-                    templateSettings.iconClass.push('glyphicon-envelope');
-                    templateSettings.content = ' sent message ' + this.encloseLabel(messageText) + ' to ' + this.encloseLabel(userLabel);
                     break;
                 case 'addEntityToLearnEpVersion':
                     var bitLabel = this.getContainedEntityLabelByType(Voc.ENTITY),
@@ -210,7 +201,7 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
             return labels;
         },
         getUsersLabels: function() {
-            return this._getEntitiesLabelsArrayFromAttribute(Voc.hasUsers, [userParams.user]);
+            return this._getEntitiesLabelsArrayFromAttribute(Voc.hasUsers, [userParams.user, this.owner.getSubject()]);
         },
         getContainedEntity: function() {
             var entity = this.model.get(Voc.hasResource);
@@ -272,6 +263,21 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
             }
 
             return labels;
+        },
+        _isSharedWithCurrentUser: function() {
+            var userUris = _.map(this._getEntitiesArrayFromAttribute(Voc.hasUsers), function(user) {
+                if ( user && user.isEntity ) {
+                    return user.getSubject();
+                } else {
+                    return user;
+                }
+            });
+
+            if ( _.indexOf(userUris, userParams.user) !== -1 ) {
+                return true;
+            }
+
+            return false;
         }
     });
 });

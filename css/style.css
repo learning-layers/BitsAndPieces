@@ -99,15 +99,6 @@ fieldset legend {
     font-size: 0.8em;
     color: gray;
 }
-.detailView {
-}
-.detailView ul  {
-    margin: 0;
-    padding-left: 1em;
-}
-.detailView ul li {
-    list-style: none;
-}
 /*override timeline.css*/
 div.timeline-groups-text {
     padding-left:0;
@@ -262,7 +253,7 @@ div#tabs .results .resultSet .entity .labelable label.withlabel {
 
 div#tabs .stream .resultSet {
 	border: 1px solid rgb(221, 221, 221);
-	max-height: 300px;
+	max-height: 400px;
 	overflow-y: auto;
 }
 
@@ -294,19 +285,6 @@ div#tabs .stream .resultSet .singleEntry .entryContent {
 
 div#tabs .stream .resultSet .singleRecommendation label.recommendationLabel {
 	display: none;
-}
-
-.messageIcon span {
-	color: #48a2c5;
-}
-
-.unreadMessage .messageIcon span {
-	color: #f6a551;
-	cursor: pointer;
-}
-
-.unreadMessage {
-	background-color: #fef3e9;
 }
 
 div#tabs .importance .ui-slider-horizontal {
@@ -561,7 +539,7 @@ img.bitModalThumbnail {
 	margin-right: auto;
 }
 
-.shareLearnEpWithUser, .messageSend {
+.shareLearnEpWithUser {
 	color: #555;
 }
 
@@ -604,7 +582,41 @@ ul.dropdown-menu li.episode a.highlight {
 	color: #777;
 }
 
-.navbar .discussionToolButton span {
+.navbar .discussionToolButton i {
     color: #DB0000;
+}
+
+.widget-handle {
+	margin-left: auto;
+	margin-right: auto;
+	display: block;
+	cursor: pointer;
+	height: 10px;
+	width: 50px;
+	font-size: 24px;
+	color: #d79634;
+	text-align: center;
+	position: relative;
+	bottom: 4px;
+}
+
+.navbar i.fa {
+	font-size: 120%;
+}
+
+.bnp-navbar-icon {
+	cursor: pointer;
+}
+
+.fa.bnp-episode-shared {
+	color: #5ba74a;
+}
+
+.fa.bnp-episode-private {
+	color: #f6a551;
+}
+
+.badge.bnp-contributors {
+	background-color: #5ba74a;
 }
 
