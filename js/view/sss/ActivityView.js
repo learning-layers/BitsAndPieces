@@ -55,19 +55,6 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
                         templateSettings.content = ' shared a copy of ' + this.encloseLabel(episodeLabel) + ' with me';
                     }
                     break;
-                case 'messageSend':
-                    var messageText = this.model.get(Voc.contents)
-                        userLabel = this.getUsersLabels().join(', ');
-
-                    messageText = messageText ? messageText : this.labelNotFoundText;
-
-                    if ( _.isArray(messageText) ) {
-                        messageText = messageText.toString();
-                    }
-
-                    templateSettings.iconClass.push('glyphicon-envelope');
-                    templateSettings.content = ' sent message ' + this.encloseLabel(messageText) + ' to ' + this.encloseLabel(userLabel);
-                    break;
                 case 'addEntityToLearnEpVersion':
                     var bitLabel = this.getContainedEntityLabelByType(Voc.ENTITY),
                         episodeLabel = this.getContainedEntityLabel();
