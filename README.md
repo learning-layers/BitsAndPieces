@@ -24,7 +24,7 @@ If you have not created any Learning Episodes yet, please use the menu on the to
 Service version requirements
 ----------------------------
 
-* SocialSemanticServer: v12.0.0-alpha (newer versions might also work if there have not been any changes that affect API consumption)
+* SocialSemanticServer: v12.1.0-alpha (newer versions might also work if there have not been any changes that affect API consumption)
 
 General Information
 -------------------
