@@ -14,7 +14,7 @@
                     
                     <div class="form-group">
                         <label for="bitDescription">Description:</label>
-                        <textarea class="form-control" id="bitDescription"></textarea>
+                        <textarea class="form-control" rows="<%= rows %>" id="bitDescription"></textarea>
                         <p class="help-block">Allows input of up to 5.000 characters. </p>
                     </div>
 

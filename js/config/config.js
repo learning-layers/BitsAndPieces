@@ -24,7 +24,8 @@ function(module, config){
         'globalSearchOp' : appConfig.search.globalSearchOp || 'and',
         'acceptableEntityTypes': ['entity', 'uploadedFile', 'evernoteResource', 'evernoteNote', 'evernoteNotebook', 'placeholder'],
         'toolbarDescriptionRows' : appConfig.toolbar.description.rows || 2,
-        'widgetOrganizeContainerHeight' : appConfig.widget.organize.container.height || '400px'
+        'widgetOrganizeContainerHeight' : appConfig.widget.organize.container.height || '400px',
+        'modalDescriptionRows': appConfig.modal.description.rows || 3
     };
 });
 

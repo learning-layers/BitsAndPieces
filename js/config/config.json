@@ -20,6 +20,11 @@
           "height" : "400px"
       }
     }
+  },
+  "modal" : {
+    "description" : {
+      "rows" : 3
+    }
   }
 }
 

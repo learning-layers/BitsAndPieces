@@ -1,7 +1,7 @@
-define(['logger', 'underscore', 'jquery', 'backbone',
+define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         'data/EntityData',
         'utils/SystemMessages', 'utils/InputValidation',
-        'text!templates/modal/bit_add_modal.tpl'], function(Logger, _, $, Backbone, EntityData, SystemMessages, InputValidation, BitAddTemplate){
+        'text!templates/modal/bit_add_modal.tpl'], function(appConfig, Logger, _, $, Backbone, EntityData, SystemMessages, InputValidation, BitAddTemplate){
     return Backbone.View.extend({
         events: {
             'submit form' : 'submitForm',
@@ -18,7 +18,9 @@ define(['logger', 'underscore', 'jquery', 'backbone',
             this.fileSelector = '#bitFile';
         },
         render: function() {
-            this.$el.html(_.template(BitAddTemplate));
+            this.$el.html(_.template(BitAddTemplate, {
+                rows: appConfig.modalDescriptionRows
+            }));
             
             return this;
         },

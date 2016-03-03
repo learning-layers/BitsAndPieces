@@ -1,7 +1,7 @@
-define(['logger', 'underscore', 'jquery', 'backbone',
+define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         'data/EntityData',
         'utils/SystemMessages', 'utils/InputValidation',
-        'text!templates/modal/placeholder_add_modal.tpl'], function(Logger, _, $, Backbone, EntityData, SystemMessages, InputValidation, PlaceholderAddTemplate){
+        'text!templates/modal/placeholder_add_modal.tpl'], function(appConfig, Logger, _, $, Backbone, EntityData, SystemMessages, InputValidation, PlaceholderAddTemplate){
     return Backbone.View.extend({
         events: {
             'submit form' : 'submitForm',
@@ -16,7 +16,9 @@ define(['logger', 'underscore', 'jquery', 'backbone',
             this.descriptionSelector = '#placeholderDescription';
         },
         render: function() {
-            this.$el.html(_.template(PlaceholderAddTemplate));
+            this.$el.html(_.template(PlaceholderAddTemplate, {
+                rows: appConfig.modalDescriptionRows
+            }));
             
             return this;
         },
