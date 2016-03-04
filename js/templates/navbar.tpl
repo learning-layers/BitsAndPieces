@@ -16,7 +16,7 @@
       <ul class="nav navbar-nav">
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Menu <span class="caret"></span></a>
-          <ul class="dropdown-menu" role="menu">
+          <ul class="dropdown-menu bnp-scrollable-menu" role="menu">
             <li><a href="#" id="createBlank">Create New Episode</a></li>
             <li><a href="#" id="createPlaceholder">Create New Placeholder</a></li>
             <li><a href="#" id="createBit">Create Bit (Upload File)</a></li>

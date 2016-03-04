@@ -20,6 +20,11 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
                 'bnp:clickEntity' : 'clickEntity',
                 'bnp:showHideToolbar' : 'handleShowHideToolbar'
             },
+            _calculateAndSetScrollableMenuMaxHeight: function() {
+                var windowHeight = $(window).height(),
+                    navbarHeight = this.$el.parent().find('.navbar').height();
+                this.$el.parent().find('.bnp-scrollable-menu').css('max-height', windowHeight - navbarHeight - 50);
+            },
             initialize: function() {
                 this.vie = this.options.vie;
                 this.widgetViews = [];
@@ -49,6 +54,18 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
                 this.timelineModel = this.vie.entities.addOrUpdate(
                         AppData.createTimeline(this.model));
                 tracker.info(tracker.STARTBITSANDPIECES, null);
+
+                this.timerId = null;
+                $(window).on('resize', function() {
+                    if ( that.timerId ) {
+                        clearTimeout(that.timerId);
+                    }
+
+                    that.timerId = setTimeout(function() {
+                        that.timerId = null;
+                        that._calculateAndSetScrollableMenuMaxHeight();
+                    }, 500);
+                });
             },
             filter: function(model, collection, options) {
                 if(model.isof(Voc.VERSION)){
@@ -77,6 +94,8 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
 
                 // Prepend navbar to body
                 this.$el.parent().prepend(navbar);
+
+                this._calculateAndSetScrollableMenuMaxHeight();
 
                 this.widgetFrame = $('<div id="myWidgets"><div class="timelineContainer"></div><div class="episodeSpecificContainer"></div></div>');
                 this.$el.append( this.widgetFrame );
