@@ -81,7 +81,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'spin', 'voc', 
             var data = {
                     forUser : userParams.user,
                     maxResources : 20,
-                    typesToRecommOnly : ['evernoteResource', 'evernoteNote', 'evernoteNotebook']
+                    typesToRecommOnly : ['evernoteResource', 'evernoteNote', 'evernoteNotebook', 'uploadedFile', 'placeholder']
                 },
                 promise = EntityData.getRecommResources(data),
                 defer = $.Deferred();
