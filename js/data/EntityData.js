@@ -283,7 +283,7 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
                     'service' : 'recommResources',
                     'data' : data
                 }).using('sss').execute().success(function(result){
-                    that.LOG.debug('recommTags success', result);
+                    that.LOG.debug('recommResources success', result);
                     var entities = [];
                     _.each(result, function(single) {
                         entities.push(single.resource);
@@ -292,7 +292,7 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
                     entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
                     defer.resolve(entities);
                 }).fail(function(f) {
-                    that.LOG.debug('recommTags fail', f);
+                    that.LOG.debug('recommResources fail', f);
                     defer.reject(f);
                 });
             }
