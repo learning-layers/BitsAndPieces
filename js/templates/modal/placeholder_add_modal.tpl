@@ -6,6 +6,8 @@
                 <h4 class="modal-title" id="placeholderAddModalLabel">Add New Placeholder</h4>
             </div>
             <div class="modal-body">
+                <div class="localMessages">
+                </div>
                 <form role="form">
                     <div class="form-group">
                         <label for="placeholderLabel">Label:</label>
@@ -15,7 +17,7 @@
                     <div class="form-group">
                         <label for="placeholderDescription">Description:</label>
                         <textarea class="form-control" rows="<%= rows %>" id="placeholderDescription"></textarea>
-                        <p class="help-block">Allows input of up to 5.000 characters. </p>
+                        <p class="help-block">Allows input of up to <%= descriptionMaxLength %> characters. </p>
                     </div>
                 </form>
             </div>

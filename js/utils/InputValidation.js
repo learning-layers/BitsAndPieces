@@ -30,7 +30,7 @@ function (Logger, $, Backbone, _, DismissibleAlertTemplate) {
                 return true;
             }
         },
-        validateTextInput: function(element, alertText) {       
+        validateTextInput: function(element, alertText) {
             var elementText = element.val();
                                                      
             this.removeAlertsFromParent(element);
@@ -48,6 +48,19 @@ function (Logger, $, Backbone, _, DismissibleAlertTemplate) {
 
             this.removeAlertsFromParent(element);
             if ( filesCount === 0 ) {
+                this.addValidationStateToParent(element, 'has-error');
+                this.addAlert(element, 'alert-danger', alertText);
+                return false;
+            } else {
+                this.removeValidationStateFromParent(element);
+                return true;
+            }
+        },
+        validateTextInputLength: function(element, allowedLength, alertText) {
+            var elementText = element.val();
+
+            this.removeAlertsFromParent(element);
+            if ( elementText.length > allowedLength ) {
                 this.addValidationStateToParent(element, 'has-error');
                 this.addAlert(element, 'alert-danger', alertText);
                 return false;

@@ -25,6 +25,11 @@
     "description" : {
       "rows" : 3
     }
+  },
+  "entity" : {
+    "description" : {
+      "maxLength" : 5000
+    }
   }
 }
 

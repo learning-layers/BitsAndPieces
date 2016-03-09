@@ -25,7 +25,8 @@ function(module, config){
         'acceptableEntityTypes': ['entity', 'uploadedFile', 'evernoteResource', 'evernoteNote', 'evernoteNotebook', 'placeholder'],
         'toolbarDescriptionRows' : appConfig.toolbar.description.rows || 2,
         'widgetOrganizeContainerHeight' : appConfig.widget.organize.container.height || '400px',
-        'modalDescriptionRows': appConfig.modal.description.rows || 3
+        'modalDescriptionRows' : appConfig.modal.description.rows || 3,
+        'entityDescriptionMaxLength' : appConfig.entity.description.maxLength || 5000
     };
 });
 
