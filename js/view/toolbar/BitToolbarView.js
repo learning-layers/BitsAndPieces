@@ -237,7 +237,7 @@ define(['config/config', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             tagcloud.empty();
             if ( !_.isEmpty(tags) ) {
                 _.each(tags, function(tag) {
-                    var fontSize = fontMin + ( ( fontMax - fontMin ) * likelihood );
+                    var fontSize = fontMin + ( ( fontMax - fontMin ) * tag.likelihood );
                     tagcloud.append(' <span class="badge"><a href="#" data-tag="' + tag.label + '" style="font-size:' + fontSize + 'px">' + tag.label + '</a></span>');
                 });
             }
