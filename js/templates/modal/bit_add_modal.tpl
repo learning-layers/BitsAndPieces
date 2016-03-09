@@ -6,6 +6,8 @@
                 <h4 class="modal-title" id="bitAddModalLabel">Add New Bit</h4>
             </div>
             <div class="modal-body">
+                <div class="localMessages">
+                </div>
                 <form role="form">
                     <div class="form-group">
                         <label for="bitLabel">Label:</label>
@@ -15,7 +17,7 @@
                     <div class="form-group">
                         <label for="bitDescription">Description:</label>
                         <textarea class="form-control" rows="<%= rows %>" id="bitDescription"></textarea>
-                        <p class="help-block">Allows input of up to 5.000 characters. </p>
+                        <p class="help-block">Allows input of up to <%= descriptionMaxLength %> characters. </p>
                     </div>
 
                     <div class="form-group">

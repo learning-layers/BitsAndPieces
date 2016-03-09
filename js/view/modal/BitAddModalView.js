@@ -1,25 +1,29 @@
 define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         'data/EntityData',
-        'utils/SystemMessages', 'utils/InputValidation',
-        'text!templates/modal/bit_add_modal.tpl'], function(appConfig, Logger, _, $, Backbone, EntityData, SystemMessages, InputValidation, BitAddTemplate){
+        'utils/SystemMessages', 'utils/LocalMessages', 'utils/InputValidation',
+        'text!templates/modal/bit_add_modal.tpl'], function(appConfig, Logger, _, $, Backbone, EntityData, SystemMessages, LocalMessages, InputValidation, BitAddTemplate){
     return Backbone.View.extend({
         events: {
             'submit form' : 'submitForm',
             'hide.bs.modal' : 'cleanForm',
             'click .btn-primary' : 'submitForm',
             'keyup input#bitLabel' : 'revalidateBitLabel',
+            'keyup textarea#bitDescription' : 'revalidateBitDescription',
             'change input#bitFile' : 'revalidateBitFile'
         },
         LOG: Logger.get('BitAddModalView'),
         initialize: function() {
+            this.localMessagesSelector = '.localMessages';
             this.bitAddModalSelector = '#bitAddModal';
             this.labelInputSelector = '#bitLabel';
             this.descriptionSelector = '#bitDescription';
             this.fileSelector = '#bitFile';
+            this.descriptionMaxLength = appConfig.entityDescriptionMaxLength;
         },
         render: function() {
             this.$el.html(_.template(BitAddTemplate, {
-                rows: appConfig.modalDescriptionRows
+                rows: appConfig.modalDescriptionRows,
+                descriptionMaxLength: this.descriptionMaxLength
             }));
             
             return this;
@@ -37,9 +41,16 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         submitForm: function(e) {
             e.preventDefault();
 
+            var that = this;
+
+            LocalMessages.clearMessages(this.$el.find(this.localMessagesSelector));
+
             var validateSuccess = true;
 
             if ( !this.validateBitLabel() ) {
+                validateSuccess = false;
+            }
+            if ( !this.validateBitDescription() ) {
                 validateSuccess = false;
             }
             if ( !this.validateBitFile() ) {
@@ -63,24 +74,30 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
 
             promise = EntityData.uploadFile(formData);
 
-            this.hideModal();
 
             promise.done(function(result) {
+                that.hideModal();
                 SystemMessages.addSuccessMessage('New Bit has been added.');
             }).fail(function(f) {
-                SystemMessages.addDangerMessage('A Bit could not be added!');
+                LocalMessages.addDangerMessage(that.$el.find(that.localMessagesSelector), 'A Bit could not be added!');
             });
         },
         cleanForm: function() {
             var labelElement = this.$el.find(this.labelInputSelector),
+                descriptionElement = this.$el.find(this.descriptionSelector),
                 fileElement = this.$el.find(this.fileSelector);
 
-            this.$el.find(this.labelInputSelector).val('');
-            this.$el.find(this.descriptionSelector).val('');
-            this.$el.find(this.fileSelector).val('');
+            LocalMessages.clearMessages(this.$el.find(this.localMessagesSelector));
+
+            labelElement.val('');
+            descriptionElement.val('');
+            fileElement.val('');
 
             InputValidation.removeAlertsFromParent(labelElement);
             InputValidation.removeValidationStateFromParent(labelElement);
+
+            InputValidation.removeAlertsFromParent(descriptionElement);
+            InputValidation.removeValidationStateFromParent(descriptionElement);
 
             InputValidation.removeAlertsFromParent(fileElement);
             InputValidation.removeValidationStateFromParent(fileElement);
@@ -93,6 +110,15 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         },
         revalidateBitLabel: function() {
             this.validateBitLabel();
+        },
+        validateBitDescription: function() {
+            var element = this.$el.find(this.descriptionSelector),
+                alertText = 'Maximum number of allowed characters exceeded!';
+
+            return InputValidation.validateTextInputLength(element, this.descriptionMaxLength, alertText);
+        },
+        revalidateBitDescription: function() {
+            this.validateBitDescription();
         },
         validateBitFile: function() {
             var element = this.$el.find(this.fileSelector),
