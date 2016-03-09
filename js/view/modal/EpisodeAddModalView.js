@@ -8,16 +8,19 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
             'hide.bs.modal' : 'cleanForm',
             'click .btn-primary' : 'submitForm',
             'keyup input#episodeLabel' : 'revalidateEpisodeLabel',
+            'keyup textarea#episodeDescription' : 'revalidateEpisodeDescription'
         },
         LOG: Logger.get('EpisodeAddModalView'),
         initialize: function() {
             this.episodeAddModalSelector = '#episodeAddModal';
             this.labelInputSelector = '#episodeLabel';
             this.descriptionSelector = '#episodeDescription';
+            this.descriptionMaxLength = appConfig.entityDescriptionMaxLength;
         },
         render: function() {
             this.$el.html(_.template(EpisodeAddTemplate, {
-                rows: appConfig.modalDescriptionRows
+                rows: appConfig.modalDescriptionRows,
+                descriptionMaxLength: this.descriptionMaxLength
             }));
             
             return this;
@@ -31,7 +34,7 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         submitForm: function(e) {
             e.preventDefault();
 
-            if ( !this.validateEpisodeLabel() ) {
+            if ( !( this.validateEpisodeLabel() === true && this.validateEpisodeDescription() === true ) ) {
                 return false;
             }
 
@@ -44,12 +47,15 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
             }
         },
         cleanForm: function() {
-            var element = this.$el.find(this.labelInputSelector);
+            var labelElement = this.$el.find(this.labelInputSelector),
+                descriptionElement = this.$el.find(this.descriptionSelector);
 
-            this.$el.find(this.labelInputSelector).val('');
-            this.$el.find(this.descriptionSelector).val('');
-            InputValidation.removeAlertsFromParent(element);
-            InputValidation.removeValidationStateFromParent(element);
+            labelElement.val('');
+            InputValidation.removeAlertsFromParent(labelElement);
+            InputValidation.removeValidationStateFromParent(labelElement);
+            descriptionElement.val('');
+            InputValidation.removeAlertsFromParent(descriptionElement);
+            InputValidation.removeValidationStateFromParent(descriptionElement);
         },
         validateEpisodeLabel: function() {
             var element = this.$el.find(this.labelInputSelector),
@@ -59,6 +65,15 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         },
         revalidateEpisodeLabel: function() {
             this.validateEpisodeLabel();
+        },
+        validateEpisodeDescription: function() {
+            var element = this.$el.find(this.descriptionSelector),
+                alertText = 'Maximum number of allowed characters exceeded!';
+
+            return InputValidation.validateTextInputLength(element, this.descriptionMaxLength, alertText);
+        },
+        revalidateEpisodeDescription: function() {
+            this.validateEpisodeDescription();
         },
         setCallback: function(cb) {
             this.formSubmitCallback = cb;

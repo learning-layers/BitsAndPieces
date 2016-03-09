@@ -16,7 +16,7 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
             this.placeholderAddModalSelector = '#placeholderAddModal';
             this.labelInputSelector = '#placeholderLabel';
             this.descriptionSelector = '#placeholderDescription';
-            this.descriptionMaxLength = appConfig.entityDescriptionMaxLength
+            this.descriptionMaxLength = appConfig.entityDescriptionMaxLength;
         },
         render: function() {
             this.$el.html(_.template(PlaceholderAddTemplate, {
