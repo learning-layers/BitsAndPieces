@@ -374,7 +374,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 this.$el.find('ul.dropdown-menu').find('li.episode').detach();
 
                 var orderedViews = _.sortBy(this.views, function(view) {
-                    return view.model.get(Voc.label);
+                    return view.model.get(Voc.label).trim();
                 });
                 _.each(orderedViews, function(view) {
                     that.$el.find('ul.dropdown-menu').append(view.$el);

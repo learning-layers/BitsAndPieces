@@ -106,13 +106,11 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             this.$el.find('.episodeSharedWith').html(EntityHelpers.getSharedWithNames(model).join(', '));
         },
         updateEpisodesOnLabelChanged: function() {
-            var episodes,
+            var episodes = null,
                 searchValue = this.$el.find('input[name="search"]').val();
 
             if ( searchValue.trim() ) {
                 episodes = this.searchEpisodes(searchValue.trim());
-            } else {
-                episodes = this.getEpisodes();
             }
 
             this.addOrUpdateEpisodeViews(episodes);
@@ -128,7 +126,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
             });
             this.episodeViews = [];
             var orderedEpisodes = _.sortBy(episodes, function(episode) {
-                return episode.get(Voc.label);
+                return episode.get(Voc.label).trim();
             });
             _.each(orderedEpisodes, function(episode) {
                 var view = new EpisodeListingView({
