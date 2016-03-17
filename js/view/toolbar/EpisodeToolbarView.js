@@ -38,6 +38,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 if ( previousEpisode && previousEpisode.isEntity ) {
                     previousEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
                     previousEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
+                    previousEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.label), this.addOrUpdateEpisodeViews, this);
                 }
             }
 
@@ -48,6 +49,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 if ( currentEpisode && currentEpisode.isEntity ) {
                     currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
                     currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
+                    currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.addOrUpdateEpisodeViews, this);
                 } else {
                     // Deal with situation when episode is not there yet
                     currentVersion.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), function(model, value, options) {
@@ -55,6 +57,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
                         currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
                         currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
+                        currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.addOrUpdateEpisodeViews, this);
                     }, this);
                 }
             }
@@ -112,7 +115,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 view.remove();
             });
             this.episodeViews = [];
-            _.each(episodes, function(episode) {
+            var orderedEpisodes = _.sortBy(episodes, function(episode) {
+                return episode.get(Voc.label);
+            });
+            _.each(orderedEpisodes, function(episode) {
                 var view = new EpisodeListingView({
                     model: episode,
                     toolContext: tracker.EPISODETAB,
