@@ -92,6 +92,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderAuthor, this);
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.discussionsCount)+' change:'+this.model.vie.namespaces.uri(Voc.unreadEntriesCount)+' change:'+this.model.vie.namespaces.uri(Voc.entriesCount), this.renderDiscussionToolButton, this);
+                    prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.label), this.redrawEpisodes, this);
                 }
             }
             if(epView = this.views[this.currentEpisode.cid]) {
@@ -101,6 +102,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderAuthor, this);
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.discussionsCount)+' change:'+this.model.vie.namespaces.uri(Voc.unreadEntriesCount)+' change:'+this.model.vie.namespaces.uri(Voc.entriesCount), this.renderDiscussionToolButton, this);
+                this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.redrawEpisodes, this);
             }
             this.handleNavbarHeightChange();
         },
@@ -239,6 +241,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 a = that.model.vie.entities.get(a);
                 that.addEpisode(a);
             });
+            that.redrawEpisodes();
             
             var deleted = _.difference(previous, set);
             this.LOG.debug('deleted', deleted);
@@ -250,17 +253,9 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
         addEpisode: function(model) {
             this.LOG.debug('addEpisode', model);
             var view = new EpisodeView({'model':model});
-            var li = $('<li class="episode" about="'+model.getSubject()+'"></li>');
-            if( model.isNew() ) {
-                model.once('change:'+model.idAttribute, 
-                    function(model, value) {
-                        li.attr('about', value);
-                });
-            }
-            li.append(view.render().$el);
-            this.$el.find('ul.dropdown-menu').append(li);
+            this.$el.find('ul.dropdown-menu').append(view.render().$el);
             this.views[model.cid] = view;
-            if( model === this.currentEpisode ) { view.highlight();}
+            if ( model === this.currentEpisode ) { view.highlight();}
             return this;
         },
         removeEpisode: function(model) {
@@ -371,6 +366,20 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             e.preventDefault();
 
             this.bitAddModalView.showModal();
+        },
+        redrawEpisodes: function() {
+            var that = this;
+
+            this.$el.find('ul.dropdown-menu').find('li.episode').detach();
+
+            if ( _.keys(this.views).length > 0 ) {
+                var orderedViews = _.sortBy(this.views, function(view) {
+                    return view.model.get(Voc.label);
+                });
+                _.each(orderedViews, function(view) {
+                    that.$el.find('ul.dropdown-menu').append(view.$el);
+                });
+            }
         }
 
     });
