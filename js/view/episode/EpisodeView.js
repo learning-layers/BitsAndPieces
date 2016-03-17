@@ -20,7 +20,7 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode
         },
         render: function() {
             this.$el.attr('href', '#');
-            this.$el.html('<button class="btn btn-danger deleteEpisode" title="Delete Episode"><i class="fa fa-chain-broken bnp-navbar-icon"></i></button> <span class="episodeLabel">' + this.model.get(Voc.label) + '</span>');
+            this.$el.html('<button class="btn btn-danger deleteEpisode" title="Disconnect yourself from the Episode."><i class="fa fa-chain-broken bnp-navbar-icon"></i></button> <span class="episodeLabel">' + this.model.get(Voc.label) + '</span>');
             return this;
         },
         changeCurrentVersion: function(event) {
