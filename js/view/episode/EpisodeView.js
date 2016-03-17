@@ -20,7 +20,7 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode
             }, this);
 
             if( this.model.isNew() ) {
-                this.model.once('change:'+model.idAttribute,
+                this.model.once('change:'+this.model.idAttribute,
                     function(model, value) {
                         that.$el.attr('about', value);
                 });
