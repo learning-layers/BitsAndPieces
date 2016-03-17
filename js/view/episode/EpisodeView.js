@@ -20,7 +20,7 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode
         },
         render: function() {
             this.$el.attr('href', '#');
-            this.$el.html('<button class="btn btn-danger deleteEpisode" title="Delete Episode"><i class="fa fa-trash bnp-navbar-icon"></i></button> <span class="episodeLabel">' + this.model.get(Voc.label) + '</span>');
+            this.$el.html('<button class="btn btn-danger deleteEpisode" title="Delete Episode"><i class="fa fa-chain-broken bnp-navbar-icon"></i></button> <span class="episodeLabel">' + this.model.get(Voc.label) + '</span>');
             return this;
         },
         changeCurrentVersion: function(event) {
@@ -48,7 +48,7 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode
             e.preventDefault();
             e.stopPropagation();
 
-            var confirmDelete = confirm('Are you sure you want to remove this Episode? This can not be undone!');
+            var confirmDelete = confirm('Disconnect yourself from the Episode. The Episode will just disappear from your workspace and the other contributors will be able to go on collaborating on it.');
 
             if ( true === confirmDelete ) {
 
