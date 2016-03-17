@@ -370,9 +370,9 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
         redrawEpisodes: function() {
             var that = this;
 
-            this.$el.find('ul.dropdown-menu').find('li.episode').detach();
+            if ( _.keys(this.views).length > 1 ) {
+                this.$el.find('ul.dropdown-menu').find('li.episode').detach();
 
-            if ( _.keys(this.views).length > 0 ) {
                 var orderedViews = _.sortBy(this.views, function(view) {
                     return view.model.get(Voc.label);
                 });
