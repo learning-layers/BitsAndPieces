@@ -5,7 +5,7 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
     return Backbone.View.extend({
         events: {
             'submit form' : 'submitForm',
-            'hide.bs.modal' : 'cleanForm',
+            'hide.bs.modal' : 'hideBsModal',
             'click .btn-primary' : 'submitForm',
             'keyup input#linkLabel' : 'revalidateLabel',
             'keyup textarea#linkDescription' : 'revalidateDescription'
@@ -36,6 +36,8 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         submitForm: function(e) {
             e.preventDefault();
 
+            this.disableDialog();
+
             var that = this;
 
             LocalMessages.clearMessages(this.$el.find(this.localMessagesSelector));
@@ -53,6 +55,7 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
             }
 
             if ( !validateSuccess ) {
+                this.enableDialog();
                 return false;
             }
 
@@ -69,11 +72,20 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
 
 
             promise.done(function(result) {
+                that.enableDialog();
                 that.hideModal();
                 SystemMessages.addSuccessMessage('New Link has been added.');
             }).fail(function(f) {
+                that.enableDialog();
                 LocalMessages.addDangerMessage(that.$el.find(that.localMessagesSelector), 'A Link could not be added!');
             });
+        },
+        hideBsModal: function(e) {
+            if ( this.formDisabled === true ) {
+                e.preventDefault();
+            } else {
+                this.cleanForm();
+            }
         },
         cleanForm: function() {
             var uriElement = this.$el.find(this.uriSelector),
@@ -118,6 +130,16 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         },
         revalidateDescription: function() {
             this.validateDescription();
+        },
+        disableDialog: function() {
+            this.formDisabled = true;
+            this.$el.find('.modal-footer').find('button').prop('disabled', true);
+            this.$el.find('.fa-spinner').show();
+        },
+        enableDialog: function() {
+            this.formDisabled = false;
+            this.$el.find('.modal-footer').find('button').prop('disabled', false);
+            this.$el.find('.fa-spinner').hide();
         }
     });
 });

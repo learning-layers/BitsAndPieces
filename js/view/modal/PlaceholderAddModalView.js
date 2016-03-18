@@ -5,7 +5,7 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
     return Backbone.View.extend({
         events: {
             'submit form' : 'submitForm',
-            'hide.bs.modal' : 'cleanForm',
+            'hide.bs.modal' : 'hideBsModal',
             'click .btn-primary' : 'submitForm',
             'keyup input#placeholderLabel' : 'revalidatePlaceholderLabel',
             'keyup textarea#placeholderDescription' : 'revalidatePlaceholderDescription'
@@ -35,11 +35,14 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         submitForm: function(e) {
             e.preventDefault();
 
-            LocalMessages.clearMessages(this.$el.find(this.localMessagesSelector));
-
             var that = this;
 
+            that.disableDialog();
+
+            LocalMessages.clearMessages(this.$el.find(this.localMessagesSelector));
+
             if ( !( this.validatePlaceholderLabel() === true && this.validatePlaceholderDescription() === true ) ) {
+                that.enableDialog();
                 return false;
             }
 
@@ -55,11 +58,20 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
 
 
             promise.done(function(result) {
+                that.enableDialog();
                 that.hideModal();
                 SystemMessages.addSuccessMessage('New Placeholder has been added.');
             }).fail(function(f) {
+                that.enableDialog();
                 LocalMessages.addDangerMessage(that.$el.find(that.localMessagesSelector), 'A Placeholder could not be added!');
             });
+        },
+        hideBsModal: function(e) {
+            if ( this.formDisabled === true ) {
+                e.preventDefault();
+            } else {
+                this.cleanForm();
+            }
         },
         cleanForm: function() {
             var labelElement = this.$el.find(this.labelInputSelector),
@@ -91,6 +103,16 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         },
         revalidatePlaceholderDescription: function() {
             this.validatePlaceholderDescription();
+        },
+        disableDialog: function() {
+            this.formDisabled = true;
+            this.$el.find('.modal-footer').find('button').prop('disabled', true);
+            this.$el.find('.fa-spinner').show();
+        },
+        enableDialog: function() {
+            this.formDisabled = false;
+            this.$el.find('.modal-footer').find('button').prop('disabled', false);
+            this.$el.find('.fa-spinner').hide();
         }
 
     });

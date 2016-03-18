@@ -28,7 +28,10 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary">Create</button>
+                <button type="button" class="btn btn-primary">
+                    <i class="fa fa-spinner fa-spin" style="display:none;"></i>
+                    Create
+                </button>
             </div>
         </div>
     </div>
