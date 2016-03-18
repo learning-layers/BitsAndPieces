@@ -3,6 +3,13 @@ define(['logger','jquery', 'backbone', 'underscore',
 function (Logger, $, Backbone, _, DismissibleAlertTemplate) {
     return {
         LOG: Logger.get('InputValidation'),
+        _isUrl: function(url) {
+            if ( url.trim().indexOf('http://') === 0 || url.trim().indexOf('https://') === 0 ) {
+                return true;
+            }
+
+            return false;
+        },
         addValidationStateToParent: function(element, stateClass) {
             element.parent().addClass(stateClass);
         },
@@ -61,6 +68,19 @@ function (Logger, $, Backbone, _, DismissibleAlertTemplate) {
 
             this.removeAlertsFromParent(element);
             if ( elementText.length > allowedLength ) {
+                this.addValidationStateToParent(element, 'has-error');
+                this.addAlert(element, 'alert-danger', alertText);
+                return false;
+            } else {
+                this.removeValidationStateFromParent(element);
+                return true;
+            }
+        },
+        validateUrlInput: function(element, alertText) {
+            var elementText = element.val();
+
+            this.removeAlertsFromParent(element);
+            if ( _.isEmpty(elementText.trim()) || !this._isUrl(elementText) ) {
                 this.addValidationStateToParent(element, 'has-error');
                 this.addAlert(element, 'alert-danger', alertText);
                 return false;

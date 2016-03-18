@@ -20,6 +20,7 @@
             <li><a href="#" id="createBlank">Create New Episode</a></li>
             <li><a href="#" id="createPlaceholder">Create New Placeholder</a></li>
             <li><a href="#" id="createBit">Create Bit (Upload File)</a></li>
+            <li><a href="#" id="createLink">Create Link</a></li>
             <li class="divider"></li>
             <li><a href="#" id="logout">Logout</a></li>
             <li class="divider"></li>

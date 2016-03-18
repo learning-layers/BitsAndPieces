@@ -36,6 +36,8 @@ define(['view/sss/EntityView', 'logger', 'tracker', 'underscore', 'jquery', 'voc
             var type = 'bit';
             if ( this.model.isof(Voc.FILE) ) {
                 type = 'file';
+            } else if ( this.model.isof(Voc.LINK) ) {
+                type = 'link';
             } else if ( this.model.isof(Voc.EVERNOTE_RESOURCE) ) {
                 type = 'evernote resource';
             } else if ( this.model.isof(Voc.EVERNOTE_NOTE) ) {

@@ -22,7 +22,7 @@ function(module, config){
         'discussionToolUrl': appConfig.discussionToolUrl,
         'localSearchOp' : appConfig.search.localSearchOp || 'and',
         'globalSearchOp' : appConfig.search.globalSearchOp || 'and',
-        'acceptableEntityTypes': ['entity', 'uploadedFile', 'evernoteResource', 'evernoteNote', 'evernoteNotebook', 'placeholder'],
+        'acceptableEntityTypes': ['entity', 'uploadedFile', 'evernoteResource', 'evernoteNote', 'evernoteNotebook', 'placeholder', 'link'],
         'toolbarDescriptionRows' : appConfig.toolbar.description.rows || 2,
         'widgetOrganizeContainerHeight' : appConfig.widget.organize.container.height || '400px',
         'modalDescriptionRows' : appConfig.modal.description.rows || 3,

@@ -1,12 +1,13 @@
 // TODO EpisodeManagerView could be renamed to MenuView
 define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
-        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView', 'view/modal/EpisodeAddModalView', 'view/modal/BitAddModalView'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView, EpisodeAddModalView, BitAddModalView){
+        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView', 'view/modal/EpisodeAddModalView', 'view/modal/BitAddModalView', 'view/modal/LinkAddModalView'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView, EpisodeAddModalView, BitAddModalView, LinkAddModalView){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
             'click a#createBlank' : 'createBlank',
             'click a#createPlaceholder' : 'createPlaceholder',
             'click a#createBit' : 'createBit',
+            'click a#createLink' : 'createLink',
             'click a#logout' : 'logOut',
             'click a.helpButton' : 'showHelp',
             'click a.affectButton' : 'handleAffect',
@@ -42,6 +43,9 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
 
             this.bitAddModalView = new BitAddModalView().render();
             $(document).find('body').prepend(this.bitAddModalView.$el);
+
+            this.linkAddModalView = new LinkAddModalView().render();
+            $(document).find('body').prepend(this.linkAddModalView.$el);
 
             var view = this;
         },
@@ -380,6 +384,11 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                     that.$el.find('ul.dropdown-menu').append(view.$el);
                 });
             }
+        },
+        createLink: function(e) {
+            e.preventDefault();
+
+            this.linkAddModalView.showModal();
         }
 
     });

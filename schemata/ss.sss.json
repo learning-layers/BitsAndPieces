@@ -404,6 +404,23 @@
                 "http://eval.bp/entity"
             ]
         },
+        "http://eval.bp/link" : {
+            "ancestors": [
+                "http://eval.bp/Thing"
+            ],
+            "comment": "",
+            "comment_plain": "",
+            "id": "http://eval.bp/link",
+            "label": "link",
+            "properties": [
+            ],
+            "specific_properties": [
+            ],
+            "subtypes": [],
+            "supertypes": [
+                "http://eval.bp/entity"
+            ]
+        },
         "http://eval.bp/rating" : {
             "ancestors": [
                 "http://eval.bp/Thing" 

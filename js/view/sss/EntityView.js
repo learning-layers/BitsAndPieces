@@ -56,6 +56,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             'sss:rating' : 'img/sss/rate.png',
             'sss:tag' : 'img/evernote/tag.png',
             'sss:placeholder' : 'img/sss/entityPlaceholder.png',
+            'sss:link' : 'img/sss/entityLink.png',
             //'sss:userEvent' : 'img/sss/userEvent.png',
             //'sss:learnEp' : 'img/evernote/learnEp.png',
             //'sss:learnEpTimelineState' : 'img/evernote/learnEpTimelineState.png',

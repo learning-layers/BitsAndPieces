@@ -20,6 +20,7 @@ define([], {
     WIDGET: "sss:Widget",
     BROWSING_WIDGET: "sss:BrowsingWidget",
     ORGANIZING_WIDGET: "sss:OrganizingWidget",
+    LINK: "sss:link",
     currentVersion: 'sss:currentVersion',
     belongsToEpisode: 'sss:learnEp',
     belongsToVersion: 'sss:learnEpVersion',

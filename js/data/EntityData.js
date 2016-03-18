@@ -12,7 +12,7 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
      * Filters entities from added entities to vie.entities
      */
     m.filter= function(model, collection, options) {
-        if( model.isof(Voc.ENTITY) || model.isof(Voc.FILE) ){
+        if( model.isof(Voc.ENTITY) || model.isof(Voc.FILE) || model.isof(Voc.LINK) ){
             this.checkIntegrity(model, options);
             if ( model.has(Voc.author) ) {
                 this.initUser(model);
@@ -336,6 +336,29 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
                     defer.resolve(result);
                 }).fail(function(f) {
                     that.LOG.debug('uploadFile fail', f);
+                    defer.reject(f);
+                });
+            }
+        );
+
+        return defer.promise();
+    };
+    m.addLink = function(data) {
+        var that = this,
+            defer = $.Deferred();
+
+        data = data || {};
+
+        this.vie.onUrisReady(
+            function() {
+                that.vie.analyze({
+                    'service' : 'linkAdd',
+                    'data' : data
+                }).using('sss').execute().success(function(result){
+                    that.LOG.debug('linkAdd success', result);
+                    defer.resolve(result);
+                }).fail(function(f) {
+                    that.LOG.debug('linkAdd fail', f);
                     defer.reject(f);
                 });
             }
