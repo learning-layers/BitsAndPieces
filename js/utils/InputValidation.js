@@ -4,11 +4,14 @@ function (Logger, $, Backbone, _, DismissibleAlertTemplate) {
     return {
         LOG: Logger.get('InputValidation'),
         _isUrl: function(url) {
-            if ( url.trim().indexOf('http://') === 0 || url.trim().indexOf('https://') === 0 ) {
-                return true;
-            }
-
-            return false;
+            // This one just checks if string looks like a URL, very simple
+            // It should begin with http:// or https://
+            // It should have at least one character as domain name (any character)
+            // It should have a point before domain extension
+            // Domain extension should be at least two characters long from a to z
+            // Rest of it could have more characters, none is also suitable
+            var re = new RegExp("^https?:\/\/.+[.]{1}[a-z]{2,}.*$", "i");
+            return re.test(url.trim());
         },
         addValidationStateToParent: function(element, stateClass) {
             element.parent().addClass(stateClass);
