@@ -37,12 +37,6 @@
                 </tbody>
             </table>
 
-            <div class="form-group">
-                <label class="control-label>">In episodes:</label>
-                <div class="list-group belongsToEpisode">
-                </div>
-            </div>
-
             <% if ( entity.thumb ) { %>
             <div>
                 <label class="subsectionLabelSmall">Thumbnail</label>
@@ -64,19 +58,6 @@
     <div class="panel-body">
 
         <div class="toolbarSection">
-        <div class="importance">
-            <label class="subsectionLabel">Importance:</label>
-            <div class="slider"></div>
-            <div class="indicators">
-                <span class="importanceLow">!</span>
-                <span class="importanceMedium">!!</span>
-                <span class="importanceHigh">!!!</span>
-                <span class="glyphicon glyphicon-star-empty importanceFavourite"></span>
-            </div>
-        </div>
-
-        <br />
-
         <div class="form-group tagSearch">
             <label>User's tags:</label>
             <input class="form-control" type="text" value="" placeholder="add new tag" />
@@ -87,10 +68,23 @@
         </div>
 
         <br />
-
+        
         <div class="recommendedTags">
             <label>Recommended tags (click to add):</label>
             <div class="tagcloud">
+            </div>
+        </div>
+
+        <br />
+
+        <div class="importance">
+            <label class="subsectionLabel">Importance:</label>
+            <div class="slider"></div>
+            <div class="indicators">
+                <span class="importanceLow">!</span>
+                <span class="importanceMedium">!!</span>
+                <span class="importanceHigh">!!!</span>
+                <span class="glyphicon glyphicon-star-empty importanceFavourite"></span>
             </div>
         </div>
 
@@ -129,5 +123,23 @@
     </div><!-- .panel-body -->
 
 </div><!-- .panel -->
+
+<div class="panel panel-default">
+
+    <div class="panel-heading">
+        <h3 class="panel-title">Used in episodes</h3>
+    </div>
+
+    <div class="panel-body">
+        <div class="form-group">
+            <div class="list-group belongsToEpisode">
+            </div>
+        </div>
+    </div><!-- .panel-body -->
+
+</div><!-- .panel -->
+
+
+
 
 </div>
