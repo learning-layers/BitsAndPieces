@@ -182,10 +182,11 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             if ( sharedWithText !== '' ) {
                 this.$el.find('.currentEpisodeSharedWith > span.bnp-contributors').popover({
                     container: '.navbar',
-                    content: sharedWithNames.join(', '),
+                    content: '<strong>Author:</strong> ' + this.model.get(Voc.label).split('@')[0] + '<br><strong>Contributors:</strong> ' + sharedWithNames.join(', '),
                     placement: 'bottom',
                     title: 'Contributors',
-                    trigger: 'hover'
+                    trigger: 'hover',
+                    html: true
                 });
             }
             this.handleNavbarHeightChange();
