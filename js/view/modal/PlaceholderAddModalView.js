@@ -60,10 +60,10 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
             promise.done(function(result) {
                 that.enableDialog();
                 that.hideModal();
-                SystemMessages.addSuccessMessage('New Placeholder has been added.');
+                SystemMessages.addSuccessMessage('New Placeholder / Quick Note has been added.');
             }).fail(function(f) {
                 that.enableDialog();
-                LocalMessages.addDangerMessage(that.$el.find(that.localMessagesSelector), 'A Placeholder could not be added!');
+                LocalMessages.addDangerMessage(that.$el.find(that.localMessagesSelector), 'A Placeholder  / Quick Note could not be added!');
             });
         },
         hideBsModal: function(e) {
