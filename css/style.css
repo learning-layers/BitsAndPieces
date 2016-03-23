@@ -608,6 +608,11 @@ ul.dropdown-menu li.episode a.highlight {
 	font-size: 120%;
 }
 
+.navbar i.fa.fa-sign-out {
+	font-size: 100%;
+	color: #d9534f;
+}
+
 .bnp-navbar-icon {
 	cursor: pointer;
 }
