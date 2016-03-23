@@ -200,6 +200,8 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
         // start and end of user store the timestamps of the last fetch
         var lastStart = user.get(Voc.start);
         var lastEnd = user.get(Voc.end);
+        // XXX This could rewrite date values to something useless
+        // Has to be checked for logic flaws
         if( lastStart && start >= lastStart )  {
             start = new Date(lastEnd.getTime() - margin);
         }
@@ -240,6 +242,47 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
             }
         );
     };
+    m.fetchSingleAndAddToAccessible = function( user, uri, callbacks ) {
+        this.LOG.debug("fetchSingleAndAddToAccessible", uri);
+        // Fetch entities currently visible
+        var forUser = user.getSubject();
+        var that = this;
+        this.vie.load({
+            'service' : 'entityDescGet',
+            'data' : {
+                'entity' : uri,
+                'setTags' : true,
+                'setFlags' : true
+            }
+        }).from('sss').execute().success(
+            function(entities) {
+                that.LOG.debug('success fetchSingleAndAddToAccessible: ', _.clone(entities), 'user: ', user);
+
+                if ( entities.length === 0 ) {
+                    that.LOG.debug('fetchSingleAndAddToAccessible: returned no entities');
+                    return;
+                }
+
+                entities = that.vie.entities.addOrUpdate(entities, {'overrideAttributes': true});
+
+                var currentEntities = user.get(Voc.hasAccessibleEntity) || [];
+                if( !_.isArray(currentEntities)) currentEntities = [currentEntities];
+                var uris = _.map(currentEntities, function(entity){
+                    return ( entity.isEntity) ? entity.getSubject() : entity;
+                });
+
+                if ( _.indexOf(uris, entities[0].getSubject()) === -1 ) {
+                    uris.push(entities[0].getSubject());
+                    user.set(Voc.hasAccessibleEntity, uris);
+                }
+
+                if( callbacks && _.isFunction(callbacks.success) ) {
+                    callbacks.success(entities);
+                }
+            }
+        );
+    };
+
     m.fetchRecommendedTags = function() {
         var that = this;
         this.vie.load({

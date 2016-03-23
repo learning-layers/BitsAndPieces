@@ -1,7 +1,7 @@
 define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         'data/EntityData',
-        'utils/SystemMessages', 'utils/LocalMessages', 'utils/InputValidation',
-        'text!templates/modal/placeholder_add_modal.tpl'], function(appConfig, Logger, _, $, Backbone, EntityData, SystemMessages, LocalMessages, InputValidation, PlaceholderAddTemplate){
+        'utils/SystemMessages', 'utils/LocalMessages', 'utils/InputValidation', 'utils/EntityHelpers',
+        'text!templates/modal/placeholder_add_modal.tpl'], function(appConfig, Logger, _, $, Backbone, EntityData, SystemMessages, LocalMessages, InputValidation, EntityHelpers, PlaceholderAddTemplate){
     return Backbone.View.extend({
         events: {
             'submit form' : 'submitForm',
@@ -61,6 +61,8 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
                 that.enableDialog();
                 that.hideModal();
                 SystemMessages.addSuccessMessage('New Placeholder / Quick Note has been added.');
+
+                EntityHelpers.triggerEntityAddedEvent(result);
             }).fail(function(f) {
                 that.enableDialog();
                 LocalMessages.addDangerMessage(that.$el.find(that.localMessagesSelector), 'A Placeholder  / Quick Note could not be added!');

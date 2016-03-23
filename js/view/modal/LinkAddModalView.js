@@ -1,7 +1,7 @@
 define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         'data/EntityData',
-        'utils/SystemMessages', 'utils/LocalMessages', 'utils/InputValidation',
-        'text!templates/modal/link_add_modal.tpl'], function(appConfig, Logger, _, $, Backbone, EntityData, SystemMessages, LocalMessages, InputValidation, LinkAddTemplate){
+        'utils/SystemMessages', 'utils/LocalMessages', 'utils/InputValidation', 'utils/EntityHelpers',
+        'text!templates/modal/link_add_modal.tpl'], function(appConfig, Logger, _, $, Backbone, EntityData, SystemMessages, LocalMessages, InputValidation, EntityHelpers, LinkAddTemplate){
     return Backbone.View.extend({
         events: {
             'submit form' : 'submitForm',
@@ -75,6 +75,8 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
                 that.enableDialog();
                 that.hideModal();
                 SystemMessages.addSuccessMessage('New Link has been added.');
+
+                EntityHelpers.triggerEntityAddedEvent(result);
             }).fail(function(f) {
                 that.enableDialog();
                 LocalMessages.addDangerMessage(that.$el.find(that.localMessagesSelector), 'A Link could not be added!');

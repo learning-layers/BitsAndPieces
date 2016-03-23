@@ -18,7 +18,8 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
         return Backbone.View.extend({
             events : {
                 'bnp:clickEntity' : 'clickEntity',
-                'bnp:showHideToolbar' : 'handleShowHideToolbar'
+                'bnp:showHideToolbar' : 'handleShowHideToolbar',
+                'bnp:newEntityAdded' : 'handleNewEntityAdded'
             },
             _calculateAndSetScrollableMenuMaxHeight: function() {
                 var windowHeight = $(window).height(),
@@ -204,9 +205,7 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
                 // This happends due to elements being hidden initially.
                 _.each(this.widgetViews, function(widget) {
                     if ( widget.model.get(Voc.belongsToVersion) === version ) {
-                        if ( widget.isBrowse() && widget.view.timeline ) {
-                            widget.view.timeline.redraw();
-                        } else if ( widget.isOrganize() ) {
+                        if ( widget.isOrganize() ) {
                             var episode = version.get(Voc.belongsToEpisode);
 
                             if ( episode && episode.isEntity ) {
@@ -235,10 +234,8 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
 
             },
             browseCurrentBrowseWidget: function(entity) {
-                var version = this.model.get(Voc.currentVersion);
-
                 _.each(this.widgetViews, function(widget) {
-                    if ( widget.isBrowse() && widget.model.get(Voc.belongsToVersion) === version ) {
+                    if ( widget.isBrowse() ) {
                         // Call browseTo on current widget view attribute
                         // filled with real widget view
                         widget.view.browseTo(entity);
@@ -306,6 +303,13 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
 
                     tracker.info(tracker.WORKSINBITSANDPIECES, null, episodeUri);
                 }, 30000);
+            },
+            handleNewEntityAdded: function(e) {
+                _.each(this.widgetViews, function(widget) {
+                    if ( widget.isBrowse() ) {
+                        widget.view.addSingleNewEntityToTimeline(e.entityUri);
+                    }
+                });
             }
         });
 });

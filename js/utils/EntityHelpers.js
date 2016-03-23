@@ -148,6 +148,12 @@ function (Logger, $, Backbone, _, Voc) {
         },
         fixNewlinesForInput: function(text) {
             return text.replace(/\\n/g, '\n');
+        },
+        triggerEntityAddedEvent: function(uri) {
+            var ev = $.Event("bnp:newEntityAdded", {
+                entityUri: uri
+            });
+            $(document).find('body .container-fluid').trigger(ev);
         }
     };
 });
