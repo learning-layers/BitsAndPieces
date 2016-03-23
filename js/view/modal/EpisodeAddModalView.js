@@ -8,7 +8,8 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
             'hide.bs.modal' : 'cleanForm',
             'click .btn-primary' : 'submitForm',
             'keyup input#episodeLabel' : 'revalidateEpisodeLabel',
-            'keyup textarea#episodeDescription' : 'revalidateEpisodeDescription'
+            'keyup textarea#episodeDescription' : 'revalidateEpisodeDescription',
+            'shown.bs.modal' : 'triggerAutofocus'
         },
         LOG: Logger.get('EpisodeAddModalView'),
         initialize: function() {
@@ -77,6 +78,9 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         },
         setCallback: function(cb) {
             this.formSubmitCallback = cb;
+        },
+        triggerAutofocus: function() {
+            this.$el.find(this.labelInputSelector).trigger('focus');
         }
     });
 });

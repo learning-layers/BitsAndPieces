@@ -8,7 +8,8 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
             'hide.bs.modal' : 'hideBsModal',
             'click .btn-primary' : 'submitForm',
             'keyup input#linkLabel' : 'revalidateLabel',
-            'keyup textarea#linkDescription' : 'revalidateDescription'
+            'keyup textarea#linkDescription' : 'revalidateDescription',
+            'shown.bs.modal' : 'triggerAutofocus'
         },
         LOG: Logger.get('LinkAddModalView'),
         initialize: function() {
@@ -142,6 +143,9 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
             this.formDisabled = false;
             this.$el.find('.modal-footer').find('button').prop('disabled', false);
             this.$el.find('.fa-spinner').hide();
+        },
+        triggerAutofocus: function() {
+            this.$el.find(this.uriSelector).trigger('focus');
         }
     });
 });

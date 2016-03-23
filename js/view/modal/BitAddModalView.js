@@ -9,7 +9,8 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
             'click .btn-primary' : 'submitForm',
             'keyup input#bitLabel' : 'revalidateBitLabel',
             'keyup textarea#bitDescription' : 'revalidateBitDescription',
-            'change input#bitFile' : 'revalidateBitFile'
+            'change input#bitFile' : 'revalidateBitFile',
+            'shown.bs.modal' : 'triggerAutofocus'
         },
         LOG: Logger.get('BitAddModalView'),
         initialize: function() {
@@ -154,6 +155,9 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
             this.formDisabled = false;
             this.$el.find('.modal-footer').find('button').prop('disabled', false);
             this.$el.find('.fa-spinner').hide();
+        },
+        triggerAutofocus: function() {
+            this.$el.find(this.labelInputSelector).trigger('focus');
         }
     });
 });
