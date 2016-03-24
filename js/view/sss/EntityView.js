@@ -53,9 +53,11 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             'sss:fileSpreadsheet' : 'img/sss/entitySpreadsheet.png',
             'sss:filePresentation' : 'img/sss/entityPresentation.png',
             'sss:fileText' : 'img/sss/entityText.png',
+            'sss:fileAudio' : 'img/sss/entityAudio.png',
             'sss:rating' : 'img/sss/rate.png',
             'sss:tag' : 'img/evernote/tag.png',
             'sss:placeholder' : 'img/sss/entityPlaceholder.png',
+            'sss:link' : 'img/sss/entityLink.png',
             //'sss:userEvent' : 'img/sss/userEvent.png',
             //'sss:learnEp' : 'img/evernote/learnEp.png',
             //'sss:learnEpTimelineState' : 'img/evernote/learnEpTimelineState.png',
@@ -295,6 +297,15 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                         case 'text/x-vcard':
                             name = 'sss:fileText';
                             break;
+                        case 'application/ogg':
+                        case 'audio/mp3':
+                        case 'audio/midi':
+                        case 'audio/x-m4a':
+                        case 'audio/amr':
+                        case 'audio/mpeg':
+                        case 'audio/wav':
+                            name = 'sss:fileAudio';
+                            break;
                     }
                 } else {
                     file = this.model.get(Voc.file);
@@ -333,6 +344,15 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                             case '.css':
                             case '.vcf':
                                 name = 'sss:fileText';
+                                break;
+                            case '.mp3':
+                            case '.ogg':
+                            case '.wav':
+                            case 'midi':
+                            case '.wma':
+                            case '.m4a':
+                            case '.amr':
+                                name = 'sss:fileAudio';
                                 break;
                         }
                     }

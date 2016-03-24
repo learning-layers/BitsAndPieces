@@ -18,10 +18,34 @@ define(['config/config', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
         LOG: Logger.get('BitToolbarView'),
         initialize: function() {
             this.bitThumbnailModalView = new BitThumbnailModalView({}).render();
+            this.visualFeedbackDisabled = false;
+        },
+        _checkAndRemoveFocusFromInputs: function() {
+            if ( this.$el.find('input[name="title"]').is(':focus') ) {
+                this.$el.find('input[name="title"]').blur();
+                return true;
+            } else if ( this.$el.find('textarea[name="description"]').is(':focus') ) {
+                this.$el.find('textarea[name="description"]').blur();
+                return true;
+            }
+
+            return false;
         },
         setEntity: function(entity) {
             var that = this;
             if( this.model === entity ) return;
+
+            // Check and apply focus protection
+            // Timeout of quarter a second should be good enough for the view
+            this.visualFeedbackDisabled = true;
+            if ( this._checkAndRemoveFocusFromInputs() ) {
+                setTimeout(function() {
+                    that.setEntity(entity);
+                }, 150);
+                return;
+            }
+            this.visualFeedbackDisabled = false;
+
             this.stopListening(this.model, 'change', this.render);
             this.model = entity;
             if( entity ) {
@@ -182,13 +206,15 @@ define(['config/config', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
         changeLabel: function(e) {
             var that = this,
             currentTarget = $(e.currentTarget),
-            label = currentTarget.val();
+            label = currentTarget.val(),
+            visualFeedbackDisabled = this.visualFeedbackDisabled;
 
             if( this.model.get(Voc.label) == label) return;
             this.LOG.debug('changeLabel', label);
             // Make sure to set user_initiated flag
             EntityData.setLabel(this.model, label, {
                 'error' : function() {
+                    if ( visualFeedbackDisabled ) return;
                     that.$el.find('input[name="title"]').effect("shake");
                 },
                 'user_initiated' : true
@@ -199,13 +225,15 @@ define(['config/config', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
         changeDescription: function(e) {
             var that = this,
             currentTarget = $(e.currentTarget),
-            description = currentTarget.val();
+            description = currentTarget.val(),
+            visualFeedbackDisabled = this.visualFeedbackDisabled;
 
             if( this.model.get(Voc.description) == description) return;
             this.LOG.debug('changeDescription', description);
             // Make sure to set user_initiated flag
             EntityData.setDescription(this.model, description, {
                 'error' : function() {
+                    if ( visualFeedbackDisabled ) return;
                     that.$el.find('textarea[name="description"]').effect("shake");
                 },
                 'user_initiated' : true
@@ -237,8 +265,7 @@ define(['config/config', 'logger', 'tracker', 'underscore', 'jquery', 'backbone'
             tagcloud.empty();
             if ( !_.isEmpty(tags) ) {
                 _.each(tags, function(tag) {
-                    var fontSize = fontMax * tag.likelihood;
-                    if ( fontSize < fontMin ) fontSize += fontMin;
+                    var fontSize = fontMin + ( ( fontMax - fontMin ) * tag.likelihood );
                     tagcloud.append(' <span class="badge"><a href="#" data-tag="' + tag.label + '" style="font-size:' + fontSize + 'px">' + tag.label + '</a></span>');
                 });
             }

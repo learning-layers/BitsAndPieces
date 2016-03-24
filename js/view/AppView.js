@@ -18,7 +18,13 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
         return Backbone.View.extend({
             events : {
                 'bnp:clickEntity' : 'clickEntity',
-                'bnp:showHideToolbar' : 'handleShowHideToolbar'
+                'bnp:showHideToolbar' : 'handleShowHideToolbar',
+                'bnp:newEntityAdded' : 'handleNewEntityAdded'
+            },
+            _calculateAndSetScrollableMenuMaxHeight: function() {
+                var windowHeight = $(window).height(),
+                    navbarHeight = this.$el.parent().find('.navbar').height();
+                this.$el.parent().find('.bnp-scrollable-menu').css('max-height', windowHeight - navbarHeight - 50);
             },
             initialize: function() {
                 this.vie = this.options.vie;
@@ -49,6 +55,18 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
                 this.timelineModel = this.vie.entities.addOrUpdate(
                         AppData.createTimeline(this.model));
                 tracker.info(tracker.STARTBITSANDPIECES, null);
+
+                this.timerId = null;
+                $(window).on('resize', function() {
+                    if ( that.timerId ) {
+                        clearTimeout(that.timerId);
+                    }
+
+                    that.timerId = setTimeout(function() {
+                        that.timerId = null;
+                        that._calculateAndSetScrollableMenuMaxHeight();
+                    }, 500);
+                });
             },
             filter: function(model, collection, options) {
                 if(model.isof(Voc.VERSION)){
@@ -77,6 +95,8 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
 
                 // Prepend navbar to body
                 this.$el.parent().prepend(navbar);
+
+                this._calculateAndSetScrollableMenuMaxHeight();
 
                 this.widgetFrame = $('<div id="myWidgets"><div class="timelineContainer"></div><div class="episodeSpecificContainer"></div></div>');
                 this.$el.append( this.widgetFrame );
@@ -185,9 +205,7 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
                 // This happends due to elements being hidden initially.
                 _.each(this.widgetViews, function(widget) {
                     if ( widget.model.get(Voc.belongsToVersion) === version ) {
-                        if ( widget.isBrowse() && widget.view.timeline ) {
-                            widget.view.timeline.redraw();
-                        } else if ( widget.isOrganize() ) {
+                        if ( widget.isOrganize() ) {
                             var episode = version.get(Voc.belongsToEpisode);
 
                             if ( episode && episode.isEntity ) {
@@ -216,10 +234,8 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
 
             },
             browseCurrentBrowseWidget: function(entity) {
-                var version = this.model.get(Voc.currentVersion);
-
                 _.each(this.widgetViews, function(widget) {
-                    if ( widget.isBrowse() && widget.model.get(Voc.belongsToVersion) === version ) {
+                    if ( widget.isBrowse() ) {
                         // Call browseTo on current widget view attribute
                         // filled with real widget view
                         widget.view.browseTo(entity);
@@ -287,6 +303,13 @@ define(['config/config', 'logger', 'tracker', 'backbone', 'jquery', 'voc','under
 
                     tracker.info(tracker.WORKSINBITSANDPIECES, null, episodeUri);
                 }, 30000);
+            },
+            handleNewEntityAdded: function(e) {
+                _.each(this.widgetViews, function(widget) {
+                    if ( widget.isBrowse() ) {
+                        widget.view.addSingleNewEntityToTimeline(e.entityUri);
+                    }
+                });
             }
         });
 });

@@ -345,7 +345,7 @@ define(['logger', 'voc', 'underscore', 'jquery', 'data/Data', 'data/episode/Vers
                         if ( discussion.entries.length > 0 ) {
                             _.each(discussion.entries, function(entry) {
                                 dataSet.entries +=1;
-                                if ( !entry.read ) {
+                                if ( !entry.read && entry.author.id !== userParams.user ) {
                                     dataSet.unreadEntries += 1;
                                 }
                             });

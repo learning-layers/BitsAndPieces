@@ -1,12 +1,13 @@
 // TODO EpisodeManagerView could be renamed to MenuView
 define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
-        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView', 'view/modal/EpisodeAddModalView', 'view/modal/BitAddModalView'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView, EpisodeAddModalView, BitAddModalView){
+        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView', 'view/modal/EpisodeAddModalView', 'view/modal/BitAddModalView', 'view/modal/LinkAddModalView'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView, EpisodeAddModalView, BitAddModalView, LinkAddModalView){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
             'click a#createBlank' : 'createBlank',
             'click a#createPlaceholder' : 'createPlaceholder',
             'click a#createBit' : 'createBit',
+            'click a#createLink' : 'createLink',
             'click a#logout' : 'logOut',
             'click a.helpButton' : 'showHelp',
             'click a.affectButton' : 'handleAffect',
@@ -42,6 +43,9 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
 
             this.bitAddModalView = new BitAddModalView().render();
             $(document).find('body').prepend(this.bitAddModalView.$el);
+
+            this.linkAddModalView = new LinkAddModalView().render();
+            $(document).find('body').prepend(this.linkAddModalView.$el);
 
             var view = this;
         },
@@ -92,6 +96,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderAuthor, this);
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
                     prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.discussionsCount)+' change:'+this.model.vie.namespaces.uri(Voc.unreadEntriesCount)+' change:'+this.model.vie.namespaces.uri(Voc.entriesCount), this.renderDiscussionToolButton, this);
+                    prevCurrEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.label), this.redrawEpisodes, this);
                 }
             }
             if(epView = this.views[this.currentEpisode.cid]) {
@@ -101,6 +106,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderAuthor, this);
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
                 this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.discussionsCount)+' change:'+this.model.vie.namespaces.uri(Voc.unreadEntriesCount)+' change:'+this.model.vie.namespaces.uri(Voc.entriesCount), this.renderDiscussionToolButton, this);
+                this.currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.redrawEpisodes, this);
             }
             this.handleNavbarHeightChange();
         },
@@ -176,10 +182,11 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             if ( sharedWithText !== '' ) {
                 this.$el.find('.currentEpisodeSharedWith > span.bnp-contributors').popover({
                     container: '.navbar',
-                    content: sharedWithNames.join(', '),
+                    content: '<strong>Author:</strong> ' + this.model.get(Voc.label).split('@')[0] + '<br><strong>Contributors:</strong> ' + sharedWithNames.join(', '),
                     placement: 'bottom',
                     title: 'Contributors',
-                    trigger: 'hover'
+                    trigger: 'hover',
+                    html: true
                 });
             }
             this.handleNavbarHeightChange();
@@ -239,6 +246,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 a = that.model.vie.entities.get(a);
                 that.addEpisode(a);
             });
+            that.redrawEpisodes();
             
             var deleted = _.difference(previous, set);
             this.LOG.debug('deleted', deleted);
@@ -250,17 +258,9 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
         addEpisode: function(model) {
             this.LOG.debug('addEpisode', model);
             var view = new EpisodeView({'model':model});
-            var li = $('<li class="episode" about="'+model.getSubject()+'"></li>');
-            if( model.isNew() ) {
-                model.once('change:'+model.idAttribute, 
-                    function(model, value) {
-                        li.attr('about', value);
-                });
-            }
-            li.append(view.render().$el);
-            this.$el.find('ul.dropdown-menu').append(li);
+            this.$el.find('ul.dropdown-menu').append(view.render().$el);
             this.views[model.cid] = view;
-            if( model === this.currentEpisode ) { view.highlight();}
+            if ( model === this.currentEpisode ) { view.highlight();}
             return this;
         },
         removeEpisode: function(model) {
@@ -371,6 +371,25 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             e.preventDefault();
 
             this.bitAddModalView.showModal();
+        },
+        redrawEpisodes: function() {
+            var that = this;
+
+            if ( _.keys(this.views).length > 1 ) {
+                this.$el.find('ul.dropdown-menu').find('li.episode').detach();
+
+                var orderedViews = _.sortBy(this.views, function(view) {
+                    return view.model.get(Voc.label).trim();
+                });
+                _.each(orderedViews, function(view) {
+                    that.$el.find('ul.dropdown-menu').append(view.$el);
+                });
+            }
+        },
+        createLink: function(e) {
+            e.preventDefault();
+
+            this.linkAddModalView.showModal();
         }
 
     });

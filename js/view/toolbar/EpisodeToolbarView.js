@@ -38,6 +38,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 if ( previousEpisode && previousEpisode.isEntity ) {
                     previousEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
                     previousEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
+                    previousEpisode.off('change:'+this.model.vie.namespaces.uri(Voc.label), this.updateEpisodesOnLabelChanged, this);
                 }
             }
 
@@ -48,6 +49,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 if ( currentEpisode && currentEpisode.isEntity ) {
                     currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
                     currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
+                    currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.updateEpisodesOnLabelChanged, this);
                 } else {
                     // Deal with situation when episode is not there yet
                     currentVersion.once('change:'+this.model.vie.namespaces.uri(Voc.belongsToEpisode), function(model, value, options) {
@@ -55,6 +57,7 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
 
                         currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.circleTypes), this.renderVisibility, this);
                         currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.hasUsers), this.renderSharedWith, this);
+                        currentEpisode.on('change:'+this.model.vie.namespaces.uri(Voc.label), this.updateEpisodesOnLabelChanged, this);
                     }, this);
                 }
             }
@@ -102,6 +105,16 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
         renderSharedWith: function(model, value, options) {
             this.$el.find('.episodeSharedWith').html(EntityHelpers.getSharedWithNames(model).join(', '));
         },
+        updateEpisodesOnLabelChanged: function() {
+            var episodes = null,
+                searchValue = this.$el.find('input[name="search"]').val();
+
+            if ( searchValue.trim() ) {
+                episodes = this.searchEpisodes(searchValue.trim());
+            }
+
+            this.addOrUpdateEpisodeViews(episodes);
+        },
         addOrUpdateEpisodeViews: function(episodes) {
             var that = this,
                 box = this.$el.find('.toolbarSectionEpisodes .myEpisodes .episodeListing');
@@ -112,7 +125,10 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'voc',
                 view.remove();
             });
             this.episodeViews = [];
-            _.each(episodes, function(episode) {
+            var orderedEpisodes = _.sortBy(episodes, function(episode) {
+                return episode.get(Voc.label).trim();
+            });
+            _.each(orderedEpisodes, function(episode) {
                 var view = new EpisodeListingView({
                     model: episode,
                     toolContext: tracker.EPISODETAB,

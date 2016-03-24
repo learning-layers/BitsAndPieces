@@ -600,6 +600,11 @@ define(['underscore', 'logger'], function(_, Logger) {
             'reqPath': 'files/upload',
             'resultKey' : 'file',
             'fileUpload' : true
+        },
+        'linkAdd' : {
+            'reqType': 'POST',
+            'reqPath': 'links',
+            'resultKey' : 'link'
         }
 
     };

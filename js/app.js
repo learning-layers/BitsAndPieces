@@ -46,6 +46,7 @@ function(appConfig, VIE, Logger, userParams, UserData, SocialSemanticService, ex
     Logger.get('SearchHelper').setLevel(Logger.OFF);
     Logger.get('CategoryData').setLevel(Logger.OFF);
     Logger.get('SystemMessages').setLevel(Logger.OFF);
+    Logger.get('LocalMessages').setLevel(Logger.OFF);
     Logger.get('InputValidation').setLevel(Logger.OFF);
     Logger.get('ActivityData').setLevel(Logger.OFF);
     Logger.get('CircleRenameModalView').setLevel(Logger.OFF);

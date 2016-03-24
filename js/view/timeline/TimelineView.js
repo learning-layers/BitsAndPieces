@@ -1,5 +1,5 @@
-define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'data/timeline/TimelineData', 'view/timeline/ClusterHelper', 'voc'], 
-    function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineData, EntitiesHelper, Voc){
+define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserView', 'chap-timeline', 'data/timeline/TimelineData', 'data/episode/UserData', 'view/timeline/ClusterHelper', 'voc'], 
+    function(Logger, tracker, _, $, Backbone, UserView, Timeline, TimelineData, UserData, EntitiesHelper, Voc){
     return Backbone.View.extend({
         LOG: Logger.get('TimelineView'),
         waitingForLastOne : 0,
@@ -292,6 +292,25 @@ define(['logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/sss/UserV
             var entityDate = new Date(entity.get(this.timeAttr));
 
             this.browseToDate(entityDate);
+        },
+        addSingleNewEntityToTimeline: function(uri) {
+            var that = this,
+                now = new Date(),
+                range = this.timeline.getVisibleChartRange();
+
+            // Always load the new entity and add it
+            // This will solve any possible issues that might arise
+            // Making one more service call is not that problematic
+            UserData.fetchSingleAndAddToAccessible(this.user, uri, {
+                success: function() {
+                    that.timeline.redraw();
+                }
+            });
+
+            // No need to scroll timeline to today if already visible
+            if ( !( now > range.start && now < range.end ) ) {
+                this.browseToDate(now);
+            }
         },
         //@unused UI removed
         expand: function(e) {

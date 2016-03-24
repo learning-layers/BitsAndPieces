@@ -1,28 +1,27 @@
 define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
         'data/EntityData',
         'utils/SystemMessages', 'utils/LocalMessages', 'utils/InputValidation', 'utils/EntityHelpers',
-        'text!templates/modal/bit_add_modal.tpl'], function(appConfig, Logger, _, $, Backbone, EntityData, SystemMessages, LocalMessages, InputValidation, EntityHelpers, BitAddTemplate){
+        'text!templates/modal/link_add_modal.tpl'], function(appConfig, Logger, _, $, Backbone, EntityData, SystemMessages, LocalMessages, InputValidation, EntityHelpers, LinkAddTemplate){
     return Backbone.View.extend({
         events: {
             'submit form' : 'submitForm',
             'hide.bs.modal' : 'hideBsModal',
             'click .btn-primary' : 'submitForm',
-            'keyup input#bitLabel' : 'revalidateBitLabel',
-            'keyup textarea#bitDescription' : 'revalidateBitDescription',
-            'change input#bitFile' : 'revalidateBitFile',
+            'keyup input#linkLabel' : 'revalidateLabel',
+            'keyup textarea#linkDescription' : 'revalidateDescription',
             'shown.bs.modal' : 'triggerAutofocus'
         },
-        LOG: Logger.get('BitAddModalView'),
+        LOG: Logger.get('LinkAddModalView'),
         initialize: function() {
             this.localMessagesSelector = '.localMessages';
-            this.bitAddModalSelector = '#bitAddModal';
-            this.labelInputSelector = '#bitLabel';
-            this.descriptionSelector = '#bitDescription';
-            this.fileSelector = '#bitFile';
+            this.linkAddModalSelector = '#linkAddModal';
+            this.uriSelector = '#linkUri';
+            this.labelInputSelector = '#linkLabel';
+            this.descriptionSelector = '#linkDescription';
             this.descriptionMaxLength = appConfig.entityDescriptionMaxLength;
         },
         render: function() {
-            this.$el.html(_.template(BitAddTemplate, {
+            this.$el.html(_.template(LinkAddTemplate, {
                 rows: appConfig.modalDescriptionRows,
                 descriptionMaxLength: this.descriptionMaxLength
             }));
@@ -30,14 +29,10 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
             return this;
         },
         showModal: function() {
-            if ( !this.isFormDataSupported() ) {
-                SystemMessages.addDangerMessage('Your current Browser does not support this feature. Please update it or use Google Chrome instead.');
-                return;
-            }
-            this.$el.find(this.bitAddModalSelector).modal('show');
+            this.$el.find(this.linkAddModalSelector).modal('show');
         },
         hideModal: function() {
-            this.$el.find(this.bitAddModalSelector).modal('hide');
+            this.$el.find(this.linkAddModalSelector).modal('hide');
         },
         submitForm: function(e) {
             e.preventDefault();
@@ -50,14 +45,14 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
 
             var validateSuccess = true;
 
-            if ( !this.validateBitLabel() ) {
+            if ( !this.validateUri() ) {
                 validateSuccess = false;
             }
-            if ( !this.validateBitDescription() ) {
+            if ( !this.validateLabel() ) {
                 validateSuccess = false;
             }
-            if ( !this.validateBitFile() ) {
-                validateSuccess= false;
+            if ( !this.validateDescription() ) {
+                validateSuccess = false;
             }
 
             if ( !validateSuccess ) {
@@ -65,29 +60,27 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
                 return false;
             }
 
-            var label = this.$el.find(this.labelInputSelector).val(),
+            var uri = this.$el.find(this.uriSelector).val(),
+                label = this.$el.find(this.labelInputSelector).val(),
                 description = this.$el.find(this.descriptionSelector).val(),
-                file = this.$el.find(this.fileSelector).get(0).files[0],
-                promise = null,
-                formData = new FormData();
+                promise = null;
 
-            formData.append('file', file);
-            formData.append('label', label);
-            formData.append('description', description);
-            formData.append('mimeType', file.type);
-
-            promise = EntityData.uploadFile(formData);
+            promise = EntityData.addLink({
+                link: uri,
+                label: label,
+                description: description
+            });
 
 
             promise.done(function(result) {
                 that.enableDialog();
                 that.hideModal();
-                SystemMessages.addSuccessMessage('New Bit has been added.');
+                SystemMessages.addSuccessMessage('New Link has been added.');
 
                 EntityHelpers.triggerEntityAddedEvent(result);
             }).fail(function(f) {
                 that.enableDialog();
-                LocalMessages.addDangerMessage(that.$el.find(that.localMessagesSelector), 'A Bit could not be added!');
+                LocalMessages.addDangerMessage(that.$el.find(that.localMessagesSelector), 'A Link could not be added!');
             });
         },
         hideBsModal: function(e) {
@@ -98,53 +91,48 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
             }
         },
         cleanForm: function() {
-            var labelElement = this.$el.find(this.labelInputSelector),
-                descriptionElement = this.$el.find(this.descriptionSelector),
-                fileElement = this.$el.find(this.fileSelector);
+            var uriElement = this.$el.find(this.uriSelector),
+                labelElement = this.$el.find(this.labelInputSelector),
+                descriptionElement = this.$el.find(this.descriptionSelector);
 
             LocalMessages.clearMessages(this.$el.find(this.localMessagesSelector));
 
+            uriElement.val('');
             labelElement.val('');
             descriptionElement.val('');
-            fileElement.val('');
+
+            InputValidation.removeAlertsFromParent(uriElement);
+            InputValidation.removeValidationStateFromParent(uriElement);
 
             InputValidation.removeAlertsFromParent(labelElement);
             InputValidation.removeValidationStateFromParent(labelElement);
 
             InputValidation.removeAlertsFromParent(descriptionElement);
             InputValidation.removeValidationStateFromParent(descriptionElement);
-
-            InputValidation.removeAlertsFromParent(fileElement);
-            InputValidation.removeValidationStateFromParent(fileElement);
         },
-        validateBitLabel: function() {
+        validateUri: function() {
+            var element = this.$el.find(this.uriSelector),
+                alertText = 'Url is required and sould be a valid URL!';
+
+            return InputValidation.validateUrlInput(element, alertText);
+        },
+        validateLabel: function() {
             var element = this.$el.find(this.labelInputSelector),
                 alertText = 'Label is required!';
 
             return InputValidation.validateTextInput(element, alertText);
         },
-        revalidateBitLabel: function() {
-            this.validateBitLabel();
+        revalidateLabel: function() {
+            this.validateLabel();
         },
-        validateBitDescription: function() {
+        validateDescription: function() {
             var element = this.$el.find(this.descriptionSelector),
                 alertText = 'Maximum number of allowed characters exceeded!';
 
             return InputValidation.validateTextInputLength(element, this.descriptionMaxLength, alertText);
         },
-        revalidateBitDescription: function() {
-            this.validateBitDescription();
-        },
-        validateBitFile: function() {
-            var element = this.$el.find(this.fileSelector),
-                alertText = 'File is required!';
-            return InputValidation.validateFileInput(element, alertText);
-        },
-        revalidateBitFile: function() {
-            this.validateBitFile();
-        },
-        isFormDataSupported() {
-            return !! window.FormData;
+        revalidateDescription: function() {
+            this.validateDescription();
         },
         disableDialog: function() {
             this.formDisabled = true;
@@ -157,7 +145,7 @@ define(['config/config', 'logger', 'underscore', 'jquery', 'backbone',
             this.$el.find('.fa-spinner').hide();
         },
         triggerAutofocus: function() {
-            this.$el.find(this.labelInputSelector).trigger('focus');
+            this.$el.find(this.uriSelector).trigger('focus');
         }
     });
 });

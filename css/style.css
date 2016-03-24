@@ -608,6 +608,11 @@ ul.dropdown-menu li.episode a.highlight {
 	font-size: 120%;
 }
 
+.navbar i.fa.fa-sign-out {
+	font-size: 100%;
+	color: #d9534f;
+}
+
 .bnp-navbar-icon {
 	cursor: pointer;
 }
@@ -622,5 +627,11 @@ ul.dropdown-menu li.episode a.highlight {
 
 .badge.bnp-contributors {
 	background-color: #5ba74a;
+}
+
+.bnp-scrollable-menu {
+	height: auto;
+	max-height: 500px;
+	overflow-x: hidden;
 }
 

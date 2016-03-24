@@ -14,8 +14,8 @@
                     
                     <div class="form-group">
                         <label for="episodeDescription">Description:</label>
-                        <textarea class="form-control" id="episodeDescription"></textarea>
-                        <p class="help-block">Allows input of up to 5.000 characters. </p>
+                        <textarea class="form-control" rows="<%= rows %>" id="episodeDescription"></textarea>
+                        <p class="help-block">Allows input of up to <%= descriptionMaxLength %> characters. </p>
                     </div>
                 </form>
             </div>
