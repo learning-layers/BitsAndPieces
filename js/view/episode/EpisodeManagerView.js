@@ -1,6 +1,6 @@
 // TODO EpisodeManagerView could be renamed to MenuView
 define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'backbone', 'view/episode/EpisodeView', 'data/episode/EpisodeData', 'data/episode/VersionData', 'UserAuth', 'data/episode/UserData', 'voc',
-        'utils/EntityHelpers', 'view/modal/PlaceholderAddModalView', 'view/modal/EpisodeAddModalView', 'view/modal/BitAddModalView', 'view/modal/LinkAddModalView'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, PlaceholderAddModalView, EpisodeAddModalView, BitAddModalView, LinkAddModalView){
+        'utils/EntityHelpers', 'utils/SystemMessages', 'view/modal/PlaceholderAddModalView', 'view/modal/EpisodeAddModalView', 'view/modal/BitAddModalView', 'view/modal/LinkAddModalView'], function(appConfig, VIE, Logger, tracker, _, $, Backbone, EpisodeView, EpisodeData, VersionData, UserAuth, UserData, Voc, EntityHelpers, SystemMessages, PlaceholderAddModalView, EpisodeAddModalView, BitAddModalView, LinkAddModalView){
     return Backbone.View.extend({
         LOG: Logger.get('EpisodeManagerView'),
         events: {
@@ -319,9 +319,16 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
         handleDiscussionTool: function(e) {
            if ( !this.currentEpisode ) return;
 
+           var currentEpisodeUri = this.currentEpisode.getSubject();
+
+           if ( !currentEpisodeUri ) {
+               SystemMessages.addDangerMessage('Discussion Tool could not be opened! Please switch Episode or refresh and try again.');
+               return;
+           }
+
            var url = appConfig.discussionToolUrl
                + '#/auth/'
-               + encodeURIComponent(encodeURIComponent(this.currentEpisode.getSubject()));
+               + encodeURIComponent(encodeURIComponent(currentEpisodeUri));
            window.open(url);
            
            tracker.info(tracker.OPENDISCUSSIONTOOL, null, this.currentEpisode.getSubject());
