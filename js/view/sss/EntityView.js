@@ -54,6 +54,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             'sss:filePresentation' : 'img/sss/entityPresentation.png',
             'sss:fileText' : 'img/sss/entityText.png',
             'sss:fileAudio' : 'img/sss/entityAudio.png',
+            'sss:fileVideo' : 'img/sss/entityVideo.png',
             'sss:rating' : 'img/sss/rate.png',
             'sss:tag' : 'img/evernote/tag.png',
             'sss:placeholder' : 'img/sss/entityPlaceholder.png',
@@ -306,6 +307,12 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                         case 'audio/wav':
                             name = 'sss:fileAudio';
                             break;
+                        case 'video/avi':
+                        case 'video/mp4':
+                        case 'video/mpeg':
+                        case 'video/quicktime':
+                            name = 'sss:fileVideo';
+                            break;
                     }
                 } else {
                     file = this.model.get(Voc.file);
@@ -353,6 +360,15 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                             case '.m4a':
                             case '.amr':
                                 name = 'sss:fileAudio';
+                                break;
+                            case '.avi':
+                            case '.m4v':
+                            case 'mpeg':
+                            case '.mpg':
+                            case '.mov':
+                            case '.flv':
+                            case '.wmv':
+                                name = 'sss:fileVideo';
                                 break;
                         }
                     }
