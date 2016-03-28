@@ -17,13 +17,15 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc', 'view/ss
             return _.contains(this.model.get('entities'), entity);
         },
         render: function() {
+            var that = this;
+
             this.$el.empty();
             this.$el.attr({
                 'class' : 'cluster labelable'
             });
             // TODO: rendering by template
             var entities = _.sortBy(this.model.get('entities'), function(entity) {
-                return entity.get(this.timeAttr);
+                return entity.get(that.timeAttr);
             });
             var that = this;
             var contents = $('<div>');
