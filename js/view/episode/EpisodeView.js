@@ -60,12 +60,20 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode
             e.preventDefault();
             e.stopPropagation();
 
+            if ( this.options.episodeManager && this.options.episodeManager.episodeDeletionInProgress ) {
+                SystemMessages.addWarningMessage('Episode is being deleted, please wait until the process has finished!');
+                return;
+            }
+
             var confirmDelete = confirm('Disconnect yourself from the Episode. The Episode will just disappear from your workspace and the other contributors will be able to go on collaborating on it.');
 
             if ( true === confirmDelete ) {
 
                 var that = this,
-                    promise = EpisodeData.removeEpisode(this.model);
+                    promise = EpisodeData.removeEpisode(this.model),
+                    elementContainer = this.$el.parent().parent();
+
+                this._disableEpisodeDeletion(elementContainer);
 
                 promise.done(function(response) {
                     var episode = that.model,
@@ -93,14 +101,24 @@ define(['vie', 'logger', 'underscore', 'jquery', 'backbone', 'voc','data/episode
                     version.destroy();
 
                     SystemMessages.addSuccessMessage('Episode <strong>' + episodeLabel + '</strong> successfully removed.');
+                    that._enableEpisodeDeletion(elementContainer);
                 }).fail(function(f) {
                     SystemMessages.addDangerMessage('Error! Could not delete episode <strong>' + that.model.get(Voc.label) + '</strong>.');
+                    that._enableEpisodeDeletion(elementContainer);
                 });
 
                             }
         },
         __getCurrentUserEntity: function() {
             return this.model.collection.get(UserParams.user);
+        },
+        _disableEpisodeDeletion: function(elementContainer) {
+            this.options.episodeManager.episodeDeletionInProgress = true;
+            elementContainer.find('button.deleteEpisode').prop('disabled', true);
+        },
+        _enableEpisodeDeletion: function(elementContainer) {
+            this.options.episodeManager.episodeDeletionInProgress = false;
+            elementContainer.find('button.deleteEpisode').prop('disabled', false);
         }
     });
 });

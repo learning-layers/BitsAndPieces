@@ -16,6 +16,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
         initialize: function() {
             var that = this;
             this.heightChangeAllowed = true;
+            this.episodeDeletionInProgress = false;
             this.views = {};
             this.LOG.debug('options', this.options);
             this.vie = this.options.vie;
@@ -246,7 +247,6 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 a = that.model.vie.entities.get(a);
                 that.addEpisode(a);
             });
-            that.redrawEpisodes();
             
             var deleted = _.difference(previous, set);
             this.LOG.debug('deleted', deleted);
@@ -254,10 +254,12 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 a = that.model.vie.entities.get(a);
                 that.removeEpisode(a);
             });
+
+            that.redrawEpisodes();
         },
         addEpisode: function(model) {
             this.LOG.debug('addEpisode', model);
-            var view = new EpisodeView({'model':model});
+            var view = new EpisodeView({ 'model': model, episodeManager: this });
             this.$el.find('ul.dropdown-menu').append(view.render().$el);
             this.views[model.cid] = view;
             if ( model === this.currentEpisode ) { view.highlight();}
@@ -265,6 +267,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
         },
         removeEpisode: function(model) {
             this.LOG.debug('removeEpisode', model);
+            delete this.views[model.cid];
         },
         createBlank: function(e) {
             var that = this;
