@@ -75,7 +75,9 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
         this.vie.load({
             'service' : 'learnEpVersionCurrentGet'
         }).from('sss').execute().success(function(version) {
-            user.set(Voc.currentVersion, version.id);
+            if ( version && version.id ) {
+                user.set(Voc.currentVersion, version.id);
+            }
         });
     };
     /**

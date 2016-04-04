@@ -18,6 +18,15 @@ define(['config/config', 'logger', 'backbone', 'jquery', 'voc', 'underscore', 'j
                 this.LOG.debug('el', this.el, this.$el);
                 this.listenTo(this.model, 'destroy', this.remove);
 
+                var that = this;
+                if ( this.model.isof(Voc.ORGANIZE) ) {
+                    var version = this.model.get(Voc.belongsToVersion);
+
+                    version.on('destroy', function() {
+                        that.model.destroy();
+                    });
+                }
+
                 this.circleRenameModalView = this.options.circleRenameModalView;
                 
             },
