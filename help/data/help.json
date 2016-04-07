@@ -10,27 +10,191 @@
       ],
       "chapters" : [
         {
-          "title": "Overview and General Terminology",
-          "videos": [
+          "title" : "Overview and Structure of the Tool",
+          "template" : "overview_and_structure"
+        },
+        {
+            "title" : "General (getting started)",
+            "videos" : [
+              {
+                "title" : "Increase awareness: How to know about the contributors of an episode? How to know, if an episode is shared? How to know, if there are new discussions in the Discussion tool?",
+                "url" : "NONE",
+                "duration" : "NONE"
+              },
+              {
+                "title" : "How to connect Evernote to B&P?",
+                "url" : "NONE",
+                "duration" : "NONE"
+              },
+              {
+                "title" : "What is a learning episode? How to browse existing episodes?",
+                "url" : "NONE",
+                "duration" : "NONE"
+              },
+              {
+                "title" : "How do I navigate the timeline?",
+                "url" : "https://www.youtube.com/embed/0U6kLV6aSVc?rel=0&wmode=transparent&autoplay=true",
+                "duration" : "1:17"
+              },
+              {
+                "title" : "Where do I find my learning episodes?",
+                "url" : "https://www.youtube.com/embed/Xl0jbLuI7ec?rel=0&wmode=transparent&autoplay=true",
+                "duration" : "1:23"
+              },
+              {
+                "title" : "How do I delete the learning episode?",
+                "url" : "https://www.youtube.com/embed/9a3Ov5SxUGw?rel=0&wmode=transparent&autoplay=true",
+                "duration" : "1:01"
+              },
+              {
+                "title" : "How can I see the notifications I have been sent in Bits&Pieces?",
+                "url" : "https://www.youtube.com/embed/lQxPXraD9oY?rel=0&wmode=transparent&autoplay=true",
+                "duration" : "1:39"
+              }
+            ]
+        },
+        {
+          "title" : "Bit actions",
+          "videos" : [
             {
-              "title" : "How can I create a bit in Bit&amp;Pieces to represent knowlege I know I want but yet I don´t have",
+              "title" : "How to upload a bit directly via B&P?",
+              "url" : "NONE",
+              "duration" : "NONE"
+            },
+            {
+              "title" : "How do I create a placeholder? How do I replace a placeholder with a bit?",
               "url" : "https://www.youtube.com/embed/nvHB_ziO-90?rel=0&wmode=transparent&autoplay=true",
               "duration" : "1:28"
+            },
+            {
+              "title" : "How to create a link? How do I add a URL?",
+              "url" : "NONE",
+              "duration" : "NONE"
+            },
+            {
+              "title" : "How do I tag a bit?",
+              "url" : "NONE",
+              "duration" : "NONE"
+            },
+            {
+              "title" : "How do I use tags?",
+              "url" : "NONE",
+              "duration" : "NONE"
+            },
+            {
+              "title" : "How do I recall a bit based on time and semantic cues?",
+              "url" : "NONE",
+              "duration" : "NONE"
+            },
+            {
+              "title" : "How do I find a bit?",
+              "url" : "https://www.youtube.com/embed/FwwoH97ZpIk?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "1:45"
+            },
+            {
+              "title" : "How to find more info about a bit in Bit&Pieces?",
+              "url" : "https://www.youtube.com/embed/JsfMzjuF12E?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "1:12"
             }
           ]
         },
         {
-          "title" : "Timeline",
+          "title" : "Episode actions",
           "videos" : [
             {
-              "title" : "How to find more info about a bit in Bit&Pieces",
-              "url" : "https://www.youtube.com/embed/JsfMzjuF12E?rel=0&wmode=transparent&autoplay=true",
-              "duration" : "1:13"
+              "title" : "How to create an episode?",
+              "url" : "https://www.youtube.com/embed/_3-LYEovYNw?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "1:03"
             },
             {
-              "title" : "How do I navigate the timeline",
-              "url" : "https://www.youtube.com/embed/0U6kLV6aSVc?rel=0&wmode=transparent&autoplay=true",
-              "duration" : "1:18"
+              "title" : "How to change the name of an episode?",
+              "url" : "https://www.youtube.com/embed/9gwhh1FkWhw?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "1:03"
+            },
+            {
+              "title" : "How to remove shared episodes from the personal account?",
+              "url" : "NONE",
+              "duration" : "NONE"
+            },
+            {
+              "title" : "Disconnecting episodes",
+              "url" : "NONE",
+              "duration" : "NONE"
+            },
+            {
+              "title" : "Sharing an episode",
+              "url" : "https://www.youtube.com/embed/Lh5E3mSxV-8?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "2:09"
+            },
+            {
+              "title" : "How do I share only parts of my learning episode?",
+              "url" : "https://www.youtube.com/embed/IPbL97EjKz4?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "1:16"
+            }
+          ]
+        },
+        {
+          "title" : "Organizer (Learning episode content)",
+          "videos" : [
+            {
+              "title" : "Quick explanation what of the circles are for (e.g. categorization, identify structure in the collected data, identify similarities and differences in resources, relate the different information to each other)",
+              "url" : "NONE",
+              "duration" : "NONE"
+            },
+            {
+              "title" : "How to move a bit into my learning episode",
+              "url" : "https://www.youtube.com/embed/p7AVQkEOfE0?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "0:55"
+            },
+            {
+              "title" : "How do I edit a learning episode that has been shared with me",
+              "url" : "https://www.youtube.com/embed/tpU0eY3bREI?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "1:23"
+            },
+            {
+              "title" : "When an episode is locked, how can I see changes made by others",
+              "url" : "https://www.youtube.com/embed/M6egel3Tf9A?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "1:29"
+            },
+            {
+              "title" : "How do I organize bits in my learning episode using circles",
+              "url" : "https://www.youtube.com/embed/qMv9CEp_ES0?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "1:34"
+            },
+            {
+              "title" : "How do I remove a bit from my learning episode and color change of bit in the timeline",
+              "url" : "https://www.youtube.com/embed/acfl5JXgqYc?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "1:17"
+            }
+          ]
+        },
+        {
+          "title" : "Workflow with different tools",
+          "videos" : [
+            {
+              "title" : "How to link B&P, DT and LD and move between them? How do I create a Living Document from Bits and Pieces?",
+              "url" : "NONE",
+              "duration": "NONE"
+            },
+            {
+              "title" : "How do I access my bits/episodes in LD?",
+              "url" : "NONE",
+              "duration": "NONE"
+            },
+            {
+              "title" : "How do I use my bits/episodes to feed into a document?",
+              "url" : "NONE",
+              "duration": "NONE"
+            },
+            {
+              "title" : "Record a bit quickly while you are on the run or while work with emails →  Evernote and Email in",
+              "url" : "NONE",
+              "duration": "NONE"
+            },
+            {
+              "title" : "Video showing email notification and their content - how to understand them (activities in episodes, in discussion tool, what has been shared, and reminder on bits) - in interaction with B&P",
+              "url" : "NONE",
+              "duration": "NONE"
             }
           ]
         }
@@ -39,6 +203,26 @@
     {
       "title" : "Discussion Tool",
       "chapters" : [
+        {
+          "title" : "General",
+          "videos" : [
+            {
+              "title" : "How to tag a discussion?",
+              "url" : "NONE",
+              "duration" : "NONE"
+            },
+            {
+              "title" : "How to access and attach Bits to a discussion?",
+              "url" : "NONE",
+              "duration" : "NONE"
+            },
+            {
+              "title" : "How to rate a discussion?",
+              "url" : "NONE",
+              "duration" : "NONE"
+            }
+          ]
+        }
       ]
     }
   ]
