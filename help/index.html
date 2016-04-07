@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+        <title>Bits And Pieces Help</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <script type="text/javascript" src="js/main.js"></script>
+        <script type="text/javascript" src="../lib/require.js"></script>
+
+        <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../lib/bootstrap/css/bootstrap-theme.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="colorbox/colorbox.css">
+        <style type="text/css">
+            h1, h2, h3 {
+                color: #777;
+            }
+            .list-group-item {
+                font-size: 16px;
+            }
+            .list-group-item a {
+                color: #337ab7;
+            }
+            .list-group-item .fa-youtube {
+                color: #DB0000;
+                padding-right: 5px;
+            }
+            .bnp-help-loading {
+                margin-top: 20px;
+            }
+        </style>
+  </script>
+
+    </head>
+    <body role="document">
+        <div id="bnp-help-app" class="container" role="main">
+            <div class="well well-sm bnp-help-loading">
+                <i class="fa fa-spinner fa-spin"></i>
+                Loading, please wait!
+            </div>
+        </div>
+        <script type="text/javascript">
+            requirejs(["help"]);
+        </script>
+    </body>
+</html>

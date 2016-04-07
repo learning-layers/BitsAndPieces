@@ -1,0 +1,45 @@
+{
+  "apps" : [
+    {
+      "title" : "Bits and Pieces",
+      "alerts" : [
+        {
+          "type" : "info",
+          "text" : "Please note that Bits and Pieces requires latest version of <strong><a href=\"https://www.google.com/chrome/browser/desktop/\" target=\"_blank\">Google Chrome Browser</a></strong> for all the features to work properly. It should be compatible with any modern browser, but could have some slight visual mismatches and other issues."
+        }
+      ],
+      "chapters" : [
+        {
+          "title": "Overview and General Terminology",
+          "videos": [
+            {
+              "title" : "How can I create a bit in Bit&amp;Pieces to represent knowlege I know I want but yet I don´t have",
+              "url" : "https://www.youtube.com/embed/nvHB_ziO-90?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "1:28"
+            }
+          ]
+        },
+        {
+          "title" : "Timeline",
+          "videos" : [
+            {
+              "title" : "How to find more info about a bit in Bit&Pieces",
+              "url" : "https://www.youtube.com/embed/JsfMzjuF12E?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "1:13"
+            },
+            {
+              "title" : "How do I navigate the timeline",
+              "url" : "https://www.youtube.com/embed/0U6kLV6aSVc?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "1:18"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title" : "Discussion Tool",
+      "chapters" : [
+      ]
+    }
+  ]
+}
