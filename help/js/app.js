@@ -26,7 +26,12 @@ function(_, $, help, NavbarTemplate, OverviewAndStructureTemplate) {
                 if ( chapter.videos && _.isArray(chapter.videos) && chapter.videos.length > 0 ) {
                     helpText += '<ul class="list-group">';
                     _.each(chapter.videos, function(video) {
-                        helpText += '<li class="list-group-item">';
+                        var listClasses = ['list-group-item'];
+
+                        if ( video.url === 'NONE' ) {
+                            listClasses.push('disabled');
+                        }
+                        helpText += '<li class="' + listClasses.join(' ') + '">';
                         helpText += '<a href="' + video.url + '" class="youtube">';
                         helpText += '<i class="fa fa-youtube"></i>';
                         helpText += video.title;
