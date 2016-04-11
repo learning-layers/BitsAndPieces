@@ -137,11 +137,6 @@
           "title" : "Organizer (Learning episode content)",
           "videos" : [
             {
-              "title" : "Quick explanation what of the circles are for (e.g. categorization, identify structure in the collected data, identify similarities and differences in resources, relate the different information to each other)",
-              "url" : "NONE",
-              "duration" : "NONE"
-            },
-            {
               "title" : "How to move a bit into my learning episode",
               "url" : "https://www.youtube.com/embed/p7AVQkEOfE0?rel=0&wmode=transparent&autoplay=true",
               "duration" : "0:55"
@@ -185,16 +180,6 @@
               "title" : "How do I use my bits/episodes to feed into a document?",
               "url" : "https://www.youtube.com/embed/MDuQCYKw4TM?rel=0&wmode=transparent&autoplay=true",
               "duration": "0:38"
-            },
-            {
-              "title" : "Record a bit quickly while you are on the run or while work with emails →  Evernote and Email in",
-              "url" : "NONE",
-              "duration": "NONE"
-            },
-            {
-              "title" : "Video showing email notification and their content - how to understand them (activities in episodes, in discussion tool, what has been shared, and reminder on bits) - in interaction with B&P",
-              "url" : "NONE",
-              "duration": "NONE"
             }
           ]
         }
