@@ -36,7 +36,7 @@ function(_, $, help, NavbarTemplate, OverviewAndStructureTemplate) {
                         helpText += '<i class="fa fa-youtube"></i>';
                         helpText += video.title;
                         helpText += '</a>';
-                        helpText += '<span class="badge">' + video.duration + '</span>';
+                        helpText += '<span class="badge"><i class="fa fa-clock-o"></i> ' + video.duration + '</span>';
                         helpText += '</li>';
                     });
                     helpText += '</ul>';

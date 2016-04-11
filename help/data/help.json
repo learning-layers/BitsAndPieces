@@ -17,11 +17,6 @@
             "title" : "General (getting started)",
             "videos" : [
               {
-                "title" : "Increase awareness: How to know about the contributors of an episode? How to know, if an episode is shared? How to know, if there are new discussions in the Discussion tool?",
-                "url" : "https://www.youtube.com/embed/B5hdc12wA_8?rel=0&wmode=transparent&autoplay=true",
-                "duration" : "2:27"
-              },
-              {
                 "title" : "How to connect Evernote to B&P?",
                 "url" : "https://www.youtube.com/embed/Ga7F-9XBYVQ?rel=0&wmode=transparent&autoplay=true",
                 "duration" : "2:09"
@@ -40,16 +35,6 @@
                 "title" : "Where do I find my learning episodes?",
                 "url" : "https://www.youtube.com/embed/Xl0jbLuI7ec?rel=0&wmode=transparent&autoplay=true",
                 "duration" : "1:23"
-              },
-              {
-                "title" : "How do I delete the learning episode?",
-                "url" : "https://www.youtube.com/embed/9a3Ov5SxUGw?rel=0&wmode=transparent&autoplay=true",
-                "duration" : "1:01"
-              },
-              {
-                "title" : "How can I see the notifications I have been sent in Bits&Pieces?",
-                "url" : "https://www.youtube.com/embed/a4DnahdnUFs?rel=0&wmode=transparent&autoplay=true",
-                "duration" : "1:51"
               }
             ]
         },
@@ -62,7 +47,7 @@
               "duration" : "1:04"
             },
             {
-              "title" : "How do I create a placeholder / Quick Note?",
+              "title" : "How do I create a placeholder / quick note?",
               "url" : "https://www.youtube.com/embed/0IGY59a-LYQ?rel=0&wmode=transparent&autoplay=true",
               "duration" : "1:00"
             },
@@ -77,19 +62,14 @@
               "duration" : "0:30"
             },
             {
-              "title" : "How do I use tags?",
-              "url" : "https://www.youtube.com/embed/ee2KU-CBIBc?rel=0&wmode=transparent&autoplay=true",
-              "duration" : "1:35"
-            },
-            {
-              "title" : "How do I recall a bit based on time and semantic cues?",
+              "title" : "How do I recall a bit based on time?",
               "url" : "https://www.youtube.com/embed/Z7izvyzi5xU?rel=0&wmode=transparent&autoplay=true",
               "duration" : "1:44"
             },
             {
-              "title" : "How do I find a bit?",
-              "url" : "https://www.youtube.com/embed/FwwoH97ZpIk?rel=0&wmode=transparent&autoplay=true",
-              "duration" : "1:45"
+              "title" : "How do I find or recall a bit based on tags?",
+              "url" : "https://www.youtube.com/embed/ee2KU-CBIBc?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "1:35"
             },
             {
               "title" : "How to find more info about a bit in Bit&Pieces?",
@@ -160,12 +140,22 @@
               "title" : "How do I remove a bit from my learning episode and color change of bit in the timeline",
               "url" : "https://www.youtube.com/embed/acfl5JXgqYc?rel=0&wmode=transparent&autoplay=true",
               "duration" : "1:17"
+            },
+            {
+              "title" : "Being aware of changes in my absence",
+              "url" : "https://www.youtube.com/embed/a4DnahdnUFs?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "1:51"
             }
           ]
         },
         {
           "title" : "Workflow with different tools",
           "videos" : [
+            {
+              "title" : "Increase awareness: How to know about the contributors of an episode? How to know, if an episode is shared? How to know, if there are new discussions in the Discussion tool?",
+              "url" : "https://www.youtube.com/embed/B5hdc12wA_8?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "2:27"
+            },
             {
               "title" : "How to link B&P, DT and LD and move between them? How do I create a Living Document from Bits and Pieces?",
               "url" : "https://www.youtube.com/embed/TWCFUdDrFts?rel=0&wmode=transparent&autoplay=true",
