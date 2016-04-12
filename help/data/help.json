@@ -97,12 +97,12 @@
               "duration" : "0:48"
             },
             {
-              "title" : "Disconnecting episodes",
+              "title" : "How to disconnect an episode?",
               "url" : "https://www.youtube.com/embed/YPYciIktB6k?rel=0&wmode=transparent&autoplay=true",
               "duration" : "0:36"
             },
             {
-              "title" : "Sharing an episode",
+              "title" : "How do I share a learning episode with others?",
               "url" : "https://www.youtube.com/embed/Lh5E3mSxV-8?rel=0&wmode=transparent&autoplay=true",
               "duration" : "2:09"
             },
@@ -117,45 +117,45 @@
           "title" : "Organizer (Learning episode content)",
           "videos" : [
             {
-              "title" : "How to move a bit into my learning episode",
+              "title" : "How to move a bit into my learning episode?",
               "url" : "https://www.youtube.com/embed/p7AVQkEOfE0?rel=0&wmode=transparent&autoplay=true",
               "duration" : "0:55"
             },
             {
-              "title" : "How do I edit a learning episode that has been shared with me",
+              "title" : "How do I edit a learning episode that has been shared with me?",
               "url" : "https://www.youtube.com/embed/tpU0eY3bREI?rel=0&wmode=transparent&autoplay=true",
               "duration" : "1:23"
             },
             {
-              "title" : "When an episode is locked, how can I see changes made by others",
+              "title" : "When an episode is locked, how can I see changes made by others?",
               "url" : "https://www.youtube.com/embed/BqrHPl63t74?rel=0&wmode=transparent&autoplay=true",
               "duration" : "1:01"
             },
             {
-              "title" : "How do I organize bits in my learning episode using circles",
+              "title" : "How do I organize bits in my learning episode using circles?",
               "url" : "https://www.youtube.com/embed/qMv9CEp_ES0?rel=0&wmode=transparent&autoplay=true",
               "duration" : "1:34"
             },
             {
-              "title" : "How do I remove a bit from my learning episode and color change of bit in the timeline",
+              "title" : "How do I remove a bit from my learning episode?",
               "url" : "https://www.youtube.com/embed/acfl5JXgqYc?rel=0&wmode=transparent&autoplay=true",
               "duration" : "1:17"
             },
             {
-              "title" : "Being aware of changes in my absence",
+              "title" : "How to be aware of changes in shared episodes that happened in my absence?",
               "url" : "https://www.youtube.com/embed/a4DnahdnUFs?rel=0&wmode=transparent&autoplay=true",
               "duration" : "1:51"
+            },
+            {
+              "title" : "How to know about the contributors of an episode? How to know, if an episode is shared? How to know, if there are new discussions in the Discussion tool?",
+              "url" : "https://www.youtube.com/embed/B5hdc12wA_8?rel=0&wmode=transparent&autoplay=true",
+              "duration" : "2:27"
             }
           ]
         },
         {
           "title" : "Workflow with different tools",
           "videos" : [
-            {
-              "title" : "Increase awareness: How to know about the contributors of an episode? How to know, if an episode is shared? How to know, if there are new discussions in the Discussion tool?",
-              "url" : "https://www.youtube.com/embed/B5hdc12wA_8?rel=0&wmode=transparent&autoplay=true",
-              "duration" : "2:27"
-            },
             {
               "title" : "How to link B&P, DT and LD and move between them? How do I create a Living Document from Bits and Pieces?",
               "url" : "https://www.youtube.com/embed/TWCFUdDrFts?rel=0&wmode=transparent&autoplay=true",
