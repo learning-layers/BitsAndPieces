@@ -333,7 +333,7 @@
             ], 
             "subtypes": [], 
             "supertypes": [
-                "http://eval.bp/Thing" 
+                "http://eval.bp/entity"
             ] 
         },
         "http://eval.bp/placeholder" : {

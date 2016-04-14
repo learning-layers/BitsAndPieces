@@ -217,15 +217,10 @@ define(['tracker', 'underscore', 'backbone', 'logger', 'jquery', 'voc',
                 entity = this.getContainedEntity();
 
             if ( entity ) {
+                // A special case for Episode Version
+                // This assumes that Episode itself is witin an entities attribute
                 if ( entity.isof(Voc.VERSION) ) {
-                    var episode = entity.get(Voc.belongsToEpisode);
-
-                    if ( episode && episode.isEntity ) {
-                        label = episode.get(Voc.label);
-                    } else {
-                        // In case episode not loaded for version, render again once it is loaded
-                        entity.once('change:'+entity.vie.namespaces.uri(Voc.belongsToEpisode), this.render, this);
-                    }
+                    label = this.getContainedEntitiesLabelsByType(Voc.EPISODE);
                 } else {
                     label = entity.get(Voc.label);
                 }
