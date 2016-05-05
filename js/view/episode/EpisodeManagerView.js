@@ -132,17 +132,22 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             this.$el.find('.currentEpisodeVisibility').html('<i class="' + elementClasses.join(' ') + '" title="' + elementTitle + '"></i>');
             this.handleNavbarHeightChange();
         },
-        renderAuthor: function(episode) {
-            var authorText = '';
-            this.LOG.debug('renderAuthor', episode);
-
+        _getAuthorLabel: function(episode) {
             var author = episode.get(Voc.author),
-                authorLabel = '',
-                elementClasses = ['fa', 'bnp-navbar-icon'];
+                authorLabel = '';
 
             if ( author && author.isEntity ) {
                 authorLabel = author.get(Voc.label).split('@')[0];
             }
+
+            return authorLabel;
+        },
+        renderAuthor: function(episode) {
+            var authorText = '';
+            this.LOG.debug('renderAuthor', episode);
+
+            var authorLabel = this._getAuthorLabel(episode),
+                elementClasses = ['fa', 'bnp-navbar-icon'];
 
             if ( EntityHelpers.isSharedEpisode(episode) ) {
                 elementClasses.push('fa-unlock');
@@ -172,7 +177,6 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
                 users = [users];
             }
 
-
             if ( users.length > 0 ) {
                 var sharedWithNames = EntityHelpers.getSharedWithNames(episode, true);
                 sharedWithText = '<span class="badge bnp-navbar-icon bnp-contributors">' + sharedWithNames.length + '</span>';
@@ -183,7 +187,7 @@ define(['config/config', 'vie', 'logger', 'tracker', 'underscore', 'jquery', 'ba
             if ( sharedWithText !== '' ) {
                 this.$el.find('.currentEpisodeSharedWith > span.bnp-contributors').popover({
                     container: '.navbar',
-                    content: '<strong>Author:</strong> ' + this.model.get(Voc.label).split('@')[0] + '<br><strong>Contributors:</strong> ' + sharedWithNames.join(', '),
+                    content: '<strong>Author:</strong> ' + this._getAuthorLabel(episode) + '<br><strong>Contributors:</strong> ' + sharedWithNames.join(', '),
                     placement: 'bottom',
                     title: 'Contributors',
                     trigger: 'hover',
