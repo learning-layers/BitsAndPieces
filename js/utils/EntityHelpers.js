@@ -147,7 +147,11 @@ function (Logger, $, Backbone, _, Voc) {
             return tmp[tmp.length - 1];
         },
         fixNewlinesForInput: function(text) {
-            return text.replace(/\\n/g, '\n');
+            if ( typeof text === 'string' ) {
+                return text.replace(/\\n/g, '\n');
+            }
+
+            return text;
         },
         triggerEntityAddedEvent: function(uri) {
             var ev = $.Event("bnp:newEntityAdded", {
