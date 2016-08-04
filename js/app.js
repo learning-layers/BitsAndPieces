@@ -89,6 +89,10 @@ function(appConfig, VIE, Logger, userParams, UserData, SocialSemanticService, ex
     }, userParams));
     v.use(sss, 'sss');
     //v.namespaces.base(namespace);
+    // Configure attributes that should not be considered linked
+    // even in case the value is a URL that exists in collection
+    v.addAsIsAttribute(Voc.label);
+    v.addAsIsAttribute(Voc.description);
 
     extender.syncByVIE(v);
     extender.addOnUrisReady(v);
