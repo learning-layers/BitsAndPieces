@@ -152,7 +152,8 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
             _.each(addedUsers, function(single) {
                 that.allUsers.push({
                     id: single.getSubject(),
-                    label : single.get(Voc.label)
+                    label:  single.get(Voc.label),
+                    email: single.get(Voc.email)
                 });
             });
         });
@@ -185,6 +186,7 @@ define(['config/config', 'logger', 'voc', 'underscore', 'jquery', 'data/Data', '
             if ( shouldBeAdded ) {
                 searchableUsers.push({
                     label: user.label,
+                    email: user.email,
                     value: user.id
                 });
             }

@@ -49,6 +49,7 @@ define([], {
     content : 'sss:content',
     contents : 'sss:contents',
     description : 'sss:description',
+    email: 'sss:email',
 
     xLabel : 'sss:xLabel',
     yLabel : 'sss:yLabel',
