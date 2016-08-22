@@ -11,7 +11,7 @@ function (Logger, $, Backbone, _, userParams, UserData) {
 
             response(
                 _.filter(UserData.getSearchableUsers(false), function(user) {
-                    return pattern.test(user.label);
+                    return pattern.test(user.label) || pattern.test(user.email);
                })
             );
         },
@@ -20,7 +20,7 @@ function (Logger, $, Backbone, _, userParams, UserData) {
 
             response(
                 _.filter(UserData.getSearchableUsers(true), function(user) {
-                    return pattern.test(user.label);
+                    return pattern.test(user.label) || pattern.test(user.email);
                })
             );
         }
